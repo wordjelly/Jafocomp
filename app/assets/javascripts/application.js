@@ -9,8 +9,13 @@
 //
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
-//
-//= require jquery
-//= require jquery_ujs
-//= require turbolinks
 //= require_tree .
+
+/***
+setup a controller that responds to a json request for data. 
+***/
+$(document).on('keyup','#search',function(event){
+
+	
+	
+});
