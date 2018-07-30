@@ -2,14 +2,10 @@
 <html>
 <head>
   <title>Jafocomp</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
-
   <!-- jquery -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-  <!--Import Google Icon Font-->
+   <!--Import Google Icon Font-->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   
   <!-- Compiled and minified CSS -->
@@ -22,8 +18,38 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 
 
+  <!-- timeago -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.3/jquery.timeago.min.js"></script>
+
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+
+  <script type="text/template" id="search_result_template">
+    <div class="col l12 m12 s12" style="padding:0px !important;">
+      <div class="card">
+        <div class="card-content grey-text" style="padding-bottom:5px !important;">
+          <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
+            <!--<time class="timeago" datetime="{{= search_result.triggered_at }}">{{= search_result.triggered_at }}
+            </time>,    -->
+            Buy Nasdaq when <span class="blue-grey-text">{{= search_result.setup }}</span> 
+          </span>
+          <!-- from here onwards its going to be the impacts that have to be loaded -->
+          {{ first_impact = search_result.impacts[0] }}
+          <p class="amber-text text-darken-2" style="font-size:22px; font-weight:600;">{{= first_impact.effect }}</p>
+          <div class="row" style="width:50%; margin-top:1rem !important; margin-left:0px !important;">
+            <div class="col l4 m4 s4 red" style="height:5px;"></div>
+            <div class="col l3 m3 s3 grey lighten-2" style="height:5px;"></div>
+          </div>
+        </div>
+        <div class="center grey-text text-lighten-1 fs-8" style="font-weight:500; padding-bottom:10px !important;">See More</div>
+      </div>
+    </div>
+  </script>
+ 
 
   <!-- STYLES -->
   <style>
@@ -32,7 +58,9 @@
       height: 100px;
       margin: 20px auto;  
     }
-  </style>       
+  </style>  
+
+
 </head>
 <body>
 

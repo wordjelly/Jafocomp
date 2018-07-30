@@ -1,6 +1,6 @@
 class Result
 	include Mongoid::Document
-	include Concerns::StatsConcern
-	embeds_many :stop_losses, class_name => "StopLoss"
-	field :suggestions, type: Array
+	field :setup, type: String
+	field :triggered_at, type: String
+	embeds_many :impacts, :class_name => "Impact"
 end

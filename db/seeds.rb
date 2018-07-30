@@ -5,3 +5,10 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+# populate results from the results.json file.
+Result.delete_all
+json = JSON.parse(IO.read("#{Rails.root}/db/results.json"))
+json["results"].each do |result|
+	r = Result.new(result)
+	r.save
+end
