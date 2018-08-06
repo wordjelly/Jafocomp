@@ -3,11 +3,11 @@
 	[
 		{
 			"setup" : "Reliance falls by 2%",
-			"triggered_at" : "2018-07-26T23:12:56+05:30",  
+			"triggered_at" : 1533195501100,  
 			"impacts" : 
 			[
 				{	
-					"effect" : "Historically, Nasdaq tends to fall",
+					"effect" : "Historically, Nasdaq tends to rise",
 					"entity_name" : "Reliance Industries",
 					"entity_unique_id" : "abcd",
 					"entity_index_name" : "NSE",
@@ -19,8 +19,32 @@
 					[
 						{
 							"time_frame" : 7,
-							"time_frame_name" : "After A Week",
-							"total_up" : 200,
+							"time_frame_name" : "1 wk-later",
+							"total_up" : 300,
+							"total_down" : 250,
+							"stop_losses" : 
+							[
+								{
+									"name" : "2% stat stop loss"
+								}
+							]
+						},
+						{
+							"time_frame" : 30,
+							"time_frame_name" : "1 month-later",
+							"total_up" : 300,
+							"total_down" : 250,
+							"stop_losses" : 
+							[
+								{
+									"name" : "2% stat stop loss"
+								}
+							]
+						},
+						{
+							"time_frame" : 300,
+							"time_frame_name" : "1 year-later",
+							"total_up" : 300,
 							"total_down" : 250,
 							"stop_losses" : 
 							[
@@ -35,11 +59,11 @@
 		},
 		{
 			"setup" : "TCS rises by 3%",
-			"triggered_at" : "2018-02-26T23:12:56+05:30",
+			"triggered_at" : 1533195501100,
 			"impacts" : 
 			[
 				{	
-					"effect" : "Historically, Nasdaq tends to rise",
+					"effect" : "Historically, Nasdaq tends to fall",
 					"entity_name" : "Reliance Industries",
 					"entity_unique_id" : "abcd",
 					"entity_index_name" : "NSE",
