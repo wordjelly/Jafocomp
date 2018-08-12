@@ -19,37 +19,82 @@
 					[
 						{
 							"time_frame" : 7,
+							"time_frame_unit": "day",
 							"time_frame_name" : "1 wk-later",
 							"total_up" : 300,
 							"total_down" : 250,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "green-text",
 							"stop_losses" : 
 							[
 								{
-									"name" : "2% stat stop loss"
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money"
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off"
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money"
 								}
 							]
 						},
 						{
 							"time_frame" : 30,
+							"time_frame_unit" : "day",
 							"time_frame_name" : "1 month-later",
-							"total_up" : 300,
+							"total_up" : 200,
 							"total_down" : 250,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "red-text",
 							"stop_losses" : 
 							[
 								{
-									"name" : "2% stat stop loss"
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money"
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off"
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money"
 								}
 							]
 						},
 						{
 							"time_frame" : 300,
+							"time_frame_unit" : "day",
 							"time_frame_name" : "1 year-later",
 							"total_up" : 300,
 							"total_down" : 250,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "green-text",
 							"stop_losses" : 
 							[
 								{
-									"name" : "2% stat stop loss"
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money"
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off"
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money"
 								}
 							]
 						}
@@ -71,13 +116,82 @@
 					[
 						{
 							"time_frame" : 7,
+							"time_frame_unit" : "day",
 							"time_frame_name" : "After A Week",
-							"total_up" : 200,
-							"total_down" : 250,
+							"total_up" : 20,
+							"total_down" : 25,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "red-text",
 							"stop_losses" : 
 							[
 								{
-									"name" : "2% stat stop loss"
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money"
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off"
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money"
+								}
+							]
+						},
+						{
+							"time_frame" : 30,
+							"time_frame_unit" : "day",
+							"time_frame_name" : "After A Month",
+							"total_up" : 20,
+							"total_down" : 25,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "red-text",
+							"stop_losses" : 
+							[
+								{
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money"
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off"
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money"
+								}
+							]
+						},
+						{
+							"time_frame" : 300,
+							"time_frame_unit" : "day",
+							"time_frame_name" : "After A Year",
+							"total_up" : 20,
+							"total_down" : 25,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "red-text",
+							"stop_losses" : 
+							[
+								{
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money"
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off"
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money"
 								}
 							]
 						}

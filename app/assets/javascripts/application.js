@@ -130,13 +130,20 @@ var add_time_to_setup = function(search_result){
 	return search_result;
 }
 
+
 $(document).on('click','.see_more',function(event){
 	$(this).parent().prev('.card-content').find('.additional_info').first().slideToggle('fast',function(){
 		
 	});	
 });
+
+// got to give small left right arrows there 
+// make the dollar black if there is a loss.
+
 $(document).on('click','.simulate',function(event){
+	
 	$(this).parent().prev('.card-content').find('.trade_simulator').first().slideToggle('fast',function(){
 
 	});
+
 });
