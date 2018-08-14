@@ -32,15 +32,33 @@
 							[
 								{
 									"name" : "2% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "5% stat stop loss",
-									"icon_name" : "money_off"
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "3% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								}
 							]
 						},
@@ -59,15 +77,33 @@
 							[
 								{
 									"name" : "2% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "5% stat stop loss",
-									"icon_name" : "money_off"
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "3% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								}
 							]
 						},
@@ -86,15 +122,33 @@
 							[
 								{
 									"name" : "2% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "5% stat stop loss",
-									"icon_name" : "money_off"
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "3% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								}
 							]
 						}
@@ -129,15 +183,33 @@
 							[
 								{
 									"name" : "2% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "5% stat stop loss",
-									"icon_name" : "money_off"
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "3% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								}
 							]
 						},
@@ -156,15 +228,33 @@
 							[
 								{
 									"name" : "2% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "5% stat stop loss",
-									"icon_name" : "money_off"
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "3% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								}
 							]
 						},
@@ -183,15 +273,33 @@
 							[
 								{
 									"name" : "2% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "5% stat stop loss",
-									"icon_name" : "money_off"
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								},
 								{
 									"name" : "3% stat stop loss",
-									"icon_name" : "attach_money"
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
 								}
 							]
 						}

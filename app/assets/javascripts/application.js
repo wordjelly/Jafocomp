@@ -73,6 +73,7 @@ var search = function(input){
 	    _.each(results,function(search_result,index,list){
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
+	    	search_result = update_falls_or_rises_text(search_result);
 	    	render_search_result(search_result);
 	    });
 	  }
@@ -122,6 +123,21 @@ var update_bar_lengths = function(search_result){
 	search_result.impacts[0].statistics[0]["bar_color"] = bar_color;
 	search_result.impacts[0].statistics[0]["remaining_bar_width"] = remaining_bar_width;
 
+	return search_result;
+}
+
+var update_falls_or_rises_text = function(search_result){
+	_.each(search_result.impacts[0].statistics,function(statistic,key,list){
+		var total_times = statistic.total_up + statistic.total_down;
+		if(statistic.total_up >= statistic.total_down){
+			statistic["up_down_text"] = "Rises " + statistic.total_up + "/" + (total_times) + " times";
+			statistic["up_down_text_color"] = "green";
+		}
+		else{
+			statistic["up_down_text"] = "Falls " + statistic.total_down + "/" + (total_times) + " times";
+			statistic["up_down_text_color"] = "red";	
+		}
+	});
 	return search_result;
 }
 
