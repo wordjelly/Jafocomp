@@ -3,6 +3,8 @@
 	[
 		{
 			"setup" : "Reliance falls by 2%",
+			"trade_action" : 0,
+			"trade_action_name" : "buy",
 			"triggered_at" : 1533195501100,  
 			"impacts" : 
 			[
@@ -158,6 +160,8 @@
 		},
 		{
 			"setup" : "TCS rises by 3%",
+			"trade_action" : 0,
+			"trade_action_name" : "buy",
 			"triggered_at" : 1533195501100,
 			"impacts" : 
 			[
