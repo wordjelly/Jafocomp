@@ -22,7 +22,7 @@
 						{
 							"time_frame" : 7,
 							"time_frame_unit": "day",
-							"time_frame_name" : "1 wk-later",
+							"time_frame_name" : "week",
 							"total_up" : 300,
 							"total_down" : 250,
 							"average_profit" : 2.3,
@@ -67,7 +67,7 @@
 						{
 							"time_frame" : 30,
 							"time_frame_unit" : "day",
-							"time_frame_name" : "1 month-later",
+							"time_frame_name" : "month",
 							"total_up" : 200,
 							"total_down" : 250,
 							"average_profit" : 2.3,
@@ -112,7 +112,7 @@
 						{
 							"time_frame" : 300,
 							"time_frame_unit" : "day",
-							"time_frame_name" : "1 year-later",
+							"time_frame_name" : "year",
 							"total_up" : 300,
 							"total_down" : 250,
 							"average_profit" : 2.3,
@@ -175,7 +175,7 @@
 						{
 							"time_frame" : 7,
 							"time_frame_unit" : "day",
-							"time_frame_name" : "After A Week",
+							"time_frame_name" : "week",
 							"total_up" : 20,
 							"total_down" : 25,
 							"average_profit" : 2.3,
@@ -220,7 +220,7 @@
 						{
 							"time_frame" : 30,
 							"time_frame_unit" : "day",
-							"time_frame_name" : "After A Month",
+							"time_frame_name" : "month",
 							"total_up" : 20,
 							"total_down" : 25,
 							"average_profit" : 2.3,
@@ -265,7 +265,163 @@
 						{
 							"time_frame" : 300,
 							"time_frame_unit" : "day",
-							"time_frame_name" : "After A Year",
+							"time_frame_name" : "year",
+							"total_up" : 20,
+							"total_down" : 25,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "red-text",
+							"stop_losses" : 
+							[
+								{
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								}
+							]
+						}
+					]
+				}
+			]	
+		},
+		{
+			"setup" : "TCS rises by 3%",
+			"setup_exit" : "October",
+			"trade_action" : 0,
+			"trade_action_name" : "buy",
+			"trade_action_end" : 1,
+			"trade_action_end_name" : "sell",
+			"triggered_at" : 1533195501100,
+			"impacts" : 
+			[
+				{	
+					"effect" : "Historically, 58% of the trades are profitable",
+					"entity_name" : "Reliance Industries",
+					"entity_unique_id" : "abcd",
+					"entity_index_name" : "NSE",
+					"statistics" : 
+					[
+						{
+							"time_frame" : 7,
+							"time_frame_unit" : "day",
+							"time_frame_name" : "week",
+							"total_up" : 20,
+							"total_down" : 25,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "red-text",
+							"stop_losses" : 
+							[
+								{
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								}
+							]
+						},
+						{
+							"time_frame" : 30,
+							"time_frame_unit" : "day",
+							"time_frame_name" : "month",
+							"total_up" : 20,
+							"total_down" : 25,
+							"average_profit" : 2.3,
+							"maximum_profit" : 5,
+							"average_loss" : 0.4,
+							"maximum_loss" : 4,
+							"see_more_icon_color" : "red-text",
+							"stop_losses" : 
+							[
+								{
+									"name" : "2% stat stop loss",
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								},
+								{
+									"name" : "5% stat stop loss",
+									"icon_name" : "money_off",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								},
+								{
+									"name" : "3% stat stop loss",
+									"icon_name" : "attach_money",
+									"total_profitable_trades": 67,
+									"total_loss_making_trades": 44,
+									"average_profit" : 2.4,
+									"average_loss" : 1.0,
+									"maximum_profit" : 6,
+									"maximum_loss" : 3
+								}
+							]
+						},
+						{
+							"time_frame" : 300,
+							"time_frame_unit" : "day",
+							"time_frame_name" : "year",
 							"total_up" : 20,
 							"total_down" : 25,
 							"average_profit" : 2.3,
