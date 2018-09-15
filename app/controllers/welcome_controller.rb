@@ -5,10 +5,10 @@ class WelcomeController < ApplicationController
 	end	
 
 	def search
-		results = Result.all.to_a
+		results = Auth::Search::Main.search({:query_string => params[:query]})
 		respond_to do |format|
 			format.json do 
-				render :json => {results: results.to_json, status: 200}
+				render :json => {results: results, status: 200}
 			end
 		end	
 	end

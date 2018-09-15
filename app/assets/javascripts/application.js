@@ -69,13 +69,17 @@ var search = function(input){
 	  	//console.log(response);
 	    //clear existing search results
 	    $('#search_results').html("");
-	    results = JSON.parse(response["results"]);
-	    _.each(results,function(search_result,index,list){
+	    //results = JSON.parse(response);
+	    
+	    _.each(response['results'],function(search_result,index,list){
+	    	search_result = search_result['_source'];
+	    	console.log(search_result);
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
 	    	search_result = update_falls_or_rises_text(search_result);
 	    	render_search_result(search_result);
 	    });
+	    
 	  }
 	});
 }
@@ -170,7 +174,7 @@ $(document).on('click','.strategic_trading',function(event){
 });
 
 $(document).ready(function(){
-	var quote_index = new Date().getTime() % 6;
+	var quote_index = new Date().getTime() % 8;
 	$.each($(".quote"), function( index, value ) {
 	  if(index == quote_index){
 	  	$(value).show();

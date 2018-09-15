@@ -131,42 +131,44 @@
           <div class="row strategic_stats" style="display:none; margin-top: 1rem;">
               <div class="divider" style="margin-bottom: 2rem;"></div>
               <!-- was here before -->
-              {{  _.each(first_impact.statistics,function(val,key,list){  }}
-                <div class="row profit_loss">
-                  <div class="col l3 m3 s3 center">
-                    <div class="blue-grey-text text-lighten-1"><i class="material-icons"  style="font-size: 24px;">timeline</i></div>
-                    <div class="grey-text text-darken-1">Hold for a {{= val.time_frame_name }}</div>
-                    <div class="grey-text text-darken-1 center">
-                      <a class="btn disabled">{{= val.stop_losses[0].name}}</a>
+              {{ if ((!_.isNull(first_impact.statistics.stop_losses)) && (!_.isEmpty(first_impact.statistics.stop_losses))) { }}
+                {{  _.each(first_impact.statistics,function(val,key,list){  }}
+                  <div class="row profit_loss">
+                    <div class="col l3 m3 s3 center">
+                      <div class="blue-grey-text text-lighten-1"><i class="material-icons"  style="font-size: 24px;">timeline</i></div>
+                      <div class="grey-text text-darken-1">Hold for a {{= val.time_frame_name }}</div>
+                      <div class="grey-text text-darken-1 center">
+                        <a class="btn disabled">{{= val.stop_losses[0].name}}</a>
+                      </div>
                     </div>
+                    <div class="col l2 m2 s2 center" style="padding-top:1.3rem !important;">
+                      <div class="grey-text text-lighten-1" style="font-size: 24px;">Avg Profit</div>
+                      <div class="amber-text" style="font-size: 18px;">{{= val.stop_losses[0].average_profit }}%</div>
+                    </div>
+                    <div class="col l2 m2 s2 center" style="padding-top:1.3rem !important;">
+                      <div class="grey-text text-lighten-1" style="font-size: 24px;">Avg Loss</div>
+                      <div class="black-text" style="font-size: 18px;">{{= val.stop_losses[0].average_loss }}%</div>
+                    </div>
+                    <div class="col l2 m2 s2 center" style="padding-top:1.3rem !important;">
+                      <div class="grey-text text-lighten-1" style="font-size: 24px;">Max Profit</div>
+                      <div class="amber-text" style="font-size: 18px;">{{= val.stop_losses[0].maximum_profit }}%</div>
+                    </div>
+                    <div class="col l2 m2 s2 center" style="padding-top:1.3rem !important;">
+                      <div class="grey-text text-lighten-1" style="font-size: 24px;">Max Loss</div>
+                      <div class="black-text" style="font-size: 18px;">{{= val.stop_losses[0].maximum_loss }}%</div>
+                    </div>
+                    <!--
+                    {{ _.each(val.stop_losses,function(stop_loss,k,l){ }}
+                    <div class="col l3 m3 s3 center">
+                      <div class="grey-text text-lighten-1" style="font-size: 24px;">{{= stop_loss.name }}</div>
+                      <div class="amber-text" style="font-size: 18px;">{{= stop_loss.average_profit }}%</div>
+                    </div>
+                    {{ }) }}
+                    -->
                   </div>
-                  <div class="col l2 m2 s2 center" style="padding-top:1.3rem !important;">
-                    <div class="grey-text text-lighten-1" style="font-size: 24px;">Avg Profit</div>
-                    <div class="amber-text" style="font-size: 18px;">{{= val.stop_losses[0].average_profit }}%</div>
-                  </div>
-                  <div class="col l2 m2 s2 center" style="padding-top:1.3rem !important;">
-                    <div class="grey-text text-lighten-1" style="font-size: 24px;">Avg Loss</div>
-                    <div class="black-text" style="font-size: 18px;">{{= val.stop_losses[0].average_loss }}%</div>
-                  </div>
-                  <div class="col l2 m2 s2 center" style="padding-top:1.3rem !important;">
-                    <div class="grey-text text-lighten-1" style="font-size: 24px;">Max Profit</div>
-                    <div class="amber-text" style="font-size: 18px;">{{= val.stop_losses[0].maximum_profit }}%</div>
-                  </div>
-                  <div class="col l2 m2 s2 center" style="padding-top:1.3rem !important;">
-                    <div class="grey-text text-lighten-1" style="font-size: 24px;">Max Loss</div>
-                    <div class="black-text" style="font-size: 18px;">{{= val.stop_losses[0].maximum_loss }}%</div>
-                  </div>
-                  <!--
-                  {{ _.each(val.stop_losses,function(stop_loss,k,l){ }}
-                  <div class="col l3 m3 s3 center">
-                    <div class="grey-text text-lighten-1" style="font-size: 24px;">{{= stop_loss.name }}</div>
-                    <div class="amber-text" style="font-size: 18px;">{{= stop_loss.average_profit }}%</div>
-                  </div>
-                  {{ }) }}
-                  -->
-                </div>
-                <div class="divider" style="margin-bottom: 2rem; margin-top: 2rem;"></div>
-              {{ }) }}
+                  <div class="divider" style="margin-bottom: 2rem; margin-top: 2rem;"></div>
+                {{ }) }}
+              {{ } }}
           </div>
         </div>
         <!-- now comes the stop losses -->
