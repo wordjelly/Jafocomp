@@ -24,12 +24,33 @@ module Auth
 											},
 											{
 												match: {
-													"impacts.entity_name".to_sym => {
+													"trade_action_name".to_sym => {
 														query: "",
 														operator: "and"
 													}
-												}	
+												}
+											},
+											{
+												nested: {
+													path: "impacts",
+													query: {
+														bool: {
+															must: [
+																{
+																	match: 
+																	{
+																		"impacts.entity_name" => {
+																				query: "",
+																				operator: "and"
+																		}
+																	}
+																}
+															]
+														}
+													}
+												}
 											}
+											
 										]
 									}	
 								]
@@ -63,13 +84,15 @@ module Auth
 				
 				query = es_six_base_ngram_query(search_on_field)
 				
-				query[:size] = args[:size] || 5
+				query[:index] = "correlations-*"
+
+				query[:size] = args[:size] || 100
 					
-
-
 				query[:body][:query][:bool][:must][0][:bool][:should][0][:match][:setup][:query] = args[:query_string]
 
-				query[:body][:query][:bool][:must][0][:bool][:should][1][:match]["impacts.entity_name".to_sym][:query] = args[:query_string]
+				query[:body][:query][:bool][:must][0][:bool][:should][0][:match][:trade_action_name][:query] = args[:query_string]
+
+				query[:body][:query][:bool][:must][0][:bool][:should][1][:nested][:query][:bool][:must][0][:match]["impacts.entity_name"][:query] = args[:query_string]
 
 				query
 

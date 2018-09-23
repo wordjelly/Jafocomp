@@ -146,7 +146,9 @@ var update_falls_or_rises_text = function(search_result){
 }
 
 var add_time_to_setup = function(search_result){
-	search_result.setup = search_result.setup  + " (" + strftime('%-d %b', new Date(search_result.triggered_at)) +  ")";
+	var d = new Date(0);
+	d.setUTCSeconds(search_result.triggered_at);
+	search_result.setup = search_result.setup  + " (" + strftime('%-d %b', d) +  ")";
 	return search_result;
 }
 

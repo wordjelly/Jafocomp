@@ -42,7 +42,7 @@
         <div class="card-content grey-text text-lighten-1" style="padding-bottom:5px !important;">
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
             <!-- this has to be formatted to correctly show buy and sell based on the trade_actions.-->
-            {{= search_result.trade_action_name }} Nasdaq when <span class="blue-grey-text">{{= search_result.setup }}
+            {{= search_result.trade_action_name }} {{= search_result.impacts[0].entity_name }} when <span class="blue-grey-text">{{= search_result.setup }}
             {{ if(search_result.setup_exit){ }}
                and {{= search_result.trade_action_end_name }} when 
                {{= search_result.setup_exit }}
