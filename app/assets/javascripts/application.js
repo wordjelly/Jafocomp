@@ -52,7 +52,7 @@ var render_search_result = function(search_result){
 	if(_.isUndefined(template)){
 		var template = _.template($('#search_result_template').html());
 	}
-	$('#search_results').prepend(template(search_result));
+	$('#search_results').append(template(search_result));
 	$("time.timeago").timeago();
 }
 

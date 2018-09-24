@@ -18,7 +18,7 @@ module Auth
 												match: {
 													"setup".to_sym => {
 														query: "",
-														operator: "and"
+														operator: "or"
 													}
 												}
 											},
@@ -26,7 +26,7 @@ module Auth
 												match: {
 													"trade_action_name".to_sym => {
 														query: "",
-														operator: "and"
+														operator: "or"
 													}
 												}
 											},
@@ -41,7 +41,7 @@ module Auth
 																	{
 																		"impacts.entity_name" => {
 																				query: "",
-																				operator: "and"
+																				operator: "or"
 																		}
 																	}
 																}
@@ -86,13 +86,13 @@ module Auth
 				
 				query[:index] = "correlations-*"
 
-				query[:size] = args[:size] || 100
+				query[:size] = args[:size] || 10
 					
 				query[:body][:query][:bool][:must][0][:bool][:should][0][:match][:setup][:query] = args[:query_string]
 
-				query[:body][:query][:bool][:must][0][:bool][:should][0][:match][:trade_action_name][:query] = args[:query_string]
+				query[:body][:query][:bool][:must][0][:bool][:should][1][:match][:trade_action_name][:query] = args[:query_string]
 
-				query[:body][:query][:bool][:must][0][:bool][:should][1][:nested][:query][:bool][:must][0][:match]["impacts.entity_name"][:query] = args[:query_string]
+				query[:body][:query][:bool][:must][0][:bool][:should][2][:nested][:query][:bool][:must][0][:match]["impacts.entity_name"][:query] = args[:query_string]
 
 				query
 
