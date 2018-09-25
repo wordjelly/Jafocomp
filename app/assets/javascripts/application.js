@@ -76,6 +76,7 @@ var search = function(input){
 	    	console.log(search_result);
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
+	    	search_result = strip_period_details_from_setup(search_result);
 	    	search_result = update_falls_or_rises_text(search_result);
 	    	render_search_result(search_result);
 	    });
@@ -152,6 +153,11 @@ var add_time_to_setup = function(search_result){
 	return search_result;
 }
 
+var strip_period_details_from_setup = function(search_result){
+	var pattern = /_period_start_\d+_period_end/g
+	search_result.setup = search_result.setup.replace(pattern,'');
+	return search_result;
+}
 
 $(document).on('click','.see_more',function(event){
 	$(this).parent().prev('.card-content').find('.additional_info').first().slideToggle('fast',function(){
@@ -175,11 +181,28 @@ $(document).on('click','.strategic_trading',function(event){
 
 });
 
+
+var quotes = {
+	"Probabilities guide the decisions of the wise." : "Marcus Tullius Cicero, Roman Philosopher, 63 BC",
+	"Because, there is no joy in the finite. True bliss is in the infinite" : "Chandogya Upanishad, 8 BCE",
+	"There's nothing in the world so demoralizing as money" : "Sophocles, 497 BCE",
+	"After a certain point, money is meaningless. It ceases to be the goal. The game is what counts" : "Aristotle Onassis, Greek Shipping Billionaire, married to Jackie Kennedy (1906 - 1975)",
+	"Let your hook always be cast; in the pool where you least expect it, there will be a fish." : "Publius Ovidius Naso(Ovid), Roman Poet, 17 AD",
+	"I paraphrase Lord Rothschild: ‘The time to buy is when there's blood on the streets.'" : "David Dreman  Author - Contrarian Investment Strategies: The Psychological Edge.",
+	"Start a fight. Prove you're alive. If you don't claim your humanity you will become a statistic. You have been warned." : "Chuck Palahnuick - The Fight Club",
+	"Remember, that you too, are a black swan" : "Nassim Nicholas Taleb, The Black Swan : The Impact of the Highly Improbable",
+	"I have a 41-year track record of investing excellence… what do you have?" : "Bill Gross, Founder ~ PIMCO",
+	"One should tread the sinless path and gather wealth." : "(Vajasaneya Samhita iv-9)(Vedas)",
+	"The rich rules over the poor, and the borrower is the slave of the lender." : "Proverbs 22:7",
+	"A man's worth is no greater than his ambitions." : "~ Marcus Aurelius, Roman Emperor",
+	"We really can't forecast all that well, and yet we pretend that we can, but we really can't." : "Alan Greenspan" 
+}
+
 $(document).ready(function(){
-	var quote_index = new Date().getTime() % 8;
-	$.each($(".quote"), function( index, value ) {
-	  if(index == quote_index){
-	  	$(value).show();
-	  }
-	});
+	var quote = _.sample(Object.keys(quotes), 1);
+	var quote_author = quotes[quote];
+	console.log("Quote is:" + quote);
+	console.log("Quote author is:" + quote_author);
+	$("#quote").text(quote);
+	$("#quote_author").text(quote_author); 
 });
