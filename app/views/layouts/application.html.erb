@@ -35,7 +35,7 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
-
+  
   <script type="text/template" id="search_result_template">
     <div class="col l12 m12 s12" style="padding:0px !important;">
       <div class="card">
@@ -58,42 +58,16 @@
           </div>
           <!-- ONE WEEK , ONE MONTH AND ONE YEAR LATER -->
           <div class="row additional_info" style="display:none; margin-top: 2rem;">
-            <div class="col l4 m4 s4 center">
-              <div class="grey-text" style="font-size:22px;">After a {{= first_impact.statistics[0].time_frame_name }}</div>
-              <!--<i class="material-icons {{= first_impact.statistics[0].see_more_icon_color }}">brightness_1</i>-->
-              <div class="total up_down">
-                <span class="{{= first_impact.statistics[0].up_down_text_color }}-text">{{= first_impact.statistics[0].up_down_text }}</span>
-                <!--
-                <span class="total_up green-text"><i class="material-icons" style="vertical-align: bottom;">arrow_drop_up</i>{{= first_impact.statistics[0].total_up }}</span>
-                <span class="total_down red-text"><i class="material-icons" style="vertical-align: bottom;">arrow_drop_down</i>{{= first_impact.statistics[0].total_down }}</span>\
-                -->
+            {{ var column_width = 12/first_impact.statistics.length; }}
+            {{ _.each(first_impact.statistics,function(statistic){  }}
+              <div class="col l{{= column_width }} m{{= column_width }} s{{= column_width }} center">
+                <div class="grey-text" style="font-size:22px;">After a {{= statistic.time_frame_name }}</div>
+                <div class="total up_down">
+                  <span class="{{= statistic.up_down_text_color }}-text">{{= statistic.up_down_text }}</span>
+                </div>
               </div>
-            </div>
-            <div class="col l4 m4 s4 center">
-              <div class="grey-text" style="font-size:22px;">After a {{= first_impact.statistics[1].time_frame_name }}</div>
-              <!--
-              <i class="material-icons {{= first_impact.statistics[0].see_more_icon_color }}">brightness_1</i>
-              <div style="display:none;"><i class="material-icons">arrow_drop_down</i></div> -->
-              <div class="total up_down">
-                <span class="{{= first_impact.statistics[1].up_down_text_color }}-text">{{= first_impact.statistics[1].up_down_text }}</span>
-                <!--
-                <span class="total_up green-text"><i class="material-icons" style="vertical-align: bottom;">arrow_drop_up</i>{{= first_impact.statistics[1].total_up }}</span>
-                <span class="total_down red-text"><i class="material-icons" style="vertical-align: bottom;">arrow_drop_down</i>{{= first_impact.statistics[1].total_down }}</span>
-                -->
-              </div>
-            </div>
-            <div class="col l4 m4 s4 center">
-              <div class="grey-text" style="font-size:22px;">After a {{= first_impact.statistics[2].time_frame_name }}</div>
-              <!--<i class="material-icons {{= first_impact.statistics[0].see_more_icon_color }}">brightness_1</i>
-              <div><i class="material-icons">arrow_drop_down</i></div>-->
-              <div class="total up_down">
-                <span class="{{= first_impact.statistics[2].up_down_text_color }}-text">{{= first_impact.statistics[2].up_down_text }}</span>
-                <!--
-                <span class="total_up green-text"><i class="material-icons" style="vertical-align: bottom;">arrow_drop_up</i>{{= first_impact.statistics[2].total_up }}</span>
-                <span class="total_down red-text"><i class="material-icons" style="vertical-align: bottom;">arrow_drop_down</i>{{= first_impact.statistics[2].total_down }}</span>
-                -->
-              </div>
-            </div>
+            {{ }); }}
+           
           </div>
           <!-- Plain Stats -->
           <div class="row plain_stats" style="display:none; margin-top: 1rem;">
