@@ -149,7 +149,7 @@ var update_falls_or_rises_text = function(search_result){
 var add_time_to_setup = function(search_result){
 	var d = new Date(0);
 	d.setUTCSeconds(search_result.triggered_at);
-	search_result.setup = search_result.setup  + " (" + strftime('%-d %b', d) +  ")";
+	search_result.setup = search_result.setup  + " (" + strftime('%-d %b %Y', d) +  ")";
 	return search_result;
 }
 
@@ -194,8 +194,13 @@ var quotes = {
 	"I have a 41-year track record of investing excellence… what do you have?" : "Bill Gross, Founder ~ PIMCO",
 	"One should tread the sinless path and gather wealth." : "(Vajasaneya Samhita iv-9)(Vedas)",
 	"The rich rules over the poor, and the borrower is the slave of the lender." : "Proverbs 22:7",
-	"A man's worth is no greater than his ambitions." : "~ Marcus Aurelius, Roman Emperor",
-	"We really can't forecast all that well, and yet we pretend that we can, but we really can't." : "Alan Greenspan" 
+	"A man's worth is no greater than his ambitions." : "~ Marcus Aurelius, Emperor of Rome",
+	"We really can't forecast all that well, and yet we pretend that we can, but we really can't." : "Alan Greenspan",
+	"People who advocate simplicity have money in the bank; the money came first, not the simplicity." : "Douglas Coupland, The Gum Thief",
+	"There will be a backlash from those who don't benefit from the system" : "Rahul Bajaj, Indian Automobile Billionaire",
+	"What do you mean there is no money in the bags?" : "Ocean's Eleven",
+	"Misdirection, what the eyes see and the ears hear, the mind believes" : "Gabriel, Swordfish(2001)",
+	"Don't *ever* risk your life for an asset. If it comes down to you or them... send flowers." : "Nathan Muir, Spy Game(2001)"
 }
 
 $(document).ready(function(){

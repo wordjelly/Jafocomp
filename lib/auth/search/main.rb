@@ -84,7 +84,7 @@ module Auth
 				
 				query = es_six_base_ngram_query(search_on_field)
 				
-				query[:index] = "correlations-*"
+				query[:index] = "correlations"
 
 				query[:size] = args[:size] || 10
 					
