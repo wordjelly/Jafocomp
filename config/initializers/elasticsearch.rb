@@ -1,9 +1,18 @@
 require "mongoid-elasticsearch"
 
-es_host = ENV["BONSAI_URL"] || "localhost"
-es_port = ENV["BONSAI_URL"].nil? ? 9200 : 443
+user = ENV["ES_USER"]
+password = ENV["ES_PASSWORD"]
+h = ENV["ES_HOST"] || "localhost"
+s = ENV["ES_SCHEME"] || "http"
+p = ENV["ES_PORT"] || 9200
 
+host = {host: h, scheme: s, port: p}
+host.merge!({user: user, password: password}) if (user && password)
 
 Mongoid::Elasticsearch.prefix = "algorini"
 
-Mongoid::Elasticsearch.client_options = {hosts: [es_host], port: es_port, transport_options: {headers: {"Content-Type" => "application/json" }, request: { timeout: 25 }}}
+Mongoid::Elasticsearch.client_options = {hosts: [host], port: p, transport_options: {headers: {"Content-Type" => "application/json" }, request: { timeout: 25 }}}
+
+client = Elasticsearch::Client.new host: [host], request_timeout: 25
+puts client.cluster.health
+
