@@ -5,7 +5,7 @@ password = ENV["ES_PASSWORD"]
 h = ENV["ES_HOST"] || "localhost"
 s = ENV["ES_SCHEME"] || "http"
 p = ENV["ES_PORT"] || 9200
-
+#
 host = {host: h, scheme: s, port: p}
 host.merge!({user: user, password: password}) if (user && password)
 
