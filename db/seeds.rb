@@ -6,6 +6,9 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 # populate results from the results.json file.
+# i need to cmmit these to elasticsearch.
+# into the correlations index.
+
 Result.delete_all
 json = JSON.parse(IO.read("#{Rails.root}/db/results.json"))
 json["results"].each do |result|

@@ -29,6 +29,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pluralize/7.0.0/pluralize.min.js"></script>
 
 
+  <!-- tooltipster/js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.3.0/js/jquery.tooltipster.min.js" integrity="sha256-lenj6loHcdfu6tFQPUHN6S2O7G2gv7yX/P9OnRc8lno=" crossorigin="anonymous"></script>
+
+  <!-- tooltipster/css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.3.0/css/tooltipster.min.css" integrity="sha256-pH1rXnKT93pKrqWn3yDTgwsQrK/M4sVMFL774/pfaas=" crossorigin="anonymous" />
+
+  <!--- fontawesome icons -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -42,7 +52,8 @@
         <div class="card-content grey-text text-lighten-1" style="padding-bottom:5px !important;">
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
             <!-- this has to be formatted to correctly show buy and sell based on the trade_actions.-->
-            {{= search_result.trade_action_name }} {{= search_result.impacts[0].entity_name }} when <span class="blue-grey-text">{{= search_result.setup }}
+            <i class="{{= search_result.entity_icon}}"></i>
+            {{= search_result.trade_action_name }} {{= search_result.impacts[0].entity_name }} <span class="blue-grey-text">{{= search_result.setup }}
             {{ if(search_result.setup_exit){ }}
                and {{= search_result.trade_action_end_name }} when 
                {{= search_result.setup_exit }}

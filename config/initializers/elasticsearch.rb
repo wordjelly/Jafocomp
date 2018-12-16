@@ -8,6 +8,7 @@ p = ENV["ES_PORT"] || 9200
 #
 host = {host: h, scheme: s, port: p}
 host.merge!({user: user, password: password}) if (user && password)
+host = {host: "localhost", scheme: "http", port: 9200}
 
 Mongoid::Elasticsearch.prefix = "algorini"
 

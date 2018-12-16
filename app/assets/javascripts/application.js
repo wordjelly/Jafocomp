@@ -203,11 +203,20 @@ var quotes = {
 	"Don't *ever* risk your life for an asset. If it comes down to you or them... send flowers." : "Nathan Muir, Spy Game(2001)"
 }
 
+// so entity icons.
+// indicator and subindicator information.
+// something like more_info, for all the items.
+// i can have an index, where we have the name, and we have an information box for it.
+// direct entity search.
+// maybe an image and an icon.
+// and a link.
+// and entity should have an icon attribute, basically as well, that is assigned when it is created, and transferred to it, 
+// in the correlation.
+
+
 $(document).ready(function(){
 	var quote = _.sample(Object.keys(quotes), 1);
 	var quote_author = quotes[quote];
-	console.log("Quote is:" + quote);
-	console.log("Quote author is:" + quote_author);
 	$("#quote").text(quote);
 	$("#quote_author").text(quote_author); 
 });

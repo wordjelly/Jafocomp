@@ -18,7 +18,8 @@ module Auth
 												match: {
 													"setup".to_sym => {
 														query: "",
-														operator: "or"
+														operator: "or",
+														boost: 2
 													}
 												}
 											},
@@ -26,7 +27,8 @@ module Auth
 												match: {
 													"trade_action_name".to_sym => {
 														query: "",
-														operator: "or"
+														operator: "or",
+														boost: 3
 													}
 												}
 											},
@@ -41,7 +43,8 @@ module Auth
 																	{
 																		"impacts.entity_name" => {
 																				query: "",
-																				operator: "or"
+																				operator: "or",
+																				boost: 4
 																		}
 																	}
 																}
@@ -84,7 +87,7 @@ module Auth
 				
 				query = es_six_base_ngram_query(search_on_field)
 				
-				query[:index] = "correlations"
+				query[:index] = "correlationsa"
 
 				query[:size] = args[:size] || 10
 					
