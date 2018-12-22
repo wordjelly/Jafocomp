@@ -23,6 +23,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'mongoid'
 gem 'wj-mongoid-elasticsearch', '~> 0.0.4'
+gem 'elasticsearch-persistence'
 gem 'hashie'
 
 # Use ActiveModel has_secure_password
@@ -48,4 +49,4 @@ group :development do
 end
 
 gem 'rails_12factor', group: :production
-ruby "2.4.4"
+

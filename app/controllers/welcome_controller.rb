@@ -5,7 +5,11 @@ class WelcomeController < ApplicationController
 	end	
 
 	def search
-		results = Auth::Search::Main.search({:query_string => params[:query]})
+
+		#results = Auth::Search::Main.completion_suggester_search({:prefix => params[:query], :context => params[:context]})
+
+		results = Result.suggest({:prefix => params[:query], :context => params[:context]})
+
 		respond_to do |format|
 			format.json do 
 				render :json => {results: results, status: 200}

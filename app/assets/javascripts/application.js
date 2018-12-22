@@ -48,6 +48,12 @@ $(document).on('keyup','#search',function(event){
 	search($(this).val());
 });
 
+/***
+so how would this work exactly.
+suppose i say 
+buy gold when 
+***/
+
 var render_search_result = function(search_result){	
 	if(_.isUndefined(template)){
 		var template = _.template($('#search_result_template').html());
@@ -59,25 +65,53 @@ var render_search_result = function(search_result){
 // now add the impacts and from tomorrow start developing the springapp for a live online version
 
 var search = function(input){
+	// split the input on spaces.
+	// for eg :
+	// buy gold
+	// replace with colons
+	// replace more than one space with nothin.
+	// replace one space with :
+	// look for it in the contexts.
+	// send it.
+	// as the context.
+	// otherwise send whatever is after the last space.
+	context = input.replace(/\s{2}/g,'');
+	context = context.replace(/\s/g,':');
+	contexts = JSON.parse($("#top_result_contexts").attr("data-context"));
+	query_context = null;
+	console.log("we are searching for context:" + context);
+	_.each(contexts.reverse(),function(ctx){
+		if(ctx.indexOf(context) != -1){
+			query_context = ctx;
+		}
+	});
+
+	console.log("query context:" + query_context);
+	console.log("last word of query:");
+	console.log(_.last(input.split(" ")));
+
 	$.ajax({
 	  url: "/search",
 	  type: "GET",
 	  dataType: "json",
-	  data:{query: input}, 
+	  data:{query: _.last(input.split(" ")), context: query_context}, 
 	  success: function(response){
-	  	//console.log("response");
-	  	//console.log(response);
-	    //clear existing search results
+	  	
+
+
 	    $('#search_results').html("");
-	    //results = JSON.parse(response);
 	    
 	    _.each(response['results'],function(search_result,index,list){
 	    	search_result = search_result['_source'];
-	    	console.log(search_result);
+
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
 	    	search_result = strip_period_details_from_setup(search_result);
 	    	search_result = update_falls_or_rises_text(search_result);
+	    	if(index == 0){
+	    		// check todo for this.
+	    		$("#top_result_contexts").attr("data-context",JSON.stringify(search_result["suggest"]["contexts"]["chain"]));
+	    	}
 	    	render_search_result(search_result);
 	    });
 	    

@@ -1,0 +1,17 @@
+// what to index?
+// for the prefixes => each and every word, including the stop words
+// for the contexts
+// wordgrams, 
+// buy 
+// buy oil
+// buy oil in 
+// buy oil in april
+// oil
+// oil in
+// oil in april
+// and other combinations of the words that can be made
+// while searching
+// to get the context ->> take all the words before the last word, and search the contexts of the prexisting query for the smallest length context that matches it, send that as the context.
+// prefix is the last word.
+// other option is to send the context as just that previous string.
+// we can send both, with a higher weightage for the primary context.

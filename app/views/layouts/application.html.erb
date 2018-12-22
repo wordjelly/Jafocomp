@@ -45,8 +45,10 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
-  
+  <!-- basially we want to store the things of the topmost result here -->
+  <!-- the contexts -->
   <script type="text/template" id="search_result_template">
+   
     <div class="col l12 m12 s12" style="padding:0px !important;">
       <div class="card">
         <div class="card-content grey-text text-lighten-1" style="padding-bottom:5px !important;">

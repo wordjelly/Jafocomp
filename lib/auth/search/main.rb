@@ -118,6 +118,48 @@ module Auth
 				end
 				res
 			end
+
+			## @param[Hash] args : should contain two keys
+			## 1. prefix : string, to search for, defaults to '' 
+			## 2. context : the contexts as an array of strings, defaults to an empty array 
+			def self.completion_suggester_search(args)
+
+				args[:prefix] ||= ""
+
+				args[:context] ||= []
+
+				query = {	
+					suggest: {
+						correlation_suggestion: {
+							prefix: args[:prefix],
+							completion: {
+				                field: "suggest",
+				                size: 10,
+				                contexts: {
+				                    "chain": args[:context]
+				                }
+				            }
+						}
+					}
+				}
+
+				puts JSON.pretty_generate(query)
+
+=begin
+#     client.suggest index: 'myindex',
+#                    body: { my_suggest: { text: 'tset', term: { field: 'title' } } }
+=end
+				
+				res = Mongoid::Elasticsearch.search(query,{:wrapper => :other}).results
+
+				res.each do |result|
+					puts result.to_s
+				end
+
+				res
+
+			end
+
 		end
 	end
 end

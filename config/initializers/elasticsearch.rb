@@ -1,3 +1,4 @@
+=begin
 require "mongoid-elasticsearch"
 
 user = ENV["ES_USER"]
@@ -17,3 +18,4 @@ Mongoid::Elasticsearch.client_options = {hosts: [host], port: p, transport_optio
 client = Elasticsearch::Client.new host: [host], request_timeout: 25
 puts client.cluster.health
 
+=end
