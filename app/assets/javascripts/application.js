@@ -1,20 +1,8 @@
-// This is a manifest file that'll be compiled into application.js, which will include all the files
-// listed below.
-//
-// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
-// or any plugin's vendor/assets/javascripts directory can be referenced here using a relative path.
-//
-// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
-// compiled file.
-//
-// Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
-// about supported directives.
 //= require_tree .
 
 /****
-DISCLAIMER : I don't know ratshit about Javascript. This is as far as it goes. I'm a doctor, and God Bless America.
+DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject. I'm a doctor, and God Bless America.
 *****/
-
 
 _.templateSettings = {
     interpolate: /\{\{\=(.+?)\}\}/g,
@@ -65,6 +53,9 @@ var render_search_result = function(search_result){
 var prepare_contexts = function(input){
 	
 	var existing_contexts = JSON.parse($("#top_result_contexts").attr("data-context"));
+	
+	//console.log("existing contexts:");
+	//console.log(existing_contexts);
 	/***
 	convert the existing contexts array to something like this
 	{
@@ -72,18 +63,21 @@ var prepare_contexts = function(input){
 	}
 	***/
 	var existing_contexts_object = null;
-	if(!_.isNull(existing_contexts)){
-		var existing_contexts_object_values = _.map(existing_contexts,function(e){
-			return {
-				"words" : e.split(/\s/),
-				"length" : e.length/100,
-				"score" : 0,
-				"word_mapping" : {},
-				"original_key" : e
-			}
-		});
-		existing_contexts_object = _.object(existing_contexts,existing_contexts_object_values);
-	}
+	
+	//console.log("Existing contexts are not null");
+	var existing_contexts_object_values = _.map(existing_contexts,function(e){
+		return {
+			"words" : e.split(/\s/),
+			"length" : e.length,
+			"score" : 0,
+			"word_mapping" : {},
+			"original_key" : e
+		}
+	});
+	existing_contexts_object = _.object(existing_contexts,existing_contexts_object_values);
+	//console.log("Existing contexts object becomes:");
+	//console.log(existing_contexts_object);
+	
 
 	// remove multiple spaces
 	var context = input.replace(/\s{2}/g,'');
@@ -100,45 +94,66 @@ var prepare_contexts = function(input){
 	});
 	
 	// sort alphabetically
-	context.sort();
+	//context.sort();
 	
+
+	//console.log("sorted context:");
+	//console.log(context);
 	
-	if(_.isNull(existing_contexts_object)){
-		// in this case we just prepare the wordgrams ?
-		// or what
-	}
-	else{
-		_.each(context,function(word){
-			for(key in existing_contexts_object){
-				_.each(existing_contexts_object[key]["words"],function(eword){
-					if(eword.indexOf(word) != -1){
-						existing_contexts_object[key]["score"] += 1
-						if(!_.has(existing_contexts_object[key][word_mapping],word)){
-							existing_contexts_object[key][word_mapping][word] = eword;
-						}
-					}
-				});
-			}
-		});
-		// the score may be same, we use the length as a decimal.
+	console.log("context is:" + context);
+	_.each(context,function(word){
 		for(key in existing_contexts_object){
-			existing_contexts_object[key]["score"] = existing_contexts_object[key]["score"] + (1/existing_contexts_object[key]["length"]);
+			_.each(existing_contexts_object[key]["words"],function(eword){
+				if(eword.indexOf(word) != -1){
+					existing_contexts_object[key]["score"] += 1
+					if(!_.has(existing_contexts_object[key]["word_mapping"],word)){
+						existing_contexts_object[key]["word_mapping"][word] = eword;
+					}
+				}
+			});
 		}
-
-		// now sort by the best one.
-		// and what do you want of them.
-		// 
-		var sorted_values = _.sortBy(_.values(existing_contexts_object), function(o) { return o["score"]; })
-		// go over the context words now, 
-		// and get their mapped values from the first one of the sorted vlaues
-		// that is one context
-		// the other context is the first sorted value "original key"
-		// and those are the two contexts for the query.
-
+	});
+	// the score may be same, we use the length as a decimal.
+	for(key in existing_contexts_object){
+		existing_contexts_object[key]["score"] = existing_contexts_object[key]["score"] + (1/existing_contexts_object[key]["length"]);
 	}
+
+	// now sort by the best one.
+	// and what do you want of them.
+	var sorted_values = _.sortBy(_.values(existing_contexts_object), function(o) { return -o["score"]; });
+
+	console.log("sorted values are:");
+	console.log(sorted_values);
+
+
+	// go over the context words now, 
+	// and get their mapped values from the first one of the sorted vlaues
+	// that is one context
+	// the other context is the first sorted value "original key"
+	// and those are the two contexts for the query.
+	var first_sorted_value = _.first(sorted_values);
+
+	context = _.map(context,function(word){
+		var first_matching_word =  _.first(_.filter(first_sorted_value,function(ww){
+			return (ww.indexOf(word) != -1);
+		}));
+
+		if (_.isNull(first_matching_word)){
+			return word;
+		}
+		else{
+			return first_matching_word;
+		}
+	});
+	
+	// so these are the context words.
+	// do we have to sort them ?
+	// 
 
 	// now prepare the wordgrams from the rewired words.
-
+	// it has to contain everything except the penultimate word.
+	console.log("context finally becomes:");
+	console.log(context);
 }
 
 var prepare_query = function(input){
@@ -149,6 +164,8 @@ var prepare_query = function(input){
 // now add the impacts and from tomorrow start developing the springapp for a live online version
 
 var search = function(input){
+
+	prepare_contexts(input);
 	// split the input on spaces.
 	// for eg :
 	// buy gold

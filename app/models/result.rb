@@ -17,25 +17,40 @@ class Result
 	field :trade_action_end_name, type: String
 	embeds_many :impacts, :class_name => "Impact"
 
-	def self.suggest(args)
-		results = gateway.client.search index: "correlations", body: {
-			suggest: {
-				correlation_suggestion: {
-					text: args[:prefix],
-					completion: {
-		                field: "suggest",
-		                size: 10,
-		                contexts: {
-		                    "chain": []
-		                }
-		            }
+	## default values for prefix and context are provided in the method as '' and [] respectively.
+	def self.suggest_r(args)
+		
+		args[:prefix] ||= ''
+		args[:context] ||= []
+
+		body = {
+				suggest: {
+					correlation_suggestion: {
+						text: args[:prefix],
+						completion: {
+			                field: "suggest",
+			                size: 10
+			            }
+					}
 				}
 			}
-			
-		}
+
+
+		body[:suggest][:correlation_suggestion][:completion][:contexts] = {
+			"chain" => args[:context]
+		} unless args[:context].blank?
+
+
+
+		results = gateway.client.search index: "correlations", body: body
 		
 		puts JSON.pretty_generate(results)
-		results["suggest"]["correlation_suggestion"][0]["options"]
+		if results["suggest"]
+			results["suggest"]["correlation_suggestion"][0]["options"]
+		else
+			[]
+		end
+		
 	end
 
 end

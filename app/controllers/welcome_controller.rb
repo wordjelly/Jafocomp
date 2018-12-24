@@ -8,7 +8,7 @@ class WelcomeController < ApplicationController
 
 		#results = Auth::Search::Main.completion_suggester_search({:prefix => params[:query], :context => params[:context]})
 
-		results = Result.suggest({:prefix => params[:query], :context => params[:context]})
+		results = Result.suggest_r({:prefix => params[:query], :context => params[:context]})
 
 		respond_to do |format|
 			format.json do 
