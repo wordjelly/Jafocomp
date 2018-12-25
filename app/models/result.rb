@@ -37,14 +37,16 @@ class Result
 
 
 		body[:suggest][:correlation_suggestion][:completion][:contexts] = {
-			"chain" => args[:context]
+			"chain" => args[:context].map{|c|
+				{"context" => c, "boost" => c.length}
+			}
 		} unless args[:context].blank?
 
 
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		puts JSON.pretty_generate(results)
+		##puts JSON.pretty_generate(results)
 		if results["suggest"]
 			results["suggest"]["correlation_suggestion"][0]["options"]
 		else

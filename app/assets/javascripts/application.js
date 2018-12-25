@@ -14,26 +14,35 @@ _.templateSettings.variable = 'search_result';
 var template;
 
 $(document).on('keyup','#search',function(event){
-	if( !$(this).val() ) {
-		$("#logo").slideDown('fast',function(){
-
-			$('#search_results').html("");
-		});
-		
+	// if the event is space.
+	// don't do anything.
+	// console.log(event.originalEvent.keyCode);
+	// console.log(event.keyCode);
+	if(event.keyCode == 32){
+		console.log("got space, doing nothing.");
 	}
 	else{
-		if($('#logo').css('display') == 'none'){
+		if( !$(this).val() ) {
+			$("#logo").slideDown('fast',function(){
 
+				$('#search_results').html("");
+			});
+			
 		}
 		else{
-			$("#logo").slideUp('fast',function(){
+			if($('#logo').css('display') == 'none'){
 
-				
-			});
+			}
+			else{
+				$("#logo").slideUp('fast',function(){
 
+					
+				});
+
+			}
 		}
+		search($(this).val());
 	}
-	search($(this).val());
 });
 
 /***
@@ -54,29 +63,21 @@ var prepare_contexts = function(input){
 	
 	var existing_contexts = JSON.parse($("#top_result_contexts").attr("data-context"));
 	
-	//console.log("existing contexts:");
-	//console.log(existing_contexts);
-	/***
-	convert the existing contexts array to something like this
-	{
-		"text" : length of text (4
-	}
-	***/
+	
 	var existing_contexts_object = null;
 	
-	//console.log("Existing contexts are not null");
+	
 	var existing_contexts_object_values = _.map(existing_contexts,function(e){
 		return {
-			"words" : e.split(/\s/),
+			"words" : e.split(/\:/),
 			"length" : e.length,
 			"score" : 0,
 			"word_mapping" : {},
 			"original_key" : e
 		}
 	});
+
 	existing_contexts_object = _.object(existing_contexts,existing_contexts_object_values);
-	//console.log("Existing contexts object becomes:");
-	//console.log(existing_contexts_object);
 	
 
 	// remove multiple spaces
@@ -125,35 +126,86 @@ var prepare_contexts = function(input){
 	console.log("sorted values are:");
 	console.log(sorted_values);
 
-
+	var original_word_wordgrams = [];
 	// go over the context words now, 
 	// and get their mapped values from the first one of the sorted vlaues
 	// that is one context
 	// the other context is the first sorted value "original key"
 	// and those are the two contexts for the query.
-	var first_sorted_value = _.first(sorted_values);
+	if(!_.isEmpty(sorted_values)){
+		var first_sorted_value = _.first(sorted_values);
 
-	context = _.map(context,function(word){
-		var first_matching_word =  _.first(_.filter(first_sorted_value,function(ww){
-			return (ww.indexOf(word) != -1);
-		}));
+		context = _.map(context,function(word){
+			console.log("mapping context word:" + word);
+			var first_matching_word =  _.first(_.filter(first_sorted_value["words"],function(ww){
+				console.log("ww is:" + ww);
 
-		if (_.isNull(first_matching_word)){
-			return word;
-		}
-		else{
-			return first_matching_word;
-		}
-	});
+				return (ww.indexOf(word) != -1);
+			}));
+			console.log("first matching word:" + first_matching_word);
+			if (_.isNull(first_matching_word)){
+				console.log("returning null");
+				return null;
+			}
+			else{
+				console.log("returning first matching word:" + first_matching_word);
+				return first_matching_word;
+			}
+		});
+
+		context = _.reject(context,function(w){
+			return _.isNull(w);
+		});
+
+		original_word_wordgrams = prepare_wordgrams(first_sorted_value["words"]);
+
+	}
+	context.sort();
 	
-	// so these are the context words.
-	// do we have to sort them ?
-	// 
+	//console.log("context finally becomes:");
+	//console.log(context);
 
-	// now prepare the wordgrams from the rewired words.
-	// it has to contain everything except the penultimate word.
-	console.log("context finally becomes:");
+	/***
+	make wordgrams from the assembled context
+	***/
+	wordgrams = prepare_wordgrams(context);
+
+	// use the original words and prepare another wordgram ?
+	// 
+	
+
+	//var wordgrams_united = _.union(wordgrams,original_word_wordgrams);
+
+	//return _.object(wordgrams_united,_.map(wordgrams_united,function(k){
+	//	return k.length;
+	//}));	
+	return _.uniq(original_word_wordgrams);
+}
+
+
+/****
+@param[Array] context : array of contexts(individual words)
+@return[Array] wordgrams : array of wordgrams.
+@eg: given context as ["happy","new","year"], will generate
+["happy","happy:new","happy:new:year","new","new:year"]
+****/
+var prepare_wordgrams = function(context){
+	var wordgrams = [];
+	console.log("contexts coming into prepare wordgrams");
 	console.log(context);
+	_.each(context,function(word,key,context){
+		var chain = word;
+		wordgrams.push(chain);
+		console.log("chain is: " + chain);
+		_.each(context,function(w,k,c){
+			if(k > key){
+				chain = chain + ":" + w;
+				console.log("chain becomes:" + chain);
+				wordgrams.push(chain);
+			}
+		});
+	});
+	return wordgrams;
 }
 
 var prepare_query = function(input){
@@ -165,7 +217,11 @@ var prepare_query = function(input){
 
 var search = function(input){
 
-	prepare_contexts(input);
+	console.log("--------- called search with input:" + input);
+
+	var contexts_with_length = prepare_contexts(input);
+	console.log("contexts with length are:");
+	console.log(contexts_with_length);
 	// split the input on spaces.
 	// for eg :
 	// buy gold
@@ -176,27 +232,27 @@ var search = function(input){
 	// send it.
 	// as the context.
 	// otherwise send whatever is after the last space.
-	context = input.replace(/\s{2}/g,'');
-	context = context.replace(/\s/g,':');
-	contexts = JSON.parse($("#top_result_contexts").attr("data-context"));
-	query_context = null;
-	console.log("we are searching for context:" + context);
-	_.each(contexts.reverse(),function(ctx){
-		if(ctx.indexOf(context) != -1){
-			query_context = ctx;
-		}
-	});
+	//context = input.replace(/\s{2}/g,'');
+	//context = context.replace(/\s/g,':');
+	//contexts = JSON.parse($("#top_result_contexts").attr("data-context"));
+	//query_context = null;
+	//console.log("we are searching for context:" + context);
+	//_.each(contexts.reverse(),function(ctx){
+	//	if(ctx.indexOf(context) != -1){
+	//		query_context = ctx;
+	//	}
+	//});
 
 
-	console.log("query context:" + query_context);
-	console.log("last word of query:");
-	console.log(_.last(input.split(" ")));
+	//console.log("query context:" + query_context);
+	//console.log("last word of query:");
+	//console.log(_.last(input.split(" ")));
 
 	$.ajax({
 	  url: "/search",
 	  type: "GET",
 	  dataType: "json",
-	  data:{query: _.last(input.split(" ")), context: query_context}, 
+	  data:{query: _.last(input.split(" ")), context: contexts_with_length}, 
 	  success: function(response){
 
 	    $('#search_results').html("");
@@ -333,7 +389,10 @@ var quotes = {
 	"There will be a backlash from those who don't benefit from the system" : "Rahul Bajaj, Indian Automobile Billionaire",
 	"What do you mean there is no money in the bags?" : "Ocean's Eleven",
 	"Misdirection, what the eyes see and the ears hear, the mind believes" : "Gabriel, Swordfish(2001)",
-	"Don't *ever* risk your life for an asset. If it comes down to you or them... send flowers." : "Nathan Muir, Spy Game(2001)"
+	"Don't *ever* risk your life for an asset. If it comes down to you or them... send flowers." : "Nathan Muir, Spy Game(2001)",
+	"Man sacrifices his health in order to make money. Then he sacrifices money to recuperate his health" : "The Dalai Lama",
+	"Ah well! You will soon be dead, and then you will own just as much of this earth as will suffice to bury you." : "Hindu yogi, replying to Alexander the Great",
+	"The world is in Me. The world cannot contain Me. The universe is in Me. I cannot be confined in the Universe. Greece , Rome and Persia are in Me. The suns and stars rise and set in Me." : "Indian yogi, on being asked by Alexander the Great to accompany him to Athens."
 }
 
 // so entity icons.

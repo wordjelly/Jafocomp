@@ -7,6 +7,8 @@ class WelcomeController < ApplicationController
 	def search
 
 		#results = Auth::Search::Main.completion_suggester_search({:prefix => params[:query], :context => params[:context]})
+		puts "these are the context sent into the params --------------------------------------"
+		puts params[:context]
 
 		results = Result.suggest_r({:prefix => params[:query], :context => params[:context]})
 
