@@ -46,7 +46,7 @@ $(document).on('keyup','#search',function(event){
 });
 
 /***
-so how would this work exactly.
+so how would this work exactly 
 suppose i say 
 buy gold when 
 ***/
@@ -291,10 +291,38 @@ and the rest will be the width for the down.
 *****************/
 // we will modify the json object received.
 // in the ajax call before rendering the template.
+// let's do this based on how many are positive and how many are negative.
 var update_bar_lengths = function(search_result){
 	
+	var green = 0;
+	var red = 0;
+	_.each(search_result.impacts[0].statistics,function(statistic){
+		// we want the best of three for these.
+		if(statistic.total_up > statistic.total_down){
+			green = green + 1;
+		}
+		else if(statistic.total_up < statistic.total_down){
+			red = red + 1;
+		}
+	});
+
 	var base_rem = 20;
+	var bar_color = "green";
+	var bar_width = 0;
 	
+	var total = green + red;
+
+	if(green >= red){
+		bar_width = (green/total)*base_rem;
+	}
+	else{
+		bar_color = "red";
+		bar_width = (red/total)*base_rem;
+	}
+
+
+	
+	/***
 	var total_up = search_result.impacts[0].statistics[0].total_up;
 	
 	var total_down = search_result.impacts[0].statistics[0].total_down;
@@ -310,7 +338,9 @@ var update_bar_lengths = function(search_result){
 		bar_color = "red";
 		bar_width = (total_down/total)*base_rem;
 	}
-	
+	**/
+
+
 	var remaining_bar_width = base_rem - bar_width;
 		
 	search_result.impacts[0].statistics[0]["bar_width"] = bar_width;
