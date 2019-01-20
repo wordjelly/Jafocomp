@@ -277,6 +277,8 @@ var search = function(input){
 
 	    $('.tooltip').tooltipster({
 		    content: 'Loading...',
+		    contentAsHTML: true,
+    		interactive: true,
 		    // 'instance' is basically the tooltip. More details in the "Object-oriented Tooltipster" section.
 		    functionBefore: function(instance, helper) {
 		        
@@ -293,7 +295,7 @@ var search = function(input){
 		            	
 		                // call the 'content' method to update the content of our tooltip with the returned data.
 		                // note: this content update will trigger an update animation (see the updateAnimation option)
-		                instance.content(data["results"]["information_description"]);
+		                instance.content(data["results"]["information_description"] + "<br><a href='http://www.google.com'>doggie</a>");
 		                //$origin.content("hello");
 		                // to remember that the data has been loaded
 		                $origin.data('loaded', true);
@@ -428,9 +430,9 @@ var add_tooltips_to_setup = function(search_result){
 		//console.log("setup is:" + search_result.setup);
 		//console.log("indicator name start: " + indicator_name_start);
 		search_result.setup = insert_string_at(search_result.setup,"<span class=\"tooltip\" title=\"test\" data-name=\"" +  search_result.indicator_name  + "\">",indicator_name_start);
-		console.log("after inserting start:");
-		console.log(search_result.setup);
-		console.log("---------------------------------------")
+		//console.log("after inserting start:");
+		//console.log(search_result.setup);
+		//console.log("---------------------------------------")
 		
 	}
 	return search_result;
