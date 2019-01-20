@@ -57,12 +57,11 @@
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
             <!-- this has to be formatted to correctly show buy and sell based on the trade_actions.-->
             <i class="{{= search_result.entity_icon}}"></i>
-            {{= search_result.trade_action_name }} {{= search_result.impacts[0].entity_name }} <span class="blue-grey-text">{{= search_result.setup }}
+            {{= search_result.setup }}
             {{ if(search_result.setup_exit){ }}
                and {{= search_result.trade_action_end_name }} when 
                {{= search_result.setup_exit }}
             {{ } }}
-            </span> 
           </span>
           <!-- from here onwards its going to be the impacts that have to be loaded -->
           {{ first_impact = search_result.impacts[0] }}

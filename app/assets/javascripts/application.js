@@ -264,6 +264,7 @@ var search = function(input){
 
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
+	    	search_result = add_impact_and_trade_action_to_setup(search_result);
 	    	search_result = add_tooltips_to_setup(search_result);
 	    	search_result = strip_period_details_from_setup(search_result);
 	    	search_result = update_falls_or_rises_text(search_result);
@@ -290,14 +291,21 @@ var search = function(input){
 		        	//console.log(instance);
 
 		            $.get('/search',{information: $origin.attr("data-name")}).done(function(data) {
-		            	//console.log("search data returned:");
-		            	//console.log(data);
+
+		            	result = data["results"];
+
+		            	title_string = "<h5 class='white-text'>"+ result["information_name"] +"</h5><br>";
+
+		            	content_string = result["information_description"] + "<br>";
+
+		            	link_string = '';
+
+		            	if(!_.isEmpty(result["information_link"])){
+		            		link_string = "<a href='" + result["information_link"] + "'></a>";
+		            	}
 		            	
-		                // call the 'content' method to update the content of our tooltip with the returned data.
-		                // note: this content update will trigger an update animation (see the updateAnimation option)
-		                instance.content(data["results"]["information_description"] + "<br><a href='http://www.google.com'>doggie</a>");
-		                //$origin.content("hello");
-		                // to remember that the data has been loaded
+		                instance.content(title_string + content_string + link_string);
+		               
 		                $origin.data('loaded', true);
 		            });
 		        }
@@ -419,22 +427,28 @@ var insert_string_at = function(string,snippet,index){
 	return string.slice(0,index) + snippet + string.slice(index,string.length);
 }
 
-var add_tooltips_to_setup = function(search_result){
-	var indicator_name_start = search_result.setup.indexOf(search_result.indicator_name);
-	// let's complete ajax for indicators.
-	if(indicator_name_start != -1){
-		var indicator_name_end = search_result.setup.indexOf(search_result.indicator_name) + search_result.indicator_name.length;
-		search_result.setup = insert_string_at(search_result.setup,"</span>",indicator_name_end);
-		//console.log("---------------------------------------");
-		//console.log(search_result.indicator_name);
-		//console.log("setup is:" + search_result.setup);
-		//console.log("indicator name start: " + indicator_name_start);
-		search_result.setup = insert_string_at(search_result.setup,"<span class=\"tooltip\" title=\"test\" data-name=\"" +  search_result.indicator_name  + "\">",indicator_name_start);
-		//console.log("after inserting start:");
-		//console.log(search_result.setup);
-		//console.log("---------------------------------------")
-		
+var add_impact_and_trade_action_to_setup = function(search_result){
+	search_result.setup = search_result.trade_action_name + " " + search_result.impacts[0].entity_name + " <span class='blue-grey-text'>" + search_result.setup + "</span>";
+	return search_result;
+}
+
+var process_setup_component = function(component,search_result){
+	var component_start = search_result.setup.indexOf(component);
+	if(component_start != -1){
+		var component_end = search_result.setup.indexOf(component) + component.length;
+		search_result.setup = insert_string_at(search_result.setup,"</span>",component_end);
+		search_result.setup = insert_string_at(search_result.setup,"<span class=\"tooltip\" title=\"test\" data-name=\"" +  component  + "\">",component_start);
 	}
+	return search_result;
+}
+
+var add_tooltips_to_setup = function(search_result){
+	
+	search_result = process_setup_component(search_result.indicator_name,search_result);
+	search_result = process_setup_component(search_result.subindicator_name,search_result);
+	search_result = process_setup_component(search_result.entity_name,search_result);
+	search_result = process_setup_component(search_result.impacts[0].entity_name,search_result);
+
 	return search_result;
 }
 
