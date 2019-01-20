@@ -17,6 +17,33 @@ class Result
 	field :trade_action_end_name, type: String
 	embeds_many :impacts, :class_name => "Impact"
 
+	## @param[Hash] args : expected to have one key called information.
+	def self.information(args)
+
+		args ||= {:information => ''}
+		args[:information] ||= ''
+
+		body = {
+			query: {
+				match: {
+					information_name: {
+						query: args[:information]
+					}
+				}
+			}
+		}
+
+		results = gateway.client.search index: "correlations", body: body
+		
+		puts JSON.pretty_generate(results)
+		if results["hits"]
+			results["hits"]["hits"][0]["_source"]
+		else
+			[]
+		end
+
+	end
+
 	## default values for prefix and context are provided in the method as '' and [] respectively.
 	def self.suggest_r(args)
 		

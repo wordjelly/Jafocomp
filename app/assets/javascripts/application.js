@@ -256,12 +256,15 @@ var search = function(input){
 	  success: function(response){
 
 	    $('#search_results').html("");
+	    	
 	    
+
 	    _.each(response['results'],function(search_result,index,list){
 	    	search_result = search_result['_source'];
 
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
+	    	search_result = add_tooltips_to_setup(search_result);
 	    	search_result = strip_period_details_from_setup(search_result);
 	    	search_result = update_falls_or_rises_text(search_result);
 	    	if(index == 0){
@@ -269,9 +272,43 @@ var search = function(input){
 	    		$("#top_result_contexts").attr("data-context",JSON.stringify(search_result["suggest"]["contexts"]["chain"]));
 	    	}
 	    	render_search_result(search_result);
+	    	
 	    });
+
+	    $('.tooltip').tooltipster({
+		    content: 'Loading...',
+		    // 'instance' is basically the tooltip. More details in the "Object-oriented Tooltipster" section.
+		    functionBefore: function(instance, helper) {
+		        
+		        var $origin = $(helper.origin);
+
+		        // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
+		        if ($origin.data('loaded') !== true) {
+
+		        	//console.log(instance);
+
+		            $.get('/search',{information: $origin.attr("data-name")}).done(function(data) {
+		            	//console.log("search data returned:");
+		            	//console.log(data);
+		            	
+		                // call the 'content' method to update the content of our tooltip with the returned data.
+		                // note: this content update will trigger an update animation (see the updateAnimation option)
+		                instance.content(data["results"]["information_description"]);
+		                //$origin.content("hello");
+		                // to remember that the data has been loaded
+		                $origin.data('loaded', true);
+		            });
+		        }
+		    }
+		});
+
+
 	  }
 	});
+
+
+	
+
 }
 
 /*****************
@@ -372,9 +409,36 @@ var add_time_to_setup = function(search_result){
 	return search_result;
 }
 
+// @param[String] string : the string into which the snippet is to be inserted
+// @param[String] snippet : the snippet to be inserted
+// @param[String] index : the index at which the snippet is to be inserted
+// @return[String] string : the original string with the snippet inserted
+var insert_string_at = function(string,snippet,index){
+	return string.slice(0,index) + snippet + string.slice(index,string.length);
+}
+
+var add_tooltips_to_setup = function(search_result){
+	var indicator_name_start = search_result.setup.indexOf(search_result.indicator_name);
+	// let's complete ajax for indicators.
+	if(indicator_name_start != -1){
+		var indicator_name_end = search_result.setup.indexOf(search_result.indicator_name) + search_result.indicator_name.length;
+		search_result.setup = insert_string_at(search_result.setup,"</span>",indicator_name_end);
+		//console.log("---------------------------------------");
+		//console.log(search_result.indicator_name);
+		//console.log("setup is:" + search_result.setup);
+		//console.log("indicator name start: " + indicator_name_start);
+		search_result.setup = insert_string_at(search_result.setup,"<span class=\"tooltip\" title=\"test\" data-name=\"" +  search_result.indicator_name  + "\">",indicator_name_start);
+		console.log("after inserting start:");
+		console.log(search_result.setup);
+		console.log("---------------------------------------")
+		
+	}
+	return search_result;
+}
+
 var strip_period_details_from_setup = function(search_result){
-	var pattern = /_period_start_\d+_period_end/g
-	search_result.setup = search_result.setup.replace(pattern,'');
+	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+_period_end)([^<>]*?<.+?>)/g
+	search_result.setup = search_result.setup.replace(pattern,'$1 $3');
 	return search_result;
 }
 
@@ -399,6 +463,11 @@ $(document).on('click','.strategic_trading',function(event){
 	});
 
 });
+
+
+/****
+tooltipster ajax.
+****/
 
 
 var quotes = {
@@ -441,6 +510,8 @@ $(document).ready(function(){
 	var quote_author = quotes[quote];
 	$("#quote").text(quote);
 	$("#quote_author").text(quote_author); 
+    //
+    $('.tooltip').tooltipster();
 });
 
 
