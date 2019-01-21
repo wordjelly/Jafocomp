@@ -213,6 +213,24 @@ var prepare_query = function(input){
 
 }
 
+function humanize(str) {
+  var frags = str.split('_');
+  for (i=0; i<frags.length; i++) {
+    frags[i] = frags[i].charAt(0).toUpperCase() + frags[i].slice(1);
+  }
+  return frags.join(' ');
+}
+
+
+var prepare_information_title = function(information_title){
+	// remove all underscores
+	// remove period_start_period_end
+	information_title = information_title.replace(/period_start_\d+_period_end/,'');
+	information_title = information_title.replace(/_/,' ');
+	// capitalize everything
+	return humanize(information_title);
+}
+
 // now add the impacts and from tomorrow start developing the springapp for a live online version
 
 var search = function(input){
@@ -294,17 +312,24 @@ var search = function(input){
 
 		            	result = data["results"];
 
-		            	title_string = "<h5 class='white-text'>"+ result["information_name"] +"</h5><br>";
+		            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
 
 		            	content_string = result["information_description"] + "<br>";
 
 		            	link_string = '';
 
 		            	if(!_.isEmpty(result["information_link"])){
-		            		link_string = "<a href='" + result["information_link"] + "'></a>";
+		            		console.log("there is an information link");
+		            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
+		            		console.log("link string becomes:");
+		            		console.log(link_string);
 		            	}
 		            	
-		                instance.content(title_string + content_string + link_string);
+		            	var content = title_string + content_string + link_string
+
+		            	console.log("content" + content);
+
+		                instance.content(content);
 		               
 		                $origin.data('loaded', true);
 		            });
@@ -432,22 +457,62 @@ var add_impact_and_trade_action_to_setup = function(search_result){
 	return search_result;
 }
 
-var process_setup_component = function(component,search_result){
+/***
+component_data_name if null, defaults to component name.
+***/
+var process_setup_component = function(component,search_result,component_data_name){
+
+	component_data_name = _.isNull(component_data_name) ? component : component_data_name;
+
 	var component_start = search_result.setup.indexOf(component);
 	if(component_start != -1){
 		var component_end = search_result.setup.indexOf(component) + component.length;
 		search_result.setup = insert_string_at(search_result.setup,"</span>",component_end);
-		search_result.setup = insert_string_at(search_result.setup,"<span class=\"tooltip\" title=\"test\" data-name=\"" +  component  + "\">",component_start);
+		search_result.setup = insert_string_at(search_result.setup,"<span class=\"tooltip\" title=\"test\" data-name=\"" +  component_data_name  + "\">",component_start);
+	}
+	return search_result;
+}
+
+
+/**
+- keeps only the first word in the entity, removes everything after and including the first underscore.
+**/
+var trim_entity_name = function(search_result,entity_name){
+	console.log("came to trim with entity name:" + entity_name);
+	if(entity_name.indexOf("_") != -1){
+
+		var idx = entity_name.indexOf("_");
+		var part_after_underscore = entity_name.slice(idx,entity_name.length);
+		var part_before_underscore = entity_name.slice(0,idx);
+		search_result.setup = search_result.setup.replace(part_after_underscore,'');
+		console.log("part before underscore:");
+
+		search_result = process_setup_component(part_before_underscore,search_result,entity_name);
+	}
+	return search_result;
+}
+
+
+var add_data_information_to_primary_entity = function(search_result){
+	var entity_name = search_result.entity_name;
+	if(entity_name.indexOf("_") != -1){
+		var idx = entity_name.indexOf("_");
+		var part_before_underscore = entity_name.slice(0,idx);
+		var with_apostrophe = part_before_underscore + "'s";
+		search_result = process_setup_component(with_apostrophe,search_result,entity_name);
 	}
 	return search_result;
 }
 
 var add_tooltips_to_setup = function(search_result){
 	
-	search_result = process_setup_component(search_result.indicator_name,search_result);
-	search_result = process_setup_component(search_result.subindicator_name,search_result);
-	search_result = process_setup_component(search_result.entity_name,search_result);
-	search_result = process_setup_component(search_result.impacts[0].entity_name,search_result);
+	search_result = process_setup_component(search_result.indicator_name,search_result,null);
+
+	search_result = process_setup_component(search_result.subindicator_name,search_result,null);
+
+	search_result = trim_entity_name(search_result,search_result.impacts[0].entity_name);
+
+	search_result = add_data_information_to_primary_entity(search_result);
 
 	return search_result;
 }
