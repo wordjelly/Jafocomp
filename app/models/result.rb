@@ -69,11 +69,11 @@ class Result
 			}
 		} unless args[:context].blank?
 
-
+		puts JSON.pretty_generate(body)
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		##puts JSON.pretty_generate(results)
+		puts JSON.pretty_generate(results)
 		if results["suggest"]
 			results["suggest"]["correlation_suggestion"][0]["options"]
 		else

@@ -222,6 +222,10 @@ function humanize(str) {
 }
 
 
+// how to show gold as gold_gold_metals ?
+// we have one option.
+// save the data-entity-type also on the 
+
 var prepare_information_title = function(information_title){
 	// remove all underscores
 	// remove period_start_period_end
@@ -238,33 +242,22 @@ var search = function(input){
 	console.log("--------- called search with input:" + input);
 
 	var contexts_with_length = prepare_contexts(input);
+
+	// if the size is only one, and we have only two words.
+	// 
+
 	console.log("contexts with length are:");
 	console.log(contexts_with_length);
-	// split the input on spaces.
-	// for eg :
-	// buy gold
-	// replace with colons
-	// replace more than one space with nothin.
-	// replace one space with :
-	// look for it in the contexts.
-	// send it.
-	// as the context.
-	// otherwise send whatever is after the last space.
-	//context = input.replace(/\s{2}/g,'');
-	//context = context.replace(/\s/g,':');
-	//contexts = JSON.parse($("#top_result_contexts").attr("data-context"));
-	//query_context = null;
-	//console.log("we are searching for context:" + context);
-	//_.each(contexts.reverse(),function(ctx){
-	//	if(ctx.indexOf(context) != -1){
-	//		query_context = ctx;
-	//	}
-	//});
 
+	if(_.size(contexts_with_length) == 1){
 
-	//console.log("query context:" + query_context);
-	//console.log("last word of query:");
-	//console.log(_.last(input.split(" ")));
+		var context = input.replace(/\s{2}/g,'');
+		
+		context = context.replace(/\s/,':');
+
+		contexts_with_length[context] = context.length;
+	}
+
 
 	$.ajax({
 	  url: "/search",
@@ -279,7 +272,7 @@ var search = function(input){
 
 	    _.each(response['results'],function(search_result,index,list){
 	    	search_result = search_result['_source'];
-
+	    	console.log(search_result);
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
 	    	search_result = add_impact_and_trade_action_to_setup(search_result);
@@ -478,14 +471,14 @@ var process_setup_component = function(component,search_result,component_data_na
 - keeps only the first word in the entity, removes everything after and including the first underscore.
 **/
 var trim_entity_name = function(search_result,entity_name){
-	console.log("came to trim with entity name:" + entity_name);
+	//console.log("came to trim with entity name:" + entity_name);
 	if(entity_name.indexOf("_") != -1){
 
 		var idx = entity_name.indexOf("_");
 		var part_after_underscore = entity_name.slice(idx,entity_name.length);
 		var part_before_underscore = entity_name.slice(0,idx);
 		search_result.setup = search_result.setup.replace(part_after_underscore,'');
-		console.log("part before underscore:");
+		//console.log("part before underscore:");
 
 		search_result = process_setup_component(part_before_underscore,search_result,entity_name);
 	}

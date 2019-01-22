@@ -22,7 +22,9 @@ class WelcomeController < ApplicationController
 		results = nil
 
 		if query
-			results = Result.suggest_r({:prefix => params[:query], :context => params[:context]})
+			puts "query is: #{query}"
+			puts "context is: #{context.to_s}"
+			results = Result.suggest_r({:prefix => query, :context => context})
 		end
 
 		if information 
@@ -38,7 +40,7 @@ class WelcomeController < ApplicationController
 
 
 	def permitted_params
-		params.permit(:query,:context,:information)
+		params.permit(:query,{:context => []},:information)
 	end
 
 end
