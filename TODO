@@ -15,3 +15,21 @@
 // prefix is the last word.
 // other option is to send the context as just that previous string.
 // we can send both, with a higher weightage for this one.
+
+<div class="col l2 m2 s2 center">
+    <div class="grey-text text-lighten-1" style="font-size: 24px;">Avg Profit</div>
+    <div class="amber-text" style="font-size: 18px;">{{= val.average_profit }}%</div>
+</div>
+<div class="col l2 m2 s2 center">
+    <div class="grey-text text-lighten-1" style="font-size: 24px;">Avg Loss</div>
+    <div class="black-text" style="font-size: 18px;">{{= val.average_loss }}%</div>
+</div>
+
+
+//  buy gold when oil's aroon_up first trading day of the week (21 Jan 2019)
+
+// there is no role for the indicator here , also text formulation is incorrect.
+
+// least profitable trade is showing zero everywhere.
+
+//

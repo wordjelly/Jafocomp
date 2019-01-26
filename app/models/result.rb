@@ -35,7 +35,7 @@ class Result
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		puts JSON.pretty_generate(results)
+		#puts JSON.pretty_generate(results)
 		if results["hits"]
 			results["hits"]["hits"][0]["_source"]
 		else
@@ -73,7 +73,7 @@ class Result
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		puts JSON.pretty_generate(results)
+		#puts JSON.pretty_generate(results)
 		if results["suggest"]
 			results["suggest"]["correlation_suggestion"][0]["options"]
 		else

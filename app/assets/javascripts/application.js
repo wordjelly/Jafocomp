@@ -102,10 +102,17 @@ var prepare_contexts = function(input){
 	//console.log(context);
 	
 	console.log("context is:" + context);
+	console.log("existing contexts object:");
+	console.log(existing_contexts_object);
+
+
+	// basically we are scoring the existing contexts for congruence with all the words before the last word in the currently typed search string
+	// we take each word(Except) the penultimate in the currently typed search string, and check it for being a part of an existing context.
+	// if it is found in an existing context, we increment hte score of that context in the contexts_object, and add the current word as a mapping
 	_.each(context,function(word){
 		for(key in existing_contexts_object){
 			_.each(existing_contexts_object[key]["words"],function(eword){
-				if(eword.indexOf(word) != -1){
+				if(eword.toLowerCase().indexOf(word.toLowerCase()) != -1){
 					existing_contexts_object[key]["score"] += 1
 					if(!_.has(existing_contexts_object[key]["word_mapping"],word)){
 						existing_contexts_object[key]["word_mapping"][word] = eword;
@@ -132,6 +139,7 @@ var prepare_contexts = function(input){
 	// that is one context
 	// the other context is the first sorted value "original key"
 	// and those are the two contexts for the query.
+	// basically the scoring went wrong here.
 	if(!_.isEmpty(sorted_values)){
 		var first_sorted_value = _.first(sorted_values);
 
@@ -140,7 +148,7 @@ var prepare_contexts = function(input){
 			var first_matching_word =  _.first(_.filter(first_sorted_value["words"],function(ww){
 				console.log("ww is:" + ww);
 
-				return (ww.indexOf(word) != -1);
+				return (ww.toLowerCase().indexOf(word.toLowerCase()) != -1);
 			}));
 			console.log("first matching word:" + first_matching_word);
 			if (_.isNull(first_matching_word)){
@@ -180,6 +188,15 @@ var prepare_contexts = function(input){
 	//	return k.length;
 	//}));	
 	return _.uniq(original_word_wordgrams);
+}
+
+/***
+returns the stop loss, with the least amount of loss.
+***/
+var get_most_economic_stop_loss = function(statistic){
+	return _.sortBy(statistic.stop_losses,function(sl){
+		return sl.maximum_loss;
+	})[0];
 }
 
 
@@ -243,9 +260,7 @@ var search = function(input){
 
 	var contexts_with_length = prepare_contexts(input);
 
-	// if the size is only one, and we have only two words.
-	// 
-
+	
 	console.log("contexts with length are:");
 	console.log(contexts_with_length);
 
@@ -268,11 +283,9 @@ var search = function(input){
 
 	    $('#search_results').html("");
 	    	
-	    
-
 	    _.each(response['results'],function(search_result,index,list){
 	    	search_result = search_result['_source'];
-	    	console.log(search_result);
+	    	//console.log(search_result);
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
 	    	search_result = add_impact_and_trade_action_to_setup(search_result);
