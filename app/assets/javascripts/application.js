@@ -199,7 +199,6 @@ var get_most_economic_stop_loss = function(statistic){
 	})[0];
 }
 
-
 /****
 @param[Array] context : array of contexts(individual words)
 @return[Array] wordgrams : array of wordgrams.
@@ -252,6 +251,14 @@ var prepare_information_title = function(information_title){
 	return humanize(information_title);
 }
 
+
+var set_stop_losses = function(search_result){
+	_.map(search_result.impacts[0].statistics,function(statistic){
+		statistic.most_economic_stop_loss = get_most_economic_stop_loss(statistic);
+	});
+	return search_result;
+}
+
 // now add the impacts and from tomorrow start developing the springapp for a live online version
 
 var search = function(input){
@@ -292,6 +299,8 @@ var search = function(input){
 	    	search_result = add_tooltips_to_setup(search_result);
 	    	search_result = strip_period_details_from_setup(search_result);
 	    	search_result = update_falls_or_rises_text(search_result);
+	    	search_result = set_stop_losses(search_result);
+	    	console.log(search_result);
 	    	if(index == 0){
 	    		// check todo for this.
 	    		$("#top_result_contexts").attr("data-context",JSON.stringify(search_result["suggest"]["contexts"]["chain"]));
@@ -551,6 +560,9 @@ $(document).on('click','.strategic_trading',function(event){
 
 });
 
+
+// I want a side by side comparison, in one tab only.
+// with a switch to show what exactly is happening.
 
 /****
 tooltipster ajax.
