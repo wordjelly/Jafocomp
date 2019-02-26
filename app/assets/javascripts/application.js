@@ -13,6 +13,8 @@ _.templateSettings.variable = 'search_result';
 
 var template;
 
+// first lets get this shit to display at least.
+
 $(document).on('keyup','#search',function(event){
 	// if the event is space.
 	// don't do anything.
@@ -41,14 +43,13 @@ $(document).on('keyup','#search',function(event){
 
 			}
 		}
-		search($(this).val());
+		search_new($(this).val());
 	}
 });
 
 /***
 so how would this work exactly 
-suppose i say 
-buy gold when 
+suppose i say buy gold when 
 ***/
 
 var render_search_result = function(search_result){	
@@ -259,6 +260,108 @@ var set_stop_losses = function(search_result){
 	return search_result;
 }
 
+
+
+/***
+getStats()[0] = week_total_up;
+getStats()[1] = week_total_down;
+getStats()[2] = week_max_profit;
+getStats()[3] = week_max_loss;
+getStats()[4] = month_total_up;
+getStats()[5] = month_total_down;
+getStats()[6] = month_max_profit;
+getStats()[7] = month_max_loss;
+getStats()[8] = six_month_total_up;
+getStats()[9] = six_month_total_down;
+getStats()[10] = six_month_max_profit;
+getStats()[11] = six_month_max_loss;
+***/
+var assign_statistics = function(search_result){
+
+	search_result.suggest = [_.first(search_result.suggest)];
+	
+	var suggestion = search_result.suggest[0];
+	
+	var stats = suggestion.input.substring(suggestion.input.indexOf("#"),suggestion.input.length);
+	
+	stats = stats.split(",");
+	
+	search_result.setup = suggestion.input.substring(0,suggestion.input.indexOf("#"));
+
+	search_result.impacts = [];
+
+	var impact = {
+		
+		statistics: [
+			{
+				time_frame: 7,
+				time_frame_unit: "days",
+				time_frame_name: "1 week",
+				total_up: stats[0],
+				total_down: stats[1],
+				max_profit: stats[2],
+				max_loss: stats[3]
+			},
+			{
+				time_frame: 31,
+				time_frame_unit: "days",
+				time_frame_name: "1 month",
+				total_up: stats[4],
+				total_down: stats[5],
+				max_profit: stats[6],
+				max_loss: stats[7]	
+			},
+			{
+				time_frame: 180,
+				time_frame_unit: "days",
+				time_frame_name: "6 months",
+				total_up: stats[8],
+				total_down: stats[9],
+				max_profit: stats[10],
+				max_loss: stats[11]		
+			}
+		]
+		
+	}
+
+	search_result.impacts.push(impact);
+	
+	search_result.triggered_at = suggestion.weight;
+
+	
+}
+
+/***
+continue from here.
+***/
+var add_color_to_complex = function(search_result){
+	var regex = new RegExp(/(buy\s[A-Za-z\-0-9]+)\s/);
+	var result = regex.exec(search_result.setup);
+	console.log("result is:");
+	console.log(result);
+}
+
+var search_new = function(input){
+	$.ajax({
+	  	url: "/search",
+	  	type: "GET",
+	  	dataType: "json",
+	  	data:{query: input}, 
+	  	success: function(response){
+
+	    $('#search_results').html("");
+	    	
+		    _.each(response['results'],function(search_result,index,list){
+		    	search_result = search_result['_source'];
+		    	assign_statistics(search_result);
+		    	search_result = update_bar_lengths(search_result);
+		    	search_result = add_time_to_setup(search_result);
+		    	console.log(search_result);
+		    });
+		}
+	});
+
+}
 // now add the impacts and from tomorrow start developing the springapp for a live online version
 
 var search = function(input){

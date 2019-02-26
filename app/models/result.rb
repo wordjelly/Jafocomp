@@ -51,6 +51,7 @@ class Result
 		args[:context] ||= []
 
 		body = {
+				_source: ["suggest"], 
 				suggest: {
 					correlation_suggestion: {
 						text: args[:prefix],
@@ -62,18 +63,20 @@ class Result
 				}
 			}
 
+		## buy:reliance : when_this_happens => 
 
+=begin
 		body[:suggest][:correlation_suggestion][:completion][:contexts] = {
 			"chain" => args[:context].map{|c|
 				{"context" => c, "boost" => c.length}
 			}
 		} unless args[:context].blank?
-
-		puts JSON.pretty_generate(body)
+=end
+		#puts JSON.pretty_generate(body)
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		#puts JSON.pretty_generate(results)
+		puts JSON.pretty_generate(results)
 		if results["suggest"]
 			results["suggest"]["correlation_suggestion"][0]["options"]
 		else
