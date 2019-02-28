@@ -282,9 +282,11 @@ var assign_statistics = function(search_result){
 	
 	var suggestion = search_result.suggest[0];
 	
-	var stats = suggestion.input.substring(suggestion.input.indexOf("#"),suggestion.input.length);
+	var stats = suggestion.input.substring(suggestion.input.indexOf("#") + 1,suggestion.input.length);
 	
-	stats = stats.split(",");
+	stats = stats.split(",").slice(0,12);
+	console.log("stats are:");
+	console.log(stats);
 	
 	search_result.setup = suggestion.input.substring(0,suggestion.input.indexOf("#"));
 
@@ -297,28 +299,28 @@ var assign_statistics = function(search_result){
 				time_frame: 7,
 				time_frame_unit: "days",
 				time_frame_name: "1 week",
-				total_up: stats[0],
-				total_down: stats[1],
-				max_profit: stats[2],
-				max_loss: stats[3]
+				total_up: Number(stats[0]),
+				total_down: Number(stats[1]),
+				maximum_profit: Number(stats[2]),
+				maximum_loss: Number(stats[3])
 			},
 			{
 				time_frame: 31,
 				time_frame_unit: "days",
 				time_frame_name: "1 month",
-				total_up: stats[4],
-				total_down: stats[5],
-				max_profit: stats[6],
-				max_loss: stats[7]	
+				total_up: Number(stats[4]),
+				total_down: Number(stats[5]),
+				maximum_profit: Number(stats[6]),
+				maximum_loss: Number(stats[7])	
 			},
 			{
 				time_frame: 180,
 				time_frame_unit: "days",
 				time_frame_name: "6 months",
-				total_up: stats[8],
-				total_down: stats[9],
-				max_profit: stats[10],
-				max_loss: stats[11]		
+				total_up: Number(stats[8]),
+				total_down: Number(stats[9]),
+				maximum_profit: Number(stats[10]),
+				maximum_loss: Number(stats[11])		
 			}
 		]
 		
@@ -334,11 +336,11 @@ var assign_statistics = function(search_result){
 /***
 continue from here.
 ***/
-var add_color_to_complex = function(search_result){
-	var regex = new RegExp(/(buy\s[A-Za-z\-0-9]+)\s/);
+var add_color_to_complex = function(search_result,delimiter){
+	var regex = new RegExp(/(buy\s[A-Z\_\\\/a-z\-0-9]+)\s/);
+	console.log(search_result.setup);
 	var result = regex.exec(search_result.setup);
-	console.log("result is:");
-	console.log(result);
+	search_result.setup = result[0] + "st" + delimiter + search_result.setup.substring(result[0].length,search_result.setup.length) + "en" + delimiter;
 }
 
 var search_new = function(input){
@@ -356,7 +358,31 @@ var search_new = function(input){
 		    	assign_statistics(search_result);
 		    	search_result = update_bar_lengths(search_result);
 		    	search_result = add_time_to_setup(search_result);
+		    	// add the tooltip spans to each word.
+		    	
+		    	var arr = search_result.setup.split(" ");
+		    	var concat = "";
+		    	_.each(arr,function(value,index){
+		    		if(index == 2){
+		    			concat+= ("<span class='blue-grey-text'>"+ "<span class='tooltip' title='test' data-name='" + value +"'> " + value + "</span>");
+		    		}
+		    		else{
+		    			concat+= ("<span class='tooltip' title='test' data-name='" + value +"'> " + value + "</span>");
+		    		}
+
+		    		// "<span class=\"tooltip\" title=\"test\" data-name=\"" +  component_data_name  + "\">"
+
+		    	});
+		    	concat += "</span>";
+		    	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
+				//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
+				
+				search_result.setup = concat;				
+
+		    	search_result = strip_period_details_from_setup(search_result);
+		    	search_result = update_falls_or_rises_text(search_result);	
 		    	console.log(search_result);
+		    	render_search_result(search_result);
 		    });
 		}
 	});
@@ -638,6 +664,10 @@ var add_tooltips_to_setup = function(search_result){
 var strip_period_details_from_setup = function(search_result){
 	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+_period_end)([^<>]*?<.+?>)/g
 	search_result.setup = search_result.setup.replace(pattern,'$1 $3');
+	//pattern = /(<.+?>[^<>]*?)(st@@@)([^<>]*?<.+?>)/g;
+	//search_result.setup = search_result.setup.replace(pattern,'$1 <span class="blue-grey-text"> $3');
+	//pattern = /(<.+?>[^<>]*?)(en@@@)([^<>]*?<.+?>)/g;
+	//search_result.setup = search_result.setup.replace(pattern,'$1 </span> $3');
 	return search_result;
 }
 
