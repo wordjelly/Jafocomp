@@ -47,6 +47,14 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+
+  <script type="text/template" id="suggest_query_template">
+    <li class="collection-item">{{= search_result.suggest_query_payload }}</li>
+  </script>
+
+  <!-- so the first thing is the primary entity detection issue in the stuff coming in direct -->
+  <!-- how do you know if the primary entity has been hit? we have to have this being done server side, for whatever is being returned. -->
+
   <!-- basially we want to store the things of the topmost result here -->
   <!-- the contexts -->
   <script type="text/template" id="search_result_template">

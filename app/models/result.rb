@@ -44,6 +44,28 @@ class Result
 
 	end
 
+	## this will join the last successfull query, and the top result from the suggested_Query, and perform a basic query, and return teh results.
+	def self.compound_query(last_successfull_query,query_suggestion_results)
+
+		top_suggestion = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"][0]["_source"]["suggest_query_payload"]
+
+		body = {
+				_source: ["suggest"], 
+				suggest: {
+					correlation_suggestion: {
+						text: last_successfull_query + " " + top_suggestion,
+						completion: {
+			                field: "suggest",
+			                size: 10
+			            }
+					}
+				}
+		}
+
+		gateway.client.search index: "correlations", body: body
+
+	end
+
 	## default values for prefix and context are provided in the method as '' and [] respectively.
 	def self.suggest_r(args)
 		
@@ -61,27 +83,59 @@ class Result
 			            }
 					}
 				}
+		}
+
+			
+		unless args[:context].blank?
+
+			body = {
+				_source: ["suggest_query_payload"], 
+				suggest: {
+					correlation_suggestion: {
+						text: args[:prefix],
+						completion: {
+							contexts: {
+								"component_type" => args[:context]
+							},
+			                field: "suggest_query",
+			                size: 10
+			            }
+					}
+				}
 			}
 
-		## buy:reliance : when_this_happens => 
 
-=begin
-		body[:suggest][:correlation_suggestion][:completion][:contexts] = {
-			"chain" => args[:context].map{|c|
-				{"context" => c, "boost" => c.length}
-			}
-		} unless args[:context].blank?
-=end
-		#puts JSON.pretty_generate(body)
+			query_suggestion_results = gateway.client.search index: "correlations", body: body
 
-		results = gateway.client.search index: "correlations", body: body
+			search_results = compound_query(args[:last_successfull_query],results) unless args[:last_successfull_query].blank?
+
+			
+
+			if query_suggestion_results["suggest"]
+				query_suggestion_results = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"]
+			else
+				query_suggestion_results = []
+			end
 		
-		puts JSON.pretty_generate(results)
-		if results["suggest"]
-			results["suggest"]["correlation_suggestion"][0]["options"]
 		else
-			[]
+
+			query_suggestion_results = []
+
+			search_results = gateway.client.search index: "correlations", body: body
+
 		end
+
+		if search_results["suggest"]
+			search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+		else
+			search_results = []
+		end
+		
+
+		{
+			:search_results => search_results.
+			:query_suggestion_results => query_suggestion_results
+		}
 		
 	end
 

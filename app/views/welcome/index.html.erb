@@ -40,11 +40,21 @@
 		</nav>
 	</div>
 
+	<div class="row" style="margin-top:2rem">
+		<ul class="collection" id="query_suggestions">
+			
+		</ul>
+	</div>
+
 	<!-- HOLDER FOR SEARCH RESULTS -->
 	<div class="row" style="margin-top:2rem">
-		 <div id="top_result_contexts" data-context="[]"></div>
+		<div id="top_result_contexts" data-context="[]"></div>
+		
+		<div id="last_successfull_query" data-query="">
+		<!-- for eg if buy gold had worked out -->
+		</div>
+		
 		<div class="search_results" id="search_results">
-			
 		</div>
 	</div>
 
@@ -56,6 +66,13 @@
 		</div>
 		<br>
 		<div class="infinity_icon"><i class="fas fa-infinity"></i></div>
+	</div>
+
+	<div class="build_query_information">
+		<div id="primary_entity"></div>
+		<div id="secondary_entity"></div>
+		<div id="indicator"></div>
+		<div id="subindicator"></div>
 	</div>
 
 </div>

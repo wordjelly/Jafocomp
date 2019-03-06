@@ -343,17 +343,15 @@ var add_color_to_complex = function(search_result,delimiter){
 	search_result.setup = result[0] + "st" + delimiter + search_result.setup.substring(result[0].length,search_result.setup.length) + "en" + delimiter;
 }
 
-var search_new = function(input){
-	$.ajax({
-	  	url: "/search",
-	  	type: "GET",
-	  	dataType: "json",
-	  	data:{query: input}, 
-	  	success: function(response){
+var update_last_successfull_query = function(query){
+	$("#last_successfull_query").attr("data-query",query);
+}
 
-	    $('#search_results').html("");
-	    	
-		    _.each(response['results'],function(search_result,index,list){
+var display_search_results = function(search_results){
+	 _.each(search_results,function(search_result,index,list){
+
+		    	update_last_successfull_query(input);
+		    	
 		    	search_result = search_result['_source'];
 		    	assign_statistics(search_result);
 		    	search_result = update_bar_lengths(search_result);
@@ -384,6 +382,26 @@ var search_new = function(input){
 		    	console.log(search_result);
 		    	render_search_result(search_result);
 		    });
+}
+
+var search_new = function(input){
+	$.ajax({
+	  	url: "/search",
+	  	type: "GET",
+	  	dataType: "json",
+	  	data:{query: input}, 
+	  	success: function(response){
+
+	    $('#search_results').html("");
+	    	if(!direct_query_has_results(response['results'])){
+	    		expand_query(input);
+	    		return;
+	    	}
+	    	
+	    	var search_results = response['results']['search_results'];
+
+	    	display_search_results(search_results);
+		   
 		}
 	});
 

@@ -11,20 +11,15 @@ class WelcomeController < ApplicationController
 
 	def search
 
-		#results = Auth::Search::Main.completion_suggester_search({:prefix => params[:query], :context => params[:context]})
-		puts "these are the context sent into the params --------------------------------------"
-		puts params[:context]
-
 		context = permitted_params[:context]
 		query = permitted_params[:query]
 		information = permitted_params[:information]
-
+		suggest_query = permitted_params[:suggest_query]
+		last_successfull_query = permitted_params[:last_successfull_query]
 		results = nil
 
 		if query
-			puts "query is: #{query}"
-			puts "context is: #{context.to_s}"
-			results = Result.suggest_r({:prefix => query, :context => context})
+			results = Result.suggest_r({:prefix => query, :context => context, :last_successfull_query => last_successfull_query})
 		end
 
 		if information 
@@ -40,7 +35,8 @@ class WelcomeController < ApplicationController
 
 
 	def permitted_params
-		params.permit(:query,{:context => []},:information)
+		## context will be a single string.
+		params.permit(:query,{:context => []},:suggest_query,:information)
 	end
 
 end

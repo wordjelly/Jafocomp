@@ -3,7 +3,7 @@ returns true if the text sent in from the search box
 (as is) has found a match.
 ***/
 var direct_query_has_results = function(search_results){
-	return _.length(search_results) > 0;
+	return _.size(search_results) > 0;
 }
 
 var get_primary_entity = function(){
@@ -20,6 +20,35 @@ var get_subindicator = function(){
 
 var get_indicator = function(){
 	return $("#indicator").attr("data-name");
+}
+
+/***
+@param[String] text: the query text
+@param[Array] context: the contexts for the query
+***/
+var get_search_suggestions = function(text,context,last_successfull_query){
+	$("#query_suggestions").html("");
+	var template = _.template($('#suggest_query_template').html());
+	$.ajax({
+	  	url: "/search",
+	  	type: "GET",
+	  	dataType: "json",
+	  	data:{query: text, suggest_query: true, context: context, last_successfull_query: last_successfull_query}, 
+	  	success: function(response){
+	  		console.log(response);
+	  		query_suggestion_results = response["results"]["query_suggestion_results"];
+	  		search_results = response["results"]["search_results"];
+	  		// these have to be rendered by another function.
+	  		display_search_results(search_results);
+	  		// the last remaining thing is a match query, that is also executed server side, if the autocomplete doesn't produce anything.
+	  		// that is the third fallback.
+	  		// i will do that tomorrow, after testing all this.
+	  		_.each(query_suggestion_results,function(search_result,index,list){
+				search_result = search_result['_source'];
+				$('#query_suggestions').append(template(search_result));  			
+	  		});
+	  	}
+	});
 }
 
 // we take the last space delimited word.
@@ -51,15 +80,31 @@ and select the secondary option or whatever.
 if we have a primary, and a subindicator -> cant do anything
 if we have a primary, a secondary, => then proceed for indicator, and subindicator
 buy apple computer when reliance
+
+flow is like this -> main query returned nothing -> so we did suggested query -> inside that, it got some results -> so it then merged and reran the main query -> and returned both the suggestions and the results of the main query together.
+
 ***/
 var expand_query = function(query){
-	// so on keypress, it will check if the query still has whatever 
-	// is there in each of the info div's above, otherwise will remove them
-	// then when the time comes to expand.
-	// we first get state.
-	// i.e check each one after the other, and query 
-	// for whichever one is not there.
-	// on returning the query -> if the user pressed tab, 
-	// then it adds that to the correct context.
+	var last_word = _.last(query.split(" "));
+	var last_successfull_query = $("#last_successfull_query").attr("data-query");
+	// send the last successfull query only if it is present in the currently sent query, otherwise it is meaningless and should be cleared ideally.
+	last_successfull_query = (query.indexOf(last_successfull_query) !== -1) ? last_successfull_query : null;
+	if(_.isUndefined(get_primary_entity())){
+		get_search_suggestions(last_word,["entity","time_based_subindicator","indicator","subindicator"],last_successfull_query);
+		//build_search_query(last_word,["entity"]);
+		// so the suggestions that come back, will have to be shown
+		// in some kind of a suggestion window.
+		// we will add a simple collection 
+		// so that we don't complicate things.
+		// we will use the first suggestion and fire a secondary query.
+		// and we will keep the input in the query box the same.
+		// we will need another template for that part.
+	}
+	else
+	{
+		// context will be "entity","time_based_subindicator"
+		// there is a time, when we may have to search for timebased or entity.
+		// their contexts can be multiple
+	}
 }
 
