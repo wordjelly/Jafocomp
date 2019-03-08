@@ -26,14 +26,14 @@ var get_indicator = function(){
 @param[String] text: the query text
 @param[Array] context: the contexts for the query
 ***/
-var get_search_suggestions = function(text,context,last_successfull_query){
+var get_search_suggestions = function(text,context,last_successfull_query,whole_query){
 	$("#query_suggestions").html("");
 	var template = _.template($('#suggest_query_template').html());
 	$.ajax({
 	  	url: "/search",
 	  	type: "GET",
 	  	dataType: "json",
-	  	data:{query: text, suggest_query: true, context: context, last_successfull_query: last_successfull_query}, 
+	  	data:{query: whole_query, suggest_query: text, context: context, last_successfull_query: last_successfull_query}, 
 	  	success: function(response){
 	  		console.log(response);
 	  		query_suggestion_results = response["results"]["query_suggestion_results"];
@@ -86,11 +86,12 @@ flow is like this -> main query returned nothing -> so we did suggested query ->
 ***/
 var expand_query = function(query){
 	var last_word = _.last(query.split(" "));
+
 	var last_successfull_query = $("#last_successfull_query").attr("data-query");
 	// send the last successfull query only if it is present in the currently sent query, otherwise it is meaningless and should be cleared ideally.
 	last_successfull_query = (query.indexOf(last_successfull_query) !== -1) ? last_successfull_query : null;
 	if(_.isUndefined(get_primary_entity())){
-		get_search_suggestions(last_word,["entity","time_based_subindicator","indicator","subindicator"],last_successfull_query);
+		get_search_suggestions(last_word,["entity","time_based_subindicator","indicator","subindicator"],last_successfull_query,query);
 		//build_search_query(last_word,["entity"]);
 		// so the suggestions that come back, will have to be shown
 		// in some kind of a suggestion window.

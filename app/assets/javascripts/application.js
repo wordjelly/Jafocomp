@@ -276,7 +276,16 @@ getStats()[9] = six_month_total_down;
 getStats()[10] = six_month_max_profit;
 getStats()[11] = six_month_max_loss;
 ***/
-var assign_statistics = function(search_result){
+var assign_statistics = function(search_result,text){
+
+	if(_.isUndefined(text)){
+		
+	}
+	else{
+		search_result.suggest = _.filter(search_result.suggest,function(el){
+			return el['input'].indexOf(text) != -1;
+		});
+	}
 
 	search_result.suggest = [_.first(search_result.suggest)];
 	
@@ -347,13 +356,14 @@ var update_last_successfull_query = function(query){
 	$("#last_successfull_query").attr("data-query",query);
 }
 
-var display_search_results = function(search_results){
+var display_search_results = function(search_results,input){
 	 _.each(search_results,function(search_result,index,list){
 
 		    	update_last_successfull_query(input);
-		    	
+		    	text = search_result["text"];
 		    	search_result = search_result['_source'];
-		    	assign_statistics(search_result);
+		    	//search_result['suggest'].reverse();
+		    	assign_statistics(search_result,text);
 		    	search_result = update_bar_lengths(search_result);
 		    	search_result = add_time_to_setup(search_result);
 		    	// add the tooltip spans to each word.
@@ -393,14 +403,15 @@ var search_new = function(input){
 	  	success: function(response){
 
 	    $('#search_results').html("");
-	    	if(!direct_query_has_results(response['results'])){
+	    	if(!direct_query_has_results(response['results']['search_results'])){
 	    		expand_query(input);
 	    		return;
 	    	}
 	    	
+	    	console.log(response['results']);
 	    	var search_results = response['results']['search_results'];
 
-	    	display_search_results(search_results);
+	    	display_search_results(search_results,input);
 		   
 		}
 	});

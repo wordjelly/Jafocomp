@@ -44,33 +44,74 @@ class Result
 
 	end
 
-	## this will join the last successfull query, and the top result from the suggested_Query, and perform a basic query, and return teh results.
-	def self.compound_query(last_successfull_query,query_suggestion_results)
-
-		top_suggestion = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"][0]["_source"]["suggest_query_payload"]
+	def self.simple_match_query(query_text)
 
 		body = {
-				_source: ["suggest"], 
-				suggest: {
-					correlation_suggestion: {
-						text: last_successfull_query + " " + top_suggestion,
-						completion: {
-			                field: "suggest",
-			                size: 10
-			            }
+			_source: ["suggest"], 
+			query: {
+				nested: {
+					path: "complex_derivations",
+					query: {
+						match: {
+							"complex_derivations.impacted_entity_name".to_sym => query_text 
+						}
 					}
 				}
+			}
 		}
 
-		gateway.client.search index: "correlations", body: body
+		response = gateway.client.search index: "correlations", body: body
+
+		
+
+	end
+
+	## this will join the last successfull query, and the top result from the suggested_Query, and perform a basic query, and return teh results.
+	def self.compound_query(last_successfull_query,query_suggestion_results,whole_query)
+
+		if query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"].blank?
+
+			simple_match_query(whole_query)
+
+		else
+
+			top_suggestion = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"][0]["_source"]["suggest_query_payload"]
+
+			body = {
+					_source: ["suggest"], 
+					suggest: {
+						correlation_suggestion: {
+							text: last_successfull_query + " " + top_suggestion,
+							completion: {
+				                field: "suggest",
+				                size: 10
+				            }
+						}
+					}
+			}
+
+			response = gateway.client.search index: "correlations", body: body
+
+			mash = Hashie::Mash.new response
+			if mash.hits.hits.empty?
+				simple_match_query(whole_query)
+			else
+				response
+			end
+
+		end
 
 	end
 
 	## default values for prefix and context are provided in the method as '' and [] respectively.
 	def self.suggest_r(args)
 		
+		puts "came to suggest_r with args"
+		puts args.to_s
+
 		args[:prefix] ||= ''
 		args[:context] ||= []
+
 
 		body = {
 				_source: ["suggest"], 
@@ -107,15 +148,23 @@ class Result
 
 			query_suggestion_results = gateway.client.search index: "correlations", body: body
 
-			search_results = compound_query(args[:last_successfull_query],results) unless args[:last_successfull_query].blank?
-
-			
+			## we want the prefix also.
+			search_results = compound_query(args[:last_successfull_query],query_suggestion_results,args[:whole_query]) unless args[:last_successfull_query].blank?
 
 			if query_suggestion_results["suggest"]
 				query_suggestion_results = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"]
 			else
 				query_suggestion_results = []
 			end
+
+			if search_results["suggest"]
+				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+				#puts "search results becomes:"
+				#puts search_results.to_s
+			elsif search_results["hits"]["hits"]
+				search_results = search_results["hits"]["hits"]
+			end
+
 		
 		else
 
@@ -123,20 +172,29 @@ class Result
 
 			search_results = gateway.client.search index: "correlations", body: body
 
+			if search_results["suggest"]
+				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+				#puts "search results becomes:"
+				#puts search_results.to_s
+			else
+				search_results = []
+			end
+
 		end
 
-		if search_results["suggest"]
-			search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-		else
-			search_results = []
-		end
+		
 		
 
-		{
-			:search_results => search_results.
+		results = {
+			:search_results => search_results,
 			:query_suggestion_results => query_suggestion_results
 		}
-		
+			
+		puts "results -----------------> "
+		puts JSON.pretty_generate(results)
+
+		results
+
 	end
 
 end
