@@ -62,7 +62,7 @@ class Result
 
 		response = gateway.client.search index: "correlations", body: body
 
-		
+		response
 
 	end
 
@@ -71,17 +71,25 @@ class Result
 
 		if query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"].blank?
 
+			puts "auto suggest didnt find anything - so did a match query , with whole query: #{whole_query}"
+
 			simple_match_query(whole_query)
 
 		else
 
+			puts "found some suggestions, so trying to combine last succesffull query."
+
 			top_suggestion = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"][0]["_source"]["suggest_query_payload"]
+
+			## that part worked, but we need to add the apostrophe for this shit to work properly.
+			## so will have to add that apostrophe.
+			effective_query = last_successfull_query + " " + top_suggestion
 
 			body = {
 					_source: ["suggest"], 
 					suggest: {
 						correlation_suggestion: {
-							text: last_successfull_query + " " + top_suggestion,
+							text: effective_query,
 							completion: {
 				                field: "suggest",
 				                size: 10
@@ -89,13 +97,20 @@ class Result
 						}
 					}
 			}
+			puts JSON.pretty_generate(body)
 
 			response = gateway.client.search index: "correlations", body: body
 
+			#puts "response is=-=================>"
+			#puts response.to_s
+
 			mash = Hashie::Mash.new response
-			if mash.hits.hits.empty?
+			if mash.suggest.correlation_suggestion[0].options.empty?
+				puts "no results in combined query, so going for match query."
 				simple_match_query(whole_query)
 			else
+				puts "got resutls in combined query."
+				response["effective_query"] = effective_query
 				response
 			end
 
@@ -129,6 +144,8 @@ class Result
 			
 		unless args[:context].blank?
 
+			puts "tried auto suggest--->"
+
 			body = {
 				_source: ["suggest_query_payload"], 
 				suggest: {
@@ -149,7 +166,8 @@ class Result
 			query_suggestion_results = gateway.client.search index: "correlations", body: body
 
 			## we want the prefix also.
-			search_results = compound_query(args[:last_successfull_query],query_suggestion_results,args[:whole_query]) unless args[:last_successfull_query].blank?
+			search_results = compound_query(args[:last_successfull_query],query_suggestion_results,args[:whole_query]) 
+			
 
 			if query_suggestion_results["suggest"]
 				query_suggestion_results = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"]
@@ -157,7 +175,11 @@ class Result
 				query_suggestion_results = []
 			end
 
+			
+
+
 			if search_results["suggest"]
+				effective_query = search_results["effective_query"]
 				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
 				#puts "search results becomes:"
 				#puts search_results.to_s
@@ -187,11 +209,12 @@ class Result
 
 		results = {
 			:search_results => search_results,
-			:query_suggestion_results => query_suggestion_results
+			:query_suggestion_results => query_suggestion_results,
+			:effective_query => effective_query
 		}
 			
-		puts "results -----------------> "
-		puts JSON.pretty_generate(results)
+		#puts "results -----------------> "
+		#puts JSON.pretty_generate(results)
 
 		results
 

@@ -35,11 +35,26 @@ var get_search_suggestions = function(text,context,last_successfull_query,whole_
 	  	dataType: "json",
 	  	data:{query: whole_query, suggest_query: text, context: context, last_successfull_query: last_successfull_query}, 
 	  	success: function(response){
-	  		console.log(response);
+	  		//console.log(response);
+
 	  		query_suggestion_results = response["results"]["query_suggestion_results"];
 	  		search_results = response["results"]["search_results"];
+	  		effective_query = response["results"]["effective_query"];
+	  		//console.log("response is:");
+	  		//console.log(response);
+	  		//console.log("effective_query" + effective_query);
 	  		// these have to be rendered by another function.
-	  		display_search_results(search_results);
+	  		// what do we do in this case.
+	  		// buy gold oil
+	  		// buy gold when oil
+	  		// successfull query in this case is not the input.
+	  		// but rather the buy gold when oil's 
+	  		// 
+	  		display_search_results(search_results,effective_query);
+	  		// we need to update the search filed with effective_query
+	  		if(!_.isNull(effective_query)){
+	  			$("#search").val(effective_query);
+	  		}
 	  		// the last remaining thing is a match query, that is also executed server side, if the autocomplete doesn't produce anything.
 	  		// that is the third fallback.
 	  		// i will do that tomorrow, after testing all this.

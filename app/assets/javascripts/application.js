@@ -279,7 +279,7 @@ getStats()[11] = six_month_max_loss;
 var assign_statistics = function(search_result,text){
 
 	if(_.isUndefined(text)){
-		
+		// so let's see if all this works.	
 	}
 	else{
 		search_result.suggest = _.filter(search_result.suggest,function(el){
@@ -294,8 +294,8 @@ var assign_statistics = function(search_result,text){
 	var stats = suggestion.input.substring(suggestion.input.indexOf("#") + 1,suggestion.input.length);
 	
 	stats = stats.split(",").slice(0,12);
-	console.log("stats are:");
-	console.log(stats);
+	//console.log("stats are:");
+	//console.log(stats);
 	
 	search_result.setup = suggestion.input.substring(0,suggestion.input.indexOf("#"));
 
@@ -352,14 +352,35 @@ var add_color_to_complex = function(search_result,delimiter){
 	search_result.setup = result[0] + "st" + delimiter + search_result.setup.substring(result[0].length,search_result.setup.length) + "en" + delimiter;
 }
 
-var update_last_successfull_query = function(query){
-	$("#last_successfull_query").attr("data-query",query);
+var update_last_successfull_query = function(query,result_text){
+	if(!((_.isUndefined(query)) || (_.isNull(query)))){
+		var successfull_query = "";
+		//console.log("query is:" + query);
+		//console.log("Result text:" + result_text);
+		_.each(query.split(" "),function(word){
+			var regex = new RegExp(word + "\\b");
+			//console.log("Regex is:" + regex);
+			if(regex.test(result_text) === true){
+				//console.log("matches.");
+				successfull_query += word + " ";
+			}
+		});
+		console.log("successfull_query is:" + successfull_query);
+		if(!(_.isEmpty(successfull_query))){
+			$("#last_successfull_query").attr("data-query",successfull_query);
+		}
+	}
 }
 
 var display_search_results = function(search_results,input){
 	 _.each(search_results,function(search_result,index,list){
-
-		    	update_last_successfull_query(input);
+	 			// upto the last matching entire word.
+	 			// not incomplete words.
+	 			// so if the search result's text is 
+	 			// buy gold on
+	 			// and your query is buy gold o
+	 			// we want to stop till buy gold.
+		    	//console.log(search_result);
 		    	text = search_result["text"];
 		    	search_result = search_result['_source'];
 		    	//search_result['suggest'].reverse();
@@ -367,7 +388,7 @@ var display_search_results = function(search_results,input){
 		    	search_result = update_bar_lengths(search_result);
 		    	search_result = add_time_to_setup(search_result);
 		    	// add the tooltip spans to each word.
-		    	
+		    	update_last_successfull_query(input,search_result.setup);
 		    	var arr = search_result.setup.split(" ");
 		    	var concat = "";
 		    	_.each(arr,function(value,index){
@@ -389,7 +410,7 @@ var display_search_results = function(search_results,input){
 
 		    	search_result = strip_period_details_from_setup(search_result);
 		    	search_result = update_falls_or_rises_text(search_result);	
-		    	console.log(search_result);
+		    	//console.log(search_result);
 		    	render_search_result(search_result);
 		    });
 }
@@ -408,7 +429,7 @@ var search_new = function(input){
 	    		return;
 	    	}
 	    	
-	    	console.log(response['results']);
+	    	//console.log(response['results']);
 	    	var search_results = response['results']['search_results'];
 
 	    	display_search_results(search_results,input);
@@ -421,13 +442,13 @@ var search_new = function(input){
 
 var search = function(input){
 
-	console.log("--------- called search with input:" + input);
+	//console.log("--------- called search with input:" + input);
 
 	var contexts_with_length = prepare_contexts(input);
 
 	
-	console.log("contexts with length are:");
-	console.log(contexts_with_length);
+	//console.log("contexts with length are:");
+	//console.log(contexts_with_length);
 
 	if(_.size(contexts_with_length) == 1){
 
