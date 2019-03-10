@@ -46,21 +46,46 @@ class Result
 
 	def self.simple_match_query(query_text)
 
+		match_query_clauses = query_text.split(" ").map{|c|
+			c = {
+				constant_score: {
+	                filter: {
+		                term: {
+		                    "complex_derivations.impacted_entity_name".to_sym => c
+		                }
+	                }
+	            }  
+=begin
+				match: {
+					"complex_derivations.impacted_entity_name".to_sym => {
+						query: c,
+						boost: 10
+					}
+				}
+=end
+			}
+		}
+
 		body = {
-			_source: ["suggest"], 
+			_source: false, 
 			query: {
 				nested: {
 					path: "complex_derivations",
 					query: {
-						match: {
-							"complex_derivations.impacted_entity_name".to_sym => query_text 
+						bool: {
+							disable_coord: true,
+							should: match_query_clauses
 						}
-					}
+					},
+					inner_hits: {}
 				}
 			}
 		}
 
+		puts JSON.pretty_generate(body)
+
 		response = gateway.client.search index: "correlations", body: body
+
 
 		response
 
@@ -183,8 +208,23 @@ class Result
 				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
 				#puts "search results becomes:"
 				#puts search_results.to_s
+				## this is the match query.
 			elsif search_results["hits"]["hits"]
-				search_results = search_results["hits"]["hits"]
+				## we want the first inner hit from each hit.
+				## to be modelled as a search result.
+				## now knock off the stats, and add the time to the impacted entity name itself.
+				search_results = search_results["hits"]["hits"].map{|hit|
+					hit = {
+						_source: {
+							suggest: [
+								{
+									input: hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["impacted_entity_name"]
+								}
+							]
+						}
+					}
+				}
+				
 			end
 
 		
@@ -213,8 +253,8 @@ class Result
 			:effective_query => effective_query
 		}
 			
-		#puts "results -----------------> "
-		#puts JSON.pretty_generate(results)
+		puts "results -----------------> "
+		puts JSON.pretty_generate(results)
 
 		results
 

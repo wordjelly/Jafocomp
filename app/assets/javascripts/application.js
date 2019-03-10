@@ -293,9 +293,12 @@ var assign_statistics = function(search_result,text){
 	
 	var stats = suggestion.input.substring(suggestion.input.indexOf("#") + 1,suggestion.input.length);
 	
-	stats = stats.split(",").slice(0,12);
-	//console.log("stats are:");
-	//console.log(stats);
+	stats = stats.split(",");
+	epoch = _.last(stats);
+	search_result.triggered_at = epoch;
+	stats = stats.slice(0,12);
+	
+	// so how to set this as the epoch.
 	
 	search_result.setup = suggestion.input.substring(0,suggestion.input.indexOf("#"));
 
@@ -336,10 +339,7 @@ var assign_statistics = function(search_result,text){
 	}
 
 	search_result.impacts.push(impact);
-	
-	search_result.triggered_at = suggestion.weight;
-
-	
+		
 }
 
 /***
