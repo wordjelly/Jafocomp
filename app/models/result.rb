@@ -55,14 +55,6 @@ class Result
 		                }
 	                }
 	            }  
-=begin
-				match: {
-					"complex_derivations.impacted_entity_name".to_sym => {
-						query: c,
-						boost: 10
-					}
-				}
-=end
 			}
 		}
 
@@ -143,18 +135,93 @@ class Result
 
 	end
 
+	def self.basic_match_query(query)
+		query_split_on_space = query.split(" ")
+		should_query_clauses = []
+	 	nested_query_clauses = []
+	 	## this should be possible, but what about the speed of this query
+	 	## that is the big problem.
+		query_split_on_space.map{|c|
+			should_query_clauses << {
+				prefix: {
+					tags: {
+						value: c
+					}
+				}
+			}
+			nested_query_clauses << {
+				prefix: 
+					{
+			            "complex_derivations.tags".to_sym => {
+			                  value: c
+			                }
+		            }
+			}
+		}
+
+		body = {
+		  _source: ["tags","preposition","epoch"],
+		  query: {
+		    bool: {
+		      must: [
+		        {
+		          bool: {
+		            should: should_query_clauses
+		          }
+		        }
+		      ],
+		      should: [
+		        {
+		          nested: {
+		            path: "complex_derivations",
+		            query: {
+                        bool: {
+                        	should: nested_query_clauses
+                        } 
+		            },
+		            inner_hits: {}
+		          } 
+		        }
+		      ]
+		    }
+		  }
+		}
+
+		search_results = gateway.client.search index: "correlations", body: body
+
+		search_results = search_results["hits"]["hits"].map{|hit|
+			
+			hit = {
+				_source: {
+					suggest: [
+						{
+							input: hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"] + "#" + hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",")
+					]
+				}
+			}
+		}
+
+	end
+
 	## default values for prefix and context are provided in the method as '' and [] respectively.
 	def self.suggest_r(args)
 		
-		puts "came to suggest_r with args"
-		puts args.to_s
+		search_results = []
+		unless args[:basic_query].blank?
+			
+			search_results = basic_match_query(args[:prefix])
 
-		args[:prefix] ||= ''
-		args[:context] ||= []
+		else
+
+			puts "came to suggest_r with args"
+			puts args.to_s
+
+			args[:prefix] ||= ''
+			args[:context] ||= []
 
 
-		body = {
-				_source: ["suggest"], 
+			body = {
+				_source: ["suggest","tags","preposition","epoch"], 
 				suggest: {
 					correlation_suggestion: {
 						text: args[:prefix],
@@ -164,88 +231,84 @@ class Result
 			            }
 					}
 				}
-		}
-
-			
-		unless args[:context].blank?
-
-			puts "tried auto suggest--->"
-
-			body = {
-				_source: ["suggest_query_payload"], 
-				suggest: {
-					correlation_suggestion: {
-						text: args[:prefix],
-						completion: {
-							contexts: {
-								"component_type" => args[:context]
-							},
-			                field: "suggest_query",
-			                size: 10
-			            }
-					}
-				}
 			}
 
+				
+			unless args[:context].blank?
 
-			query_suggestion_results = gateway.client.search index: "correlations", body: body
+				puts "tried auto suggest--->"
 
-			## we want the prefix also.
-			search_results = compound_query(args[:last_successfull_query],query_suggestion_results,args[:whole_query]) 
-			
-
-			if query_suggestion_results["suggest"]
-				query_suggestion_results = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"]
-			else
-				query_suggestion_results = []
-			end
-
-			
-
-
-			if search_results["suggest"]
-				effective_query = search_results["effective_query"]
-				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-				#puts "search results becomes:"
-				#puts search_results.to_s
-				## this is the match query.
-			elsif search_results["hits"]["hits"]
-				## we want the first inner hit from each hit.
-				## to be modelled as a search result.
-				## now knock off the stats, and add the time to the impacted entity name itself.
-				search_results = search_results["hits"]["hits"].map{|hit|
-					hit = {
-						_source: {
-							suggest: [
-								{
-									input: hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["impacted_entity_name"]
-								}
-							]
+				body = {
+					_source: ["suggest_query_payload"], 
+					suggest: {
+						correlation_suggestion: {
+							text: args[:prefix],
+							completion: {
+								contexts: {
+									"component_type" => args[:context]
+								},
+				                field: "suggest_query",
+				                size: 10
+				            }
 						}
 					}
 				}
+
+
+				query_suggestion_results = gateway.client.search index: "correlations", body: body
+
+				## we want the prefix also.
+				search_results = compound_query(args[:last_successfull_query],query_suggestion_results,args[:whole_query]) 
 				
-			end
 
-		
-		else
+				if query_suggestion_results["suggest"]
+					query_suggestion_results = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"]
+				else
+					query_suggestion_results = []
+				end
 
-			query_suggestion_results = []
+				
 
-			search_results = gateway.client.search index: "correlations", body: body
 
-			if search_results["suggest"]
-				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-				#puts "search results becomes:"
-				#puts search_results.to_s
+				if search_results["suggest"]
+					effective_query = search_results["effective_query"]
+					search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+					#puts "search results becomes:"
+					#puts search_results.to_s
+					## this is the match query.
+				elsif search_results["hits"]["hits"]
+					## we want the first inner hit from each hit.
+					## to be modelled as a search result.
+					## now knock off the stats, and add the time to the impacted entity name itself.
+					search_results = search_results["hits"]["hits"].map{|hit|
+						hit = {
+							_source: {
+								suggest: [
+									{
+										input: hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["impacted_entity_name"]
+									}
+								]
+							}
+						}
+					}
+					
+				end
+
+			
 			else
-				search_results = []
+				query_suggestion_results = []
+
+				search_results = gateway.client.search index: "correlations", body: body
+
+				if search_results["suggest"]
+					search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+				else
+					search_results = []
+				end
+
 			end
 
 		end
-
-		
-		
 
 		results = {
 			:search_results => search_results,

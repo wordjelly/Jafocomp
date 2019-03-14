@@ -66,9 +66,21 @@ var get_search_suggestions = function(text,context,last_successfull_query,whole_
 	});
 }
 
-// we take the last space delimited word.
-// check if we have an entity(and it is in the query string) otherwise break and query for that
-// and proceed.
+var do_match_query = function(input){
+	$.ajax({
+	  	url: "/search",
+	  	type: "GET",
+	  	dataType: "json",
+	  	data:{query: input, basic_query: true}, 
+	  	success: function(response){
+	  		console.log("response is:");
+	  		console.log(response);
+	  	}
+	})
+
+}
+
+
 
 
 /***

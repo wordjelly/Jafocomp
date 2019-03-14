@@ -262,6 +262,47 @@ var set_stop_losses = function(search_result){
 
 
 
+var build_setup = function(search_result){
+	var complex_string = search_result.preposition + " ";
+	
+	console.log("complex string:" + complex_string);
+
+	var time_subindicator_regexp = new RegExp(/year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/g);
+
+	if(time_subindicator_regexp.test(search_result.information) == true){
+
+		_.map(search_result.tags,function(tag,index){
+		
+			complex_string = complex_string + tag + " ";
+		
+		});
+
+	}
+	else{
+		_.map(search_result.tags,function(tag,index){
+
+			if(index == 0){
+
+			}
+			else if(index == 1){
+				complex_string =  complex_string + tag + "'s" + " ";
+			}
+			else{
+				complex_string = complex_string + tag + " ";
+			}
+		});			
+	}
+
+
+	console.log("complex string becomes:");
+	console.log(complex_string);
+
+	search_result.setup = search_result.setup + " " + complex_string;
+
+	console.log("setup becomes:");
+	console.log(search_result.setup);
+}
+
 /***
 getStats()[0] = week_total_up;
 getStats()[1] = week_total_down;
@@ -287,20 +328,28 @@ var assign_statistics = function(search_result,text){
 		});
 	}
 
+
 	search_result.suggest = [_.first(search_result.suggest)];
 	
 	var suggestion = search_result.suggest[0];
 	
-	var stats = suggestion.input.substring(suggestion.input.indexOf("#") + 1,suggestion.input.length);
-	
+	var information = suggestion.input.split("#");
+
+	//console.log("information:");
+	//console.log(information);
+
+	// so if they are stop words
+	// like sunday, quarter, year, week, last, first
+	// then we don't apply that.
+	search_result.information = information;
+	search_result.setup = "buy " + information[0].split(" ")[0];
+	var stats = information[1];
+
 	stats = stats.split(",");
-	epoch = _.last(stats);
-	search_result.triggered_at = epoch;
+	search_result.triggered_at = search_result.epoch;
 	stats = stats.slice(0,12);
 	
-	// so how to set this as the epoch.
-	
-	search_result.setup = suggestion.input.substring(0,suggestion.input.indexOf("#"));
+	build_setup(search_result);
 
 	search_result.impacts = [];
 
@@ -383,6 +432,7 @@ var display_search_results = function(search_results,input){
 		    	//console.log(search_result);
 		    	text = search_result["text"];
 		    	search_result = search_result['_source'];
+		    	
 		    	//search_result['suggest'].reverse();
 		    	assign_statistics(search_result,text);
 		    	search_result = update_bar_lengths(search_result);
@@ -398,8 +448,6 @@ var display_search_results = function(search_results,input){
 		    		else{
 		    			concat+= ("<span class='tooltip' title='test' data-name='" + value +"'> " + value + "</span>");
 		    		}
-
-		    		// "<span class=\"tooltip\" title=\"test\" data-name=\"" +  component_data_name  + "\">"
 
 		    	});
 		    	concat += "</span>";
@@ -425,7 +473,8 @@ var search_new = function(input){
 
 	    $('#search_results').html("");
 	    	if(!direct_query_has_results(response['results']['search_results'])){
-	    		expand_query(input);
+	    		//expand_query(input);
+	    		do_match_query(input);
 	    		return;
 	    	}
 	    	
@@ -559,7 +608,9 @@ and the rest will be the width for the down.
 // in the ajax call before rendering the template.
 // let's do this based on how many are positive and how many are negative.
 var update_bar_lengths = function(search_result){
-	
+	// abbreviate all indicators
+	// like williams R indicator WR indicator.
+	// 
 	var green = 0;
 	var red = 0;
 	_.each(search_result.impacts[0].statistics,function(statistic){
@@ -712,7 +763,7 @@ var add_tooltips_to_setup = function(search_result){
 }
 
 var strip_period_details_from_setup = function(search_result){
-	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+_period_end)([^<>]*?<.+?>)/g
+	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+(_\d+)?_period_end)([^<>]*?<.+?>)/g
 	search_result.setup = search_result.setup.replace(pattern,'$1 $3');
 	//pattern = /(<.+?>[^<>]*?)(st@@@)([^<>]*?<.+?>)/g;
 	//search_result.setup = search_result.setup.replace(pattern,'$1 <span class="blue-grey-text"> $3');
@@ -772,8 +823,8 @@ var quotes = {
 	"Misdirection, what the eyes see and the ears hear, the mind believes" : "Gabriel, Swordfish(2001)",
 	"Don't *ever* risk your life for an asset. If it comes down to you or them... send flowers." : "Nathan Muir, Spy Game(2001)",
 	"Man sacrifices his health in order to make money. Then he sacrifices money to recuperate his health" : "The Dalai Lama",
-	"Ah well! You will soon be dead, and then you will own just as much of this earth as will suffice to bury you." : "Hindu yogi, replying to Alexander the Great",
-	"The world is in Me. The world cannot contain Me. The universe is in Me. I cannot be confined in the Universe. Greece , Rome and Persia are in Me. The suns and stars rise and set in Me." : "Indian yogi, on being asked by Alexander the Great to accompany him to Athens."
+	"You will soon be dead, and then you will own just as much of this earth as will suffice to bury you." : "Hindu yogi, replying to Alexander the Great",
+	"Greece , Rome and Persia are in Me. The suns and stars rise and set in Me." : "Indian yogi, on being asked by Alexander the Great to accompany him to Athens."
 }
 
 // so entity icons.

@@ -29,7 +29,7 @@ class WelcomeController < ApplicationController
 			results = Result.information({:information => information})
 		else
 			# so the prefix is either the suggest_query, or the whole_Query.
-			results = Result.suggest_r({:prefix => (suggest_query || query), :whole_query => query, :context => context, :last_successfull_query => last_successfull_query})
+			results = Result.suggest_r({:prefix => (suggest_query || query), :whole_query => query, :context => context, :last_successfull_query => last_successfull_query, :basic_query => params[:basic_query]})
 		end
 
 		respond_to do |format|
@@ -42,7 +42,7 @@ class WelcomeController < ApplicationController
 
 	def permitted_params
 		## context will be a single string.
-		params.permit(:query,{:context => []},:suggest_query,:information, :last_successfull_query)
+		params.permit(:query,{:context => []},:suggest_query,:information, :last_successfull_query, :basic_query)
 	end
 
 end
