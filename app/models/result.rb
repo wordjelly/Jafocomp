@@ -187,15 +187,26 @@ class Result
 		  }
 		}
 
+		puts "query body"
+		puts body.to_s
+
 		search_results = gateway.client.search index: "correlations", body: body
 
 		search_results = search_results["hits"]["hits"].map{|hit|
-			
+				
+			puts hit.to_s
+
+			input = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",")
+
 			hit = {
 				_source: {
+					preposition: hit["_source"]["preposition"],
+					epoch: hit["_source"]["epoch"],
+					tags: hit["_source"]["tags"],
 					suggest: [
 						{
-							input: hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"] + "#" + hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",")
+							input: input
+						}
 					]
 				}
 			}

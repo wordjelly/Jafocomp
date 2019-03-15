@@ -73,8 +73,9 @@ var do_match_query = function(input){
 	  	dataType: "json",
 	  	data:{query: input, basic_query: true}, 
 	  	success: function(response){
-	  		console.log("response is:");
-	  		console.log(response);
+	  		var search_results = response['results']['search_results'];
+
+	    	display_search_results(search_results,input);
 	  	}
 	})
 

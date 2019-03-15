@@ -824,7 +824,8 @@ var quotes = {
 	"Don't *ever* risk your life for an asset. If it comes down to you or them... send flowers." : "Nathan Muir, Spy Game(2001)",
 	"Man sacrifices his health in order to make money. Then he sacrifices money to recuperate his health" : "The Dalai Lama",
 	"You will soon be dead, and then you will own just as much of this earth as will suffice to bury you." : "Hindu yogi, replying to Alexander the Great",
-	"Greece , Rome and Persia are in Me. The suns and stars rise and set in Me." : "Indian yogi, on being asked by Alexander the Great to accompany him to Athens."
+	"Greece , Rome and Persia are in Me. The suns and stars rise and set in Me." : "Indian yogi, on being asked by Alexander the Great to accompany him to Athens.",
+	"The farther backward you can look, the farther forward you can see" : "Winston Churchill"
 }
 
 // so entity icons.
