@@ -265,7 +265,7 @@ var set_stop_losses = function(search_result){
 var build_setup = function(search_result){
 	var complex_string = search_result.preposition + " ";
 	
-	console.log("complex string:" + complex_string);
+	//console.log("complex string:" + complex_string);
 
 	var time_subindicator_regexp = new RegExp(/year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/g);
 
@@ -294,13 +294,13 @@ var build_setup = function(search_result){
 	}
 
 
-	console.log("complex string becomes:");
-	console.log(complex_string);
+	//console.log("complex string becomes:");
+	//console.log(complex_string);
 
 	search_result.setup = search_result.setup + " " + complex_string;
 
-	console.log("setup becomes:");
-	console.log(search_result.setup);
+	//console.log("setup becomes:");
+	//console.log(search_result.setup);
 }
 
 /***
@@ -414,11 +414,77 @@ var update_last_successfull_query = function(query,result_text){
 				successfull_query += word + " ";
 			}
 		});
-		console.log("successfull_query is:" + successfull_query);
+		//console.log("successfull_query is:" + successfull_query);
 		if(!(_.isEmpty(successfull_query))){
 			$("#last_successfull_query").attr("data-query",successfull_query);
 		}
 	}
+}
+
+var replace_percentage_and_literal_numbers = function(search_result){
+	
+	search_result.setup = search_result.setup.replace("five","5");
+	search_result.setup = search_result.setup.replace("ten","10");
+	search_result.setup = search_result.setup.replace("twenty","20");
+	search_result.setup = search_result.setup.replace("thirty","30");
+	search_result.setup = search_result.setup.replace("forty","40");
+	search_result.setup = search_result.setup.replace("fifty","50");
+	search_result.setup = search_result.setup.replace("sixty","60");
+	search_result.setup = search_result.setup.replace("seventy","70");
+	search_result.setup = search_result.setup.replace("eighty","80");
+	search_result.setup = search_result.setup.replace("ninety","90");
+	search_result.setup = search_result.setup.replace(" percent","%");
+	return search_result;
+
+}
+
+var replace_pattern_with_icons = function(setup){
+	//console.log("setup is:");
+	//console.log(setup);
+	var pattern = new RegExp(/<.+?>[^<>]*?(up_?|down_?)+[^<>]*?<.+?>/)
+	var match = pattern.exec(setup);
+
+	if(!_.isNull(match)){
+		//console.log("------------------------------------------------------------- GOT A MATCH");
+		//console.log(match);
+		
+		//console.log("pattern text is:");
+		//console.log(pattern_text);
+		var pattern_text = match[0];
+		if(pattern_text.length > 3){
+			console.log("pattern text is:" );
+			console.log(pattern_text);
+			pattern_text = pattern_text.replace(/up/g,"<i class='material-icons'>arrow_upward</i>");
+			pattern_text = pattern_text.replace(/down/g,"<i class='material-icons'>arrow_downward</i>");
+			console.log("after replacing");
+			console.log(pattern_text);
+			setup = setup.replace(match[0],pattern_text);
+			console.log("setup after replacing:");
+			console.log(setup);
+		}
+	}
+	//var up_post = new RegExp(/(up)_(up_down)/g);
+	//setup = setup.replace(up_post,"<i class='material-icons'>arrow_upward</i>$2");
+	//var pre_down = new RegExp(/(up|down)_(down)/g);
+	//setup = setup.replace(pre_down,"$1<i class='material-icons'>arrow_downward</i>");
+	//var down_post = new RegExp(/(down)_(up_down)/g);
+	//setup = setup.replace(down_post,"<i class='material-icons'>arrow_downward</i>$2");
+	return setup;
+}
+
+var shrink_indicators = function(setup){
+	setup = setup.replace("stochastic_oscillator_k_indicator","SOK_indicator");
+	setup = setup.replace("stochastic_oscillator_d_indicator","SOD_indicator");
+	setup = setup.replace("average_directional_movement_indicator","ADM_indicator");
+	setup = setup.replace("double_ema_indicator","DEMA_indicator");
+	setup = setup.replace("awesome_oscillator_indicator","AO_indicator");
+	setup = setup.replace("triple_ema_indicator","TEMA_indicator");
+	setup = setup.replace("single_ema_indicator","SEMA_indicator");
+	setup = setup.replace("moving_average_convergence_divergence","MACD_indicator");
+	setup = setup.replace("acceleration_deceleration_indicator","ACDC_indicator");
+	setup = setup.replace("relative_strength_indicator","RSI_indicator");
+	setup = setup.replace("williams_r_indicator","WR_indicator");
+	return setup;
 }
 
 var display_search_results = function(search_results,input){
@@ -436,9 +502,14 @@ var display_search_results = function(search_results,input){
 		    	//search_result['suggest'].reverse();
 		    	assign_statistics(search_result,text);
 		    	search_result = update_bar_lengths(search_result);
+		    	search_result = convert_n_day_change_to_superscript(search_result);
+		    	search_result = replace_percentage_and_literal_numbers(search_result);
 		    	search_result = add_time_to_setup(search_result);
 		    	// add the tooltip spans to each word.
 		    	update_last_successfull_query(input,search_result.setup);
+		    	
+		    	search_result.setup = shrink_indicators(search_result.setup);
+		    	
 		    	var arr = search_result.setup.split(" ");
 		    	var concat = "";
 		    	_.each(arr,function(value,index){
@@ -454,8 +525,10 @@ var display_search_results = function(search_results,input){
 		    	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
 				//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
 				
-				search_result.setup = concat;				
+				search_result.setup = concat;	
 
+				//search_result.setup = replace_pattern_with_icons(search_result.setup);	
+				
 		    	search_result = strip_period_details_from_setup(search_result);
 		    	search_result = update_falls_or_rises_text(search_result);	
 		    	//console.log(search_result);
@@ -564,8 +637,8 @@ var search = function(input){
 		            	if(!_.isEmpty(result["information_link"])){
 		            		console.log("there is an information link");
 		            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
-		            		console.log("link string becomes:");
-		            		console.log(link_string);
+		            		//console.log("link string becomes:");
+		            		//console.log(link_string);
 		            	}
 		            	
 		            	var content = title_string + content_string + link_string
@@ -762,13 +835,34 @@ var add_tooltips_to_setup = function(search_result){
 	return search_result;
 }
 
+var convert_n_day_change_to_superscript = function(search_result){
+	var pattern = /(\d+)\sday\schange/
+	var match = pattern.exec(search_result.setup);
+	search_result.setup = search_result.setup.replace(pattern,'');
+	if(!_.isNull(match)){
+		search_result.setup = search_result.setup + "<sup>" + match[1] + "</sup>";
+	}
+	return search_result;
+}
+
+
 var strip_period_details_from_setup = function(search_result){
+		
 	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+(_\d+)?_period_end)([^<>]*?<.+?>)/g
-	search_result.setup = search_result.setup.replace(pattern,'$1 $3');
-	//pattern = /(<.+?>[^<>]*?)(st@@@)([^<>]*?<.+?>)/g;
-	//search_result.setup = search_result.setup.replace(pattern,'$1 <span class="blue-grey-text"> $3');
-	//pattern = /(<.+?>[^<>]*?)(en@@@)([^<>]*?<.+?>)/g;
-	//search_result.setup = search_result.setup.replace(pattern,'$1 </span> $3');
+	
+	var match = pattern.exec(search_result.setup);
+	if(!_.isNull(match)){
+		//console.log("match is:");
+		//console.log(match);
+		if(match.length == 5){
+			search_result.setup = search_result.setup.replace(pattern,'$1 $4');
+		}
+		else{
+			//search_result.setup = match[1] + match[3];
+			search_results.setup = search_result.setup.replace(pattern,'$1 $3');
+		}
+	}
+	
 	return search_result;
 }
 

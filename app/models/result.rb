@@ -194,7 +194,7 @@ class Result
 
 		search_results = search_results["hits"]["hits"].map{|hit|
 				
-			puts hit.to_s
+			#puts hit.to_s
 
 			input = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",")
 
