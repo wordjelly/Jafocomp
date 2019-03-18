@@ -488,6 +488,7 @@ var shrink_indicators = function(setup){
 }
 
 var display_search_results = function(search_results,input){
+	 $('#search_results').html("");
 	 _.each(search_results,function(search_result,index,list){
 	 			// upto the last matching entire word.
 	 			// not incomplete words.

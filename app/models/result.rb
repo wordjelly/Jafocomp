@@ -137,15 +137,18 @@ class Result
 
 	def self.basic_match_query(query)
 		query_split_on_space = query.split(" ")
+		
 		should_query_clauses = []
 	 	nested_query_clauses = []
 	 	## this should be possible, but what about the speed of this query
 	 	## that is the big problem.
-		query_split_on_space.map{|c|
+	 	total_terms = query_split_on_space.size
+		query_split_on_space.each_with_index.map{|c,i|
 			should_query_clauses << {
 				prefix: {
 					tags: {
-						value: c
+						value: c,
+						boost: i*10
 					}
 				}
 			}
@@ -153,7 +156,8 @@ class Result
 				prefix: 
 					{
 			            "complex_derivations.tags".to_sym => {
-			                  value: c
+			                  value: c,
+			                  boost: (total_terms - i)*10
 			                }
 		            }
 			}
