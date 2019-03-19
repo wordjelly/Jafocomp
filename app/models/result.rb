@@ -192,13 +192,13 @@ class Result
 		}
 
 		puts "query body"
-		puts body.to_s
+		puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
 
 		search_results = search_results["hits"]["hits"].map{|hit|
 				
-			#puts hit.to_s
+			puts hit.to_s
 
 			input = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",")
 
@@ -222,33 +222,28 @@ class Result
 	def self.suggest_r(args)
 		
 		search_results = []
-		unless args[:basic_query].blank?
-			
-			search_results = basic_match_query(args[:prefix])
+		
+		puts "came to suggest_r with args"
+		puts args.to_s
 
-		else
+		args[:prefix] ||= ''
+		args[:context] ||= []
 
-			puts "came to suggest_r with args"
-			puts args.to_s
-
-			args[:prefix] ||= ''
-			args[:context] ||= []
-
-
-			body = {
-				_source: ["suggest","tags","preposition","epoch"], 
-				suggest: {
-					correlation_suggestion: {
-						text: args[:prefix],
-						completion: {
-			                field: "suggest",
-			                size: 10
-			            }
-					}
+		body = {
+			_source: ["suggest","tags","preposition","epoch"], 
+			suggest: {
+				correlation_suggestion: {
+					text: args[:prefix],
+					completion: {
+		                field: "suggest",
+		                size: 10
+		            }
 				}
 			}
+		}
 
-				
+
+=begin			
 			unless args[:context].blank?
 
 				puts "tried auto suggest--->"
@@ -311,28 +306,36 @@ class Result
 
 			
 			else
-				query_suggestion_results = []
+=end
+			query_suggestion_results = []
 
-				search_results = gateway.client.search index: "correlations", body: body
+			search_results = gateway.client.search index: "correlations", body: body
 
-				if search_results["suggest"]
-					search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-				else
-					search_results = []
-				end
-
+			if search_results["suggest"]
+				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+			else
+				search_results = []
 			end
+
+#			end
+
+		#end
+
+		if search_results.blank?
+
+			## now we have a situation where we have to fall back onto the ngram query.
+			search_results = basic_match_query(args[:prefix])
 
 		end
 
 		results = {
 			:search_results => search_results,
 			:query_suggestion_results => query_suggestion_results,
-			:effective_query => effective_query
+			:effective_query => nil
 		}
-			
-		puts "results -----------------> "
-		puts JSON.pretty_generate(results)
+	
+		#puts "results -----------------> "
+		#puts JSON.pretty_generate(results)
 
 		results
 

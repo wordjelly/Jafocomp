@@ -10,6 +10,7 @@ class WelcomeController < ApplicationController
 
 
 	def search
+		#sleep(10)
 		puts "params are:"
 		puts params.to_s
 		puts "permitted params are:"

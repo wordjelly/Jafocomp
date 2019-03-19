@@ -60,175 +60,7 @@ var render_search_result = function(search_result){
 	$("time.timeago").timeago();
 }
 
-var prepare_contexts = function(input){
-	
-	var existing_contexts = JSON.parse($("#top_result_contexts").attr("data-context"));
-	
-	
-	var existing_contexts_object = null;
-	
-	
-	var existing_contexts_object_values = _.map(existing_contexts,function(e){
-		return {
-			"words" : e.split(/\:/),
-			"length" : e.length,
-			"score" : 0,
-			"word_mapping" : {},
-			"original_key" : e
-		}
-	});
 
-	existing_contexts_object = _.object(existing_contexts,existing_contexts_object_values);
-	
-
-	// remove multiple spaces
-	var context = input.replace(/\s{2}/g,'');
-	
-	// split on space.
-	context = context.split(/\s/);
-	
-	// take everything before the space
-	context = context.slice(0,-1);
-	
-	// get rid of the stopwords
-	context = _.reject(context, function(element){
-		_.has(stopwords,element);
-	});
-	
-	// sort alphabetically
-	//context.sort();
-	
-
-	//console.log("sorted context:");
-	//console.log(context);
-	
-	console.log("context is:" + context);
-	console.log("existing contexts object:");
-	console.log(existing_contexts_object);
-
-
-	// basically we are scoring the existing contexts for congruence with all the words before the last word in the currently typed search string
-	// we take each word(Except) the penultimate in the currently typed search string, and check it for being a part of an existing context.
-	// if it is found in an existing context, we increment hte score of that context in the contexts_object, and add the current word as a mapping
-	_.each(context,function(word){
-		for(key in existing_contexts_object){
-			_.each(existing_contexts_object[key]["words"],function(eword){
-				if(eword.toLowerCase().indexOf(word.toLowerCase()) != -1){
-					existing_contexts_object[key]["score"] += 1
-					if(!_.has(existing_contexts_object[key]["word_mapping"],word)){
-						existing_contexts_object[key]["word_mapping"][word] = eword;
-					}
-				}
-			});
-		}
-	});
-	// the score may be same, we use the length as a decimal.
-	for(key in existing_contexts_object){
-		existing_contexts_object[key]["score"] = existing_contexts_object[key]["score"] + (1/existing_contexts_object[key]["length"]);
-	}
-
-	// now sort by the best one.
-	// and what do you want of them.
-	var sorted_values = _.sortBy(_.values(existing_contexts_object), function(o) { return -o["score"]; });
-
-	console.log("sorted values are:");
-	console.log(sorted_values);
-
-	var original_word_wordgrams = [];
-	// go over the context words now, 
-	// and get their mapped values from the first one of the sorted vlaues
-	// that is one context
-	// the other context is the first sorted value "original key"
-	// and those are the two contexts for the query.
-	// basically the scoring went wrong here.
-	if(!_.isEmpty(sorted_values)){
-		var first_sorted_value = _.first(sorted_values);
-
-		context = _.map(context,function(word){
-			console.log("mapping context word:" + word);
-			var first_matching_word =  _.first(_.filter(first_sorted_value["words"],function(ww){
-				console.log("ww is:" + ww);
-
-				return (ww.toLowerCase().indexOf(word.toLowerCase()) != -1);
-			}));
-			console.log("first matching word:" + first_matching_word);
-			if (_.isNull(first_matching_word)){
-				console.log("returning null");
-				return null;
-			}
-			else{
-				console.log("returning first matching word:" + first_matching_word);
-				return first_matching_word;
-			}
-		});
-
-		context = _.reject(context,function(w){
-			return _.isNull(w);
-		});
-
-		original_word_wordgrams = prepare_wordgrams(first_sorted_value["words"]);
-
-	}
-	context.sort();
-	
-	//console.log("context finally becomes:");
-	//console.log(context);
-
-	/***
-	make wordgrams from the assembled context
-	***/
-	wordgrams = prepare_wordgrams(context);
-
-	// use the original words and prepare another wordgram ?
-	// 
-	
-
-	//var wordgrams_united = _.union(wordgrams,original_word_wordgrams);
-
-	//return _.object(wordgrams_united,_.map(wordgrams_united,function(k){
-	//	return k.length;
-	//}));	
-	return _.uniq(original_word_wordgrams);
-}
-
-/***
-returns the stop loss, with the least amount of loss.
-***/
-var get_most_economic_stop_loss = function(statistic){
-	return _.sortBy(statistic.stop_losses,function(sl){
-		return sl.maximum_loss;
-	})[0];
-}
-
-/****
-@param[Array] context : array of contexts(individual words)
-@return[Array] wordgrams : array of wordgrams.
-@eg: given context as ["happy","new","year"], will generate
-["happy","happy:new","happy:new:year","new","new:year"]
-****/
-var prepare_wordgrams = function(context){
-	var wordgrams = [];
-	console.log("contexts coming into prepare wordgrams");
-	console.log(context);
-	_.each(context,function(word,key,context){
-		var chain = word;
-		wordgrams.push(chain);
-		console.log("chain is: " + chain);
-		_.each(context,function(w,k,c){
-			if(k > key){
-				chain = chain + ":" + w;
-				console.log("chain becomes:" + chain);
-				wordgrams.push(chain);
-			}
-		});
-	});
-	return wordgrams;
-}
-
-var prepare_query = function(input){
-	// the last word after the space becomes the prefix input.
-
-}
 
 function humanize(str) {
   var frags = str.split('_');
@@ -252,13 +84,6 @@ var prepare_information_title = function(information_title){
 	return humanize(information_title);
 }
 
-
-var set_stop_losses = function(search_result){
-	_.map(search_result.impacts[0].statistics,function(statistic){
-		statistic.most_economic_stop_loss = get_most_economic_stop_loss(statistic);
-	});
-	return search_result;
-}
 
 
 
@@ -391,101 +216,11 @@ var assign_statistics = function(search_result,text){
 		
 }
 
-/***
-continue from here.
-***/
-var add_color_to_complex = function(search_result,delimiter){
-	var regex = new RegExp(/(buy\s[A-Z\_\\\/a-z\-0-9]+)\s/);
-	console.log(search_result.setup);
-	var result = regex.exec(search_result.setup);
-	search_result.setup = result[0] + "st" + delimiter + search_result.setup.substring(result[0].length,search_result.setup.length) + "en" + delimiter;
-}
 
-var update_last_successfull_query = function(query,result_text){
-	if(!((_.isUndefined(query)) || (_.isNull(query)))){
-		var successfull_query = "";
-		//console.log("query is:" + query);
-		//console.log("Result text:" + result_text);
-		_.each(query.split(" "),function(word){
-			var regex = new RegExp(word + "\\b");
-			//console.log("Regex is:" + regex);
-			if(regex.test(result_text) === true){
-				//console.log("matches.");
-				successfull_query += word + " ";
-			}
-		});
-		//console.log("successfull_query is:" + successfull_query);
-		if(!(_.isEmpty(successfull_query))){
-			$("#last_successfull_query").attr("data-query",successfull_query);
-		}
-	}
-}
 
-var replace_percentage_and_literal_numbers = function(search_result){
-	
-	search_result.setup = search_result.setup.replace("five","5");
-	search_result.setup = search_result.setup.replace("ten","10");
-	search_result.setup = search_result.setup.replace("twenty","20");
-	search_result.setup = search_result.setup.replace("thirty","30");
-	search_result.setup = search_result.setup.replace("forty","40");
-	search_result.setup = search_result.setup.replace("fifty","50");
-	search_result.setup = search_result.setup.replace("sixty","60");
-	search_result.setup = search_result.setup.replace("seventy","70");
-	search_result.setup = search_result.setup.replace("eighty","80");
-	search_result.setup = search_result.setup.replace("ninety","90");
-	search_result.setup = search_result.setup.replace(" percent","%");
-	return search_result;
 
-}
 
-var replace_pattern_with_icons = function(setup){
-	//console.log("setup is:");
-	//console.log(setup);
-	var pattern = new RegExp(/<.+?>[^<>]*?(up_?|down_?)+[^<>]*?<.+?>/)
-	var match = pattern.exec(setup);
 
-	if(!_.isNull(match)){
-		//console.log("------------------------------------------------------------- GOT A MATCH");
-		//console.log(match);
-		
-		//console.log("pattern text is:");
-		//console.log(pattern_text);
-		var pattern_text = match[0];
-		if(pattern_text.length > 3){
-			console.log("pattern text is:" );
-			console.log(pattern_text);
-			pattern_text = pattern_text.replace(/up/g,"<i class='material-icons'>arrow_upward</i>");
-			pattern_text = pattern_text.replace(/down/g,"<i class='material-icons'>arrow_downward</i>");
-			console.log("after replacing");
-			console.log(pattern_text);
-			setup = setup.replace(match[0],pattern_text);
-			console.log("setup after replacing:");
-			console.log(setup);
-		}
-	}
-	//var up_post = new RegExp(/(up)_(up_down)/g);
-	//setup = setup.replace(up_post,"<i class='material-icons'>arrow_upward</i>$2");
-	//var pre_down = new RegExp(/(up|down)_(down)/g);
-	//setup = setup.replace(pre_down,"$1<i class='material-icons'>arrow_downward</i>");
-	//var down_post = new RegExp(/(down)_(up_down)/g);
-	//setup = setup.replace(down_post,"<i class='material-icons'>arrow_downward</i>$2");
-	return setup;
-}
-
-var shrink_indicators = function(setup){
-	setup = setup.replace("stochastic_oscillator_k_indicator","SOK_indicator");
-	setup = setup.replace("stochastic_oscillator_d_indicator","SOD_indicator");
-	setup = setup.replace("average_directional_movement_indicator","ADM_indicator");
-	setup = setup.replace("double_ema_indicator","DEMA_indicator");
-	setup = setup.replace("awesome_oscillator_indicator","AO_indicator");
-	setup = setup.replace("triple_ema_indicator","TEMA_indicator");
-	setup = setup.replace("single_ema_indicator","SEMA_indicator");
-	setup = setup.replace("moving_average_convergence_divergence","MACD_indicator");
-	setup = setup.replace("acceleration_deceleration_indicator","ACDC_indicator");
-	setup = setup.replace("relative_strength_indicator","RSI_indicator");
-	setup = setup.replace("williams_r_indicator","WR_indicator");
-	return setup;
-}
 
 var display_search_results = function(search_results,input){
 	 $('#search_results').html("");
@@ -507,7 +242,7 @@ var display_search_results = function(search_results,input){
 		    	search_result = replace_percentage_and_literal_numbers(search_result);
 		    	search_result = add_time_to_setup(search_result);
 		    	// add the tooltip spans to each word.
-		    	update_last_successfull_query(input,search_result.setup);
+		    	//update_last_successfull_query(input,search_result.setup);
 		    	
 		    	search_result.setup = shrink_indicators(search_result.setup);
 		    	
@@ -515,10 +250,10 @@ var display_search_results = function(search_results,input){
 		    	var concat = "";
 		    	_.each(arr,function(value,index){
 		    		if(index == 2){
-		    			concat+= ("<span class='blue-grey-text'>"+ "<span class='tooltip' title='test' data-name='" + value +"'> " + value + "</span>");
+		    			concat+= ("<span class='blue-grey-text'>"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
 		    		}
 		    		else{
-		    			concat+= ("<span class='tooltip' title='test' data-name='" + value +"'> " + value + "</span>");
+		    			concat+= ("<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
 		    		}
 
 		    	});
@@ -535,33 +270,126 @@ var display_search_results = function(search_results,input){
 		    	//console.log(search_result);
 		    	render_search_result(search_result);
 		    });
+
+	 		$('.tooltip').tooltipster({
+			    content: 'Loading...',
+			    contentAsHTML: true,
+	    		interactive: true,
+			    // 'instance' is basically the tooltip. More details in the "Object-oriented Tooltipster" section.
+			    functionBefore: function(instance, helper) {
+			        
+			        var $origin = $(helper.origin);
+
+			        // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
+			        if ($origin.data('loaded') !== true) {
+
+			        	//console.log(instance);
+
+			            $.get('/search',{information: $origin.attr("data-name")}).done(function(data) {
+
+			            	result = data["results"];
+
+			            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
+
+			            	content_string = result["information_description"] + "<br>";
+
+			            	link_string = '';
+
+			            	if(!_.isEmpty(result["information_link"])){
+			            		console.log("there is an information link");
+			            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
+			            		//console.log("link string becomes:");
+			            		//console.log(link_string);
+			            	}
+			            	
+			            	var content = title_string + content_string + link_string
+
+			            	console.log("content" + content);
+
+			                instance.content(content);
+			               
+			                $origin.data('loaded', true);
+			            });
+			        }
+			    }
+			});
+
+
+}
+
+var query_pending = function(input){
+	var already_running_query = $("#already_running_query").attr("data-already-running-query");
+	//console.log("already running query is:");
+	//console.log(already_running_query);
+	if(!_.isEmpty(already_running_query)){
+		$("#queued_query").attr("data-queued-query",input);
+		return true;
+	}
+	else{	
+		return false;
+	}
 }
 
 var search_new = function(input){
-	$.ajax({
-	  	url: "/search",
-	  	type: "GET",
-	  	dataType: "json",
-	  	data:{query: input}, 
-	  	success: function(response){
+	if(query_pending(input) == true){
 
-	    $('#search_results').html("");
-	    	if(!direct_query_has_results(response['results']['search_results'])){
-	    		//expand_query(input);
-	    		do_match_query(input);
-	    		return;
-	    	}
-	    	
-	    	//console.log(response['results']);
-	    	var search_results = response['results']['search_results'];
+	} 
+	else{
+		console.log("no pending query");
+		$.ajax({
+		  	url: "/search",
+		  	type: "GET",
+		  	dataType: "json",
+		  	data:{query: input},
+		  	beforeSend: function(){
+		  	  //console.log("setting already running query");
+		      $("#already_running_query").attr("data-already-running-query",input);
+		    }, 
+		  	success: function(response){
 
-	    	display_search_results(search_results,input);
-		   
-		}
-	});
+		    	$('#search_results').html("");
+		    	
+		    	var search_results = response['results']['search_results'];
 
+		    	display_search_results(search_results,input);
+
+			},
+			complete: function(){
+				$("#already_running_query").attr("data-already-running-query","");
+				//console.log("unsetting already running query");
+				//console.log($("#queued_query").attr("data-queued-query"));
+				if(!_.isEmpty($("#queued_query").attr("data-queued-query"))){
+					//console.log("firing search request again for queued query.");
+					var queued_query = $("#queued_query").attr("data-queued-query");
+					$("#queued_query").attr("data-queued-query","");
+					search_new(queued_query);
+				}
+			}
+		});
+	}
 }
-// now add the impacts and from tomorrow start developing the springapp for a live online version
+
+
+/***
+var update_last_successfull_query = function(query,result_text){
+	if(!((_.isUndefined(query)) || (_.isNull(query)))){
+		var successfull_query = "";
+		//console.log("query is:" + query);
+		//console.log("Result text:" + result_text);
+		_.each(query.split(" "),function(word){
+			var regex = new RegExp(word + "\\b");
+			//console.log("Regex is:" + regex);
+			if(regex.test(result_text) === true){
+				//console.log("matches.");
+				successfull_query += word + " ";
+			}
+		});
+		//console.log("successfull_query is:" + successfull_query);
+		if(!(_.isEmpty(successfull_query))){
+			$("#last_successfull_query").attr("data-query",successfull_query);
+		}
+	}
+}
 
 var search = function(input){
 
@@ -611,49 +439,7 @@ var search = function(input){
 	    	
 	    });
 
-	    $('.tooltip').tooltipster({
-		    content: 'Loading...',
-		    contentAsHTML: true,
-    		interactive: true,
-		    // 'instance' is basically the tooltip. More details in the "Object-oriented Tooltipster" section.
-		    functionBefore: function(instance, helper) {
-		        
-		        var $origin = $(helper.origin);
-
-		        // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
-		        if ($origin.data('loaded') !== true) {
-
-		        	//console.log(instance);
-
-		            $.get('/search',{information: $origin.attr("data-name")}).done(function(data) {
-
-		            	result = data["results"];
-
-		            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
-
-		            	content_string = result["information_description"] + "<br>";
-
-		            	link_string = '';
-
-		            	if(!_.isEmpty(result["information_link"])){
-		            		console.log("there is an information link");
-		            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
-		            		//console.log("link string becomes:");
-		            		//console.log(link_string);
-		            	}
-		            	
-		            	var content = title_string + content_string + link_string
-
-		            	console.log("content" + content);
-
-		                instance.content(content);
-		               
-		                $origin.data('loaded', true);
-		            });
-		        }
-		    }
-		});
-
+	  
 
 	  }
 	});
@@ -662,6 +448,8 @@ var search = function(input){
 	
 
 }
+***/
+
 
 /*****************
 will return an object
@@ -763,6 +551,104 @@ var add_time_to_setup = function(search_result){
 	return search_result;
 }
 
+var convert_n_day_change_to_superscript = function(search_result){
+	var pattern = /(\d+)\sday\schange/
+	var match = pattern.exec(search_result.setup);
+	search_result.setup = search_result.setup.replace(pattern,'');
+	if(!_.isNull(match)){
+		search_result.setup = search_result.setup + "<sup>" + match[1] + "</sup>";
+	}
+	return search_result;
+}
+
+
+var strip_period_details_from_setup = function(search_result){
+		
+	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+(_\d+)?_period_end)([^<>]*?<.+?>)/g
+	
+	var match = pattern.exec(search_result.setup);
+	if(!_.isNull(match)){
+		//console.log("match is:");
+		//console.log(match);
+		if(match.length == 5){
+			search_result.setup = search_result.setup.replace(pattern,'$1 $4');
+		}
+		else{
+			//search_result.setup = match[1] + match[3];
+			search_results.setup = search_result.setup.replace(pattern,'$1 $3');
+		}
+	}
+	
+	return search_result;
+}
+
+var replace_percentage_and_literal_numbers = function(search_result){
+	
+	search_result.setup = search_result.setup.replace("five","5");
+	search_result.setup = search_result.setup.replace("ten","10");
+	search_result.setup = search_result.setup.replace("twenty","20");
+	search_result.setup = search_result.setup.replace("thirty","30");
+	search_result.setup = search_result.setup.replace("forty","40");
+	search_result.setup = search_result.setup.replace("fifty","50");
+	search_result.setup = search_result.setup.replace("sixty","60");
+	search_result.setup = search_result.setup.replace("seventy","70");
+	search_result.setup = search_result.setup.replace("eighty","80");
+	search_result.setup = search_result.setup.replace("ninety","90");
+	search_result.setup = search_result.setup.replace(" percent","%");
+	return search_result;
+
+}
+
+var replace_pattern_with_icons = function(setup){
+	//console.log("setup is:");
+	//console.log(setup);
+	var pattern = new RegExp(/<.+?>[^<>]*?(up_?|down_?)+[^<>]*?<.+?>/)
+	var match = pattern.exec(setup);
+
+	if(!_.isNull(match)){
+		//console.log("------------------------------------------------------------- GOT A MATCH");
+		//console.log(match);
+		
+		//console.log("pattern text is:");
+		//console.log(pattern_text);
+		var pattern_text = match[0];
+		if(pattern_text.length > 3){
+			console.log("pattern text is:" );
+			console.log(pattern_text);
+			pattern_text = pattern_text.replace(/up/g,"<i class='material-icons'>arrow_upward</i>");
+			pattern_text = pattern_text.replace(/down/g,"<i class='material-icons'>arrow_downward</i>");
+			console.log("after replacing");
+			console.log(pattern_text);
+			setup = setup.replace(match[0],pattern_text);
+			console.log("setup after replacing:");
+			console.log(setup);
+		}
+	}
+	//var up_post = new RegExp(/(up)_(up_down)/g);
+	//setup = setup.replace(up_post,"<i class='material-icons'>arrow_upward</i>$2");
+	//var pre_down = new RegExp(/(up|down)_(down)/g);
+	//setup = setup.replace(pre_down,"$1<i class='material-icons'>arrow_downward</i>");
+	//var down_post = new RegExp(/(down)_(up_down)/g);
+	//setup = setup.replace(down_post,"<i class='material-icons'>arrow_downward</i>$2");
+	return setup;
+}
+
+var shrink_indicators = function(setup){
+	setup = setup.replace("stochastic_oscillator_k_indicator","SOK_indicator");
+	setup = setup.replace("stochastic_oscillator_d_indicator","SOD_indicator");
+	setup = setup.replace("average_directional_movement_indicator","ADM_indicator");
+	setup = setup.replace("double_ema_indicator","DEMA_indicator");
+	setup = setup.replace("awesome_oscillator_indicator","AO_indicator");
+	setup = setup.replace("triple_ema_indicator","TEMA_indicator");
+	setup = setup.replace("single_ema_indicator","SEMA_indicator");
+	setup = setup.replace("moving_average_convergence_divergence","MACD_indicator");
+	setup = setup.replace("acceleration_deceleration_indicator","ACDC_indicator");
+	setup = setup.replace("relative_strength_indicator","RSI_indicator");
+	setup = setup.replace("williams_r_indicator","WR_indicator");
+	return setup;
+}
+
+
 // @param[String] string : the string into which the snippet is to be inserted
 // @param[String] snippet : the snippet to be inserted
 // @param[String] index : the index at which the snippet is to be inserted
@@ -836,36 +722,7 @@ var add_tooltips_to_setup = function(search_result){
 	return search_result;
 }
 
-var convert_n_day_change_to_superscript = function(search_result){
-	var pattern = /(\d+)\sday\schange/
-	var match = pattern.exec(search_result.setup);
-	search_result.setup = search_result.setup.replace(pattern,'');
-	if(!_.isNull(match)){
-		search_result.setup = search_result.setup + "<sup>" + match[1] + "</sup>";
-	}
-	return search_result;
-}
 
-
-var strip_period_details_from_setup = function(search_result){
-		
-	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+(_\d+)?_period_end)([^<>]*?<.+?>)/g
-	
-	var match = pattern.exec(search_result.setup);
-	if(!_.isNull(match)){
-		//console.log("match is:");
-		//console.log(match);
-		if(match.length == 5){
-			search_result.setup = search_result.setup.replace(pattern,'$1 $4');
-		}
-		else{
-			//search_result.setup = match[1] + match[3];
-			search_results.setup = search_result.setup.replace(pattern,'$1 $3');
-		}
-	}
-	
-	return search_result;
-}
 
 $(document).on('click','.see_more',function(event){
 	$(this).parent().prev('.card-content').find('.additional_info').first().slideToggle('fast',function(){
