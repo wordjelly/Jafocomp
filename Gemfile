@@ -25,6 +25,9 @@ gem 'mongoid'
 gem 'wj-mongoid-elasticsearch', '~> 0.0.4'
 gem 'elasticsearch-persistence'
 gem 'hashie'
+#gem "activejob", ">= 4.2.11"
+#gem "actionview", ">= 4.2.11.1"
+
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

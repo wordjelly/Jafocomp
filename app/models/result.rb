@@ -23,21 +23,28 @@ class Result
 		args ||= {:information => ''}
 		args[:information] ||= ''
 
-		body = {
-			query: {
-				match: {
-					information_name: {
-						query: args[:information]
-					}
+		body = 
+		{
+			_source: ["information_name","information_description","information_link"], 
+			suggest: {
+				correlation_suggestion: {
+					text: args[:information],
+					completion: {
+		                field: "suggest_query",
+		                size: 10,
+		                contexts: {
+		                    component_type: ["entity","subindicator","indicator"]
+		                }
+		            }
 				}
 			}
 		}
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		#puts JSON.pretty_generate(results)
-		if results["hits"]
-			results["hits"]["hits"][0]["_source"]
+		puts JSON.pretty_generate(results)
+		if results["suggest"]
+			results["suggest"]["correlation_suggestion"][0]["options"][0]
 		else
 			[]
 		end

@@ -217,8 +217,53 @@ var assign_statistics = function(search_result,text){
 }
 
 
+/**
+will analyze the siblings of the origin.
+if indicator is before it, then it will send everything after indicator -> as the query.
+if indicator is in it, then it will send only it.
+if indicator is after it, 
+***/
+var prepare_query_for_tooltip_search = function(origin){
+	var indicator_element = null;
+	var subindicator_name = [];
+	var query = null;
+	if(origin.data("name").indexOf("indicator") != -1){
+		query = origin.data("name");
+	}
+	else{
+		origin.prevAll().each(function(el){
+			if(el.data("name").indexOf("indicator") != -1){
+				
+				indicator_element = el;
+				break;
+			}
+			else{
+				subindicator_name.push(el.data("name"));
+			}
+		});
+	}
+
+	if(!_.isNull(indicator_element)){
+		query = Array.reverse(subindicator_name).join(" ");
+		origin.nextAll().each(function(el){
+			// unless it has a bracket, or is a superscript.
+			if(el.prop("nodeName").indexOf("sup") == -1){
+				query = query + " " + el.data("name");
+			}
+			// add time later
+			// and manage sup in one of the data-names.
 
 
+		})
+	}
+	else{
+		// query  the element as long as its not a stopword.
+		if(!_.has(stopwords,origin.data("name"))){
+			query = origin.data("name");
+		}
+	}
+	return query;
+}
 
 
 
@@ -240,9 +285,11 @@ var display_search_results = function(search_results,input){
 		    	search_result = update_bar_lengths(search_result);
 		    	search_result = convert_n_day_change_to_superscript(search_result);
 		    	search_result = replace_percentage_and_literal_numbers(search_result);
-		    	search_result = add_time_to_setup(search_result);
+		    	
 		    	// add the tooltip spans to each word.
 		    	//update_last_successfull_query(input,search_result.setup);
+		    	// only the thing about the sup is left.
+		    	// 
 		    	
 		    	search_result.setup = shrink_indicators(search_result.setup);
 		    	
@@ -267,6 +314,7 @@ var display_search_results = function(search_results,input){
 				
 		    	search_result = strip_period_details_from_setup(search_result);
 		    	search_result = update_falls_or_rises_text(search_result);	
+		    	search_result = add_time_to_setup(search_result);
 		    	//console.log(search_result);
 		    	render_search_result(search_result);
 		    });
@@ -280,14 +328,22 @@ var display_search_results = function(search_results,input){
 			        
 			        var $origin = $(helper.origin);
 
+			       //prepare_query_for_tooltip_search($origin);
+
 			        // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
 			        if ($origin.data('loaded') !== true) {
 
-			        	//console.log(instance);
+			        	// so origin is the span element.
+			        	// first check if it has indicator before it or after it.
+			        	// if indicator is before, then it is a subindicator, and we take everything after it.
+			        	// but the exception so close, 
 
-			            $.get('/search',{information: $origin.attr("data-name")}).done(function(data) {
+			            $.get('/search',{information: prepare_query_for_tooltip_search($origin)}).done(function(data) {
 
-			            	result = data["results"];
+			            	console.log("data is:");
+			            	console.log(data);
+
+			            	result = data["results"]["_source"];
 
 			            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
 
@@ -298,8 +354,6 @@ var display_search_results = function(search_results,input){
 			            	if(!_.isEmpty(result["information_link"])){
 			            		console.log("there is an information link");
 			            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
-			            		//console.log("link string becomes:");
-			            		//console.log(link_string);
 			            	}
 			            	
 			            	var content = title_string + content_string + link_string
