@@ -227,28 +227,44 @@ var prepare_query_for_tooltip_search = function(origin){
 	var indicator_element = null;
 	var subindicator_name = [];
 	var query = null;
-	if(origin.data("name").indexOf("indicator") != -1){
+	if(origin.data("name").indexOf("_indicator") != -1){
+		console.log("making query from indicator");
 		query = origin.data("name");
 	}
 	else{
-		origin.prevAll().each(function(el){
-			if(el.data("name").indexOf("indicator") != -1){
-				
-				indicator_element = el;
-				break;
-			}
-			else{
-				subindicator_name.push(el.data("name"));
+		origin.prevAll().each(function(key,el){
+			console.log(el);
+			console.log($(el).data("name"));
+			data_name = $(el).data("name");
+			if(!_.isUndefined(data_name)){
+				if((data_name.toString().indexOf("_indicator")) != -1){
+
+					if(_.isNull(indicator_element)){
+						indicator_element = el;
+						//console.log("making query from indicator element");
+					}
+					//break;
+				}
+				else{
+					if(_.isNull(indicator_element)){
+						subindicator_name.push($(el).data("name"));
+					}
+				}
 			}
 		});
 	}
 
+	console.log("subindicator name contains:");
+	console.log(subindicator_name);
+
 	if(!_.isNull(indicator_element)){
-		query = Array.reverse(subindicator_name).join(" ");
-		origin.nextAll().each(function(el){
+
+		query = subindicator_name.reverse().join(" ");
+		query += " " + origin.data("name"); 
+		origin.nextAll().each(function(key,el){
 			// unless it has a bracket, or is a superscript.
-			if(el.prop("nodeName").indexOf("sup") == -1){
-				query = query + " " + el.data("name");
+			if($(el).prop("nodeName").indexOf("sup") == -1){
+				query = query + " " + $(el).data("name");
 			}
 			// add time later
 			// and manage sup in one of the data-names.
