@@ -92,7 +92,7 @@ var build_setup = function(search_result){
 	
 	//console.log("complex string:" + complex_string);
 
-	var time_subindicator_regexp = new RegExp(/year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/g);
+	var time_subindicator_regexp = new RegExp(/year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]/g);
 
 	if(time_subindicator_regexp.test(search_result.information) == true){
 
@@ -124,8 +124,30 @@ var build_setup = function(search_result){
 
 	search_result.setup = search_result.setup + " " + complex_string;
 
+	//search_result.setup = add_icons(search_result.setup);
 	//console.log("setup becomes:");
 	//console.log(search_result.setup);
+}
+
+
+var get_icon = function(setup){
+	var oil_regex = new RegExp(/^buy\soil/gi)
+	var gold_regex = new RegExp(/^buy\sgold/gi)
+	var forex_regex = new RegExp(/^buy\s(EUR|USD|JPY)/gi)
+	if(oil_regex.test(setup) == true){
+		// add the oil icon at the start of the setup
+		return "<i class='fas fa-tint'></i>";
+	}
+	else if(gold_regex.test(setup) == true){
+		return "<i class='fas fa-balance-scale'></i>";
+	}
+	else if(forex_regex.test(setup) == true){
+		return "<i class='fas fa-coins'></i>";
+	}
+	else{
+		return "<i class='fas fa-industry'></i>";
+	}
+	return setup;
 }
 
 /***
@@ -327,8 +349,10 @@ var display_search_results = function(search_results,input){
 		    	concat += "</span>";
 		    	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
 				//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
-				
-				search_result.setup = concat;	
+				// previous setup was :
+				// 
+				var icon = get_icon(search_result.setup);
+				search_result.setup = icon + concat;	
 
 				//search_result.setup = replace_pattern_with_icons(search_result.setup);	
 				

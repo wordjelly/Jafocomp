@@ -45,6 +45,7 @@ class Result
 			size: 1
 		}
 
+
 		results = gateway.client.search index: "correlations", body: body
 		
 		puts JSON.pretty_generate(results)
@@ -346,8 +347,8 @@ class Result
 			:effective_query => nil
 		}
 	
-		#puts "results -----------------> "
-		#puts JSON.pretty_generate(results)
+		puts "results -----------------> "
+		puts JSON.pretty_generate(results)
 
 		results
 
