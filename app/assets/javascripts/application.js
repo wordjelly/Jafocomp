@@ -227,9 +227,13 @@ var prepare_query_for_tooltip_search = function(origin){
 	var indicator_element = null;
 	var subindicator_name = [];
 	var query = null;
-	if(origin.data("name").indexOf("_indicator") != -1){
+	if(origin.data("name").toString().indexOf("_indicator") != -1){
 		console.log("making query from indicator");
-		query = origin.data("name");
+		console.log("new query:");
+		console.log(expand_indicators_for_information_query(origin.data("name")));
+		query = expand_indicators_for_information_query(origin.data("name"));
+		console.log("query is:");
+		console.log(query);
 	}
 	else{
 		origin.prevAll().each(function(key,el){
@@ -252,32 +256,32 @@ var prepare_query_for_tooltip_search = function(origin){
 				}
 			}
 		});
-	}
-
-	console.log("subindicator name contains:");
-	console.log(subindicator_name);
-
-	if(!_.isNull(indicator_element)){
-
-		query = subindicator_name.reverse().join(" ");
-		query += " " + origin.data("name"); 
-		origin.nextAll().each(function(key,el){
-			// unless it has a bracket, or is a superscript.
-			if($(el).prop("nodeName").indexOf("sup") == -1){
-				query = query + " " + $(el).data("name");
-			}
-			// add time later
-			// and manage sup in one of the data-names.
 
 
-		})
-	}
-	else{
-		// query  the element as long as its not a stopword.
-		if(!_.has(stopwords,origin.data("name"))){
-			query = origin.data("name");
+		console.log("subindicator name contains:");
+		console.log(subindicator_name);
+
+		if(!_.isNull(indicator_element)){
+			console.log("there is an indicator name");
+			query = subindicator_name.reverse().join(" ");
+			query += " " + origin.data("name"); 
+			origin.nextAll().each(function(key,el){
+				// unless it has a bracket, or is a superscript.
+				if($(el).prop("nodeName").indexOf("sup") == -1){
+					query = query + " " + $(el).data("name");
+				}
+
+			})
 		}
+		else{
+			// query  the element as long as its not a stopword.
+			if(!_.has(stopwords,origin.data("name"))){
+				query = origin.data("name");
+			}
+		}
+
 	}
+
 	return query;
 }
 
@@ -358,27 +362,31 @@ var display_search_results = function(search_results,input){
 
 			            	console.log("data is:");
 			            	console.log(data);
+			            	if(!_.isEmpty(data["results"])){
 
-			            	result = data["results"]["_source"];
+			            		result = data["results"][0]["_source"];
 
-			            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
+				            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
 
-			            	content_string = result["information_description"] + "<br>";
+				            	content_string = result["information_description"] + "<br>";
 
-			            	link_string = '';
+				            	link_string = '';
 
-			            	if(!_.isEmpty(result["information_link"])){
-			            		console.log("there is an information link");
-			            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
+				            	if(!_.isEmpty(result["information_link"])){
+				            		console.log("there is an information link");
+				            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
+				            	}
+				            	
+				            	var content = title_string + content_string + link_string
+
+				            	console.log("content" + content);
+
+				                instance.content(content);
+				               
+				                $origin.data('loaded', true);
+
 			            	}
 			            	
-			            	var content = title_string + content_string + link_string
-
-			            	console.log("content" + content);
-
-			                instance.content(content);
-			               
-			                $origin.data('loaded', true);
 			            });
 			        }
 			    }
@@ -703,6 +711,21 @@ var replace_pattern_with_icons = function(setup){
 	return setup;
 }
 
+var expand_indicators_for_information_query = function(setup){
+	setup = setup.replace("SOK_indicator","stochastic_oscillator_k_indicator");
+	setup = setup.replace("SOD_indicator","stochastic_oscillator_d_indicator");
+	setup = setup.replace("ADM_indicator","average_directional_movement_indicator");
+	setup = setup.replace("DEMA_indicator","double_ema_indicator");
+	setup = setup.replace("AO_indicator","awesome_oscillator_indicator");
+	setup = setup.replace("TEMA_indicator","triple_ema_indicator");
+	setup = setup.replace("SEMA_indicator","single_ema_indicator");
+	setup = setup.replace("MACD_indicator","moving_average_convergence_divergence");
+	setup = setup.replace("ACDC_indicator","acceleration_deceleration_indicator");
+	setup = setup.replace("RSI_indicator","relative_strength_indicator");
+	setup = setup.replace("WR_indicator","williams_r_indicator");
+	return setup;
+}
+
 var shrink_indicators = function(setup){
 	setup = setup.replace("stochastic_oscillator_k_indicator","SOK_indicator");
 	setup = setup.replace("stochastic_oscillator_d_indicator","SOD_indicator");
@@ -717,6 +740,7 @@ var shrink_indicators = function(setup){
 	setup = setup.replace("williams_r_indicator","WR_indicator");
 	return setup;
 }
+
 
 
 // @param[String] string : the string into which the snippet is to be inserted

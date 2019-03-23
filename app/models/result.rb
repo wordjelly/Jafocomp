@@ -26,25 +26,30 @@ class Result
 		body = 
 		{
 			_source: ["information_name","information_description","information_link"], 
-			suggest: {
-				correlation_suggestion: {
-					text: args[:information],
-					completion: {
-		                field: "suggest_query",
-		                size: 10,
-		                contexts: {
-		                    component_type: ["entity","subindicator","indicator"]
-		                }
-		            }
+			query: {
+				bool: {
+					should: [
+						{
+							match: {
+								information_name: args[:information].strip
+							}
+						},
+						{
+							prefix: {
+								"information_name.raw".to_sym => args[:information].strip
+							}
+						}
+					]
 				}
-			}
+			},
+			size: 1
 		}
 
 		results = gateway.client.search index: "correlations", body: body
 		
 		puts JSON.pretty_generate(results)
-		if results["suggest"]
-			results["suggest"]["correlation_suggestion"][0]["options"][0]
+		if results["hits"]
+			results["hits"]["hits"]
 		else
 			[]
 		end
