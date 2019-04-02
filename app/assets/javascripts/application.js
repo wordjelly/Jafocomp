@@ -877,7 +877,7 @@ var quotes = {
 	"Probabilities guide the decisions of the wise." : "Marcus Tullius Cicero, Roman Philosopher, 63 BC",
 	"Because, there is no joy in the finite. True bliss is in the infinite" : "Chandogya Upanishad, 8 BCE",
 	"There's nothing in the world so demoralizing as money" : "Sophocles, 497 BCE",
-	"After a certain point, money is meaningless. It ceases to be the goal. The game is what counts" : "Aristotle Onassis, Greek Shipping Billionaire, married to Jackie Kennedy (1906 - 1975)",
+	"After a certain point, money is meaningless. It ceases to be the goal. The game is what counts" : "Aristotle Onassis, Greek Shipping Billionaire(1906 - 1975)",
 	"Let your hook always be cast; in the pool where you least expect it, there will be a fish." : "Publius Ovidius Naso(Ovid), Roman Poet, 17 AD",
 	"I paraphrase Lord Rothschild: ‘The time to buy is when there's blood on the streets.'" : "David Dreman  Author - Contrarian Investment Strategies: The Psychological Edge.",
 	"Start a fight. Prove you're alive. If you don't claim your humanity you will become a statistic. You have been warned." : "Chuck Palahnuick - The Fight Club",
@@ -888,14 +888,17 @@ var quotes = {
 	"A man's worth is no greater than his ambitions." : "~ Marcus Aurelius, Emperor of Rome",
 	"We really can't forecast all that well, and yet we pretend that we can, but we really can't." : "Alan Greenspan",
 	"People who advocate simplicity have money in the bank; the money came first, not the simplicity." : "Douglas Coupland, The Gum Thief",
-	"There will be a backlash from those who don't benefit from the system" : "Rahul Bajaj, Indian Automobile Billionaire",
 	"What do you mean there is no money in the bags?" : "Ocean's Eleven",
 	"Misdirection, what the eyes see and the ears hear, the mind believes" : "Gabriel, Swordfish(2001)",
 	"Don't *ever* risk your life for an asset. If it comes down to you or them... send flowers." : "Nathan Muir, Spy Game(2001)",
 	"Man sacrifices his health in order to make money. Then he sacrifices money to recuperate his health" : "The Dalai Lama",
 	"You will soon be dead, and then you will own just as much of this earth as will suffice to bury you." : "Hindu yogi, replying to Alexander the Great",
-	"Greece , Rome and Persia are in Me. The suns and stars rise and set in Me." : "Indian yogi, on being asked by Alexander the Great to accompany him to Athens.",
-	"The farther backward you can look, the farther forward you can see" : "Winston Churchill"
+	"Greece , Rome and Persia are in Me. The suns and stars rise and set in Me." : "Indian yogi to Alexander the Great.",
+	"The farther backward you can look, the farther forward you can see" : "Winston Churchill",
+	"Mankind is divided into rich and poor, into property owners and exploited" : "Joseph Stalin",
+	"Forethought we may have, undoubtedly, but not foresight" : "Napoleon Bonaparte",
+	"The worse a situation becomes, the less it takes to turn it around." : "George Soros",
+	"There's only one boss, the customer. He can fire everyone from the Chairman down, simply by spending his money somewhere else." : "Sam Walton"
 }
 
 // so entity icons.
