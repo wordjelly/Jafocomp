@@ -13,6 +13,20 @@ _.templateSettings.variable = 'search_result';
 
 var template;
 
+/***
+clear the search bar if the clear icon is clicked.
+***/
+$(document).on('click','#clear_search',function(event){
+	$("#search").val("");
+	
+	$("#logo").slideDown('fast',function(){
+
+		$('#search_results').html("");
+	});
+			
+	
+});
+
 // first lets get this shit to display at least.
 
 $(document).on('keyup','#search',function(event){
@@ -92,7 +106,7 @@ var build_setup = function(search_result){
 	
 	//console.log("complex string:" + complex_string);
 
-	var time_subindicator_regexp = new RegExp(/year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]/g);
+	var time_subindicator_regexp = new RegExp(/year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
 	if(time_subindicator_regexp.test(search_result.information) == true){
 
@@ -444,7 +458,8 @@ var search_new = function(input){
 		  	dataType: "json",
 		  	data:{query: input},
 		  	beforeSend: function(){
-		  	  //console.log("setting already running query");
+		  	  
+		  	  $("#progress_bar").css("visibility","visible");
 		      $("#already_running_query").attr("data-already-running-query",input);
 		    }, 
 		  	success: function(response){
@@ -457,6 +472,7 @@ var search_new = function(input){
 
 			},
 			complete: function(){
+				$("#progress_bar").css("visibility","hidden");
 				$("#already_running_query").attr("data-already-running-query","");
 				//console.log("unsetting already running query");
 				//console.log($("#queued_query").attr("data-queued-query"));
@@ -685,7 +701,11 @@ var strip_period_details_from_setup = function(search_result){
 }
 
 var replace_percentage_and_literal_numbers = function(search_result){
-	
+	search_result.setup = search_result.setup.replace("half","<sup>1</sup>&frasl;<sup><2/sup>");
+	search_result.setup = search_result.setup.replace("one","1");
+	search_result.setup = search_result.setup.replace("two","2");
+	search_result.setup = search_result.setup.replace("three","3");
+	search_result.setup = search_result.setup.replace("four","4");
 	search_result.setup = search_result.setup.replace("five","5");
 	search_result.setup = search_result.setup.replace("ten","10");
 	search_result.setup = search_result.setup.replace("twenty","20");

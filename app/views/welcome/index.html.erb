@@ -2,32 +2,32 @@
 	<div class="row">
 		<div id="queued_query" data-queued-query></div>
 		<div id="already_running_query" data-already-running-query></div>
-		<div class="progress">
+		<div class="progress" id="progress_bar" style="visibility: hidden;">
 		      <div class="indeterminate"></div>
 		</div>
 	</div>
 	<div class="row" id="logo" style="margin-bottom: 0px !important;">
 		<div class="col l12 m12 s12 center">
-		<img src="assets/algorini.png" style="height: 200px; width:auto;%" />
+		<img class="responsive-img" src="assets/algorini.png" />
 		</div>
 	</div>
 	<div class="row" style="margin-top:1rem !important;">
-		<div class="col s12 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+		<div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
 	      <h4 class="z-depth-1 shadow-demo amber center white-text" style="padding: 2rem; margin-top:0px;">FOREX</h4>
 	    </div>
-	    <div class="col s12 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
 	      <h4 class="z-depth-2 shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px;">DOW</h4>
 	    </div>
-	    <div class="col s12 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
 	      <h4 class="z-depth-3 shadow-demo amber center white-text" style="padding: 2rem;  margin-top:0px;">DAX</h4>
 	    </div>
-	    <div class="col s12 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
 	      <h4 class="z-depth-4 shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px;">CAC</h4>
 	    </div>
-	    <div class="col s12 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
 	      <h4 class="z-depth-5 shadow-demo amber  center white-text" style="padding: 2rem; margin-top:0px;">NIFTY</h4>
 	    </div>
-	    <div class="col s12 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
 	      <h4 class="z-depth-5 shadow-demo blue-grey center white-text" style="padding: 2rem; margin-top:0px;">OIL</h4>
 	    </div>
 	</div>
@@ -40,18 +40,20 @@
 		        <div class="input-field">
 		          <input id="search" type="search" placeholder="Apple" required>
 		          <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-		          <i class="material-icons">close</i>
+		          <i id="clear_search" class="material-icons">close</i>
 		        </div>
 		      </form>
 		    </div>
 		</nav>
 	</div>
 
+	<!--
 	<div class="row" style="margin-top:2rem">
 		<ul class="collection" id="query_suggestions">
 			
 		</ul>
 	</div>
+	-->
 
 	<!-- HOLDER FOR SEARCH RESULTS -->
 	<div class="row" style="margin-top:2rem">
@@ -71,8 +73,10 @@
 		</div>
 		<div class="divider col l2 m2 s2 offset-l5 offset-m5 offset-s5" style="margin-top:1rem;">
 		</div>
+		<!--
 		<br>
 		<div class="infinity_icon"><i class="fas fa-infinity"></i></div>
+		-->
 	</div>
 
 	<div class="build_query_information">
