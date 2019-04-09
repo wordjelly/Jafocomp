@@ -108,8 +108,8 @@ var build_setup = function(search_result){
 	// one -> sort out the ngram prefix query
 	// get a source for the indices
 	// make the sorting higher for 
-
-	var time_subindicator_regexp = new RegExp(/year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
+	// so this is sorted.
+	var time_subindicator_regexp = new RegExp(/first|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
 	if(time_subindicator_regexp.test(search_result.information) == true){
 
