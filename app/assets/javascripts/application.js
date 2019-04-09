@@ -256,6 +256,18 @@ var assign_statistics = function(search_result,text){
 }
 
 
+// so is it an indicator, this can be done easily.
+// what's next.
+var word_is_indicator = function(word){
+	var result = false;
+	var indicators = ["_indicator","close","open","high","low","volume"];
+	_.each(indicators,function(indicator){
+		if(word.indexOf(indicator) != -1){
+			result = true;
+		}
+	});
+	return result;
+}
 /**
 will analyze the siblings of the origin.
 if indicator is before it, then it will send everything after indicator -> as the query.
@@ -280,7 +292,7 @@ var prepare_query_for_tooltip_search = function(origin){
 			console.log($(el).data("name"));
 			data_name = $(el).data("name");
 			if(!_.isUndefined(data_name)){
-				if((data_name.toString().indexOf("_indicator")) != -1){
+				if(word_is_indicator(data_name.toString())){
 
 					if(_.isNull(indicator_element)){
 						indicator_element = el;
