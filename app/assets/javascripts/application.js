@@ -260,7 +260,7 @@ var assign_statistics = function(search_result,text){
 // what's next.
 var word_is_indicator = function(word){
 	var result = false;
-	var indicators = ["_indicator","close","open","high","low","volume"];
+	var indicators = ["_indicator","close","open","high","low","volume","aroon"];
 	_.each(indicators,function(indicator){
 		if(word.indexOf(indicator) != -1){
 			result = true;
@@ -288,6 +288,7 @@ var prepare_query_for_tooltip_search = function(origin){
 	}
 	else{
 		origin.prevAll().each(function(key,el){
+			console.log("doing prevall");
 			console.log(el);
 			console.log($(el).data("name"));
 			data_name = $(el).data("name");
@@ -715,8 +716,15 @@ var strip_period_details_from_setup = function(search_result){
 	return search_result;
 }
 
+var restore_percentage_and_literal_names_for_information_query = function(query){
+
+
+
+	return query;
+}
+
 var replace_percentage_and_literal_numbers = function(search_result){
-	search_result.setup = search_result.setup.replace("half","<sup>1</sup>&frasl;<sup><2/sup>");
+	search_result.setup = search_result.setup.replace("half","<sup>1</sup>&frasl;<sup>2</sup>");
 	search_result.setup = search_result.setup.replace("one","1");
 	search_result.setup = search_result.setup.replace("two","2");
 	search_result.setup = search_result.setup.replace("three","3");
@@ -731,7 +739,7 @@ var replace_percentage_and_literal_numbers = function(search_result){
 	search_result.setup = search_result.setup.replace("seventy","70");
 	search_result.setup = search_result.setup.replace("eighty","80");
 	search_result.setup = search_result.setup.replace("ninety","90");
-	search_result.setup = search_result.setup.replace(" percent","%");
+	search_result.setup = search_result.setup.replace(" percent", "%");
 	return search_result;
 
 }
@@ -934,6 +942,18 @@ var quotes = {
 	"Forethought we may have, undoubtedly, but not foresight" : "Napoleon Bonaparte",
 	"The worse a situation becomes, the less it takes to turn it around." : "George Soros",
 	"There's only one boss, the customer. He can fire everyone from the Chairman down, simply by spending his money somewhere else." : "Sam Walton"
+}
+
+var numeric_literals = {
+	"half" : "",
+	"one" : "1",
+	"two" : "2",
+	"three" : "3",
+	"four" : "4",
+	"five" : "5",
+	"six" : "6",
+	"ten" : "10",
+	"twenty" "20"
 }
 
 // so entity icons.
