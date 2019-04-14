@@ -349,8 +349,8 @@ class Result
 			:effective_query => nil
 		}
 	
-		#puts "results -----------------> "
-		#puts JSON.pretty_generate(results)
+		puts "first search result -----------------> "
+		puts JSON.pretty_generate(results[:search_results][0])
 
 		results
 

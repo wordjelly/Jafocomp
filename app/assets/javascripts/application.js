@@ -109,7 +109,7 @@ var build_setup = function(search_result){
 	// get a source for the indices
 	// make the sorting higher for 
 	// so this is sorted.
-	var time_subindicator_regexp = new RegExp(/first|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
+	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
 	if(time_subindicator_regexp.test(search_result.information) == true){
 
@@ -334,7 +334,7 @@ var prepare_query_for_tooltip_search = function(origin){
 
 	}
 
-	return query;
+	return restore_percentage_and_literal_names_for_information_query(query);
 }
 
 
@@ -717,31 +717,18 @@ var strip_period_details_from_setup = function(search_result){
 }
 
 var restore_percentage_and_literal_names_for_information_query = function(query){
-
-
-
+	var inverted_literals = _.invert(numeric_literals);
+	_.each(_.keys(inverted_literals),function(numeric){
+		query = query.replace(numeric,inverted_literals[numeric]);
+	});
 	return query;
 }
 
 var replace_percentage_and_literal_numbers = function(search_result){
-	search_result.setup = search_result.setup.replace("half","<sup>1</sup>&frasl;<sup>2</sup>");
-	search_result.setup = search_result.setup.replace("one","1");
-	search_result.setup = search_result.setup.replace("two","2");
-	search_result.setup = search_result.setup.replace("three","3");
-	search_result.setup = search_result.setup.replace("four","4");
-	search_result.setup = search_result.setup.replace("five","5");
-	search_result.setup = search_result.setup.replace("ten","10");
-	search_result.setup = search_result.setup.replace("twenty","20");
-	search_result.setup = search_result.setup.replace("thirty","30");
-	search_result.setup = search_result.setup.replace("forty","40");
-	search_result.setup = search_result.setup.replace("fifty","50");
-	search_result.setup = search_result.setup.replace("sixty","60");
-	search_result.setup = search_result.setup.replace("seventy","70");
-	search_result.setup = search_result.setup.replace("eighty","80");
-	search_result.setup = search_result.setup.replace("ninety","90");
-	search_result.setup = search_result.setup.replace(" percent", "%");
+	_.each(_.keys(numeric_literals),function(literal){
+		search_result.setup = search_result.setup.replace(literal,numeric_literals[literal]);
+	});
 	return search_result;
-
 }
 
 var replace_pattern_with_icons = function(setup){
@@ -953,7 +940,17 @@ var numeric_literals = {
 	"five" : "5",
 	"six" : "6",
 	"ten" : "10",
-	"twenty" "20"
+	"twenty" : "20",
+	"thirty" : "30",
+	"forty" : "40",
+	"fifty" : "50",
+	"sixty" : "60",
+	"seventy" : "70",
+	"eighty" : "80",
+	"ninety" : "90",
+	"hundred" : "100",
+	"half" : "<sup>1</sup>&frasl;<sup>2</sup>",
+	" percent" : "%"
 }
 
 // so entity icons.
