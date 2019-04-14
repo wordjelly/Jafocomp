@@ -160,7 +160,7 @@ class Result
 			should_query_clauses << {
 				prefix: {
 					tags: {
-						value: c[0..9],
+						value: c.gsub(/\'s$/,'')[0..9],
 						boost: i*10
 					}
 				}
@@ -169,7 +169,7 @@ class Result
 				prefix: 
 					{
 			            "complex_derivations.tags".to_sym => {
-			                  value: c[0..9],
+			                  value: c.gsub(/\'s$/,'')[0..9],
 			                  boost: (total_terms - i)*10
 			                }
 		            }
