@@ -48,7 +48,7 @@ class Result
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		puts JSON.pretty_generate(results)
+		##puts JSON.pretty_generate(results)
 		if results["hits"]
 			results["hits"]["hits"]
 		else
@@ -209,9 +209,11 @@ class Result
 
 		search_results = gateway.client.search index: "correlations", body: body
 
+		puts "search results size:"
+		puts search_results["hits"]["hits"].size
 		search_results = search_results["hits"]["hits"].map{|hit|
 				
-			puts hit.to_s
+			#puts hit.to_s
 
 			input = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",")
 
@@ -347,8 +349,8 @@ class Result
 			:effective_query => nil
 		}
 	
-		puts "results -----------------> "
-		puts JSON.pretty_generate(results)
+		#puts "results -----------------> "
+		#puts JSON.pretty_generate(results)
 
 		results
 
