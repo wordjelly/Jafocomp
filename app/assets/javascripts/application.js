@@ -719,7 +719,7 @@ var strip_period_details_from_setup = function(search_result){
 var restore_percentage_and_literal_names_for_information_query = function(query){
 	var inverted_literals = _.invert(numeric_literals);
 	_.each(_.keys(inverted_literals),function(numeric){
-		query = query.replace(numeric,inverted_literals[numeric]);
+		query = query.replace(numeric + "%",inverted_literals[numeric] + " percent");
 	});
 	return query;
 }
@@ -932,7 +932,6 @@ var quotes = {
 }
 
 var numeric_literals = {
-	"half" : "",
 	"one" : "1",
 	"two" : "2",
 	"three" : "3",
