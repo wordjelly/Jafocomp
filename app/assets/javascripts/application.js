@@ -199,12 +199,7 @@ var assign_statistics = function(search_result,text){
 	
 	var information = suggestion.input.split("#");
 
-	//console.log("information:");
-	//console.log(information);
-
-	// so if they are stop words
-	// like sunday, quarter, year, week, last, first
-	// then we don't apply that.
+	
 	search_result.information = information;
 	search_result.setup = "buy " + information[0].split(" ")[0];
 	var stats = information[1];

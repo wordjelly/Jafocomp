@@ -48,7 +48,7 @@ class Result
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		##puts JSON.pretty_generate(results)
+		puts JSON.pretty_generate(results["hits"]["hits"])
 		if results["hits"]
 			results["hits"]["hits"]
 		else
