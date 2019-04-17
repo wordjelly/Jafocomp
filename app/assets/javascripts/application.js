@@ -716,8 +716,8 @@ var restore_percentage_and_literal_names_for_information_query = function(query)
 	_.each(_.keys(inverted_literals),function(numeric){
 		query = query.replace(numeric + "%",numeric + " percent");
 	});
-	query = query.replace("<sup>1\\</sup><sup>2</sup>","half");
-	query = query.replace("<sup>1&frasl;</sup><sup>2</sup>","half");
+	query = query.replace("<sup>1</sup>/<sup>2</sup>%","half percent");
+	
 	return query;
 }
 
@@ -945,7 +945,7 @@ var numeric_literals = {
 	"eighty" : "80",
 	"ninety" : "90",
 	"hundred" : "100",
-	"half" : "<sup>1&frasl;</sup><sup>2</sup>",
+	"half" : "<sup>1</sup>&frasl;<sup>2</sup>",
 	" percent" : "%"
 }
 
