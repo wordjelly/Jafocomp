@@ -106,7 +106,7 @@ var build_setup = function(search_result){
 	
 	console.log("the search result information is:");
 	console.log(search_result.information);
-	
+
 	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
 	if(time_subindicator_regexp.test(search_result.information) == true){
@@ -345,6 +345,8 @@ var display_search_results = function(search_results,input){
 		    	text = search_result["text"];
 		    	search_result = search_result['_source'];
 		    	
+		    	console.log("search result is:");
+		    	console.log(search_result);
 		    	//search_result['suggest'].reverse();
 		    	assign_statistics(search_result,text);
 		    	search_result = update_bar_lengths(search_result);
