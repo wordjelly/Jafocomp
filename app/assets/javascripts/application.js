@@ -104,11 +104,9 @@ var prepare_information_title = function(information_title){
 var build_setup = function(search_result){
 	var complex_string = search_result.preposition + " ";
 	
-	// today we have three targets
-	// one -> sort out the ngram prefix query
-	// get a source for the indices
-	// make the sorting higher for 
-	// so this is sorted.
+	console.log("the search result information is:");
+	console.log(search_result.information);
+	
 	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
 	if(time_subindicator_regexp.test(search_result.information) == true){

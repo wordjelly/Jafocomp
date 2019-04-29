@@ -177,7 +177,7 @@ class Result
 		}
 
 		body = {
-		  _source: ["tags","preposition","epoch"],
+		  _source: ["tags","preposition","epoch","_id"],
 		  query: {
 		    bool: {
 		      must: [
@@ -218,6 +218,7 @@ class Result
 			input = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",")
 
 			hit = {
+				_id: hit["_id"],
 				_source: {
 					preposition: hit["_source"]["preposition"],
 					epoch: hit["_source"]["epoch"],
@@ -245,7 +246,7 @@ class Result
 		args[:context] ||= []
 
 		body = {
-			_source: ["suggest","tags","preposition","epoch"], 
+			_source: ["suggest","tags","preposition","epoch","_id"], 
 			suggest: {
 				correlation_suggestion: {
 					text: args[:prefix],
@@ -349,8 +350,12 @@ class Result
 			:effective_query => nil
 		}
 	
-		puts "first search result -----------------> "
-		puts JSON.pretty_generate(results[:search_results][0])
+		#puts "first search result -----------------> "
+		#puts JSON.pretty_generate(results[:search_results])
+
+		#results[:search_results].map{|c|
+		#	puts "search result id:" + c["_id"].to_s
+		#}
 
 		results
 
