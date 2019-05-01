@@ -111,6 +111,7 @@ var build_setup = function(search_result){
 
 	if(time_subindicator_regexp.test(search_result.information) == true){
 
+		console.log("got a time based subindicator");
 		_.map(search_result.tags,function(tag,index){
 		
 			complex_string = complex_string + tag + " ";
@@ -118,14 +119,26 @@ var build_setup = function(search_result){
 		});
 
 	}
-	else{
+	else if(time_subindicator_regexp.test(search_result.tags) == true){
+
+		console.log("got a time based subindicator, by checking the tags");
+		_.map(search_result.tags,function(tag,index){
+		
+			complex_string = complex_string + tag + " ";
+		
+		});
+
+	}
+	else
+	{
 		_.map(search_result.tags,function(tag,index){
 
 			if(index == 0){
-
+				// full name.
+				complex_string =  complex_string + tag + "'s" + " ";
 			}
 			else if(index == 1){
-				complex_string =  complex_string + tag + "'s" + " ";
+				// symbol
 			}
 			else{
 				complex_string = complex_string + tag + " ";
