@@ -107,7 +107,7 @@ var build_setup = function(search_result){
 	console.log("the search result information is:");
 	console.log(search_result.information);
 
-	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
+	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
 	if(time_subindicator_regexp.test(search_result.information) == true){
 
@@ -198,8 +198,13 @@ var assign_statistics = function(search_result,text){
 		// so let's see if all this works.	
 	}
 	else{
+		var text_split_on_space = text.split("#")[0].split(" ");
 		search_result.suggest = _.filter(search_result.suggest,function(el){
-			return el['input'].indexOf(text) != -1;
+			var satisfied = true;
+			_.each(text_split_on_space,function(word){
+				satisfied = (el['input'].indexOf(word) != -1);
+			});
+			return satisfied;
 		});
 	}
 
@@ -213,6 +218,9 @@ var assign_statistics = function(search_result,text){
 	
 	search_result.information = information;
 	search_result.setup = "buy " + information[0].split(" ")[0];
+
+	// so its splitting on the space.
+
 	var stats = information[1];
 
 	stats = stats.split(",");
@@ -360,6 +368,8 @@ var display_search_results = function(search_results,input){
 		    	
 		    	console.log("search result is:");
 		    	console.log(search_result);
+		    	console.log("text is:");
+		    	console.log(text);
 		    	//search_result['suggest'].reverse();
 		    	assign_statistics(search_result,text);
 		    	search_result = update_bar_lengths(search_result);
