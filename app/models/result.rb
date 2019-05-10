@@ -279,14 +279,15 @@ class Result
 		#end
 
 		if search_results.blank?
-			
+
 			## now we have a situation where we have to fall back onto the ngram query.
 			search_results = basic_match_query(args[:prefix])
 
 		end
 
 		results = {
-			:search_results => search_results,
+			#:search_results => search_results,
+			:search_results => ["1","@","3","$","5","6","7","9","10"]
 			:query_suggestion_results => query_suggestion_results,
 			:effective_query => nil
 		}
