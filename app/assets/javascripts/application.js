@@ -104,14 +104,14 @@ var prepare_information_title = function(information_title){
 var build_setup = function(search_result){
 	var complex_string = search_result.preposition + " ";
 	
-	console.log("the search result information is:");
-	console.log(search_result.information);
+	//console.log("the search result information is:");
+	//console.log(search_result.information);
 
 	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
 	if(time_subindicator_regexp.test(search_result.information) == true){
 
-		console.log("got a time based subindicator");
+		//console.log("got a time based subindicator");
 		_.map(search_result.tags,function(tag,index){
 		
 			complex_string = complex_string + tag + " ";
@@ -199,16 +199,23 @@ var assign_statistics = function(search_result,text){
 	}
 	else{
 		var text_split_on_space = text.split("#")[0].split(" ");
+		console.log("text split on space:");
+		console.log(text_split_on_space);
 		search_result.suggest = _.filter(search_result.suggest,function(el){
 			var satisfied = true;
+			console.log("el input is:");
+			console.log(el["input"]);
 			_.each(text_split_on_space,function(word){
-				satisfied = (el['input'].indexOf(word) != -1);
+				if(satisfied == true){
+					satisfied = (el['input'].indexOf(word) != -1);
+				}
 			});
 			return satisfied;
 		});
 	}
 
-
+	console.log("suggestions remaining");
+	
 	search_result.suggest = [_.first(search_result.suggest)];
 	
 	var suggestion = search_result.suggest[0];
@@ -366,10 +373,10 @@ var display_search_results = function(search_results,input){
 		    	text = search_result["text"];
 		    	search_result = search_result['_source'];
 		    	
-		    	console.log("search result is:");
-		    	console.log(search_result);
-		    	console.log("text is:");
-		    	console.log(text);
+		    	//console.log("search result is:");
+		    	//console.log(search_result);
+		    	//console.log("text is:");
+		    	//console.log(text);
 		    	//search_result['suggest'].reverse();
 		    	assign_statistics(search_result,text);
 		    	search_result = update_bar_lengths(search_result);
@@ -486,6 +493,7 @@ var search_new = function(input){
 	} 
 	else{
 		console.log("no pending query");
+		var ajaxTime= new Date().getTime();
 		$.ajax({
 		  	url: "/search",
 		  	type: "GET",
@@ -497,6 +505,9 @@ var search_new = function(input){
 		      $("#already_running_query").attr("data-already-running-query",input);
 		    }, 
 		  	success: function(response){
+		  		var totalTime = new Date().getTime()-ajaxTime;
+
+		  		console.log("server side took:" + totalTime);
 
 		    	$('#search_results').html("");
 		    	

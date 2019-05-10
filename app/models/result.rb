@@ -260,11 +260,15 @@ class Result
 
 			query_suggestion_results = []
 
+			search_start_time = Time.now.to_i
 			search_results = gateway.client.search index: "correlations", body: body
+			search_end_time = Time.now.to_i
+			puts "elasticsearch query took-------------"
+			puts (search_end_time - search_start_time)
 
 			if search_results["suggest"]
 				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-				puts JSON.pretty_generate(search_results)
+				#puts JSON.pretty_generate(search_results)
 			else
 				search_results = []
 			end
