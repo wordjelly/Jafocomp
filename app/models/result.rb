@@ -262,6 +262,7 @@ class Result
 
 			search_start_time = Time.now.to_i
 			search_results = gateway.client.search index: "correlations", body: body
+			puts search_results["suggest"].to_s
 			search_end_time = Time.now.to_i
 			puts "elasticsearch query took-------------"
 			puts (search_end_time - search_start_time)
@@ -278,7 +279,7 @@ class Result
 		#end
 
 		if search_results.blank?
-
+			
 			## now we have a situation where we have to fall back onto the ngram query.
 			search_results = basic_match_query(args[:prefix])
 
