@@ -262,7 +262,7 @@ class Result
 
 			search_start_time = Time.now.to_i
 			search_results = gateway.client.search index: "correlations", body: body
-			puts search_results["suggest"].to_s
+			#puts search_results["suggest"].to_s
 			search_end_time = Time.now.to_i
 			puts "elasticsearch query took-------------"
 			puts (search_end_time - search_start_time)
@@ -287,7 +287,7 @@ class Result
 
 		results = {
 			#:search_results => search_results,
-			:search_results => ["1","@","3","$","5","6","7","9","10"]
+			:search_results => ["1","@","3","$","5","6","7","9","10"],
 			:query_suggestion_results => query_suggestion_results,
 			:effective_query => nil
 		}
