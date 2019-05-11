@@ -269,9 +269,24 @@ class Result
 
 			if search_results["suggest"]
 				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-				search_results.map{|c| 
+				
+				search_results.map!{|c|
+					txt = c["text"]
+					txt = txt.split("#")[0].split(" ")
+					puts "the text parts are:"
+					puts txt.to_s
+					c["_source"]["suggest"] = c["_source"]["suggest"].select{|d|
+						results = txt.map{|k|
+							d["input"] =~ /#{k}/
+						}.compact
+						results.size == txt.size
+					}[0..0]
 					c
 				}
+				puts "the search results become:"
+				puts JSON.pretty_generate(search_results)
+				## so each of the search-results
+				## we want only one suggestion.
 				#puts JSON.pretty_generate(search_results)
 			else
 				search_results = []
@@ -289,7 +304,7 @@ class Result
 
 		results = {
 			#:search_results => search_results,
-			:search_results => ["1","@","3","$","5","6","7","9","10"],
+			:search_results => search_results,
 			:query_suggestion_results => query_suggestion_results,
 			:effective_query => nil
 		}

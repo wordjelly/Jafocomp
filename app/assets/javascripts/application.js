@@ -193,7 +193,9 @@ getStats()[10] = six_month_max_profit;
 getStats()[11] = six_month_max_loss;
 ***/
 var assign_statistics = function(search_result,text){
-
+	console.log("search result is:");
+	console.log(search_result);
+	/***
 	if(_.isUndefined(text)){
 		// so let's see if all this works.	
 	}
@@ -217,7 +219,7 @@ var assign_statistics = function(search_result,text){
 	console.log("suggestions remaining");
 	
 	search_result.suggest = [_.first(search_result.suggest)];
-	
+	**/
 	var suggestion = search_result.suggest[0];
 	
 	var information = suggestion.input.split("#");
