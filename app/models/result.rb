@@ -282,10 +282,9 @@ class Result
 		#end
 
 		if search_results.blank?
-
+			puts "search results were blank."
 			## now we have a situation where we have to fall back onto the ngram query.
 			search_results = basic_match_query(args[:prefix])
-
 		end
 
 		results = {
