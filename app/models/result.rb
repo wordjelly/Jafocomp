@@ -269,6 +269,9 @@ class Result
 
 			if search_results["suggest"]
 				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+				search_results.map{|c| 
+					c
+				}
 				#puts JSON.pretty_generate(search_results)
 			else
 				search_results = []
