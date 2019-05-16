@@ -13,6 +13,10 @@ _.templateSettings.variable = 'search_result';
 
 var template;
 
+
+$(document).on('click','.dedication',function(event){
+	$(".dedication-text").first().slideToggle();
+})
 /***
 clear the search bar if the clear icon is clicked.
 ***/
@@ -109,28 +113,13 @@ var build_setup = function(search_result){
 
 	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
-	if(time_subindicator_regexp.test(search_result.information) == true){
+	// first test the tags to see if they contain period_start_period_end.
+	// then that is not a time based subindciator.
+	var non_time_subindicator = new RegExp(/period_start_\d/g)
 
-		//console.log("got a time based subindicator");
-		_.map(search_result.tags,function(tag,index){
-		
-			complex_string = complex_string + tag + " ";
-		
-		});
+	// same thing is repeated below in the final else.
+	if(non_time_subindicator.test(search_result.tags) == true){
 
-	}
-	else if(time_subindicator_regexp.test(search_result.tags) == true){
-
-		console.log("got a time based subindicator, by checking the tags");
-		_.map(search_result.tags,function(tag,index){
-		
-			complex_string = complex_string + tag + " ";
-		
-		});
-
-	}
-	else
-	{
 		_.map(search_result.tags,function(tag,index){
 
 			if(index == 0){
@@ -143,7 +132,51 @@ var build_setup = function(search_result){
 			else{
 				complex_string = complex_string + tag + " ";
 			}
-		});			
+		});
+
+	}
+	else{
+
+		if(time_subindicator_regexp.test(search_result.information) == true){
+
+			// if any of the tags have 
+			// period_start_period_end
+			// then 
+			_.map(search_result.tags,function(tag,index){
+			
+				complex_string = complex_string + tag + " ";
+			
+			});
+
+		}
+		else if(time_subindicator_regexp.test(search_result.tags) == true){
+
+			console.log("got a time based subindicator, by checking the tags");
+			_.map(search_result.tags,function(tag,index){
+			
+				complex_string = complex_string + tag + " ";
+			
+			});
+
+		}
+		else
+		{
+			// non time subindicator.
+			_.map(search_result.tags,function(tag,index){
+
+				if(index == 0){
+					// full name.
+					complex_string =  complex_string + tag + "'s" + " ";
+				}
+				else if(index == 1){
+					// symbol
+				}
+				else{
+					complex_string = complex_string + tag + " ";
+				}
+			});			
+		}
+
 	}
 
 
