@@ -280,7 +280,7 @@ var assign_statistics = function(search_result,text){
 	}
 
 	/// add week.
-	if((Number(stats[0]) == 0) && (Number(stats(1)) == 0)){
+	if((Number(stats[0]) == 0) && (Number(stats[1]) == 0)){
 
 	}
 	else{
@@ -296,7 +296,7 @@ var assign_statistics = function(search_result,text){
 	}
 
 	/// and month
-	if((Number(stats[4]) == 0) && (Number(stats(5)) == 0)){
+	if((Number(stats[4]) == 0) && (Number(stats[5]) == 0)){
 
 	}
 	else{
@@ -312,7 +312,7 @@ var assign_statistics = function(search_result,text){
 	}
 
 	/// add year
-	if((Number(stats[8]) == 0) && (Number(stats(9)) == 0)){
+	if((Number(stats[8]) == 0) && (Number(stats[9]) == 0)){
 
 	}
 	else{
