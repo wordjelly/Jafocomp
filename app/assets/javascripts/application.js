@@ -275,7 +275,7 @@ var assign_statistics = function(search_result,text){
 
 	search_result.impacts = [];
 
-	var impatc = {
+	var impact = {
 		statistics: []
 	}
 
@@ -284,7 +284,7 @@ var assign_statistics = function(search_result,text){
 
 	}
 	else{
-		statistics.push({
+		impact.statistics.push({
 			time_frame: 7,
 			time_frame_unit: "days",
 			time_frame_name: "1 week",
@@ -300,7 +300,7 @@ var assign_statistics = function(search_result,text){
 
 	}
 	else{
-		statistics.push({
+		impact.statistics.push({
 			time_frame: 31,
 			time_frame_unit: "days",
 			time_frame_name: "1 month",
@@ -316,7 +316,7 @@ var assign_statistics = function(search_result,text){
 
 	}
 	else{
-		statistics.push({
+		impact.statistics.push({
 			time_frame: 180,
 			time_frame_unit: "days",
 			time_frame_name: "6 months",
