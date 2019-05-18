@@ -211,6 +211,8 @@ var get_icon = function(setup){
 	return setup;
 }
 
+
+
 /***
 getStats()[0] = week_total_up;
 getStats()[1] = week_total_down;
@@ -273,39 +275,58 @@ var assign_statistics = function(search_result,text){
 
 	search_result.impacts = [];
 
-	var impact = {
-		
-		statistics: [
-			{
-				time_frame: 7,
-				time_frame_unit: "days",
-				time_frame_name: "1 week",
-				total_up: Number(stats[0]),
-				total_down: Number(stats[1]),
-				maximum_profit: Number(stats[2]),
-				maximum_loss: Number(stats[3])
-			},
-			{
-				time_frame: 31,
-				time_frame_unit: "days",
-				time_frame_name: "1 month",
-				total_up: Number(stats[4]),
-				total_down: Number(stats[5]),
-				maximum_profit: Number(stats[6]),
-				maximum_loss: Number(stats[7])	
-			},
-			{
-				time_frame: 180,
-				time_frame_unit: "days",
-				time_frame_name: "6 months",
-				total_up: Number(stats[8]),
-				total_down: Number(stats[9]),
-				maximum_profit: Number(stats[10]),
-				maximum_loss: Number(stats[11])		
-			}
-		]
-		
+	var impatc = {
+		statistics: []
 	}
+
+	/// add week.
+	if((Number(stats[0]) == 0) && (Number(stats(1)) == 0)){
+
+	}
+	else{
+		statistics.push({
+			time_frame: 7,
+			time_frame_unit: "days",
+			time_frame_name: "1 week",
+			total_up: Number(stats[0]),
+			total_down: Number(stats[1]),
+			maximum_profit: Number(stats[2]),
+			maximum_loss: Number(stats[3])
+		})
+	}
+
+	/// and month
+	if((Number(stats[4]) == 0) && (Number(stats(5)) == 0)){
+
+	}
+	else{
+		statistics.push({
+			time_frame: 31,
+			time_frame_unit: "days",
+			time_frame_name: "1 month",
+			total_up: Number(stats[4]),
+			total_down: Number(stats[5]),
+			maximum_profit: Number(stats[6]),
+			maximum_loss: Number(stats[7])
+		})
+	}
+
+	/// add year
+	if((Number(stats[8]) == 0) && (Number(stats(9)) == 0)){
+
+	}
+	else{
+		statistics.push({
+			time_frame: 180,
+			time_frame_unit: "days",
+			time_frame_name: "6 months",
+			total_up: Number(stats[8]),
+			total_down: Number(stats[9]),
+			maximum_profit: Number(stats[10]),
+			maximum_loss: Number(stats[11])
+		})
+	}
+
 
 	search_result.impacts.push(impact);
 		
