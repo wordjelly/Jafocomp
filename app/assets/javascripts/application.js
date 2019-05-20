@@ -670,25 +670,22 @@ var search = function(input){
 }
 ***/
 
+// so this sup business does not work.
+// 
+
 var update_coin_counts = function(search_result){
-	
+	var max_units = 9;
 	var gold = [];
 	var total_time_units = [];
-	
 	_.each(search_result.impacts[0].statistics,function(statistic){
-		// we want the best of three for these.
 		if(statistic.total_up > statistic.total_down){
 			gold.push(1);
 			gold.push(1);
-		}
-		else{
-			total_time_units.push(1);
-			total_time_units.push(1);
+			gold.push(1);
 		}
 	});
-
 	search_result.impacts[0].statistics[0]["gold_coins"] = gold;
-	search_result.impacts[0].statistics[0]["other_coins"] = total_time_units;
+	search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold.length);
 	return search_result;
 }
 
@@ -829,9 +826,10 @@ var strip_period_details_from_setup = function(search_result){
 var restore_percentage_and_literal_names_for_information_query = function(query){
 	var inverted_literals = _.invert(numeric_literals);
 	_.each(_.keys(inverted_literals),function(numeric){
-		query = query.replace(numeric + "%",numeric + " percent");
+		query = query.replace(numeric + "%", inverted_literals[numeric] + " percent");
+		query = query.replace(numeric + " and a ", inverted_literals[numeric] + " and a ");
 	});
-	query = query.replace("<sup>1</sup>/<sup>2</sup>%","half percent");
+	query = query.replace("<sup>1</sup>⁄<sup>2</sup>%","half percent");
 	
 	return query;
 }
