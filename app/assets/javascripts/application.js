@@ -678,9 +678,11 @@ var update_coin_counts = function(search_result){
 	_.each(search_result.impacts[0].statistics,function(statistic){
 		// we want the best of three for these.
 		if(statistic.total_up > statistic.total_down){
-			gold.push(1)
+			gold.push(1);
+			gold.push(1);
 		}
 		else{
+			total_time_units.push(1);
 			total_time_units.push(1);
 		}
 	});
@@ -690,6 +692,7 @@ var update_coin_counts = function(search_result){
 	return search_result;
 }
 
+// i need to color and linkify the company names
 
 
 /*****************
