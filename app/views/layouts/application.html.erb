@@ -74,8 +74,19 @@
           {{ first_impact = search_result.impacts[0] }}
           <p class="{{= first_impact.statistics[0].bar_color }}-text text-darken-2" style="font-size:22px; font-weight:600;">{{= first_impact.effect }}</p>
           <div class="row" style="width:50%; margin-top:1rem !important; margin-left:0px !important;">
-            <div class="col {{= first_impact.statistics[0].bar_color }} darken-2" style="height:5px; width:{{= first_impact.statistics[0].bar_width}}rem;"></div>
-            <div class="col grey lighten-2" style="height:5px; width:{{= first_impact.statistics[0].remaining_bar_width}}rem;"></div>
+
+            {{_.each(search_result.impacts[0].statistics[0].gold_coins,function(coin){ }}
+
+              <span><i style="font-size:20px;" class="fas fa-coins amber-text"></i></span>              
+
+            {{  })}}
+
+            {{_.each(search_result.impacts[0].statistics[0].other_coins,function(coin){ }}
+
+              <span><i style="font-size:20px;" class="fas fa-coins grey-text text-lighten-2"></i></span>              
+
+            {{  })}}
+
           </div>
           <!-- ONE WEEK , ONE MONTH AND ONE YEAR LATER -->
           <div class="row additional_info" style="display:none; margin-top: 2rem;">

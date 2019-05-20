@@ -435,6 +435,7 @@ var display_search_results = function(search_results,input){
 		    	//console.log(text);
 		    	//search_result['suggest'].reverse();
 		    	assign_statistics(search_result,text);
+		    	search_result = update_coin_counts(search_result);
 		    	search_result = update_bar_lengths(search_result);
 		    	search_result = convert_n_day_change_to_superscript(search_result);
 		    	search_result = replace_percentage_and_literal_numbers(search_result);
@@ -668,6 +669,27 @@ var search = function(input){
 
 }
 ***/
+
+var update_coin_counts = function(search_result){
+	
+	var gold = [];
+	var total_time_units = [];
+	
+	_.each(search_result.impacts[0].statistics,function(statistic){
+		// we want the best of three for these.
+		if(statistic.total_up > statistic.total_down){
+			gold.push(1)
+		}
+		else{
+			total_time_units.push(1);
+		}
+	});
+
+	search_result.impacts[0].statistics[0]["gold_coins"] = gold;
+	search_result.impacts[0].statistics[0]["other_coins"] = total_time_units;
+	return search_result;
+}
+
 
 
 /*****************
@@ -1024,13 +1046,13 @@ var numeric_literals = {
 	"three" : "3",
 	"four" : "4",
 	"five" : "5",
+	"sixty" : "60",
 	"six" : "6",
 	"ten" : "10",
 	"twenty" : "20",
 	"thirty" : "30",
 	"forty" : "40",
 	"fifty" : "50",
-	"sixty" : "60",
 	"seventy" : "70",
 	"eighty" : "80",
 	"ninety" : "90",
