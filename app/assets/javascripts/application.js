@@ -675,6 +675,7 @@ var search = function(input){
 
 var update_coin_counts = function(search_result){
 	var max_units = 9;
+	var multiple = max_units/(_.size(search_result.impacts[0].statistics));
 	var gold = [];
 	var total_time_units = [];
 	_.each(search_result.impacts[0].statistics,function(statistic){
@@ -685,7 +686,7 @@ var update_coin_counts = function(search_result){
 		}
 	});
 	search_result.impacts[0].statistics[0]["gold_coins"] = gold;
-	search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold.length);
+	search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - (gold.length*(multiple)));
 	return search_result;
 }
 
