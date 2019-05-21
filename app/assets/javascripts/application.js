@@ -359,7 +359,7 @@ var prepare_query_for_tooltip_search = function(origin){
 		console.log("making query from indicator");
 		console.log("new query:");
 		console.log(expand_indicators_for_information_query(origin.data("name")));
-		query = expand_indicators_for_information_query(origin.data("name"));
+		query = expand_indicators_for_information_query(origin.data("name")).replace(/_period_start_\d+_(\d+_)*period_end/,"");
 		console.log("query is:");
 		console.log(query);
 	}
@@ -411,6 +411,8 @@ var prepare_query_for_tooltip_search = function(origin){
 
 	}
 
+	// remove period_start_\d_period_end.
+	// if it is there in the query.
 	return restore_percentage_and_literal_names_for_information_query(query);
 }
 
@@ -671,8 +673,6 @@ var search = function(input){
 ***/
 
 // so this sup business does not work.
-// 
-
 var update_coin_counts = function(search_result){
 	var max_units = 9;
 	var multiple = max_units/(_.size(search_result.impacts[0].statistics));

@@ -36,7 +36,7 @@ class Result
 						},
 						{
 							prefix: {
-								"information_name.raw".to_sym => args[:information].strip
+								"information_name.raw".to_sym => args[:information].strip[0..20]
 							}
 						}
 					]
