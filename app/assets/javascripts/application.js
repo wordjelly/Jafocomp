@@ -675,24 +675,24 @@ var search = function(input){
 // so this sup business does not work.
 var update_coin_counts = function(search_result){
 	var max_units = 9;
-	console.log("multiple is:");
+	
 	var multiple = max_units/(_.size(search_result.impacts[0].statistics));
+	console.log("multiple is:" + multiple);
 	console.log("size of the statistics of the first impact is:");
 	console.log(_.size(search_result.impacts[0].statistics));
-	console.log(multiple);
+	
 	var gold = [];
 	var total_time_units = [];
 	_.each(search_result.impacts[0].statistics,function(statistic){
 		if(statistic.total_up > statistic.total_down){
-			gold.push(1);
-			gold.push(1);
-			gold.push(1);
+			gold.push(_.range(Math.floor(multiple)));
 		}
 	});
+	gold = _.flatten(gold);
 	search_result.impacts[0].statistics[0]["gold_coins"] = gold;
 	console.log("the gold coins become:");
 	console.log(gold);
-	search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - (gold.length*(multiple)));
+	search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold);
 	return search_result;
 }
 
