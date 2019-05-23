@@ -692,7 +692,7 @@ var update_coin_counts = function(search_result){
 	search_result.impacts[0].statistics[0]["gold_coins"] = gold;
 	console.log("the gold coins become:");
 	console.log(gold);
-	search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold);
+	search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold.length);
 	return search_result;
 }
 
