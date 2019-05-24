@@ -684,7 +684,7 @@ var update_coin_counts = function(search_result){
 	var gold = [];
 	var total_time_units = [];
 	_.each(search_result.impacts[0].statistics,function(statistic){
-		if(statistic.total_up > statistic.total_down){
+		if(statistic.total_up >= statistic.total_down){
 			gold.push(_.range(Math.floor(multiple)));
 		}
 	});
@@ -781,11 +781,11 @@ var update_falls_or_rises_text = function(search_result){
 	_.each(search_result.impacts[0].statistics,function(statistic,key,list){
 		var total_times = statistic.total_up + statistic.total_down;
 		if(statistic.total_up >= statistic.total_down){
-			statistic["up_down_text"] = "Rises " + statistic.total_up + "/" + (total_times) + " times";
+			statistic["up_down_text"] = "<i class='material-icons'>call_made</i>Rises " + statistic.total_up + "/" + (total_times) + " times";
 			statistic["up_down_text_color"] = "green";
 		}
 		else{
-			statistic["up_down_text"] = "Falls " + statistic.total_down + "/" + (total_times) + " times";
+			statistic["up_down_text"] = "<i class='material-icons'>call_received</i>Falls " + statistic.total_down + "/" + (total_times) + " times";
 			statistic["up_down_text_color"] = "red";	
 		}
 	});
