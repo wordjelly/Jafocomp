@@ -88,6 +88,15 @@
             {{  })}}
 
           </div>
+          <div class="row chips" style="margin-top: 1rem; border-bottom: none; !important">
+              {{ _.each(search_result.categories,function(category){  }}
+
+                <div class="chip" data-category='{{= category }}' style="border-bottom: none">
+                  {{= category }}
+                </div>
+
+              {{ }) }}
+          </div>
           <!-- ONE WEEK , ONE MONTH AND ONE YEAR LATER -->
           <div class="row additional_info" style="display:none; margin-top: 2rem;">
             {{ var column_width = 12/first_impact.statistics.length; }}

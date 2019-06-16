@@ -57,6 +57,10 @@ class Result
 
 	end
 
+=begin
+	## we make all the entity permutations, before hand.
+	## and then we simply increment one if it is found.
+	## how to make the permutations ?ds
 	def self.simple_match_query(query_text)
 
 		match_query_clauses = query_text.split(" ").map{|c|
@@ -147,7 +151,7 @@ class Result
 		end
 
 	end
-
+=end
 	def self.basic_match_query(query)
 		query_split_on_space = query.split(" ")
 		
@@ -165,10 +169,28 @@ class Result
 					}
 				}
 			}
+			should_query_clauses << {
+				prefix: {
+					industries: {
+						value: c.gsub(/\'s$/,'')[0..9],
+						boost: i*10
+					}
+				}
+			}
+
 			nested_query_clauses << {
 				prefix: 
 					{
 			            "complex_derivations.tags".to_sym => {
+			                  value: c.gsub(/\'s$/,'')[0..9],
+			                  boost: (total_terms - i)*10
+			                }
+		            }
+			}
+			nested_query_clauses << {
+				prefix: 
+					{
+			            "complex_derivations.industries".to_sym => {
 			                  value: c.gsub(/\'s$/,'')[0..9],
 			                  boost: (total_terms - i)*10
 			                }
@@ -180,7 +202,7 @@ class Result
 		  _source: ["tags","preposition","epoch","_id"],
 		  query: {
 		    bool: {
-		      must: [
+		      should: [
 		        {
 		          bool: {
 		            should: should_query_clauses

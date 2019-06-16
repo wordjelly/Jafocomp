@@ -105,6 +105,7 @@ var prepare_information_title = function(information_title){
 
 
 
+
 var build_setup = function(search_result){
 	var complex_string = search_result.preposition + " ";
 	
@@ -212,6 +213,25 @@ var get_icon = function(setup){
 }
 
 
+/***
+@param[Object] search_result : the search result itself.
+@param[Array] stats: from the suggestion split on commas.
+sets the impacted categories using the suggestion input.
+## we want to take up everything after the 
+***/
+var set_impacted_categories_from_suggestion_input = function(search_result,stats){
+	var categories = stats.slice(12,stats.length - 1);
+	search_result.categories = categories;
+	console.log("the search result categories are:");
+	console.log(search_result.categories);
+}
+
+/***
+***/
+var set_origin_categories = function(search_result){
+
+}
+
 
 /***
 getStats()[0] = week_total_up;
@@ -269,6 +289,9 @@ var assign_statistics = function(search_result,text){
 
 	stats = stats.split(",");
 	search_result.triggered_at = search_result.epoch;
+
+	// this sets the 
+	set_impacted_categories_from_suggestion_input(search_result,stats);
 	stats = stats.slice(0,12);
 	
 	build_setup(search_result);
@@ -421,6 +444,7 @@ var prepare_query_for_tooltip_search = function(origin){
 var display_search_results = function(search_results,input){
 	 $('#search_results').html("");
 	 _.each(search_results,function(search_result,index,list){
+	 			// ALL THIS
 	 			// upto the last matching entire word.
 	 			// not incomplete words.
 	 			// so if the search result's text is 
@@ -545,6 +569,8 @@ var query_pending = function(input){
 		return false;
 	}
 }
+
+
 
 var search_new = function(input){
 	if(query_pending(input) == true){
@@ -675,24 +701,25 @@ var search = function(input){
 // so this sup business does not work.
 var update_coin_counts = function(search_result){
 	var max_units = 9;
-	
-	var multiple = max_units/(_.size(search_result.impacts[0].statistics));
-	console.log("multiple is:" + multiple);
-	console.log("size of the statistics of the first impact is:");
-	console.log(_.size(search_result.impacts[0].statistics));
-	
-	var gold = [];
-	var total_time_units = [];
-	_.each(search_result.impacts[0].statistics,function(statistic){
-		if(statistic.total_up >= statistic.total_down){
-			gold.push(_.range(Math.floor(multiple)));
-		}
-	});
-	gold = _.flatten(gold);
-	search_result.impacts[0].statistics[0]["gold_coins"] = gold;
-	console.log("the gold coins become:");
-	console.log(gold);
-	search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold.length);
+	if(!_.isEmpty(search_result.impacts[0].statistics)){
+		var multiple = max_units/(_.size(search_result.impacts[0].statistics));
+		console.log("multiple is:" + multiple);
+		console.log("size of the statistics of the first impact is:");
+		console.log(_.size(search_result.impacts[0].statistics));
+		
+		var gold = [];
+		var total_time_units = [];
+		_.each(search_result.impacts[0].statistics,function(statistic){
+			if(statistic.total_up >= statistic.total_down){
+				gold.push(_.range(Math.floor(multiple)));
+			}
+		});
+		gold = _.flatten(gold);
+		search_result.impacts[0].statistics[0]["gold_coins"] = gold;
+		console.log("the gold coins become:");
+		console.log(gold);
+		search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold.length);
+	}
 	return search_result;
 }
 
@@ -1012,13 +1039,17 @@ $(document).on('click','.strategic_trading',function(event){
 });
 
 
+$(document).on('click','.chip',function(event){
+	console.log("clicked chip with category:" + $(this).attr("data-category"));
+	search_new($(this).attr("data-category"));
+});
+
 // I want a side by side comparison, in one tab only.
 // with a switch to show what exactly is happening.
 
 /****
 tooltipster ajax.
 ****/
-
 
 var quotes = {
 	"Probabilities guide the decisions of the wise." : "Marcus Tullius Cicero, Roman Philosopher, 63 BC",
