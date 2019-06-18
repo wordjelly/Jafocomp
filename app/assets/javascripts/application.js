@@ -78,6 +78,10 @@ var render_search_result = function(search_result){
 	$("time.timeago").timeago();
 }
 
+var render_categories = function(categories){
+	var category_template = _.template($('#categories_template').html());
+	$("#categories").append(category_template(categories));
+}
 
 
 function humanize(str) {
@@ -220,6 +224,8 @@ sets the impacted categories using the suggestion input.
 ## we want to take up everything after the 
 ***/
 var set_impacted_categories_from_suggestion_input = function(search_result,stats){
+	console.log("stats are:");
+	console.log(stats);
 	var categories = stats.slice(12,stats.length - 1);
 	search_result.categories = categories;
 	console.log("the search result categories are:");
@@ -229,7 +235,7 @@ var set_impacted_categories_from_suggestion_input = function(search_result,stats
 /***
 ***/
 var set_origin_categories = function(search_result){
-
+	// this and also where to display them.
 }
 
 
@@ -442,119 +448,122 @@ var prepare_query_for_tooltip_search = function(origin){
 
 
 var display_search_results = function(search_results,input){
-	 $('#search_results').html("");
-	 _.each(search_results,function(search_result,index,list){
-	 			// ALL THIS
-	 			// upto the last matching entire word.
-	 			// not incomplete words.
-	 			// so if the search result's text is 
-	 			// buy gold on
-	 			// and your query is buy gold o
-	 			// we want to stop till buy gold.
-		    	//console.log(search_result);
-		    	text = search_result["text"];
-		    	search_result = search_result['_source'];
-		    	
-		    	//console.log("search result is:");
-		    	//console.log(search_result);
-		    	//console.log("text is:");
-		    	//console.log(text);
-		    	//search_result['suggest'].reverse();
-		    	assign_statistics(search_result,text);
-		    	search_result = update_coin_counts(search_result);
-		    	search_result = update_bar_lengths(search_result);
-		    	search_result = convert_n_day_change_to_superscript(search_result);
-		    	search_result = replace_percentage_and_literal_numbers(search_result);
-		    	
-		    	// add the tooltip spans to each word.
-		    	//update_last_successfull_query(input,search_result.setup);
-		    	// only the thing about the sup is left.
-		    	// 
-		    	
-		    	search_result.setup = shrink_indicators(search_result.setup);
-		    	
-		    	var arr = search_result.setup.split(" ");
-		    	var concat = "";
-		    	_.each(arr,function(value,index){
-		    		if(index == 2){
-		    			concat+= ("<span class='blue-grey-text'>"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
-		    		}
-		    		else{
-		    			concat+= ("<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
-		    		}
+	$('#search_results').html("");
+	$('#categories').html("");
+	var categories = [];
+	 // and later use a template to get this.
+	_.each(search_results,function(search_result,index,list){
+			// ALL THIS
+			// upto the last matching entire word.
+			// not incomplete words.
+			// so if the search result's text is 
+			// buy gold on
+			// and your query is buy gold o
+			// we want to stop till buy gold.
+    	//console.log(search_result);
+    	text = search_result["text"];
+    	search_result = search_result['_source'];
+    	
+    	//console.log("search result is:");
+    	//console.log(search_result);
+    	//console.log("text is:");
+    	//console.log(text);
+    	//search_result['suggest'].reverse();
+    	assign_statistics(search_result,text);
+    	search_result = update_coin_counts(search_result);
+    	search_result = update_bar_lengths(search_result);
+    	search_result = convert_n_day_change_to_superscript(search_result);
+    	search_result = replace_percentage_and_literal_numbers(search_result);
+    	
+    	// add the tooltip spans to each word.
+    	//update_last_successfull_query(input,search_result.setup);
+    	// only the thing about the sup is left.
+    	// 
+    	
+    	search_result.setup = shrink_indicators(search_result.setup);
+    	
+    	var arr = search_result.setup.split(" ");
+    	var concat = "";
+    	_.each(arr,function(value,index){
+    		if(index == 2){
+    			concat+= ("<span class='blue-grey-text'>"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
+    		}
+    		else{
+    			concat+= ("<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
+    		}
 
-		    	});
-		    	concat += "</span>";
-		    	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
-				//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
-				// previous setup was :
-				// 
-				var icon = get_icon(search_result.setup);
-				search_result.setup = icon + concat;	
+    	});
+    	concat += "</span>";
+    	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
+		//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
+		// previous setup was :
+		// 
+		var icon = get_icon(search_result.setup);
+		search_result.setup = icon + concat;	
 
-				//search_result.setup = replace_pattern_with_icons(search_result.setup);	
-				
-		    	search_result = strip_period_details_from_setup(search_result);
-		    	search_result = update_falls_or_rises_text(search_result);	
-		    	search_result = add_time_to_setup(search_result);
-		    	//console.log(search_result);
-		    	render_search_result(search_result);
-		    });
+		//search_result.setup = replace_pattern_with_icons(search_result.setup);	
+		
+    	search_result = strip_period_details_from_setup(search_result);
+    	search_result = update_falls_or_rises_text(search_result);	
+    	search_result = add_time_to_setup(search_result);
+    	//console.log(search_result);
+    	categories = _.union(search_result.categories,categories);
+    	render_search_result(search_result);
+    });
 
-	 		$('.tooltip').tooltipster({
-			    content: 'Loading...',
-			    contentAsHTML: true,
-	    		interactive: true,
-			    // 'instance' is basically the tooltip. More details in the "Object-oriented Tooltipster" section.
-			    functionBefore: function(instance, helper) {
-			        
-			        var $origin = $(helper.origin);
+		$('.tooltip').tooltipster({
+	    content: 'Loading...',
+	    contentAsHTML: true,
+		interactive: true,
+	    // 'instance' is basically the tooltip. More details in the "Object-oriented Tooltipster" section.
+	    functionBefore: function(instance, helper) {
+	        
+	        var $origin = $(helper.origin);
 
-			       //prepare_query_for_tooltip_search($origin);
+	       //prepare_query_for_tooltip_search($origin);
 
-			        // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
-			        if ($origin.data('loaded') !== true) {
+	        // we set a variable so the data is only loaded once via Ajax, not every time the tooltip opens
+	        if ($origin.data('loaded') !== true) {
 
-			        	// so origin is the span element.
-			        	// first check if it has indicator before it or after it.
-			        	// if indicator is before, then it is a subindicator, and we take everything after it.
-			        	// but the exception so close, 
+	        	// so origin is the span element.
+	        	// first check if it has indicator before it or after it.
+	        	// if indicator is before, then it is a subindicator, and we take everything after it.
+	        	// but the exception so close, 
 
-			            $.get('/search',{information: prepare_query_for_tooltip_search($origin)}).done(function(data) {
+	            $.get('/search',{information: prepare_query_for_tooltip_search($origin)}).done(function(data) {
 
-			            	console.log("data is:");
-			            	console.log(data);
-			            	if(!_.isEmpty(data["results"])){
+	            	console.log("data is:");
+	            	console.log(data);
+	            	if(!_.isEmpty(data["results"])){
 
-			            		result = data["results"][0]["_source"];
+	            		result = data["results"][0]["_source"];
 
-				            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
+		            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
 
-				            	content_string = result["information_description"] + "<br>";
+		            	content_string = result["information_description"] + "<br>";
 
-				            	link_string = '';
+		            	link_string = '';
 
-				            	if(!_.isEmpty(result["information_link"])){
-				            		console.log("there is an information link");
-				            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
-				            	}
-				            	
-				            	var content = title_string + content_string + link_string
+		            	if(!_.isEmpty(result["information_link"])){
+		            		console.log("there is an information link");
+		            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
+		            	}
+		            	
+		            	var content = title_string + content_string + link_string
 
-				            	console.log("content" + content);
+		            	console.log("content" + content);
 
-				                instance.content(content);
-				               
-				                $origin.data('loaded', true);
+		                instance.content(content);
+		               
+		                $origin.data('loaded', true);
 
-			            	}
-			            	
-			            });
-			        }
-			    }
-			});
-
-
+	            	}
+	            	
+	            });
+	        }
+	    }
+	});
+	render_categories(categories);
 }
 
 var query_pending = function(input){

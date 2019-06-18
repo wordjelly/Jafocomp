@@ -237,7 +237,12 @@ class Result
 				
 			puts hit.to_s
 
-			input = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",")
+			input = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["industries"].join(",") + ","
+
+			## here add the industries.
+			## and we are in business
+			## and then add the chips to the top of the page.
+			## or intermittently.
 
 			hit = {
 				_id: hit["_id"],
