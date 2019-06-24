@@ -160,6 +160,24 @@ class Result
 	 	## this should be possible, but what about the speed of this query
 	 	## that is the big problem.
 	 	total_terms = query_split_on_space.size
+
+
+	 	unless $sectors_name_to_counter[query].blank?
+
+		 	should_query_clauses << {
+		 		term: {
+		 			industries: $sectors_name_to_counter[query]
+		 		}
+		 	}
+
+		 	nested_query_clauses << {
+		 		term: {
+		 			"complex_derivations.industries".to_sym => $sectors_name_to_counter[query]
+		 		}
+		 	}
+
+	 	end
+
 		query_split_on_space.each_with_index.map{|c,i|
 			should_query_clauses << {
 				prefix: {
@@ -203,13 +221,11 @@ class Result
 		  query: {
 		    bool: {
 		      should: [
-		        {
+		      	{
 		          bool: {
 		            should: should_query_clauses
 		          }
-		        }
-		      ],
-		      should: [
+		        },
 		        {
 		          nested: {
 		            path: "complex_derivations",
@@ -252,13 +268,30 @@ class Result
 					tags: hit["_source"]["tags"],
 					suggest: [
 						{
-							input: input
+							input: plug_industries(input)
 						}
 					]
 				}
 			}
 		}
 
+	end
+
+	def self.plug_industries(input)
+		sectors = []
+		parts = input.split("#")
+		stats = parts[1].split(",")
+		input.split("#")[1].split(",")[12..-1].each do |industry_code|
+			industry_name = $sectors[industry_code.to_s].information_name
+			sectors.push(industry_name)
+		end
+		#puts "the sectors are:"
+		#puts sectors.to_s
+		#puts "stats are:"
+		input = parts[0] + "#" + stats[0..11].join(",") + "," + sectors.join(",")
+		#puts "the input becomes:"
+		#puts input
+		input
 	end
 
 	## default values for prefix and context are provided in the method as '' and [] respectively.
@@ -285,39 +318,40 @@ class Result
 			}
 		}
 
-			query_suggestion_results = []
+		query_suggestion_results = []
 
-			search_start_time = Time.now.to_i
-			search_results = gateway.client.search index: "correlations", body: body
-			#puts search_results["suggest"].to_s
-			search_end_time = Time.now.to_i
-			puts "elasticsearch query took-------------"
-			puts (search_end_time - search_start_time)
+		search_start_time = Time.now.to_i
+		search_results = gateway.client.search index: "correlations", body: body
+		#puts search_results["suggest"].to_s
+		search_end_time = Time.now.to_i
+		puts "elasticsearch query took-------------"
+		puts (search_end_time - search_start_time)
 
-			if search_results["suggest"]
-				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-				
-				search_results.map!{|c|
-					txt = c["text"]
-					txt = txt.split("#")[0].split(" ")
-					puts "the text parts are:"
-					puts txt.to_s
-					c["_source"]["suggest"] = c["_source"]["suggest"].select{|d|
-						results = txt.map{|k|
-							d["input"] =~ /#{k}/
-						}.compact
-						results.size == txt.size
-					}[0..0]
-					c
-				}
-				puts "the search results become:"
-				puts JSON.pretty_generate(search_results)
-				## so each of the search-results
-				## we want only one suggestion.
-				#puts JSON.pretty_generate(search_results)
-			else
-				search_results = []
-			end
+		if search_results["suggest"]
+			search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+			
+			search_results.map!{|c|
+				txt = c["text"]
+				txt = txt.split("#")[0].split(" ")
+				#puts "the text parts are:"
+				#puts txt.to_s
+				c["_source"]["suggest"] = c["_source"]["suggest"].select{|d|
+					results = txt.map{|k|
+						d["input"] =~ /#{k}/
+					}.compact
+					results.size == txt.size
+				}[0..0]
+				c["_source"]["suggest"][0]["input"] = plug_industries(c["_source"]["suggest"][0]["input"])
+				c
+			}
+			puts "the search results become:"
+			puts JSON.pretty_generate(search_results)
+			## so each of the search-results
+			## we want only one suggestion.
+			#puts JSON.pretty_generate(search_results)
+		else
+			search_results = []
+		end
 
 #			end
 
