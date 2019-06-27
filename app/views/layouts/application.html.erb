@@ -54,7 +54,7 @@
 
 
   <script type="text/template" id="categories_template">
-    <div class="row chips" style="margin-top: 1rem; border-bottom: none; !important">
+    <div class="row related_chips" style="margin-top: 1.7rem; border-bottom: none; !important">
         {{ _.each(search_result,function(category){  }}
 
           <div class="chip" data-category='{{= category }}' style="border-bottom: none; cursor: pointer;">
@@ -62,7 +62,23 @@
           </div>
 
         {{ }) }}
-    </div>
+
+        <div class="chip show_more_query_chips grey lighten-2"  style="border-bottom: none; cursor: pointer; font-size: 16px;">
+            <i class="material-icons" style="vertical-align: middle; !important">add</i>
+        </div>
+
+
+        <% $sectors.keys.each_slice(2) do |sector_row|%>
+          <div class="row query_chips" style="margin-top: 1rem; border-bottom: none; !important; display: none;">
+            <% sector_row.each do |counter| %>
+              <% sector = $sectors[counter] %>
+                  <div class="chip default_sector grey lighten-2" data-category='<%= sector.information_name %>' style="border-bottom: none; cursor: pointer;">
+                      <%= sector.information_name %>
+                  </div>
+            <% end %>
+          </div>
+        <% end %>
+
   </script>
   <!-- so the first thing is the primary entity detection issue in the stuff coming in direct -->
   <!-- how do you know if the primary entity has been hit? we have to have this being done server side, for whatever is being returned. -->

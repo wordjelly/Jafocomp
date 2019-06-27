@@ -13,6 +13,16 @@ _.templateSettings.variable = 'search_result';
 
 var template;
 
+var slide_down_logo = function(event){
+	$("#logo").slideDown('fast',function(){
+
+		$('#search_results').html("");
+		$('.show_more_query_chips').remove();
+		$('.query_chips').remove();
+		$('.related_chips').remove();
+		$('.default_sectors').first().show();
+	});
+}
 
 $(document).on('click','.dedication',function(event){
 	$(".dedication-text").first().slideToggle();
@@ -23,10 +33,7 @@ clear the search bar if the clear icon is clicked.
 $(document).on('click','#clear_search',function(event){
 	$("#search").val("");
 	
-	$("#logo").slideDown('fast',function(){
-
-		$('#search_results').html("");
-	});
+	slide_down_logo();
 			
 	
 });
@@ -43,10 +50,7 @@ $(document).on('keyup','#search',function(event){
 	}
 	else{
 		if( !$(this).val() ) {
-			$("#logo").slideDown('fast',function(){
-
-				$('#search_results').html("");
-			});
+			slide_down_logo();
 			
 		}
 		else{
@@ -58,6 +62,7 @@ $(document).on('keyup','#search',function(event){
 
 					
 				});
+				$(".default_sectors").first().hide();
 
 			}
 		}
@@ -1049,8 +1054,30 @@ $(document).on('click','.strategic_trading',function(event){
 
 
 $(document).on('click','.chip',function(event){
-	console.log("clicked chip with category:" + $(this).attr("data-category"));
-	search_new($(this).attr("data-category"));
+	//console.log("clicked chip with category:" + $(this).attr("data-category"));
+	// if its parent is the row chip.
+	if($(this).hasClass("show_more_chips")){
+		// so its show more.
+		$(".additional_chips").show();
+	}
+	else if($(this).hasClass("show_less_chips")){
+		$(".additional_chips").hide();
+	}
+	else if($(this).hasClass("show_more_query_chips")){
+		$(".query_chips").slideToggle();
+	}	
+	else{
+		if($(this).hasClass("default_sector")){
+			$("#logo").slideUp('fast',function(){
+				
+			});
+			$(".default_sectors").first().hide();
+		}
+		else{
+
+		}
+		search_new($(this).attr("data-category"));
+	}
 });
 
 // I want a side by side comparison, in one tab only.

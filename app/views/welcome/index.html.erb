@@ -47,6 +47,39 @@
 		</nav>
 	</div>
 
+	<div class="row default_sectors center" style="margin-top: 3rem;">
+		<%= puts $sectors.to_s %>
+		<% index = 0 %>
+		<% last_index = $sectors.keys.size %>
+		<% $sectors.keys.each_slice(2) do |sector_row|%>
+			<% display = (index == 0 ? "block" : "none") %>
+			<% additional_chips_class = (index > 0 ? "additional_chips" : "") %>
+			<div class="row chips <%= additional_chips_class %>" style="margin-top: 1rem; border-bottom: none; !important; display: <%= display %> ">
+				<% sector_row.each do |counter| %>
+					<% sector = $sectors[counter] %>
+					
+			        <div class="chip default_sector blue-grey white-text lighten-2" data-category='<%= sector.information_name %>' style="border-bottom: none; cursor: pointer;">
+			            <%= sector.information_name %>
+			        </div>
+				<% end %>
+				<!-- if it is the first row -->
+				<%= puts index.to_s %>
+				<% if index == 0 %>
+					<!-- add a chip to show all -->
+					<div class="chip show_more_chips blue-grey white-text lighten-2"  style="border-bottom: none; cursor: pointer; font-size: 16px;">
+			            <i class="material-icons" style="vertical-align: middle; !important">add</i>
+			        </div>
+				<% elsif index == (last_index - sector_row.size) %>
+					<!-- add a chip to minus -->
+					<div class="chip show_less_chips blue-gray lighten-2"  style="border-bottom: none; cursor: pointer; font-size: 16px;">
+			            <i class="material-icons" style="vertical-align: middle; !important">remove</i>
+			        </div>
+				<% end %>
+				<% index+= sector_row.size %>
+			</div>
+		<% end %> 
+	</div>
+
 	<!--
 	<div class="row" style="margin-top:2rem">
 		<ul class="collection" id="query_suggestions">
@@ -56,7 +89,7 @@
 	-->
 
 	<!-- HOLDER FOR SEARCH RESULTS -->
-	<div class="row" style="margin-top:2rem">
+	<div class="row">
 		<div id="top_result_contexts" data-context="[]"></div>
 		
 		<div id="last_successfull_query" data-query="">
@@ -69,14 +102,15 @@
 		</div>
 	</div>
 
-	<div class="row center quote_holder" style="margin-top:6rem;">
-		<div class="grey-text quote" style="font-size:14px; margin-top:5rem;">
+	<div class="row center quote_holder" style="margin-top:1rem;">
+		<div class="grey-text quote" style="font-size:14px; margin-top:1rem;">
 			<span id="quote"></span><br><span class="blue-grey-text" id="quote_author"></span>
 		</div>
 		<div class="divider col l2 m2 s2 offset-l5 offset-m5 offset-s5" style="margin-top:1rem;">
 		</div>
 	</div>
 
+<!--
 	<div class="row center quote_holder" style="margin-top:1rem;">
 		<div class="dedication grey-text" style="font-size:12px;">
 			<i>Dedication</i>
@@ -85,7 +119,7 @@
 			To my father, the bravest person I have know.
 		</div>
 	</div>
-
+-->
 	<div class="build_query_information">
 		<div id="primary_entity"></div>
 		<div id="secondary_entity"></div>
