@@ -218,6 +218,13 @@ class Result
 
 		body = {
 		  _source: ["tags","preposition","epoch","_id"],
+		  sort: [
+		  	{
+		  		epoch: {
+		  			order: "desc"
+		  		}
+		  	}
+		  ],
 		  query: {
 		    bool: {
 		      should: [
