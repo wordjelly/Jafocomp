@@ -51,7 +51,7 @@
 		<%= puts $sectors.to_s %>
 		<% index = 0 %>
 		<% last_index = $sectors.keys.size %>
-		<% $sectors.keys.each_slice(2) do |sector_row|%>
+		<% $sectors.keys.each_slice(4) do |sector_row|%>
 			<% display = (index == 0 ? "block" : "none") %>
 			<% additional_chips_class = (index > 0 ? "additional_chips" : "") %>
 			<div class="row chips <%= additional_chips_class %>" style="margin-top: 1rem; border-bottom: none; !important; display: <%= display %> ">
@@ -98,7 +98,18 @@
 		<div id="categories">
 			
 		</div>
-		<div class="search_results" id="search_results">
+		<div class="row">
+			<div class="search_results col l9 s9 m9" style="padding:0px !important;" id="search_results">
+			</div>
+			<div class="related_queries col l3 m3 s3" id="related_queries" style="padding-left: 1.5rem;">
+				<h5 class="blue-grey-text" style="margin-top: 0.6rem; display:none;" id="related_queries_title">
+					<div>Related</div>
+					<div class="divider" style="margin-bottom:0.2rem; margin-top:0.5rem;"></div>
+				</h5>
+				
+				<div id="related_queries_holder">
+				</div>
+			</div>
 		</div>
 	</div>
 

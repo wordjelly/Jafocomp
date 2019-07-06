@@ -52,6 +52,13 @@
     <li class="collection-item">{{= search_result.suggest_query_payload }}</li>
   </script>
 
+  <script type="text/template" id="related_queries_template">
+    {{_.each(search_result,function(query){ }}
+      <div class="grey-text text-lighten-2 related_query_term" style="font-size:18px; cursor: pointer" data-related-query={{= query }}>
+        <i class="material-icons" style="vertical-align: bottom">keyboard_arrow_right</i>{{= query }}  
+      </div>
+    {{ }) }}
+  </script>
 
   <script type="text/template" id="categories_template">
     <div class="row related_chips" style="margin-top: 1.7rem; border-bottom: none; !important">
@@ -87,7 +94,7 @@
   <!-- the contexts -->
   <script type="text/template" id="search_result_template">
    
-    <div class="col l12 m12 s12" style="padding:0px !important;">
+    
       <div class="card">
         <div class="card-content grey-text text-lighten-1" style="padding-bottom:5px !important;">
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
@@ -178,7 +185,6 @@
           <!-- <span class="strategic_trading" style="cursor:pointer;">Strategic Trading</span> -->
         </div>
       </div>
-    </div>
   </script>
  
 

@@ -288,14 +288,19 @@ class Result
 		sectors = []
 		parts = input.split("#")
 		stats = parts[1].split(",")
+		related_queries = []
+		## so we have to add these also.
+		## later on on the side.
+		## so gotta do this here.
 		input.split("#")[1].split(",")[12..-1].each do |industry_code|
 			industry_name = $sectors[industry_code.to_s].information_name
+			related_queries.push($sectors[industry_code.to_s].related_queries)
 			sectors.push(industry_name)
 		end
 		#puts "the sectors are:"
 		#puts sectors.to_s
 		#puts "stats are:"
-		input = parts[0] + "#" + stats[0..11].join(",") + "," + sectors.join(",")
+		input = parts[0] + "#" + stats[0..11].join(",") + "," + sectors.join(",") + "%" + related_queries.flatten.join(",")
 		#puts "the input becomes:"
 		#puts input
 		input

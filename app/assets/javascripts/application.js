@@ -88,6 +88,13 @@ var render_categories = function(categories){
 	$("#categories").append(category_template(categories));
 }
 
+var render_related_queries = function(related_queries){
+	var related_queries_template = _.template($('#related_queries_template').html());
+	$("#related_queries_holder").empty();
+	$("#related_queries_title").show();
+	$("#related_queries_holder").append(related_queries_template(related_queries));
+}
+
 
 function humanize(str) {
   var frags = str.split('_');
@@ -237,6 +244,10 @@ var set_impacted_categories_from_suggestion_input = function(search_result,stats
 	console.log(search_result.categories);
 }
 
+var set_related_queries_from_suggestion_input = function(search_result,related_queries){
+	search_result.related_queries = related_queries.split(",");
+}
+
 /***
 ***/
 var set_origin_categories = function(search_result){
@@ -288,7 +299,9 @@ var assign_statistics = function(search_result,text){
 	**/
 	var suggestion = search_result.suggest[0];
 	
-	var information = suggestion.input.split("#");
+	var related_queries = suggestion.input.split("%")[1];
+	var pre = suggestion.input.split("%")[0];
+	var information = pre.split("#");
 
 	
 	search_result.information = information;
@@ -303,6 +316,7 @@ var assign_statistics = function(search_result,text){
 
 	// this sets the 
 	set_impacted_categories_from_suggestion_input(search_result,stats);
+	set_related_queries_from_suggestion_input(search_result,related_queries);
 	stats = stats.slice(0,12);
 	
 	build_setup(search_result);
@@ -456,6 +470,7 @@ var display_search_results = function(search_results,input){
 	$('#search_results').html("");
 	$('#categories').html("");
 	var categories = [];
+	var related_queries = [];
 	 // and later use a template to get this.
 	_.each(search_results,function(search_result,index,list){
 			// ALL THIS
@@ -513,6 +528,7 @@ var display_search_results = function(search_results,input){
     	search_result = add_time_to_setup(search_result);
     	//console.log(search_result);
     	categories = _.union(search_result.categories,categories);
+    	related_queries = _.union(search_result.related_queries,related_queries);
     	render_search_result(search_result);
     });
 
@@ -569,6 +585,7 @@ var display_search_results = function(search_results,input){
 	    }
 	});
 	render_categories(categories);
+	render_related_queries(related_queries);
 }
 
 var query_pending = function(input){
@@ -1052,6 +1069,9 @@ $(document).on('click','.strategic_trading',function(event){
 
 });
 
+$(document).on('click','.related_query_term',function(event){
+	search_new($(this).attr("data-related-query"));
+});
 
 $(document).on('click','.chip',function(event){
 	//console.log("clicked chip with category:" + $(this).attr("data-category"));
