@@ -238,7 +238,7 @@ sets the impacted categories using the suggestion input.
 var set_impacted_categories_from_suggestion_input = function(search_result,stats){
 	console.log("stats are:");
 	console.log(stats);
-	var categories = stats.slice(12,stats.length - 1);
+	var categories = stats.slice(12,stats.length);
 	search_result.categories = categories;
 	console.log("the search result categories are:");
 	console.log(search_result.categories);

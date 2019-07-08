@@ -1,25 +1,38 @@
 <div class="row strategic_stats" style="display:none; margin-top: 1rem;">
-            <div class="divider" style="margin-bottom: 2rem;"></div>
-            <!-- was here before -->
-            {{  _.each(first_impact.statistics,function(val,key,list){  }}
-              <div class="{{= val.time_frame_name }}">
-                <div class="row profit_loss">
-                  <div class="col l3 m3 s3 center">
-                    <div class="blue-grey-text text-lighten-1"><i class="material-icons"  style="font-size: 24px;">timeline</i></div>
-                    <div class="grey-text text-darken-1">Over {{= val.time_frame_name }}</div>
-                    <div class="green-text text-darken-1 tooltip" data-name="{{= val.most_economic_stop_loss.stop_loss_arr_name }}">{{= val.most_economic_stop_loss.stop_loss_description }}</div>
-                  </div>
-                  <div class="col l4 m4 s4 center">
-                    <div class="grey-text text-lighten-1" style="font-size: 24px;">Most Profitable Trade</div>
-                    <div class="amber-text" style="font-size: 18px;">{{= val.most_economic_stop_loss.maximum_profit/10 }}%
-                    </div>
-                  </div>
-                  <div class="col l4 m4 s4 center">
-                    <div class="grey-text text-lighten-1" style="font-size: 24px;">Least Profitable Trade</div>
-                    <div class="black-text" style="font-size: 18px;">{{= val.most_economic_stop_loss.maximum_loss/10 }}%</div>
-                  </div>
-                </div>
-                <div class="divider" style="margin-bottom: 2rem; margin-top: 2rem;"></div>
-              </div>
-            {{ }) }}
-          </div> 
+  <div class="divider" style="margin-bottom: 2rem;"></div>
+    <!-- was here before -->
+    {{  _.each(first_impact.statistics,function(val,key,list){  }}
+      <div class="{{= val.time_frame_name }}">
+        <div class="row profit_loss">
+          <div class="col l3 m3 s3 center">
+            <div class="blue-grey-text text-lighten-1"><i class="material-icons"  style="font-size: 24px;">timeline</i></div>
+            <div class="grey-text text-darken-1">Over {{= val.time_frame_name }}</div>
+            <div class="green-text text-darken-1 tooltip" data-name="{{= val.most_economic_stop_loss.stop_loss_arr_name }}">{{= val.most_economic_stop_loss.stop_loss_description }}</div>
+          </div>
+          <div class="col l4 m4 s4 center">
+            <div class="grey-text text-lighten-1" style="font-size: 24px;">Most Profitable Trade</div>
+            <div class="amber-text" style="font-size: 18px;">{{= val.most_economic_stop_loss.maximum_profit/10 }}%
+            </div>
+          </div>
+          <div class="col l4 m4 s4 center">
+            <div class="grey-text text-lighten-1" style="font-size: 24px;">Least Profitable Trade</div>
+            <div class="black-text" style="font-size: 18px;">{{= val.most_economic_stop_loss.maximum_loss/10 }}%</div>
+          </div>
+        </div>
+        <div class="divider" style="margin-bottom: 2rem; margin-top: 2rem;"></div>
+      </div>
+    {{ }) }}
+</div> 
+
+<!-- STOP LOSS SWITCH -->
+<div class="divider" style="margin-bottom: 2rem;"></div>
+<div class="row switch center">
+  <div class="switch">
+    <label>
+      Stop Loss Off
+      <input type="checkbox" class="stop_loss_switch">
+      <span class="lever"></span>
+      Stop Loss On
+    </label>
+  </div>
+</div>
