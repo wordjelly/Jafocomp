@@ -293,6 +293,7 @@ class Result
 		## later on on the side.
 		## so gotta do this here.
 		input.split("#")[1].split(",")[12..-1].each do |industry_code|
+			puts "the industry code is: #{industry_code}"
 			industry_name = $sectors[industry_code.to_s].information_name
 			related_queries.push($sectors[industry_code.to_s].related_queries)
 			sectors.push(industry_name)
