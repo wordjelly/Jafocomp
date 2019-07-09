@@ -141,10 +141,11 @@ var build_setup = function(search_result){
 
 			if(index == 0){
 				// full name.
-				complex_string =  complex_string + tag + "'s" + " ";
+				
 			}
 			else if(index == 1){
 				// symbol
+				complex_string =  complex_string + tag + "'s" + " ";
 			}
 			else{
 				complex_string = complex_string + tag + " ";
