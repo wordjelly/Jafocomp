@@ -292,11 +292,14 @@ class Result
 		## so we have to add these also.
 		## later on on the side.
 		## so gotta do this here.
+		puts "the input is:"
+		puts input.to_s
 		input.split("#")[1].split(",")[12..-1].each do |industry_code|
-			puts "the industry code is: #{industry_code}"
-			industry_name = $sectors[industry_code.to_s].information_name
-			related_queries.push($sectors[industry_code.to_s].related_queries)
-			sectors.push(industry_name)
+			unless $sectors[industry_code.to_s].blank?
+				industry_name = $sectors[industry_code.to_s].information_name
+				related_queries.push($sectors[industry_code.to_s].related_queries)
+				sectors.push(industry_name)
+			end
 		end
 		#puts "the sectors are:"
 		#puts sectors.to_s
