@@ -145,7 +145,7 @@ var build_setup = function(search_result){
 			}
 			else if(index == 1){
 				// symbol
-				complex_string =  complex_string + tag + "'s" + " ";
+				complex_string =  complex_string + tag + " ";
 			}
 			else{
 				complex_string = complex_string + tag + " ";
