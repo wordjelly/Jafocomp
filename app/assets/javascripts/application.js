@@ -43,8 +43,9 @@ $(document).on('click','#clear_search',function(event){
 $(document).on('keyup','#search',function(event){
 	// if the event is space.
 	// don't do anything.
-	// console.log(event.originalEvent.keyCode);
-	// console.log(event.keyCode);
+	
+	// handle backspace on empty.
+
 	if(event.keyCode == 32){
 		console.log("got space, doing nothing.");
 	}
@@ -65,8 +66,8 @@ $(document).on('keyup','#search',function(event){
 				$(".default_sectors").first().hide();
 
 			}
+			search_new($(this).val());
 		}
-		search_new($(this).val());
 	}
 });
 

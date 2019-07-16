@@ -37,8 +37,8 @@ class Sector
 
 		sector_counter_to_name = sector_counter_to_name.sort_by { |counter,sector|  sector.related_queries.size }.to_h
 
-		puts "sector counter to name is:"
-		puts sector_counter_to_name.to_s
+		#puts "sector counter to name is:"
+		#puts sector_counter_to_name.to_s
 
 		{
 			sector_counter_to_name: sector_counter_to_name,
