@@ -21,6 +21,8 @@ var slide_down_logo = function(event){
 		$('.query_chips').remove();
 		$('.related_chips').remove();
 		$('.default_sectors').first().show();
+		$("#related_queries_holder").empty();
+		$("#related_queries_title").hide();
 	});
 }
 
