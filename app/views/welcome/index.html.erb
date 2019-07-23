@@ -11,24 +11,47 @@
 		<img class="responsive-img" src="assets/algorini.png" />
 		</div>
 	</div>
-	<div class="row" style="margin-top:1rem !important;">
+	<!-- so we have to hide on small -->
+
+	<div class="row center chips hide-on-large-only" style="margin-bottom: 2rem; border-bottom: none;">
+		<!-- so here we add the chips -->
+		<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="forex" style="border-bottom: none; cursor: pointer;">
+			  FRX
+		</div>
+		<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="dow" style="border-bottom: none; cursor: pointer;">
+			  DOW
+		</div>
+		<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="dax" style="border-bottom: none; cursor: pointer;">
+			  DAX
+		</div>
+		<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="cac" style="border-bottom: none; cursor: pointer;">
+			  CAC
+		</div>
+		<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="nifty" style="border-bottom: none; cursor: pointer;">
+			  NIFTY
+		</div>
+		<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="opec" style="border-bottom: none; cursor: pointer;">
+			  OIL
+		</div>
+	</div>
+	<div class="row hide-on-med-and-down" style="margin-top:1rem !important;">
 		<div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 class="z-depth-1 shadow-demo amber center white-text" style="padding: 2rem; margin-top:0px;">FOREX</h4>
+	      <h4 data-related-query="forex" class="z-depth-1 index_chip shadow-demo amber center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">FRX</h4>
 	    </div>
 	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 class="z-depth-2 shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px;">DOW</h4>
+	      <h4 data-related-query="DOW" class="z-depth-2 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DOW</h4>
 	    </div>
 	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 class="z-depth-3 shadow-demo amber center white-text" style="padding: 2rem;  margin-top:0px;">DAX</h4>
+	      <h4 data-related-query="DAX" class="z-depth-3 index_chip shadow-demo amber center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DAX</h4>
 	    </div>
 	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 class="z-depth-4 shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px;">CAC</h4>
+	      <h4 data-related-query="CAC" class="z-depth-4 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">CAC</h4>
 	    </div>
 	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 class="z-depth-5 shadow-demo amber  center white-text" style="padding: 2rem; margin-top:0px;">NIFTY</h4>
+	      <h4 data-related-query="nifty" class="z-depth-5 index_chip shadow-demo amber  center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">NIFTY</h4>
 	    </div>
 	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 class="z-depth-5 shadow-demo blue-grey center white-text" style="padding: 2rem; margin-top:0px;">OIL</h4>
+	      <h4 data-related-query="opec" class="z-depth-5 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">OIL</h4>
 	    </div>
 	</div>
 	<!--

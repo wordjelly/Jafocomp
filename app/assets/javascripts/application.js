@@ -630,9 +630,12 @@ var search_new = function(input){
 		    	$('#search_results').html("");
 		    	
 		    	var search_results = response['results']['search_results'];
-
-		    	display_search_results(search_results,input);
-
+		    	if(_.isEmpty(search_results)){
+		    		$("#related_queries_title").hide();
+		    	}
+		    	else{
+		    		display_search_results(search_results,input);
+		    	}
 			},
 			complete: function(){
 				$("#progress_bar").css("visibility","hidden");
@@ -1072,8 +1075,21 @@ $(document).on('click','.strategic_trading',function(event){
 });
 
 $(document).on('click','.related_query_term',function(event){
+	$("#search").val($(this).attr("data-related-query"));
 	search_new($(this).attr("data-related-query"));
 });
+
+$(document).on("click",'.index_chip',function(event){
+
+	$("#logo").slideUp('fast',function(){
+				
+	});
+	$(".default_sectors").first().hide();
+	$("#search").val($(this).attr("data-related-query"));
+	search_new($(this).attr("data-related-query"));
+});
+
+
 
 $(document).on('click','.chip',function(event){
 	//console.log("clicked chip with category:" + $(this).attr("data-category"));
