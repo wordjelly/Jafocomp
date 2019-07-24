@@ -15,7 +15,7 @@ class Sector
 		sector_counter_to_name = {}
 		sector_name_to_counter = {}
 		body = {
-			size: 300,
+			size: 30,
 			query: {
 				bool: {
 					must: [

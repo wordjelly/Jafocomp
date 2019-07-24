@@ -906,7 +906,9 @@ var restore_percentage_and_literal_names_for_information_query = function(query)
 
 var replace_percentage_and_literal_numbers = function(search_result){
 	_.each(_.keys(numeric_literals),function(literal){
-		search_result.setup = search_result.setup.replace(literal,numeric_literals[literal]);
+		// only followed by a word bondary.
+		k = new RegExp("\\b" + literal,"gm");
+		search_result.setup = search_result.setup.replace(k,numeric_literals[literal]);
 	});
 	return search_result;
 }
