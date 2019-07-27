@@ -74,7 +74,7 @@
 		<%= puts $sectors.to_s %>
 		<% index = 0 %>
 		<% last_index = $sectors.keys.size %>
-		<% $sectors.keys.each_slice(4) do |sector_row|%>
+		<% $sectors.keys[0..28].each_slice(4) do |sector_row|%>
 			<% display = (index == 0 ? "block" : "none") %>
 			<% additional_chips_class = (index > 0 ? "additional_chips" : "") %>
 			<div class="row chips <%= additional_chips_class %>" style="margin-top: 1rem; border-bottom: none; !important; display: <%= display %> ">
