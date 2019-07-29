@@ -224,7 +224,9 @@ class Result
 				                }
 			            }
 					},
-					inner_hits: {}
+					inner_hits: {
+						name: "tags"
+					}
 				}
 			}
 			nested_query_clauses << {
@@ -240,7 +242,9 @@ class Result
 				                }
 			            }
 					},
-					inner_hits: {}
+					inner_hits: {
+						name: "industries"
+					}
 				}
 			}
 		}
@@ -259,26 +263,6 @@ class Result
 		  query: {
 		    bool: {
 		      should: should
-=begin
-		      [
-		      	{
-		          bool: {
-		            should: should_query_clauses
-		          }
-		        },
-		        {
-		          nested: {
-		            path: "complex_derivations",
-		            query: {
-                        bool: {
-                        	should: nested_query_clauses
-                        } 
-		            },
-		            inner_hits: {}
-		          } 
-		        }
-		      ]
-=end
 		    }
 		  }
 		}
@@ -292,9 +276,18 @@ class Result
 		puts search_results["hits"]["hits"].size
 		search_results = search_results["hits"]["hits"].map{|hit|
 				
-			puts hit.to_s
-
-			input = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["industries"].join(",") + ","
+			## so it depends which hit matched.
+			## either tags or industries.
+			## both have to be checke.
+			object_to_use = nil
+			unless hit["inner_hits"]["tags"].blank?
+				object_to_use = hit["inner_hits"]["tags"]
+			else
+				unless hit["inner_hits"]["industries"].blank?
+					object_to_use = hit["inner_hits"]["industries"]
+				end
+			end
+			input = object_to_use["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["industries"].join(",") + ","
 
 			## here add the industries.
 			## and we are in business
