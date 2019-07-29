@@ -171,8 +171,14 @@ class Result
 		 	}
 
 		 	nested_query_clauses << {
-		 		term: {
-		 			"complex_derivations.industries".to_sym => $sectors_name_to_counter[query]
+		 		nested: {
+		 			path: "complex_derivations",
+		 			query: {
+		 				term: {
+				 			"complex_derivations.industries".to_sym => $sectors_name_to_counter[query]
+				 		}
+		 			},
+		 			inner_hits: {}
 		 		}
 		 	}
 
@@ -206,26 +212,40 @@ class Result
 			}
 
 			nested_query_clauses << {
-				prefix: 
-					{
-			            "complex_derivations.tags".to_sym => {
-			                  value: c.gsub(/\'s$/,'')[0..9],
-			                  #boost: (total_terms - i)*10
-			                   boost: 10
-			                }
-		            }
+				nested: {
+					path: "complex_derivations",
+					query: {
+						prefix: 
+						{
+				            "complex_derivations.tags".to_sym => {
+				                  value: c.gsub(/\'s$/,'')[0..9],
+				                  #boost: (total_terms - i)*10
+				                   boost: 10
+				                }
+			            }
+					},
+					inner_hits: {}
+				}
 			}
 			nested_query_clauses << {
-				prefix: 
-					{
-			            "complex_derivations.industries".to_sym => {
-			                  value: c.gsub(/\'s$/,'')[0..9],
-			                  #boost: (total_terms - i)*10
-			                  boost: 10
-			                }
-		            }
+				nested: {
+					path: "complex_derivations",
+					query: {
+						prefix: 
+						{
+				            "complex_derivations.industries".to_sym => {
+				                  value: c.gsub(/\'s$/,'')[0..9],
+				                  #boost: (total_terms - i)*10
+				                  boost: 10
+				                }
+			            }
+					},
+					inner_hits: {}
+				}
 			}
 		}
+
+		should = (should_query_clauses + nested_query_clauses).flatten
 
 		body = {
 		  _source: ["tags","preposition","epoch","_id"],
@@ -238,7 +258,9 @@ class Result
 		  ],
 		  query: {
 		    bool: {
-		      should: [
+		      should: should
+=begin
+		      [
 		      	{
 		          bool: {
 		            should: should_query_clauses
@@ -256,6 +278,7 @@ class Result
 		          } 
 		        }
 		      ]
+=end
 		    }
 		  }
 		}

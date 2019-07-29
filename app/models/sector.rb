@@ -16,11 +16,13 @@ class Sector
 		sector_name_to_counter = {}
 		body = {
 			size: 300,
+=begin
 			sort: {
 				"total_related_queries".to_sym => {
 					order: "desc"
 				}
 			},
+=end
 			query: {
 				bool: {
 					must: [
