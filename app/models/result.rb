@@ -287,7 +287,7 @@ class Result
 					object_to_use = hit["inner_hits"]["industries"]
 				end
 			end
-			input = object_to_use["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]["_source"]["industries"].join(",") + ","
+			input = object_to_use["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  object_to_use["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + object_to_use["hits"]["hits"][0]["_source"]["industries"].join(",") + ","
 
 			## here add the industries.
 			## and we are in business
