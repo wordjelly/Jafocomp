@@ -17,7 +17,7 @@ class Sector
 		body = {
 			size: 300,
 			sort: {
-				total_related_queries.to_sym => {
+				"total_related_queries".to_sym => {
 					order: "desc"
 				}
 			},
