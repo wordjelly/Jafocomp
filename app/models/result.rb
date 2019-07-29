@@ -178,12 +178,20 @@ class Result
 
 	 	end
 
+	 	## ideally 
+	 	## nasdaq being found in the tags should have 
+	 	## boosted
+	 	## and the complex derivation -> nifty
+	 	## boosted by 10
+	 	## so all should be boosting equally.
+
 		query_split_on_space.each_with_index.map{|c,i|
 			should_query_clauses << {
 				prefix: {
 					tags: {
 						value: c.gsub(/\'s$/,'')[0..9],
-						boost: i*10
+						#boost: i*10
+						boost: 10
 					}
 				}
 			}
@@ -191,7 +199,8 @@ class Result
 				prefix: {
 					industries: {
 						value: c.gsub(/\'s$/,'')[0..9],
-						boost: i*10
+						#boost: i*10
+						boost: 10
 					}
 				}
 			}
@@ -201,7 +210,8 @@ class Result
 					{
 			            "complex_derivations.tags".to_sym => {
 			                  value: c.gsub(/\'s$/,'')[0..9],
-			                  boost: (total_terms - i)*10
+			                  #boost: (total_terms - i)*10
+			                   boost: 10
 			                }
 		            }
 			}
@@ -210,7 +220,8 @@ class Result
 					{
 			            "complex_derivations.industries".to_sym => {
 			                  value: c.gsub(/\'s$/,'')[0..9],
-			                  boost: (total_terms - i)*10
+			                  #boost: (total_terms - i)*10
+			                  boost: 10
 			                }
 		            }
 			}
