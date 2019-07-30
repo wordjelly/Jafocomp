@@ -307,7 +307,7 @@ var assign_statistics = function(search_result,text){
 
 	
 	search_result.information = information;
-	search_result.setup = "buy " + information[0].split(" ")[0];
+	search_result.setup = "What happens to " + information[0].split(" ")[0];
 
 	// so its splitting on the space.
 
