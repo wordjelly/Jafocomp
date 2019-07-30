@@ -470,7 +470,7 @@ var prepare_query_for_tooltip_search = function(origin){
 
 
 var assign_target = function(search_result){
-	var k = new RegExp(/to([a-zA-Z0-9\s\-\_]+)in|when\b/)
+	var k = new RegExp(/to([a-zA-Z0-9\s\-\_]+)(in|when)\b/)
 	var target = k.exec(search_result.setup);
 	if(_.size(target) >= 1){
 		search_result.target = target[1];
