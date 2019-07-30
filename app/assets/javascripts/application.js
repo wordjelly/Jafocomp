@@ -203,6 +203,7 @@ var build_setup = function(search_result){
 	//console.log(complex_string);
 
 	search_result.setup = search_result.setup + " " + complex_string;	
+	assign_target(search_result);
 	var parts = search_result.setup.split(/falls|rises|in/);
 	// find the apostrophe
 	search_result.setup = parts[0] + '...';
@@ -513,7 +514,7 @@ var display_search_results = function(search_results,input){
     	
     	search_result.setup = shrink_indicators(search_result.setup);
 
-    	assign_target(search_result);
+    	//assign_target(search_result);
     	
     	var arr = search_result.setup.split(" ");
     	var concat = "";
