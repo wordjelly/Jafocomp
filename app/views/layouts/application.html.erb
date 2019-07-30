@@ -111,11 +111,11 @@
           <p class="{{= first_impact.statistics[0].bar_color }}-text text-darken-2" style="font-size:22px; font-weight:600;">{{= first_impact.effect }}</p>
           <div class="row" style="width:50%; margin-top:1rem !important; margin-left:0px !important;">
 
-            {{ if(_.size(search_result.impacts[0].statistics[0].gold_coins) > _.size(search_result.impacts[0].statistics[0].other_coins)) }}
+            {{ if(_.size(search_result.impacts[0].statistics[0].gold_coins) > _.size(search_result.impacts[0].statistics[0].other_coins))  { }}
               Nifty-50 tends to rise
-            {{ else }}
+            {{ else { }}
               Nifty-50 tends to fall
-            {{ end }}
+            {{ } }}
 
             {{_.each(search_result.impacts[0].statistics[0].gold_coins,function(coin){ }}
 
