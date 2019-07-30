@@ -112,9 +112,9 @@
           <div class="row" style="width:50%; margin-top:1rem !important; margin-left:0px !important;">
 
             {{ if(_.size(search_result.impacts[0].statistics[0].gold_coins) > _.size(search_result.impacts[0].statistics[0].other_coins))  { }}
-              <span style="font-size:20px;" class="amber-text">Nifty-50 tends to rise</span>
+              <span style="font-size:20px; font-weight:400;" class="amber-text">{{= search_result.target }} tends to rise</span>
             {{ } else { }}
-              <span style="font-size:20px;" class="red-text">Nifty-50 tends to fall</span>
+              <span style="font-size:20px; font-weight:400;" class="red-text">{{= search_result.target }} tends to fall</span>
             {{ } }}
 
             

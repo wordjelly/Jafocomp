@@ -309,6 +309,7 @@ var assign_statistics = function(search_result,text){
 	search_result.information = information;
 	search_result.setup = "What happens to " + information[0].split(" ")[0];
 
+
 	// so its splitting on the space.
 
 	var stats = information[1];
@@ -467,6 +468,14 @@ var prepare_query_for_tooltip_search = function(origin){
 }
 
 
+var assign_target = function(search_result){
+	var k = new RegExp(/to([a-zA-Z0-9\s]+)in|when\b/)
+	var target = k.exec(search_result.setup);
+	if(_.size(target) >= 1){
+		search_result.target = target[1];
+	}
+}
+
 
 var display_search_results = function(search_results,input){
 	$('#search_results').html("");
@@ -503,6 +512,8 @@ var display_search_results = function(search_results,input){
     	// 
     	
     	search_result.setup = shrink_indicators(search_result.setup);
+
+    	assign_target(search_result);
     	
     	var arr = search_result.setup.split(" ");
     	var concat = "";
