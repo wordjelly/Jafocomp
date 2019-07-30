@@ -203,9 +203,9 @@ var build_setup = function(search_result){
 	//console.log(complex_string);
 
 	search_result.setup = search_result.setup + " " + complex_string;	
-	var parts = search_result.setup.split(/\'/);
+	var parts = search_result.setup.split(/falls|rises|in/);
 	// find the apostrophe
-	search_result.setup = parts[0] + '...' + '<span style="display:none">' + parts[1] +  '</span>';
+	search_result.setup = parts[0] + '...';
 	
 }
 
