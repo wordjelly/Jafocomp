@@ -214,9 +214,9 @@ var build_setup = function(search_result){
 	console.log(rises_parts);	
 	// for rises falls and crosses.
 	if(_.size(rises_parts) > 1){
-		search_result.setup = parts[0];
+		search_result.setup = rises_parts[0] + rises_parts[1]; 
 	}
-		
+
 }
 
 // so on clicking choose report, it executes an update
