@@ -206,7 +206,7 @@ var build_setup = function(search_result){
 	assign_target(search_result);
 	var parts = search_result.setup.split(/indicator/);
 	if(_.size(parts) > 0){
-		search_result.setup = parts[0] + indicator + " changes";
+		search_result.setup = parts[0] + "indicator" + " changes";
 	}	
 }
 
