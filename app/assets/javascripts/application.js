@@ -207,6 +207,11 @@ var build_setup = function(search_result){
 	var parts = search_result.setup.split(/indicator/);
 	if(_.size(parts) > 1){
 		search_result.setup = parts[0] + "indicator" + " changes";
+		parts = search_result.setup.split(/(rises|falls)/);
+		// for rises falls and crosses.
+		if(_.size(parts) > 1){
+			search_result.setup = parts[0];
+		}
 	}	
 }
 
