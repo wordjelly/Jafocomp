@@ -207,14 +207,16 @@ var build_setup = function(search_result){
 	var parts = search_result.setup.split(/indicator/);
 	if(_.size(parts) > 1){
 		search_result.setup = parts[0] + "indicator" + " changes";
-		var rises_parts = search_result.setup.split(/(rises|falls)/);
-		console.log("rises parts are:");
-		console.log(rises_parts);	
-		// for rises falls and crosses.
-		if(_.size(rises_parts) > 1){
-			search_result.setup = parts[0];
-		}
+
 	}	
+	var rises_parts = search_result.setup.split(/(rises|falls)/);
+	console.log("rises parts are:");
+	console.log(rises_parts);	
+	// for rises falls and crosses.
+	if(_.size(rises_parts) > 1){
+		search_result.setup = parts[0];
+	}
+		
 }
 
 // so on clicking choose report, it executes an update
