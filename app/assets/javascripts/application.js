@@ -204,8 +204,11 @@ var build_setup = function(search_result){
 
 	search_result.setup = search_result.setup + " " + complex_string;	
 	assign_target(search_result);
-	var parts = search_result.setup.split(/falls|rises|in/);
-	
+	var parts = search_result.setup.split(/indicator/);
+	search_result.setup = parts[0] + indicator + " changes";
+	//search_result.setup = parts[0] + 
+	//search_result.setup = parts[0] + 
+	// take the part after the word indicator and convert to changes.
 	// find the apostrophe
 	// search_result.setup = parts[0] + '...';
 	// what happens to hcl when (a certain event takes place)
