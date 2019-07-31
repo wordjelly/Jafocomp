@@ -205,10 +205,17 @@ var build_setup = function(search_result){
 	search_result.setup = search_result.setup + " " + complex_string;	
 	assign_target(search_result);
 	var parts = search_result.setup.split(/indicator/);
-	if(_.size(parts) > 0){
+	if(_.size(parts) > 1){
 		search_result.setup = parts[0] + "indicator" + " changes";
 	}	
 }
+
+// so on clicking choose report, it executes an update
+// adds a hidden report id, and executes the update
+// inside order, it first matches and loads those report ids
+// so let me do that first.
+// then will show those reports
+
 
 
 var get_icon = function(setup){
@@ -470,7 +477,7 @@ var prepare_query_for_tooltip_search = function(origin){
 
 
 var assign_target = function(search_result){
-	var k = new RegExp(/to([a-zA-Z0-9\s\-\_]+)(in|when|on)\b/)
+	var k = new RegExp(/to([a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/)
 	var target = k.exec(search_result.setup);
 	if(_.size(target) >= 1){
 		search_result.target = target[1];
