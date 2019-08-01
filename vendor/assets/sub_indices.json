@@ -1,0 +1,36 @@
+{
+	"DAX-30" : [
+		{
+			"symbol" : "^TECDAX",
+			"full_name" : "Dax Technology",
+			"index" : "DAX-30",
+			"colloquial" : "German Tech Stocks"
+		}
+	],
+	"CAC-40" : [
+
+	],
+	"NIFTY-50" : [
+
+	],
+	"NASDAQ-100" : [
+		{
+			"symbol" : "^NDXT",
+			"full_name" : "NASDAQ 100 Technology Sector",
+			"index" : "NASDAQ-100",
+			"colloquial" : "US Tech Stocks"
+		},
+		{
+			"symbol" : "^BKX",
+			"full_name" : "KBW Nasdaq Bank Index",
+			"index" : "NASDAQ-100",
+			"colloquial" : "US Bank Stocks"
+		},
+		{
+			
+		}
+	],
+	"FTSE-100" : [
+
+	]
+}
