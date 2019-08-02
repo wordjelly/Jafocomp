@@ -11,7 +11,18 @@
 
 	],
 	"NIFTY-50" : [
-
+		{
+			"symbol" : "^NSEBANK",
+			"full_name" : "NIFTY BANK",
+			"index" : "NIFTY-50",
+			"colloquial" : "Indian Banks"
+		},
+		{
+			"symbol" : "^CNXIT",
+			"full_name" : "NIFTY IT",
+			"index" : "NIFTY-50",
+			"colloquial" : "Indian IT Stocks"	
+		}
 	],
 	"NASDAQ-100" : [
 		{
@@ -24,10 +35,19 @@
 			"symbol" : "^BKX",
 			"full_name" : "KBW Nasdaq Bank Index",
 			"index" : "NASDAQ-100",
-			"colloquial" : "US Bank Stocks"
+			"colloquial" : "US Banks"
 		},
 		{
-			
+			"symbol" : "^NBI",
+			"full_name" : "NASDAQ Biotechnology Index",
+			"index" : "NASDAQ-100",
+			"colloquial" : "US Biotech Stocks"
+		},
+		{
+			"symbol" : "^KIX",
+			"full_name" : "KBW Nasdaq Insurance Index",
+			"index" : "NASDAQ-100",
+			"colloquial" : "US Insurance Stocks"
 		}
 	],
 	"FTSE-100" : [
