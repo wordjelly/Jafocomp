@@ -123,9 +123,21 @@
 			
 		</div>
 		<div class="row">
-			<div class="search_results col l9 s9 m9" style="padding:0px !important;" id="search_results">
+			<div class="search_results col l9 s12 m9" style="padding:0px !important;" id="search_results">
+				
 			</div>
-			<div class="related_queries col l3 m3 s3" id="related_queries" style="padding-left: 1.5rem;">
+			<!-- this is where i added the new part -->
+			<div class="row" id="new_search_results" style="display:none;">
+		        <div class="col s12">
+		          <ul class="tabs">
+		            <li class="tab col s6 m6 l6"><a href="#positive">Positive Impact</a></li>
+		            <li class="tab col s6 m6 l6"><a href="#negative">Negative Impact</a></li>
+		          </ul>
+		        </div>
+		        <div id="positive"></div>
+		        <div id="negative"></div>
+		    </div>
+			<div class="related_queries col l3 m3 s12" id="related_queries" style="padding-left: 1.5rem;">
 				<h5 class="blue-grey-text" style="margin-top: 0.6rem; display:none;" id="related_queries_title">
 					<div>Related</div>
 					<div class="divider" style="margin-bottom:0.2rem; margin-top:0.5rem;"></div>

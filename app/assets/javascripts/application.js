@@ -73,6 +73,24 @@ $(document).on('keyup','#search',function(event){
 	}
 });
 
+
+var search_result_is_positive = function(search_result){
+	return search_result.impacts[0].statistics[0].gold_coins >= search_result.impacts[0].statistics[0].other_coins;
+}
+
+var render_search_result_new = function(search_result){
+	if(_.isUndefined(template)){
+		var template = _.template($('#search_result_template').html());
+	}
+	if(search_result_is_positive){
+		$('#positive').append(template(search_result));
+	}
+	else{
+		$('#negative').append(template(search_result));
+	}
+	$("time.timeago").timeago();
+}
+
 /***
 so how would this work exactly 
 suppose i say buy gold when 
@@ -494,11 +512,25 @@ var assign_target = function(search_result){
 }
 
 
+var clear_html = function(){
+	$("#positive").html("");
+	$("#negative").html("");
+	$("#new_search_results").show();
+}
+
+
+var update_positive_and_negative_tab_titles = function(positive,negative){
+	
+}
+
+
 var display_search_results = function(search_results,input){
 	$('#search_results').html("");
 	$('#categories').html("");
 	var categories = [];
 	var related_queries = [];
+	var total_positive = 0;
+	var total_negative = 0;
 	 // and later use a template to get this.
 	_.each(search_results,function(search_result,index,list){
 			// ALL THIS
@@ -559,6 +591,15 @@ var display_search_results = function(search_results,input){
     	//console.log(search_result);
     	categories = _.union(search_result.categories,categories);
     	related_queries = _.union(search_result.related_queries,related_queries);
+    	// add the total positive and negative
+    	// add that to the positive/negative text.
+    	// as a number in a bracket.
+    	if(search_result_is_positive(search_result)){
+    		++total_positive;
+    	}
+    	else{
+    		++total_negative;
+    	}
     	render_search_result(search_result);
     });
 

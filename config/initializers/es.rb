@@ -1,7 +1,7 @@
 remote_host = {host: ENV["REMOTE_ES_HOST"] , scheme: 'https', port: 9243}
 remote_host.merge!({user: ENV["REMOTE_ES_USER"], password: ENV["REMOTE_ES_PASSWORD"]})
 
-host = {host: 'localhost', scheme: 'http', port: 9200}
+host = {host: 'localhost', scheme: 'http', port: ENV["LOCAL_ES_PORT"]}
 
 host = Rails.env.development? ? host : remote_host
 
