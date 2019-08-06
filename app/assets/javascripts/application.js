@@ -4,6 +4,10 @@
 DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject. I'm a doctor, and God Bless America.
 *****/
 
+$(document).ready(function(){
+    $('.tabs').tabs();
+});
+
 _.templateSettings = {
     interpolate: /\{\{\=(.+?)\}\}/g,
     evaluate: /\{\{(.+?)\}\}/g
@@ -82,7 +86,8 @@ var render_search_result_new = function(search_result){
 	if(_.isUndefined(template)){
 		var template = _.template($('#search_result_template').html());
 	}
-	if(search_result_is_positive){
+	if(search_result_is_positive(search_result)){
+		console.log(template(search_result));
 		$('#positive').append(template(search_result));
 	}
 	else{
@@ -513,18 +518,20 @@ var assign_target = function(search_result){
 
 
 var clear_html = function(){
-	$("#positive").html("");
-	$("#negative").html("");
+	$("#positive").html('<div style="visibility:hidden">doggy</div>');
+	$("#negative").html('<div style="visibility:hidden">doggy</div>');
 	$("#new_search_results").show();
 }
 
 
 var update_positive_and_negative_tab_titles = function(positive,negative){
-	
+	$("#positive_count").text(positive);
+	$("#negative_count").text(negative);
 }
 
 
 var display_search_results = function(search_results,input){
+	clear_html();
 	$('#search_results').html("");
 	$('#categories').html("");
 	var categories = [];
@@ -600,8 +607,10 @@ var display_search_results = function(search_results,input){
     	else{
     		++total_negative;
     	}
-    	render_search_result(search_result);
+    	render_search_result_new(search_result);
     });
+
+    update_positive_and_negative_tab_titles(total_positive,total_negative);
 
 		$('.tooltip').tooltipster({
 	    content: 'Loading...',

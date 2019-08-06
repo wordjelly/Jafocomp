@@ -100,7 +100,7 @@
       <div class="card">
         <div class="card-content grey-text text-lighten-1" style="padding-bottom:5px !important;">
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
-            <!-- this has to be formatted to correctly show buy and sell based on the trade_actions.-->
+            
             <i class="{{= search_result.entity_icon}}"></i>
             {{= search_result.setup }}
             {{ if(search_result.setup_exit){ }}
@@ -108,7 +108,7 @@
                {{= search_result.setup_exit }}
             {{ } }}
           </span>
-          <!-- from here onwards its going to be the impacts that have to be loaded -->
+          
           {{ first_impact = search_result.impacts[0] }}
           <p class="{{= first_impact.statistics[0].bar_color }}-text text-darken-2" style="font-size:22px; font-weight:600;">{{= first_impact.effect }}</p>
           <div class="row" style="width:50%; margin-top:1rem !important; margin-left:0px !important;">
@@ -122,7 +122,7 @@
             
 
           </div>
-          <!-- ONE WEEK , ONE MONTH AND ONE YEAR LATER -->
+         
           <div class="row additional_info" style="display:none; margin-top: 2rem;">
             {{ var column_width = 12/first_impact.statistics.length; }}
             {{ _.each(first_impact.statistics,function(statistic){  }}
@@ -135,9 +135,9 @@
             {{ }); }}
            
           </div>
-          <!-- Plain Stats -->
+          
           <div class="row plain_stats" style="display:none; margin-top: 1rem;">
-            <!-- STOP LOSS SWITCH CODE WAS HERE, pasted into stop loss template -->
+           
             <div class="divider" style="margin-bottom: 2rem; margin-top: 2rem;"></div>
             {{  _.each(first_impact.statistics,function(val,key,list){  }}
               <div class="{{= val.time_frame_name }}">
@@ -159,18 +159,15 @@
               </div>
             {{ }) }}
           </div>  
-          <!-- Stop Loss for max loss and max profit ->
-          <!-- strategic part was here -->
-          <!-- Stop Loss Stats -->
+          
         </div>
-        <!-- now comes the stop losses -->
-        <!-- that's what you get with bet on it -->
+        
         <div class="center grey-text text-lighten-1 fs-8" style="font-weight:500; padding-bottom:10px !important;">
           <span class="see_more" style="cursor:pointer;">Up & Down</span>
           <span  style="margin-left: 1rem; margin-right: 1rem;"></span>
           <span class="plain_trading" style="cursor:pointer;">Profit & Loss</span>
           <span  style="margin-left: 1rem; margin-right: 1rem;"></span>
-          <!-- <span class="strategic_trading" style="cursor:pointer;">Strategic Trading</span> -->
+          
         </div>
       </div>
   </script>
