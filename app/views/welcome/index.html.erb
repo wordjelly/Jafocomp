@@ -119,8 +119,10 @@
 		<div id="last_successfull_query" data-query="">
 		<!-- for eg if buy gold had worked out -->
 		</div>
-		<div id="categories">
-			
+		<div style="display:none;">
+			<div id="categories">
+				
+			</div>
 		</div>
 		<div class="row">
 			<div class="search_results col l9 s12 m9" style="padding:0px !important;" id="search_results">
@@ -130,8 +132,8 @@
 			<div class="row" id="new_search_results" style="display:none;">
 		        <div class="col s12 l12 m12">
 		          <ul class="tabs">
-		            <li class="tab col s6 m6 l6 active amber-text"><a href="#positive">Positive Impact <span id="positive_count" class="new badge teal">0</span></a></li>
-		            <li class="tab col s6 m6 l6"><a href="#negative">Negative Impact <span id="negative_count" class="new badge red">0</span></a></li>
+		            <li class="tab positive col s6 m6 l6 active amber-text"><a class="positive" href="#positive">Positive Impact <div id="positive_count" class="chip">0</div></a></li>
+		            <li class="tab negative col s6 m6 l6"><a class="negative" href="#negative">Negative Impact <div id="negative_count" class="chip">0</div></a></li>
 		          </ul>
 		        </div>
 		        <div id="positive"><div style="visibility:hidden;">hello</div></div>
