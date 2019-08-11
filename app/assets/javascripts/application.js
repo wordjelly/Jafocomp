@@ -4,9 +4,9 @@
 DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject. I'm a doctor, and God Bless America.
 *****/
 
-$(document).ready(function(){
-    $('.tabs').tabs();
-});
+//$(document).ready(function(){
+//    $('.tabs').tabs();
+//});
 
 _.templateSettings = {
     interpolate: /\{\{\=(.+?)\}\}/g,
@@ -523,6 +523,8 @@ var clear_html = function(){
 	$("#new_search_results").show();
 }
 
+// now let me solve the colloquial issue.
+// 
 
 var update_positive_and_negative_tab_titles = function(positive,negative){
 	$("#positive_count").text(positive);
@@ -532,6 +534,7 @@ var update_positive_and_negative_tab_titles = function(positive,negative){
 
 var display_search_results = function(search_results,input){
 	clear_html();
+	$('.tabs').tabs();
 	$('#search_results').html("");
 	$('#categories').html("");
 	var categories = [];
@@ -664,8 +667,8 @@ var display_search_results = function(search_results,input){
 	        }
 	    }
 	});
-	render_categories(categories);
-	render_related_queries(related_queries);
+	var k = _.union(categories,related_queries);	
+	render_categories(k);
 }
 
 var query_pending = function(input){
