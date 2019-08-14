@@ -20,7 +20,7 @@ var template;
 var slide_down_logo = function(event){
 	$("#logo").slideDown('fast',function(){
 
-		$('#search_results').html("");
+		$('#new_search_results').html("");
 		$('.show_more_query_chips').remove();
 		$('.query_chips').remove();
 		$('.related_chips').remove();
@@ -29,6 +29,8 @@ var slide_down_logo = function(event){
 		$("#related_queries_title").hide();
 	});
 }
+
+
 
 $(document).on('click','.dedication',function(event){
 	$(".dedication-text").first().slideToggle();
@@ -347,6 +349,8 @@ var assign_statistics = function(search_result,text){
 
 	
 	search_result.information = information;
+	console.log("information is:");
+	console.log(information);
 	search_result.setup = "What happens to " + information[0].split(" ")[0];
 
 
