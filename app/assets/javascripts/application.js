@@ -20,7 +20,7 @@ var template;
 var slide_down_logo = function(event){
 	$("#logo").slideDown('fast',function(){
 
-		$('#new_search_results').html("");
+		$('#new_search_results').hide();
 		$('.show_more_query_chips').remove();
 		$('.query_chips').remove();
 		$('.related_chips').remove();
@@ -31,7 +31,6 @@ var slide_down_logo = function(event){
 }
 
 
-
 $(document).on('click','.dedication',function(event){
 	$(".dedication-text").first().slideToggle();
 })
@@ -40,10 +39,7 @@ clear the search bar if the clear icon is clicked.
 ***/
 $(document).on('click','#clear_search',function(event){
 	$("#search").val("");
-	
 	slide_down_logo();
-			
-	
 });
 
 // first lets get this shit to display at least.
@@ -226,9 +222,18 @@ var build_setup = function(search_result){
 
 	//console.log("complex string becomes:");
 	//console.log(complex_string);
+	// so if it comes with hyphens after the preposition and 
+	// that preposition is when, then we get rid of those hyphens.
+	// the problem is for the rollovers.
+
 
 	search_result.setup = search_result.setup + " " + complex_string;	
 	assign_target(search_result);
+
+	// indicator rises by 90 percent in 10 days.
+	// so we just shortened it to changes.
+	// can we hide this in some way ?
+
 	var parts = search_result.setup.split(/indicator/);
 	if(_.size(parts) > 1){
 		search_result.setup = parts[0] + "indicator" + " changes";
@@ -349,10 +354,15 @@ var assign_statistics = function(search_result,text){
 
 	
 	search_result.information = information;
-	console.log("information is:");
-	console.log(information);
+	//console.log("information is:");
+	//console.log(information);
+	
 	search_result.setup = "What happens to " + information[0].split(" ")[0];
 
+	// remove hyphens from the namess. like Indian-Stocks
+	search_result.setup = search_result.setup.replace(/\-/," ");
+
+	//so here we want to 
 
 	// so its splitting on the space.
 
@@ -534,6 +544,8 @@ var update_positive_and_negative_tab_titles = function(positive,negative){
 	$("#positive_count").text(positive);
 	$("#negative_count").text(negative);
 }
+
+// we fold the indicators, add it into a seperate data elemet.
 
 
 var display_search_results = function(search_results,input){
@@ -818,7 +830,30 @@ var search = function(input){
 
 }
 ***/
+/***
+		_.each(search_result.impacts[0].statistics,function(statistic){
+			var sum = statistic.total_up + statistic.total_down;
+			var percent = statistic.total_up/sum;
 
+			if(statistic.time_frame_name == "1 week"){
+
+				if(percent >= 0.55){
+					gold.push(_.range(Math.floor(multiple)));
+				}
+			}
+			else if(statistic.time_frame_name == "1 month"){
+				if(percent >= 0.61){
+					gold.push(_.range(Math.floor(multiple)));
+				}
+			}
+			else{
+				if(percent >= 0.66){
+					gold.push(_.range(Math.floor(multiple)));
+				}
+			}
+			
+		});
+		**/
 // so this sup business does not work.
 var update_coin_counts = function(search_result){
 	var max_units = 9;

@@ -154,13 +154,54 @@ class Result
 =end
 	def self.basic_match_query(query)
 		query_split_on_space = query.split(" ")
-		
+
+
 		should_query_clauses = []
 	 	nested_query_clauses = []
 	 	## this should be possible, but what about the speed of this query
 	 	## that is the big problem.
 	 	total_terms = query_split_on_space.size
 
+	 	## so if we get a match.
+	 	## we don't need to split the tags ?
+	 	## indian it stocks.
+	 	## 
+	 	## what to test ?
+	 	## it is generating the report
+	 	## now for the report options.
+	 	tags_nested_query = {
+	 		nested: {
+	 			path: "complex_derivations",
+	 			query: {
+	 				bool: {
+	 					should: [
+	 						
+	 					]
+	 				}
+	 			},
+	 			inner_hits: {
+	 				name: "tags",
+	 				size: 3
+	 			}
+	 		}
+	 	}
+
+	 	industries_nested_query = {
+	 		nested: {
+	 			path: "complex_derivations",
+	 			query: {
+	 				bool: {
+	 					should: [
+	 						
+	 					]
+	 				}
+	 			},
+	 			inner_hits: {
+	 				name: "industries",
+	 				size: 3
+	 			}
+	 		}	
+	 	}
 
 	 	unless $sectors_name_to_counter[query].blank?
 
@@ -170,6 +211,15 @@ class Result
 		 		}
 		 	}
 
+		 	industries_nested_query[:nested][:query][:bool][:should] << 
+		 	{
+		 		term: 
+		 		{
+				 	"complex_derivations.industries".to_sym => $sectors_name_to_counter[query]
+				}
+		 	}
+
+=begin
 		 	nested_query_clauses << {
 		 		nested: {
 		 			path: "complex_derivations",
@@ -178,92 +228,100 @@ class Result
 				 			"complex_derivations.industries".to_sym => $sectors_name_to_counter[query]
 				 		}
 		 			},
-		 			inner_hits: {}
+		 			inner_hits: {
+		 				name: "industries",
+		 				size: 2
+		 			}
 		 		}
 		 	}
-
+=end
 	 	end
 
-	 	## ideally 
-	 	## nasdaq being found in the tags should have 
-	 	## boosted
-	 	## and the complex derivation -> nifty
-	 	## boosted by 10
-	 	## so all should be boosting equally.
+	 	
+	 	## THESE ARE THE MATCH QUERIES.
+	 	## SENDS THE QUERY EN BLOC.
+	 	should_query_clauses << {
+			match: {
+				"tags.english".to_sym => query
+			}
+		}
+
+		tags_nested_query[:nested][:query][:bool][:should] << 
+			{
+				match: 
+				{
+		            "complex_derivations.tags.english".to_sym => query
+	            }
+			}
 
 		query_split_on_space.each_with_index.map{|c,i|
 			should_query_clauses << {
 				prefix: {
 					tags: {
-						value: c.gsub(/\'s$/,'')[0..9],
-						#boost: i*10
-						boost: 10
+						value: c.gsub(/\'s$/,'')[0..9].downcase
 					}
 				}
 			}
 			should_query_clauses << {
 				prefix: {
 					industries: {
-						value: c.gsub(/\'s$/,'')[0..9],
-						#boost: i*10
-						boost: 10
+						value: c.gsub(/\'s$/,'')[0..9].downcase
 					}
 				}
 			}
 
-			nested_query_clauses << {
-				nested: {
-					path: "complex_derivations",
-					query: {
-						prefix: 
-						{
-				            "complex_derivations.tags".to_sym => {
-				                  value: c.gsub(/\'s$/,'')[0..9],
-				                  #boost: (total_terms - i)*10
-				                   boost: 10
-				                }
-			            }
-					},
-					inner_hits: {
-						name: "tags"
-					}
-				}
+
+			tags_nested_query[:nested][:query][:bool][:should] << 
+			{
+				prefix: 
+				{
+		            "complex_derivations.tags".to_sym => {
+		                  value: c.gsub(/\'s$/,'')[0..9].downcase
+		                }
+	            }
 			}
-			nested_query_clauses << {
-				nested: {
-					path: "complex_derivations",
-					query: {
-						prefix: 
-						{
-				            "complex_derivations.industries".to_sym => {
-				                  value: c.gsub(/\'s$/,'')[0..9],
-				                  #boost: (total_terms - i)*10
-				                  boost: 10
-				                }
-			            }
-					},
-					inner_hits: {
-						name: "industries"
-					}
-				}
+
+			
+
+			industries_nested_query[:nested][:query][:bool][:should] << 
+			{
+				prefix: 
+				{
+		            "complex_derivations.industries".to_sym => {
+		                  value: c.gsub(/\'s$/,'')[0..9].downcase
+		                }
+	            }
 			}
+
 		}
 
-		should = (should_query_clauses + nested_query_clauses).flatten
+		should = (should_query_clauses).flatten
+		should << tags_nested_query
+		should << industries_nested_query
+
+		## why the scores for this are not working.
 
 		body = {
 		  _source: ["tags","preposition","epoch","_id"],
-		  sort: [
-		  	{
-		  		epoch: {
-		  			order: "desc"
-		  		}
-		  	}
-		  ],
 		  query: {
-		    bool: {
-		      should: should
-		    }
+		  	function_score: {
+		  		query: {
+		  			bool: {
+				      should: should,
+				      minimum_should_match: 1
+				    }
+		  		},
+		  		functions: [
+		  			{
+		  				gauss: {
+				            epoch: {
+				              origin: Time.now.to_i.to_s,
+				              scale: "1h"
+				            }
+				        }
+		  			}
+		  		]
+		  	}
 		  }
 		}
 
@@ -279,16 +337,24 @@ class Result
 			## so it depends which hit matched.
 			## either tags or industries.
 			## both have to be checke.
+			puts "these are the inner hits -------------->"
+			puts hit["inner_hits"]
+			puts "ends------------------------------->"
 			object_to_use = nil
 			unless hit["inner_hits"]["tags"].blank?
+				puts "using tags."
 				object_to_use = hit["inner_hits"]["tags"]
 			else
 				unless hit["inner_hits"]["industries"].blank?
 					object_to_use = hit["inner_hits"]["industries"]
 				end
 			end
+			puts "object to use is:"
+			puts object_to_use.to_s
 			input = object_to_use["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  object_to_use["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + object_to_use["hits"]["hits"][0]["_source"]["industries"].join(",") + ","
 
+			puts "input becomes:"
+			puts input.to_s
 			## here add the industries.
 			## and we are in business
 			## and then add the chips to the top of the page.
@@ -355,7 +421,7 @@ class Result
 					text: args[:prefix],
 					completion: {
 		                field: "suggest",
-		                size: 10
+		                size: 40
 		            }
 				}
 			}

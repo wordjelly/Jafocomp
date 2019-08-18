@@ -32,4 +32,16 @@
 
 // least profitable trade is showing zero everywhere.
 
-//
+// --------------------------------------------
+
+// for multi word stuff -> we have to split on the underscores.
+// gotta sort all that out, also the different things being truncated.
+// so for sma -> we will use (shows a moving average divergence)
+// shortening of the sma cross and such things, and close
+// the defaults -> to show a new user
+// and fixing the search queries.
+// showing close falls -> defaulting to that.
+// fixing the profit and loss explanations
+// if there are multiple sma cross types, then 
+// like 4 day sma crosses above 12 day sma
+// 22 day sma crosses above 12 day sma.
