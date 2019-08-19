@@ -408,8 +408,8 @@ class Result
 		
 		search_results = []
 		
-		puts "came to suggest_r with args"
-		puts args.to_s
+		#puts "came to suggest_r with args"
+		#puts args.to_s
 
 		args[:prefix] ||= ''
 		args[:context] ||= []
@@ -421,7 +421,7 @@ class Result
 					text: args[:prefix],
 					completion: {
 		                field: "suggest",
-		                size: 40
+		                size: 10
 		            }
 				}
 			}

@@ -356,8 +356,13 @@ var assign_statistics = function(search_result,text){
 	search_result.information = information;
 	//console.log("information is:");
 	//console.log(information);
+
+	var stats = information[1];
+
+	stats = stats.split(",");
+
 	
-	search_result.setup = "What happens to " + information[0].split(" ")[0];
+	search_result.setup = "What happens to " + information[0].substring(stats[12],(stats[12] + stats[13]));
 
 	// remove hyphens from the namess. like Indian-Stocks
 	search_result.setup = search_result.setup.replace(/\-/," ");
@@ -366,9 +371,9 @@ var assign_statistics = function(search_result,text){
 
 	// so its splitting on the space.
 
-	var stats = information[1];
+	
 
-	stats = stats.split(",");
+	
 	search_result.triggered_at = search_result.epoch;
 
 	// this sets the 
@@ -855,6 +860,7 @@ var search = function(input){
 		});
 		**/
 // so this sup business does not work.
+// let me improve the search.
 var update_coin_counts = function(search_result){
 	var max_units = 9;
 	if(!_.isEmpty(search_result.impacts[0].statistics)){
