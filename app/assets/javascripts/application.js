@@ -303,6 +303,26 @@ var set_origin_categories = function(search_result){
 	// this and also where to display them.
 }
 
+// @return[Object] 
+// keys -> 
+// primary_entity : the primary entity(the one which is affected)
+// secondary entity : the secondary entity if at all.
+// related_queries : Array of related queries
+// statistics : Array of statistics
+var split_input_text = function(input_text){
+	//resulting object
+	var result_object = {};
+
+	var split_on_related_queries = input_text.split("%");
+	// first part is the text + stats + offsets
+	result_object["related_queries"] = split_on_related_queries[1];
+
+	var split_on_offsets = split_on_related_queries[0].split("*");
+
+	
+
+}
+
 
 /***
 getStats()[0] = week_total_up;
@@ -346,8 +366,8 @@ var assign_statistics = function(search_result,text){
 	
 	search_result.suggest = [_.first(search_result.suggest)];
 	**/
+
 	var suggestion = search_result.suggest[0];
-	
 	var related_queries = suggestion.input.split("%")[1];
 	var pre = suggestion.input.split("%")[0];
 	var information = pre.split("#");
@@ -371,9 +391,6 @@ var assign_statistics = function(search_result,text){
 
 	// so its splitting on the space.
 
-	
-
-	
 	search_result.triggered_at = search_result.epoch;
 
 	// this sets the 
