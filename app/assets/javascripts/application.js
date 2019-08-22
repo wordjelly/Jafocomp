@@ -51,7 +51,7 @@ $(document).on('keyup','#search',function(event){
 	// handle backspace on empty.
 
 	if(event.keyCode == 32){
-		console.log("got space, doing nothing.");
+		//console.log("got space, doing nothing.");
 	}
 	else{
 		if( !$(this).val() ) {
@@ -85,7 +85,7 @@ var render_search_result_new = function(search_result){
 		var template = _.template($('#search_result_template').html());
 	}
 	if(search_result_is_positive(search_result)){
-		console.log(template(search_result));
+		//console.log(template(search_result));
 		$('#positive').append(template(search_result));
 	}
 	else{
@@ -191,7 +191,7 @@ var build_setup = function(search_result){
 		}
 		else if(time_subindicator_regexp.test(search_result.tags) == true){
 
-			console.log("got a time based subindicator, by checking the tags");
+			//console.log("got a time based subindicator, by checking the tags");
 			_.map(search_result.tags,function(tag,index){
 			
 				complex_string = complex_string + tag + " ";
@@ -240,8 +240,8 @@ var build_setup = function(search_result){
 
 	}	
 	var rises_parts = search_result.setup.split(/(rises|falls)/);
-	console.log("rises parts are:");
-	console.log(rises_parts);	
+	//console.log("rises parts are:");
+	//console.log(rises_parts);	
 	// for rises falls and crosses.
 	if(_.size(rises_parts) > 1){
 		search_result.setup = rises_parts[0] + rises_parts[1]; 
@@ -285,12 +285,12 @@ sets the impacted categories using the suggestion input.
 ## we want to take up everything after the 
 ***/
 var set_impacted_categories_from_suggestion_input = function(search_result,stats){
-	console.log("stats are:");
-	console.log(stats);
+	//console.log("stats are:");
+	//console.log(stats);
 	var categories = stats.slice(12,stats.length);
 	search_result.categories = categories;
-	console.log("the search result categories are:");
-	console.log(search_result.categories);
+	//console.log("the search result categories are:");
+	//console.log(search_result.categories);
 }
 
 var set_related_queries_from_suggestion_input = function(search_result,related_queries){
@@ -311,16 +311,44 @@ var set_origin_categories = function(search_result){
 // statistics : Array of statistics
 var split_input_text = function(input_text){
 	//resulting object
+	console.log("input text is:");
+	console.log(input_text);
 	var result_object = {};
 
+	var split_on_offsets = input_text.split("*");
+	text_stats_and_related_queries = split_on_offsets[0];
+	offsets = split_on_offsets[1];
+	console.log("text stats:" + text_stats_and_related_queries);
+	console.log("offsets:" + offsets);
+	/***
 	var split_on_related_queries = input_text.split("%");
 	// first part is the text + stats + offsets
-	result_object["related_queries"] = split_on_related_queries[1];
-
-	var split_on_offsets = split_on_related_queries[0].split("*");
-
+	var text_stats_offsets = split_on_related_queries[0];
+	var related_queries = split_on_related_queries[1];
 	
-
+	
+	console.log("split on offsets is:");
+	console.log(split_on_offsets);
+	var text_and_stats = split_on_offsets[0]
+	var length_and_offsets = split_on_offsets[1];
+	length_and_offsets = length_and_offsets.split(",");
+	var primary_entity_length = length_and_offsets[0];
+	var primary_entity_offset = length_and_offsets[1];
+	var secondary_entity_length = null;
+	var secondary_entity_offset = null;
+	if(_.size(length_and_offsets) > 2){
+		secondary_entity_length = length_and_offsets[2];
+		secondary_entity_offset = length_and_offsets[3];
+	} 
+	result_object["related_queries"] = related_queries;
+	result_object["primary_entity_length"] = primary_entity_length;
+	result_object["primary_entity_offset"] = primary_entity_offset;
+	result_object["secondary_entity_length"] = secondary_entity_length;
+	result_object["secondary_entity_offset"] = secondary_entity_offset;
+	console.log("result object is:");
+	console.log(result_object);
+	return result_object;
+	***/
 }
 
 
@@ -367,6 +395,8 @@ var assign_statistics = function(search_result,text){
 	search_result.suggest = [_.first(search_result.suggest)];
 	**/
 
+	console.log("called split input text");
+	split_input_text(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
 	var related_queries = suggestion.input.split("%")[1];
 	var pre = suggestion.input.split("%")[0];
@@ -483,18 +513,18 @@ var prepare_query_for_tooltip_search = function(origin){
 	var subindicator_name = [];
 	var query = null;
 	if(origin.data("name").toString().indexOf("_indicator") != -1){
-		console.log("making query from indicator");
-		console.log("new query:");
-		console.log(expand_indicators_for_information_query(origin.data("name")));
+		//console.log("making query from indicator");
+		//console.log("new query:");
+		//console.log(expand_indicators_for_information_query(origin.data("name")));
 		query = expand_indicators_for_information_query(origin.data("name")).replace(/_period_start_\d+_(\d+_)*period_end/,"");
-		console.log("query is:");
-		console.log(query);
+		//console.log("query is:");
+		//console.log(query);
 	}
 	else{
 		origin.prevAll().each(function(key,el){
-			console.log("doing prevall");
-			console.log(el);
-			console.log($(el).data("name"));
+			//console.log("doing prevall");
+			//console.log(el);
+			//console.log($(el).data("name"));
 			data_name = $(el).data("name");
 			if(!_.isUndefined(data_name)){
 				if(word_is_indicator(data_name.toString())){
@@ -514,11 +544,11 @@ var prepare_query_for_tooltip_search = function(origin){
 		});
 
 
-		console.log("subindicator name contains:");
-		console.log(subindicator_name);
+		//console.log("subindicator name contains:");
+		//console.log(subindicator_name);
 
 		if(!_.isNull(indicator_element)){
-			console.log("there is an indicator name");
+			//console.log("there is an indicator name");
 			query = subindicator_name.reverse().join(" ");
 			query += " " + origin.data("name"); 
 			origin.nextAll().each(function(key,el){
@@ -674,8 +704,8 @@ var display_search_results = function(search_results,input){
 
 	            $.get('/search',{information: prepare_query_for_tooltip_search($origin)}).done(function(data) {
 
-	            	console.log("data is:");
-	            	console.log(data);
+	            	//console.log("data is:");
+	            	//console.log(data);
 	            	if(!_.isEmpty(data["results"])){
 
 	            		result = data["results"][0]["_source"];
@@ -687,13 +717,13 @@ var display_search_results = function(search_results,input){
 		            	link_string = '';
 
 		            	if(!_.isEmpty(result["information_link"])){
-		            		console.log("there is an information link");
+		            		//console.log("there is an information link");
 		            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
 		            	}
 		            	
 		            	var content = title_string + content_string + link_string
 
-		            	console.log("content" + content);
+		            	//console.log("content" + content);
 
 		                instance.content(content);
 		               
@@ -729,7 +759,7 @@ var search_new = function(input){
 
 	} 
 	else{
-		console.log("no pending query");
+		//console.log("no pending query");
 		var ajaxTime= new Date().getTime();
 		$.ajax({
 		  	url: "/search",
@@ -744,7 +774,7 @@ var search_new = function(input){
 		  	success: function(response){
 		  		var totalTime = new Date().getTime()-ajaxTime;
 
-		  		console.log("server side took:" + totalTime);
+		  		//console.log("server side took:" + totalTime);
 
 		    	$('#search_results').html("");
 		    	
@@ -882,9 +912,9 @@ var update_coin_counts = function(search_result){
 	var max_units = 9;
 	if(!_.isEmpty(search_result.impacts[0].statistics)){
 		var multiple = max_units/(_.size(search_result.impacts[0].statistics));
-		console.log("multiple is:" + multiple);
-		console.log("size of the statistics of the first impact is:");
-		console.log(_.size(search_result.impacts[0].statistics));
+		//console.log("multiple is:" + multiple);
+		//console.log("size of the statistics of the first impact is:");
+		//console.log(_.size(search_result.impacts[0].statistics));
 		
 		var gold = [];
 		var total_time_units = [];
@@ -895,8 +925,8 @@ var update_coin_counts = function(search_result){
 		});
 		gold = _.flatten(gold);
 		search_result.impacts[0].statistics[0]["gold_coins"] = gold;
-		console.log("the gold coins become:");
-		console.log(gold);
+		//console.log("the gold coins become:");
+		//console.log(gold);
 		search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold.length);
 	}
 	return search_result;
@@ -1070,15 +1100,15 @@ var replace_pattern_with_icons = function(setup){
 		//console.log(pattern_text);
 		var pattern_text = match[0];
 		if(pattern_text.length > 3){
-			console.log("pattern text is:" );
-			console.log(pattern_text);
+			//console.log("pattern text is:" );
+			//console.log(pattern_text);
 			pattern_text = pattern_text.replace(/up/g,"<i class='material-icons'>arrow_upward</i>");
 			pattern_text = pattern_text.replace(/down/g,"<i class='material-icons'>arrow_downward</i>");
-			console.log("after replacing");
-			console.log(pattern_text);
+			//console.log("after replacing");
+			//console.log(pattern_text);
 			setup = setup.replace(match[0],pattern_text);
-			console.log("setup after replacing:");
-			console.log(setup);
+			//console.log("setup after replacing:");
+			//console.log(setup);
 		}
 	}
 	//var up_post = new RegExp(/(up)_(up_down)/g);

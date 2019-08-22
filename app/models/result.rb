@@ -385,9 +385,19 @@ class Result
 		## so we have to add these also.
 		## later on on the side.
 		## so gotta do this here.
-		puts "the input is:"
+		#puts "the input is:"
+		#puts input.to_s
+		#we need part between # and start
 		puts input.to_s
-		input.split("#")[1].split(",")[12..-1].each do |industry_code|
+		stats_and_industries = nil
+		offsets = nil
+		input.scan(/#(?<stats>[0-9,\-]+)\*(?<offsets>[0-9,]+)$/) do |jj|
+			stats_and_industries = jj[0]
+			offsets = jj[1]
+		end
+
+
+		stats_and_industries.split(",")[12..-1].each do |industry_code|
 			unless $sectors[industry_code.to_s].blank?
 				industry_name = $sectors[industry_code.to_s].information_name
 				related_queries.push($sectors[industry_code.to_s].related_queries)
@@ -397,7 +407,8 @@ class Result
 		#puts "the sectors are:"
 		#puts sectors.to_s
 		#puts "stats are:"
-		input = parts[0] + "#" + stats[0..11].join(",") + "," + sectors.join(",") + "%" + related_queries.flatten.join(",")
+		#okay so here we have to manage it.
+		input = parts[0] + "#" + stats[0..11].join(",") + "," + sectors.join(",") + "%" + related_queries.flatten.join(",") + "*" + offsets
 		#puts "the input becomes:"
 		#puts input
 		input
