@@ -281,7 +281,9 @@ class Result
 	            }
 			}
 
-			
+			## that query has a ten fold boost.
+			## where we match all the words
+			## okay i can manage this.		
 
 			industries_nested_query[:nested][:query][:bool][:should] << 
 			{
@@ -349,9 +351,25 @@ class Result
 					object_to_use = hit["inner_hits"]["industries"]
 				end
 			end
-			puts "object to use is:"
-			puts object_to_use.to_s
-			input = object_to_use["hits"]["hits"][0]["_source"]["tags"].join(" ") + "#" +  object_to_use["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + object_to_use["hits"]["hits"][0]["_source"]["industries"].join(",") + ","
+			
+				
+			matching_tags = object_to_use["hits"]["hits"][0]["_source"]["tags"].select{|c|
+				query =~ /c/
+			}
+
+			entity_name = nil
+
+			if matching_tags.blank?
+				entity_name = object_to_use["hits"]["hits"][0]["_source"]["tags"][0]
+			else
+				entity_name = matching_tags[0]
+			end
+
+
+
+			input = entity_name + "#" +  object_to_use["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + object_to_use["hits"]["hits"][0]["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
+
+			## could become problematic.
 
 			puts "input becomes:"
 			puts input.to_s

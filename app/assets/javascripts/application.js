@@ -303,13 +303,11 @@ var set_origin_categories = function(search_result){
 	// this and also where to display them.
 }
 
-// @return[Object] 
-// keys -> 
-// primary_entity : the primary entity(the one which is affected)
-// secondary entity : the secondary entity if at all.
-// related_queries : Array of related queries
-// statistics : Array of statistics
-var split_input_text = function(input_text){
+// @return[Array]:
+// primary entity is at index 0,1
+// secondary entity is at index 2,3
+// length : , offset, length, offset
+var get_offsets = function(input_text){
 	//resulting object
 	console.log("input text is:");
 	console.log(input_text);
@@ -320,35 +318,7 @@ var split_input_text = function(input_text){
 	offsets = split_on_offsets[1];
 	console.log("text stats:" + text_stats_and_related_queries);
 	console.log("offsets:" + offsets);
-	/***
-	var split_on_related_queries = input_text.split("%");
-	// first part is the text + stats + offsets
-	var text_stats_offsets = split_on_related_queries[0];
-	var related_queries = split_on_related_queries[1];
-	
-	
-	console.log("split on offsets is:");
-	console.log(split_on_offsets);
-	var text_and_stats = split_on_offsets[0]
-	var length_and_offsets = split_on_offsets[1];
-	length_and_offsets = length_and_offsets.split(",");
-	var primary_entity_length = length_and_offsets[0];
-	var primary_entity_offset = length_and_offsets[1];
-	var secondary_entity_length = null;
-	var secondary_entity_offset = null;
-	if(_.size(length_and_offsets) > 2){
-		secondary_entity_length = length_and_offsets[2];
-		secondary_entity_offset = length_and_offsets[3];
-	} 
-	result_object["related_queries"] = related_queries;
-	result_object["primary_entity_length"] = primary_entity_length;
-	result_object["primary_entity_offset"] = primary_entity_offset;
-	result_object["secondary_entity_length"] = secondary_entity_length;
-	result_object["secondary_entity_offset"] = secondary_entity_offset;
-	console.log("result object is:");
-	console.log(result_object);
-	return result_object;
-	***/
+	return offsets.split(",");
 }
 
 
@@ -396,7 +366,7 @@ var assign_statistics = function(search_result,text){
 	**/
 
 	console.log("called split input text");
-	split_input_text(search_result.suggest[0].input);
+	var offsets = get_offsets(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
 	var related_queries = suggestion.input.split("%")[1];
 	var pre = suggestion.input.split("%")[0];
@@ -412,7 +382,7 @@ var assign_statistics = function(search_result,text){
 	stats = stats.split(",");
 
 	
-	search_result.setup = "What happens to " + information[0].substring(stats[12],(stats[12] + stats[13]));
+	search_result.setup = "What happens to " + information[0].substring(offsets[0],offsets[1]);
 
 	// remove hyphens from the namess. like Indian-Stocks
 	search_result.setup = search_result.setup.replace(/\-/," ");
