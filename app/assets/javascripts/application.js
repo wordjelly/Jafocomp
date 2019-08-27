@@ -1295,7 +1295,8 @@ var quotes = {
 	"Mankind is divided into rich and poor, into property owners and exploited" : "Joseph Stalin",
 	"Forethought we may have, undoubtedly, but not foresight" : "Napoleon Bonaparte",
 	"The worse a situation becomes, the less it takes to turn it around." : "George Soros",
-	"There's only one boss, the customer. He can fire everyone from the Chairman down, simply by spending his money somewhere else." : "Sam Walton"
+	"There's only one boss, the customer. He can fire everyone from the Chairman down, simply by spending his money somewhere else." : "Sam Walton",
+	"I am become death, the destroyer of worlds" : "Oppenheimer after the first nuclear test, quoting the Bhagavad Gita."
 }
 
 var numeric_literals = {

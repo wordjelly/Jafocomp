@@ -57,102 +57,130 @@ class Result
 
 	end
 
-=begin
-	## we make all the entity permutations, before hand.
-	## and then we simply increment one if it is found.
-	## how to make the permutations ?ds
-	def self.simple_match_query(query_text)
-
-		match_query_clauses = query_text.split(" ").map{|c|
-			c = {
-				constant_score: {
-	                filter: {
-		                term: {
-		                    "complex_derivations.impacted_entity_name".to_sym => c
-		                }
-	                }
-	            }  
-			}
-		}
-
-		body = {
-			_source: false, 
-			query: {
-				nested: {
-					path: "complex_derivations",
-					query: {
-						bool: {
-							disable_coord: true,
-							should: match_query_clauses
-						}
-					},
-					inner_hits: {}
+	def self.new_match_query(query)
+		## first basic match.
+		## should[1][:nested][:query][:bool][:should]
+		puts "RUNNING NEW MATCH QUERY."
+		should = [
+			{
+				match: {
+					"tags.english".to_sym => query
 				}
+			},
+			{
+				nested: {
+		 			path: "complex_derivations",
+		 			query: {
+		 				bool: {
+		 					should: [
+								{
+									match: {
+										"complex_derivations.tag_text".to_sym => query
+									}
+								},
+								{
+									match: {
+										"complex_derivations.industries".to_sym => query
+									}
+								} 						
+		 					]
+		 				}
+		 			},
+		 			inner_hits: {}
+		 		}
 			}
+		] 
+
+		query_split = query.split(" ")
+		#puts "query split is: #{query_split}"
+		base_boost = 100
+		query_split.each_with_index {|word,key|
+			if (key < (query_split.size - 1)) 
+				#puts "key is #{key}, word is: #{word}"
+				should[1][:nested][:query][:bool][:should] << {
+					span_near: {
+						clauses: [
+							{
+								span_term: {
+					                "complex_derivations.tag_text".to_sym => {
+					                  value: query_split[key]
+					                }
+				            	}
+				        	},
+				        	{
+					            span_term: {
+					                "complex_derivations.tag_text".to_sym => {
+					                  value: query_split[key + 1]
+					                }
+					            }
+				        	}
+						],
+						slop: 10,
+						in_order: true,
+						boost: base_boost
+					}
+				}
+				base_boost = base_boost/2
+			end
 		}
 
-		puts JSON.pretty_generate(body)
+		puts "should clauses are:"
+		puts JSON.pretty_generate(should)
 
-		response = gateway.client.search index: "correlations", body: body
 
-
-		response
-
-	end
-
-	## this will join the last successfull query, and the top result from the suggested_Query, and perform a basic query, and return teh results.
-	def self.compound_query(last_successfull_query,query_suggestion_results,whole_query)
-
-		if query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"].blank?
-
-			puts "auto suggest didnt find anything - so did a match query , with whole query: #{whole_query}"
-
-			simple_match_query(whole_query)
-
-		else
-
-			puts "found some suggestions, so trying to combine last succesffull query."
-
-			top_suggestion = query_suggestion_results["suggest"]["correlation_suggestion"][0]["options"][0]["_source"]["suggest_query_payload"]
-
-			## that part worked, but we need to add the apostrophe for this shit to work properly.
-			## so will have to add that apostrophe.
-			effective_query = last_successfull_query + " " + top_suggestion
-
-			body = {
-					_source: ["suggest"], 
-					suggest: {
-						correlation_suggestion: {
-							text: effective_query,
-							completion: {
-				                field: "suggest",
-				                size: 10
-				            }
-						}
-					}
+		body = 
+			{
+		  		_source: ["tags","preposition","epoch","_id"],
+			  	query: {
+				  	function_score: {
+				  		query: {
+				  			bool: {
+						      should: should,
+						      minimum_should_match: 1
+						    }
+				  		},
+				  		functions: [
+				  			{
+				  				gauss: {
+						            epoch: {
+						              origin: Time.now.to_i.to_s,
+						              scale: "1h"
+						            }
+						        }
+				  			}
+				  		]
+				  	}
+			  	}
 			}
-			puts JSON.pretty_generate(body)
 
-			response = gateway.client.search index: "correlations", body: body
+		## knock off the plagarized tag
+		## solve nasdaq 100 t
+		## and provide colloquials.
+		## then move to reduction.
 
-			#puts "response is=-=================>"
-			#puts response.to_s
+		search_results = gateway.client.search index: "correlations", body: body
 
-			mash = Hashie::Mash.new response
-			if mash.suggest.correlation_suggestion[0].options.empty?
-				puts "no results in combined query, so going for match query."
-				simple_match_query(whole_query)
-			else
-				puts "got resutls in combined query."
-				response["effective_query"] = effective_query
-				response
-			end
+		#puts "search results size:"
+		#puts search_results["hits"]["hits"].size
+		search_results = search_results["hits"]["hits"].map{|hit|
 
-		end
+			#puts hit["inner_hits"]
+
+		}	
+
+		#puts " ---------------- NEW MATCH QUERY RESULTS END -----------------"
 
 	end
-=end
+
 	def self.basic_match_query(query)
+
+		## just search as follows
+		## all the terms in the complex derivation tags
+		## should each individual word in the complex derivation tags
+
+		## secondly if any of the 
+
+
 		query_split_on_space = query.split(" ")
 
 
@@ -219,22 +247,6 @@ class Result
 				}
 		 	}
 
-=begin
-		 	nested_query_clauses << {
-		 		nested: {
-		 			path: "complex_derivations",
-		 			query: {
-		 				term: {
-				 			"complex_derivations.industries".to_sym => $sectors_name_to_counter[query]
-				 		}
-		 			},
-		 			inner_hits: {
-		 				name: "industries",
-		 				size: 2
-		 			}
-		 		}
-		 	}
-=end
 	 	end
 
 	 	
@@ -327,24 +339,23 @@ class Result
 		  }
 		}
 
-		puts "query body"
-		puts JSON.pretty_generate(body)
+		#puts "query body"
+		#puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
 
-		puts "search results size:"
-		puts search_results["hits"]["hits"].size
+		#puts "search results size:"
+		#puts search_results["hits"]["hits"].size
 		search_results = search_results["hits"]["hits"].map{|hit|
-				
 			## so it depends which hit matched.
 			## either tags or industries.
 			## both have to be checke.
-			puts "these are the inner hits -------------->"
-			puts hit["inner_hits"]
-			puts "ends------------------------------->"
+			#puts "these are the inner hits -------------->"
+			#puts hit["inner_hits"]
+			#puts "ends------------------------------->"
 			object_to_use = nil
 			unless hit["inner_hits"]["tags"].blank?
-				puts "using tags."
+				#puts "using tags."
 				object_to_use = hit["inner_hits"]["tags"]
 			else
 				unless hit["inner_hits"]["industries"].blank?
@@ -371,8 +382,8 @@ class Result
 
 			## could become problematic.
 
-			puts "input becomes:"
-			puts input.to_s
+			#puts "input becomes:"
+			#puts input.to_s
 			## here add the industries.
 			## and we are in business
 			## and then add the chips to the top of the page.
@@ -498,6 +509,7 @@ class Result
 		if search_results.blank?
 			puts "search results were blank."
 			## now we have a situation where we have to fall back onto the ngram query.
+			new_match_query(args[:prefix])
 			search_results = basic_match_query(args[:prefix])
 		end
 
