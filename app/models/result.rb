@@ -129,46 +129,66 @@ class Result
 
 
 		body = 
-			{
-		  		_source: ["tags","preposition","epoch","_id"],
-			  	query: {
-				  	function_score: {
-				  		query: {
-				  			bool: {
-						      should: should,
-						      minimum_should_match: 1
-						    }
-				  		},
-				  		functions: [
-				  			{
-				  				gauss: {
-						            epoch: {
-						              origin: Time.now.to_i.to_s,
-						              scale: "1h"
-						            }
-						        }
-				  			}
-				  		]
-				  	}
+		{
+	  		_source: ["tags","preposition","epoch","_id"],
+		  	query: {
+			  	function_score: {
+			  		query: {
+			  			bool: {
+					      should: should,
+					      minimum_should_match: 1
+					    }
+			  		},
+			  		functions: [
+			  			{
+			  				gauss: {
+					            epoch: {
+					              origin: Time.now.to_i.to_s,
+					              scale: "1h"
+					            }
+					        }
+			  			}
+			  		]
 			  	}
-			}
+		  	}
+		}
 
-		## knock off the plagarized tag
-		## solve nasdaq 100 t
-		## and provide colloquials.
-		## then move to reduction.
-
+		
 		search_results = gateway.client.search index: "correlations", body: body
 
-		#puts "search results size:"
-		#puts search_results["hits"]["hits"].size
+
 		search_results = search_results["hits"]["hits"].map{|hit|
 
-			#puts hit["inner_hits"]
+			object_to_use = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]
 
+			entity_names = object_to_use["_source"]["tag_text"].split("**")[0].split(",")
+			selected_names = entity_names.select{|c| query =~ /c/i }
+			entity_name = nil
+
+			if selected_names.blank?
+				entity_name = entity_names[0]	
+			else
+				entity_name = selected_names[0]
+			end
+
+			input = entity_name + "#" +  object_to_use["_source"]["stats"].join(",") + "," + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
+
+		
+			hit = {
+				_id: hit["_id"],
+				_source: {
+					preposition: hit["_source"]["preposition"],
+					epoch: hit["_source"]["epoch"],
+					tags: hit["_source"]["tags"],
+					suggest: [
+						{
+							input: plug_industries(input)
+						}
+					]
+				}
+			}
+						
 		}	
-
-		#puts " ---------------- NEW MATCH QUERY RESULTS END -----------------"
 
 	end
 
@@ -376,6 +396,8 @@ class Result
 				entity_name = matching_tags[0]
 			end
 
+			## so upto the seperator.
+			## its one of the two.
 
 
 			input = entity_name + "#" +  object_to_use["hits"]["hits"][0]["_source"]["stats"].join(",") + "," + object_to_use["hits"]["hits"][0]["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
