@@ -4,6 +4,7 @@ class Result
 	include Mongoid::Document
 	#include Mongoid::Elasticsearch
   	#elasticsearch!
+  	SEPARATOR_FOR_TAG_TEXT = "^^"
 	include Elasticsearch::Persistence::Model
 	field :setup, type: String
 	field :setup_exit, type: String
@@ -69,10 +70,10 @@ class Result
 			},
 			{
 				nested: {
-		 			path: "complex_derivations",
-		 			query: {
-		 				bool: {
-		 					should: [
+					path: "complex_derivations",
+					query: {
+						bool: {
+							should: [
 								{
 									match: {
 										"complex_derivations.tag_text".to_sym => query
@@ -82,7 +83,19 @@ class Result
 									match: {
 										"complex_derivations.industries".to_sym => query
 									}
-								} 						
+								} 
+							]
+						}
+					}
+				}
+			},
+			{
+				nested: {
+		 			path: "complex_derivations",
+		 			query: {
+		 				bool: {
+		 					should: [
+														
 		 					]
 		 				}
 		 			},
@@ -97,7 +110,7 @@ class Result
 		query_split.each_with_index {|word,key|
 			if (key < (query_split.size - 1)) 
 				#puts "key is #{key}, word is: #{word}"
-				should[1][:nested][:query][:bool][:should] << {
+				should[2][:nested][:query][:bool][:should] << {
 					span_near: {
 						clauses: [
 							{
@@ -117,7 +130,7 @@ class Result
 						],
 						slop: 10,
 						in_order: true,
-						boost: base_boost
+						boost: 100
 					}
 				}
 				base_boost = base_boost/2
@@ -135,8 +148,7 @@ class Result
 			  	function_score: {
 			  		query: {
 			  			bool: {
-					      should: should,
-					      minimum_should_match: 1
+					      should: should
 					    }
 			  		},
 			  		functions: [
@@ -158,10 +170,11 @@ class Result
 
 
 		search_results = search_results["hits"]["hits"].map{|hit|
-
+			#puts JSON.generate(hit)
+			puts JSON.generate(hit["inner_hits"]["complex_derivations"]["hits"]["hits"])
 			object_to_use = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]
 
-			entity_names = object_to_use["_source"]["tag_text"].split("**")[0].split(",")
+			entity_names = object_to_use["_source"]["tag_text"].split(SEPARATOR_FOR_TAG_TEXT)[0].split(",")
 			selected_names = entity_names.select{|c| query =~ /c/i }
 			entity_name = nil
 
@@ -187,7 +200,7 @@ class Result
 					]
 				}
 			}
-						
+
 		}	
 
 	end
@@ -367,6 +380,7 @@ class Result
 		#puts "search results size:"
 		#puts search_results["hits"]["hits"].size
 		search_results = search_results["hits"]["hits"].map{|hit|
+			puts JSON.generate(hit)
 			## so it depends which hit matched.
 			## either tags or industries.
 			## both have to be checke.
@@ -532,7 +546,7 @@ class Result
 			puts "search results were blank."
 			## now we have a situation where we have to fall back onto the ngram query.
 			new_match_query(args[:prefix])
-			search_results = basic_match_query(args[:prefix])
+			search_results = new_match_query(args[:prefix])
 		end
 
 		results = {

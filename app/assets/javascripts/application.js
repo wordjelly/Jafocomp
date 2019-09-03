@@ -233,7 +233,9 @@ var build_setup = function(search_result){
 	// indicator rises by 90 percent in 10 days.
 	// so we just shortened it to changes.
 	// can we hide this in some way ?
+	// so i don't want to do this part at the moment.
 
+	/****
 	var parts = search_result.setup.split(/indicator/);
 	if(_.size(parts) > 1){
 		search_result.setup = parts[0] + "indicator" + " changes";
@@ -246,6 +248,7 @@ var build_setup = function(search_result){
 	if(_.size(rises_parts) > 1){
 		search_result.setup = rises_parts[0] + rises_parts[1]; 
 	}
+	***/
 
 }
 
