@@ -109,7 +109,29 @@ class Result
 		base_boost = 100
 		query_split.each_with_index {|word,key|
 			if (key < (query_split.size - 1)) 
-				#puts "key is #{key}, word is: #{word}"
+				should << {
+					span_near: {
+						clauses: [
+							{
+								span_term: {
+					                "tag_text".to_sym => {
+					                  value: query_split[key]
+					                }
+				            	}
+				        	},
+				        	{
+					            span_term: {
+					                "tag_text".to_sym => {
+					                  value: query_split[key + 1]
+					                }
+					            }
+				        	}
+						],
+						slop: 10,
+						in_order: true,
+						boost: 100
+					}
+				}
 				should[2][:nested][:query][:bool][:should] << {
 					span_near: {
 						clauses: [
@@ -139,7 +161,6 @@ class Result
 
 		puts "should clauses are:"
 		puts JSON.pretty_generate(should)
-
 
 		body = 
 		{

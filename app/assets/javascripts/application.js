@@ -143,6 +143,7 @@ var prepare_information_title = function(information_title){
 }
 
 
+// so now let's get on with stubbing.
 
 
 
@@ -163,16 +164,23 @@ var build_setup = function(search_result){
 
 		_.map(search_result.tags,function(tag,index){
 
-			if(index == 0){
-				complex_string =  complex_string + tag + "'s" + " ";
-			}
-			else if(index == 1){
-				complex_string =  complex_string + tag + " ";
+			// okay so handle colloquial seperator here.
+			if(tag.startsWith("**") && tag.endsWith("**")){
+				// this is the colloquial, ignore it.
 			}
 			else{
-				complex_string = complex_string + tag + " ";
+				if(index == 0){
+					complex_string =  complex_string + tag + "'s" + " "  ;
+				}
+				else if(index == 2){
+					complex_string = complex_string + tag + " " + "See-More ";
+				}
+				else{
+					complex_string = complex_string + tag + " ";
+				}
 			}
 		});
+		complex_string = complex_string 
 
 	}
 	else{
@@ -204,17 +212,28 @@ var build_setup = function(search_result){
 			// non time subindicator.
 			_.map(search_result.tags,function(tag,index){
 
-				if(index == 0){
-					// full name.
-					complex_string =  complex_string + tag + "'s" + " ";
-				}
-				else if(index == 1){
-					// symbol
+				if(tag.startsWith("**") && tag.endsWith("**")){
+					// this is the colloquial, ignore it.
 				}
 				else{
-					complex_string = complex_string + tag + " ";
+					if(index == 0){
+						// full name.
+						complex_string =  complex_string + tag + "'s" + " ";
+					}
+					else if(index == 1){
+						// symbol
+						
+					}
+					else if(index == 2){
+						complex_string = complex_string + "See-More ";
+					}
+					else{
+						complex_string = complex_string + tag + " ";
+					}
 				}
-			});			
+			});	
+
+			complex_string = complex_string 		
 		}
 
 	}
@@ -225,7 +244,6 @@ var build_setup = function(search_result){
 	// so if it comes with hyphens after the preposition and 
 	// that preposition is when, then we get rid of those hyphens.
 	// the problem is for the rollovers.
-
 
 	search_result.setup = search_result.setup + " " + complex_string;	
 	assign_target(search_result);
@@ -316,6 +334,8 @@ var get_offsets = function(input_text){
 	console.log(input_text);
 	var result_object = {};
 
+
+
 	var split_on_offsets = input_text.split("*");
 	text_stats_and_related_queries = split_on_offsets[0];
 	offsets = split_on_offsets[1];
@@ -368,10 +388,12 @@ var assign_statistics = function(search_result,text){
 	search_result.suggest = [_.first(search_result.suggest)];
 	**/
 
+	// so after the apostrophe we expand.
+
 	console.log("called split input text");
 	var offsets = get_offsets(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
-	var related_queries = suggestion.input.split("%")[1];
+	var related_queries = suggestion.input.split("%")[1].split("*")[0];
 	var pre = suggestion.input.split("%")[0];
 	var information = pre.split("#");
 
@@ -562,6 +584,11 @@ var clear_html = function(){
 	$("#new_search_results").show();
 }
 
+
+$(document).on('click','.see-more',function(event){
+	console.log("clicked see more");
+	$(".tooltip").show();
+})
 // now let me solve the colloquial issue.
 // 
 
@@ -617,16 +644,43 @@ var display_search_results = function(search_results,input){
     	
     	var arr = search_result.setup.split(" ");
     	var concat = "";
+    	var see_more_triggered = false;
     	_.each(arr,function(value,index){
-    		if(index == 2){
-    			concat+= ("<span class='blue-grey-text'>"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
+    		// so here we to check if this is the right value.
+    		// if the value is See-More
+    		// then what do we do ?
+    		// replace with icon and hide every subsequent thing.
+    		if(value == "See-More"){
+    			see_more_triggered = true;
+    			console.log("see more is triggered");
+    			concat += "<span class='see-more'>...</span>";
     		}
     		else{
-    			concat+= ("<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
+	    		if(index == 2){
+	    			var cls = 'blue-grey-text';
+	    			var style = 'display:inline;';
+	    			if(see_more_triggered === true){
+	    				style = 'display:none;';
+	    			}
+	    			console.log("style is:" + style);
+	    			concat+= ("<span style=" + style + " class=" + cls + ">"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
+	    		}
+	    		else{
+	    			var cls = 'tooltip';
+	    			var style = 'display:inline;';
+	    			if(see_more_triggered === true){
+	    				style = 'display:none;';
+	    			}
+	    			console.log("style is:" + style);
+	    			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + value + "</span>");
+	    		}
     		}
 
     	});
     	concat += "</span>";
+
+    	// replace see more with the icon.
+
     	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
 		//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
 		// previous setup was :
@@ -708,6 +762,10 @@ var display_search_results = function(search_results,input){
 	        }
 	    }
 	});
+	console.log("categories are:");
+	console.log(categories);
+	console.log("related queries are:");
+	console.log(related_queries);
 	var k = _.union(categories,related_queries);	
 	render_categories(k);
 }
