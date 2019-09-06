@@ -222,7 +222,7 @@ var build_setup = function(search_result){
 					}
 					else if(index == 1){
 						// symbol
-						
+
 					}
 					else if(index == 2){
 						complex_string = complex_string + "See-More ";
@@ -393,6 +393,8 @@ var assign_statistics = function(search_result,text){
 	console.log("called split input text");
 	var offsets = get_offsets(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
+	console.log("suggestion input is:");
+	console.log(suggestion.input);
 	var related_queries = suggestion.input.split("%")[1].split("*")[0];
 	var pre = suggestion.input.split("%")[0];
 	var information = pre.split("#");

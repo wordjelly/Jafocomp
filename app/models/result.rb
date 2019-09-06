@@ -86,7 +86,8 @@ class Result
 								} 
 							]
 						}
-					}
+					},
+					inner_hits: {}
 				}
 			},
 			{
@@ -159,8 +160,14 @@ class Result
 			end
 		}
 
+		
+		if should[2][:nested][:query][:bool][:should].blank?
+			should.pop
+		end
+
 		puts "should clauses are:"
 		puts JSON.pretty_generate(should)
+
 
 		body = 
 		{
@@ -189,20 +196,32 @@ class Result
 		
 		search_results = gateway.client.search index: "correlations", body: body
 
+		## as far as industries are concerned
+		## i want to know what.
+		## buy bmw?
+		## buy what?
+		## so search inside inner hits.
 
 		search_results = search_results["hits"]["hits"].map{|hit|
 			#puts JSON.generate(hit)
 			puts JSON.generate(hit["inner_hits"]["complex_derivations"]["hits"]["hits"])
 			object_to_use = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]
 
-			entity_names = object_to_use["_source"]["tag_text"].split(SEPARATOR_FOR_TAG_TEXT)[0].split(",")
-			selected_names = entity_names.select{|c| query =~ /c/i }
+			# if it doesn't contain the time tag_text
+			# then we have to get it from the suggest.
 			entity_name = nil
-
-			if selected_names.blank?
-				entity_name = entity_names[0]	
+			if object_to_use["_source"]["tag_text"].blank?
+				entity_name = object_to_use["_source"]["tags"][0]
 			else
-				entity_name = selected_names[0]
+				entity_names = object_to_use["_source"]["tag_text"].split(SEPARATOR_FOR_TAG_TEXT)[0].split(",")
+				selected_names = entity_names.select{|c| query =~ /c/i }
+				entity_name = nil
+
+				if selected_names.blank?
+					entity_name = entity_names[0]	
+				else
+					entity_name = selected_names[0]
+				end
 			end
 
 			input = entity_name + "#" +  object_to_use["_source"]["stats"].join(",") + "," + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
@@ -477,18 +496,29 @@ class Result
 		puts input.to_s
 		stats_and_industries = nil
 		offsets = nil
-		input.scan(/#(?<stats>[0-9,\-]+)\*(?<offsets>[0-9,]+)$/) do |jj|
+		input.scan(/#(?<stats>[0-9A-Za-z\s,\-]+)\*(?<offsets>[0-9,]+)$/) do |jj|
 			stats_and_industries = jj[0]
 			offsets = jj[1]
 		end
 
-
+=begin
 		stats_and_industries.split(",")[12..-1].each do |industry_code|
 			unless $sectors[industry_code.to_s].blank?
 				industry_name = $sectors[industry_code.to_s].information_name
 				related_queries.push($sectors[industry_code.to_s].related_queries)
 				sectors.push(industry_name)
 			end
+		end
+=end
+		stats_and_industries.split(",")[12..-1].each do |industry_name|
+			#unless $sectors[industry_code.to_s].blank?
+				#industry_name = $sectors[industry_code.to_s].information_name
+				#set this in the initializer.
+				if sector_counter = $sectors_name_to_counter[industry_name]
+					related_queries.push($sectors[sector_counter].related_queries)
+					sectors.push(industry_name)
+				end
+			#end
 		end
 		#puts "the sectors are:"
 		#puts sectors.to_s
