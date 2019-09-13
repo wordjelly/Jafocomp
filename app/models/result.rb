@@ -61,7 +61,22 @@ class Result
 	def self.new_match_query(query)
 		## first basic match.
 		## should[1][:nested][:query][:bool][:should]
+		## sort out stubbing for close
+
 		puts "RUNNING NEW MATCH QUERY."
+		
+		query = query.downcase
+
+		## its going to be inner_hits with function score.
+		## that includes the entire tag text
+		## the scoring will include its profitability.
+		## at the level of the inner hit.
+		## then we can see what happens.
+		## not hard to change.
+		## so we don't match on anything much else.
+		## add that entire thing to the complex_derivations
+		## tag text.
+
 		should = [
 			{
 				match: {
@@ -181,6 +196,13 @@ class Result
 			  		},
 			  		functions: [
 			  			{
+			  				## you are only using epoch.
+			  				## you are not using the profitability
+			  				## so that has to be defined where ?
+			  				## in the complex derivation for what ?
+			  				## you have to sort by the score of the inner hit.
+			  				## also add gauss on the profitablility
+			  				## this is going to have to be stored on the complex derivation.
 			  				gauss: {
 					            epoch: {
 					              origin: Time.now.to_i.to_s,
@@ -242,6 +264,123 @@ class Result
 			}
 
 		}	
+
+	end
+
+	def self.nested_function_score_query(query)
+
+		body = 
+		{
+	  		_source: ["tags","preposition","epoch","_id"],
+		  	query: {
+			  	nested: {
+			  		path: "complex_derivations",
+			  		query: {
+			  			function_score: {
+			  				query: {
+			  					bool: {
+			  						should: []
+			  					}
+			  				},
+			  				functions: [
+			  					{
+				                    field_value_factor: {
+				                      	field: "complex_derivations.profitability"
+				                    }
+				                }
+			  				]
+			  			}
+			  		},
+			  		inner_hits: {}
+			  	}
+		  	}
+		}
+
+		query_split = query.split(" ")
+		#puts "query split is: #{query_split}"
+		base_boost = 100
+		query_split.each_with_index {|word,key|
+			if (key < (query_split.size - 1)) 
+				body[:query][:nested][:query][:function_score][:query][:bool][:should] << {
+					span_near: {
+						clauses: [
+							{
+								span_term: {
+					                "complex_derivations.tag_text".to_sym => {
+					                  value: query_split[key]
+					                }
+				            	}
+				        	},
+				        	{
+					            span_term: {
+					                "complex_derivations.tag_text".to_sym => {
+					                  value: query_split[key + 1]
+					                }
+					            }
+				        	}
+						],
+						slop: 10,
+						in_order: true,
+						boost: 100
+					}
+				}
+				base_boost = base_boost/2
+			end
+		}
+
+		
+		if body[:query][:nested][:query][:function_score][:query][:bool][:should].blank?
+			body[:query][:nested][:query][:function_score][:query][:bool][:should].pop
+		end
+
+		search_results = gateway.client.search index: "correlations", body: body
+
+		## as far as industries are concerned
+		## i want to know what.
+		## buy bmw?
+		## buy what?
+		## so search inside inner hits.
+
+		search_results = search_results["hits"]["hits"].map{|hit|
+			#puts JSON.generate(hit)
+			puts JSON.generate(hit["inner_hits"]["complex_derivations"]["hits"]["hits"])
+			object_to_use = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]
+
+			# if it doesn't contain the time tag_text
+			# then we have to get it from the suggest.
+			entity_name = nil
+			if object_to_use["_source"]["tag_text"].blank?
+				entity_name = object_to_use["_source"]["tags"][0]
+			else
+				entity_names = object_to_use["_source"]["tag_text"].split(SEPARATOR_FOR_TAG_TEXT)[0].split(",")
+				selected_names = entity_names.select{|c| query =~ /c/i }
+				entity_name = nil
+
+				if selected_names.blank?
+					entity_name = entity_names[0]	
+				else
+					entity_name = selected_names[0]
+				end
+			end
+
+			input = entity_name + "#" +  object_to_use["_source"]["stats"].join(",") + "," + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
+
+		
+			hit = {
+				_id: hit["_id"],
+				_source: {
+					preposition: hit["_source"]["preposition"],
+					epoch: hit["_source"]["epoch"],
+					tags: hit["_source"]["tags"],
+					suggest: [
+						{
+							input: plug_industries(input)
+						}
+					]
+				}
+			}
+
+		}
 
 	end
 
@@ -596,8 +735,8 @@ class Result
 		if search_results.blank?
 			puts "search results were blank."
 			## now we have a situation where we have to fall back onto the ngram query.
-			new_match_query(args[:prefix])
-			search_results = new_match_query(args[:prefix])
+			#new_match_query(args[:prefix])
+			search_results = nested_function_score_query(args[:prefix])
 		end
 
 		results = {

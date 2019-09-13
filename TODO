@@ -45,3 +45,11 @@
 // if there are multiple sma cross types, then 
 // like 4 day sma crosses above 12 day sma
 // 22 day sma crosses above 12 day sma.
+
+----------------------------------------------------------------
+// hook the positive and negative counts using profit and loss
+// do the t-test for complexes and indicators.
+// sort by that, and gauss of the epoch.
+// add chart js to show the yearly trends for the indicator.
+// and then market that bitch.
+----------------------------------------------------------------

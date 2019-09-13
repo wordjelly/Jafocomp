@@ -1,14 +1,12 @@
-//= require search.js
+//= require_tree .
 
 /****
 DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject. I'm a doctor, and God Bless America.
 *****/
 
-// so we need to just show the max possible profit and loss for 
-// the week in the template.
-// so basically modify the template
-// use the week display technique.
-
+//$(document).ready(function(){
+//    $('.tabs').tabs();
+//});
 
 _.templateSettings = {
     interpolate: /\{\{\=(.+?)\}\}/g,
@@ -79,12 +77,7 @@ $(document).on('keyup','#search',function(event){
 
 
 var search_result_is_positive = function(search_result){
-	
 	return search_result.impacts[0].statistics[0].gold_coins >= search_result.impacts[0].statistics[0].other_coins;
-	
-	//console.log("----------- statistics ----------------");
-	//console.log(search_result.impacts[0].statistics[0]);
-	//return search_result.impacts[0].statistics[0].maximum_profit >= search_result.impacts[0].statistics[0].maximum_loss*-1
 }
 
 var render_search_result_new = function(search_result){
@@ -380,26 +373,6 @@ var get_offsets = function(input_text){
 }
 
 
-var get_rises_or_falls = function(statistic){
-	if (statistic.total_up >= statistic.total_down){
-		return "rose";
-	} 
-	else{
-		return "fell";
-	}
-}
-
-
-var get_percentage = function(statistic){
-	if(statistic.total_up >= statistic.total_down){
-		return Math.round((statistic.total_up/(statistic.total_up + statistic.total_down))*100);
-	}
-	else{
-		return Math.round((statistic.total_down/(statistic.total_up + statistic.total_down))*100);
-	}
-}
-
-
 /***
 getStats()[0] = week_total_up;
 getStats()[1] = week_total_down;
@@ -494,16 +467,14 @@ var assign_statistics = function(search_result,text){
 	}
 	else{
 		impact.statistics.push({
-			time_frame: 1,
+			time_frame: 7,
 			time_frame_unit: "days",
-			time_frame_name: "1 day",
+			time_frame_name: "1 week",
 			total_up: Number(stats[0]),
 			total_down: Number(stats[1]),
 			maximum_profit: Number(stats[2]),
 			maximum_loss: Number(stats[3])
 		})
-		search_result.rises_or_falls = get_rises_or_falls(impact.statistics[0]);
-		search_result.percentage = get_percentage(impact.statistics[0]);
 	}
 
 	/// and month
@@ -766,7 +737,6 @@ var display_search_results = function(search_results,input){
     		++total_negative;
     	}
     	render_search_result_new(search_result);
-    	//render_search_result(search_result);
     });
 
     update_positive_and_negative_tab_titles(total_positive,total_negative);
@@ -1004,19 +974,16 @@ var search = function(input){
 var update_coin_counts = function(search_result){
 	var max_units = 9;
 	if(!_.isEmpty(search_result.impacts[0].statistics)){
-		//var multiple = max_units/(_.size(search_result.impacts[0].statistics));
-		var multiple = 9;
+		var multiple = max_units/(_.size(search_result.impacts[0].statistics));
 		//console.log("multiple is:" + multiple);
 		//console.log("size of the statistics of the first impact is:");
 		//console.log(_.size(search_result.impacts[0].statistics));
 		
 		var gold = [];
 		var total_time_units = [];
-		_.each(search_result.impacts[0].statistics,function(statistic,key,list){
-			if(key == 0){
-				if(statistic.total_up >= statistic.total_down){
-					gold.push(_.range(Math.floor(multiple)));
-				}
+		_.each(search_result.impacts[0].statistics,function(statistic){
+			if(statistic.total_up >= statistic.total_down){
+				gold.push(_.range(Math.floor(multiple)));
 			}
 		});
 		gold = _.flatten(gold);
