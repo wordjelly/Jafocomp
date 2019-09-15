@@ -284,11 +284,19 @@ class Result
 			  				},
 			  				functions: [
 			  					{
+			  						filter: {
+			  							bool: {
+			  								must: [
+
+			  								]
+			  							}
+			  						},
 				                    field_value_factor: {
 				                      	field: "complex_derivations.profitability"
 				                    }
 				                }
-			  				]
+			  				],
+			  				boost_mode: "sum"
 			  			}
 			  		},
 			  		inner_hits: {}
@@ -297,9 +305,17 @@ class Result
 		}
 
 		query_split = query.split(" ")
+		#add it to the function score filter.
+
 		#puts "query split is: #{query_split}"
 		base_boost = 100
 		query_split.each_with_index {|word,key|
+			## add to the function score filter.
+			body[:query][:nested][:query][:function_score][:functions][0][:filter][:bool][:must] << {
+				match: {
+					"complex_derivations.tag_text".to_sym => word
+				}
+			}
 			if (key < (query_split.size - 1)) 
 				body[:query][:nested][:query][:function_score][:query][:bool][:should] << {
 					span_near: {
