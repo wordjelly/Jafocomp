@@ -121,7 +121,7 @@ GEM
       tzinfo (>= 0.3.37)
     multi_json (1.13.1)
     multipart-post (2.0.0)
-    nokogiri (1.9.1)
+    nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     origin (2.3.1)
     patron (0.13.1)
