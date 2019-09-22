@@ -365,8 +365,8 @@ var set_origin_categories = function(search_result){
 // length : , offset, length, offset
 var get_offsets = function(input_text){
 	//resulting object
-	console.log("input text is:");
-	console.log(input_text);
+	//console.log("input text is:");
+	//console.log(input_text);
 	var result_object = {};
 
 
@@ -374,8 +374,8 @@ var get_offsets = function(input_text){
 	var split_on_offsets = input_text.split("*");
 	text_stats_and_related_queries = split_on_offsets[0];
 	offsets = split_on_offsets[1];
-	console.log("text stats:" + text_stats_and_related_queries);
-	console.log("offsets:" + offsets);
+	//console.log("text stats:" + text_stats_and_related_queries);
+	//console.log("offsets:" + offsets);
 	return offsets.split(",");
 }
 
@@ -705,10 +705,6 @@ var display_search_results = function(search_results,input){
     	var concat = "";
     	var see_more_triggered = false;
     	_.each(arr,function(value,index){
-    		// so here we to check if this is the right value.
-    		// if the value is See-More
-    		// then what do we do ?
-    		// replace with icon and hide every subsequent thing.
     		if(value == "See-More"){
     			see_more_triggered = true;
     			console.log("see more is triggered");
@@ -721,8 +717,7 @@ var display_search_results = function(search_results,input){
 	    			if(see_more_triggered === true){
 	    				style = 'display:none;';
 	    			}
-	    			console.log("style is:" + style);
-	    			concat+= ("<span style=" + style + " class=" + cls + ">"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + value + "</span>");
+	    			concat+= ("<span style=" + style + " class=" + cls + ">"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
 	    		}
 	    		else{
 	    			var cls = 'tooltip';
@@ -731,7 +726,7 @@ var display_search_results = function(search_results,input){
 	    				style = 'display:none;';
 	    			}
 	    			console.log("style is:" + style);
-	    			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + value + "</span>");
+	    			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
 	    		}
     		}
 
@@ -1186,38 +1181,31 @@ var replace_percentage_and_literal_numbers = function(search_result){
 	return search_result;
 }
 
-var replace_pattern_with_icons = function(setup){
-	//console.log("setup is:");
-	//console.log(setup);
-	var pattern = new RegExp(/<.+?>[^<>]*?(up_?|down_?)+[^<>]*?<.+?>/)
-	var match = pattern.exec(setup);
-
-	if(!_.isNull(match)){
-		//console.log("------------------------------------------------------------- GOT A MATCH");
-		//console.log(match);
-		
-		//console.log("pattern text is:");
-		//console.log(pattern_text);
-		var pattern_text = match[0];
-		if(pattern_text.length > 3){
-			//console.log("pattern text is:" );
-			//console.log(pattern_text);
-			pattern_text = pattern_text.replace(/up/g,"<i class='material-icons'>arrow_upward</i>");
-			pattern_text = pattern_text.replace(/down/g,"<i class='material-icons'>arrow_downward</i>");
-			//console.log("after replacing");
-			//console.log(pattern_text);
-			setup = setup.replace(match[0],pattern_text);
-			//console.log("setup after replacing:");
-			//console.log(setup);
-		}
+var replacer = function(match,ud,offset,string){
+	if(ud == "up"){
+		return "<i class='material-icons'>arrow_upward</i>";
 	}
-	//var up_post = new RegExp(/(up)_(up_down)/g);
-	//setup = setup.replace(up_post,"<i class='material-icons'>arrow_upward</i>$2");
-	//var pre_down = new RegExp(/(up|down)_(down)/g);
-	//setup = setup.replace(pre_down,"$1<i class='material-icons'>arrow_downward</i>");
-	//var down_post = new RegExp(/(down)_(up_down)/g);
-	//setup = setup.replace(down_post,"<i class='material-icons'>arrow_downward</i>$2");
-	return setup;
+	else{
+		return "<i class='material-icons'>arrow_downward</i>";
+	}
+}
+
+
+var replace_pattern_with_icons = function(setup){
+	
+	// do we have something like 
+	var end_pattern = new RegExp(/(up|down)(_)(up|down)$/g);
+	// if this pattern matches, then knock of the last up/down, with the replacer.
+	var pattern = new RegExp(/(up|down)(?=_(down|up))/g);
+	var newText = setup.replace(pattern,replacer);
+	if(!_.isNull(end_pattern.exec(setup))){
+		// we have to repalce that.
+		newText = newText.replace(/_(up|down)$/g,replacer);
+		newText = newText.replace(/>(_)</g,function(match,ud,offset,string){return '';});
+	}
+
+
+	return newText;
 }
 
 var expand_indicators_for_information_query = function(setup){
