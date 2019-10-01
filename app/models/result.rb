@@ -703,7 +703,7 @@ class Result
 					text: args[:prefix],
 					completion: {
 		                field: "suggest",
-		                size: 20
+		                size: 10
 		            }
 				}
 			}
@@ -715,8 +715,8 @@ class Result
 		search_results = gateway.client.search index: "correlations", body: body
 		#puts search_results["suggest"].to_s
 		search_end_time = Time.now.to_i
-		puts "elasticsearch query took-------------"
-		puts (search_end_time - search_start_time)
+		#puts "elasticsearch query took-----------6+--"
+		#puts (search_end_time - search_start_time)
 
 		if search_results["suggest"]
 			search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
@@ -735,11 +735,10 @@ class Result
 				c["_source"]["suggest"][0]["input"] = plug_industries(c["_source"]["suggest"][0]["input"])
 				c
 			}
-			puts "the search results become:"
-			puts JSON.pretty_generate(search_results)
-			## so each of the search-results
-			## we want only one suggestion.
-			#puts JSON.pretty_generate(search_results)
+
+			## write what is / explain
+			## 
+			
 		else
 			search_results = []
 		end

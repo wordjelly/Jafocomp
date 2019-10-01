@@ -1190,6 +1190,7 @@ var replacer = function(match,ud,offset,string){
 	}
 }
 
+// next step is further normalization of the UI.
 
 var replace_pattern_with_icons = function(setup){
 	
@@ -1222,22 +1223,63 @@ var expand_indicators_for_information_query = function(setup){
 	setup = setup.replace("WR_indicator","williams_r_indicator");
 	return setup;
 }
+	
+// @return[Object] [key] : abbreviated indicator name [value] : full name with underscores, can be used for information query. 
+// used to populate the what is questions.
+// and the time indicator results.
+// what happens to dow jones in september?
+// historically dow jones tends to rise in september, by an average of
+// x/y/z
+
+var indicator_abbreviations_to_names =  function(){
+	return {
+		"SOK Indicator" : "stochastic_oscillator_k_indicator",
+		"SOD Indicator" : "stochastic_oscillator_d_indicator",
+		"ADM Indicator" : "average_directional_movement_indicator",
+		"DEMA Indicator" : "double_ema_indicator",
+		"AO Indicator" : "awesome_oscillator_indicator",
+		"TEMA Indicator" : "triple_ema_indicator",
+		"SEMA Indicator" : "single_ema_indicator",
+		"MACD Indicator" : "moving_average_convergence_divergence",
+		"AD Indicator" : "acceleration_deceleration_indicator",
+		"RSI Indicator" : "relative_strength_indicator",
+		"WR Indicator" : "williams_r_indicator",
+		"Aroon Up Indicator" : "aroon_up",
+		"Aroon Down Indicator" : "aroon_down",
+		"CCI Indicator" : "cci_indicator"
+	}
+}
 
 var shrink_indicators = function(setup){
-	setup = setup.replace("stochastic_oscillator_k_indicator","SOK_indicator");
-	setup = setup.replace("stochastic_oscillator_d_indicator","SOD_indicator");
-	setup = setup.replace("average_directional_movement_indicator","ADM_indicator");
-	setup = setup.replace("double_ema_indicator","DEMA_indicator");
-	setup = setup.replace("awesome_oscillator_indicator","AO_indicator");
-	setup = setup.replace("triple_ema_indicator","TEMA_indicator");
-	setup = setup.replace("single_ema_indicator","SEMA_indicator");
-	setup = setup.replace("moving_average_convergence_divergence","MACD_indicator");
-	setup = setup.replace("acceleration_deceleration_indicator","ACDC_indicator");
-	setup = setup.replace("relative_strength_indicator","RSI_indicator");
-	setup = setup.replace("williams_r_indicator","WR_indicator");
+	setup = setup.replace("stochastic_oscillator_k_indicator","SOK Indicator");
+	setup = setup.replace("stochastic_oscillator_d_indicator","SOD Indicator");
+	setup = setup.replace("average_directional_movement_indicator","ADM Indicator");
+	setup = setup.replace("double_ema_indicator","DEMA Indicator");
+	setup = setup.replace("awesome_oscillator_indicator","AO Indicator");
+	setup = setup.replace("triple_ema_indicator","TEMA Indicator");
+	setup = setup.replace("single_ema_indicator","SEMA Indicator");
+	setup = setup.replace("moving_average_convergence_divergence","MACD Indicator");
+	setup = setup.replace("acceleration_deceleration_indicator","AD Indicator");
+	setup = setup.replace("relative_strength_indicator","RSI Indicator");
+	setup = setup.replace("williams_r_indicator","WR Indicator");
+	setup = setup.replace("aroon_up","Aroon Up Indicator");
+	setup = setup.replace("aroon_down","Aroon Down Indicator");
+	setup = setup.replace("cci_indicator","CCI Indicator");
 	return setup;
 }
 
+/**
+var add_indicator_question = function(search_result){
+	_.each(indicator_names(),function(name){
+		if(_.contains(search_result.setup,name){
+			search_result.question = "What is the" + name + " ?";
+		}	
+	});
+}
+**/
+
+// add what is
+// solve arron_
 
 
 // @param[String] string : the string into which the snippet is to be inserted

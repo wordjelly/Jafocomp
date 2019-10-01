@@ -95,17 +95,22 @@
   <!-- basially we want to store the things of the topmost result here -->
   <!-- the contexts -->
   <script type="text/template" id="search_result_template">
-   
+    
       <div class="card">
-        <div class="card-content grey-text text-lighten-1" style="padding-bottom:5px !important;">
+        <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
             
             <i class="{{= search_result.entity_icon}}"></i>
             {{= search_result.setup }}
           </span>
-          
-          <div class="black-text" style="margin-top: 1rem;font-size:18px; margin-bottom:1rem; !important">
-          On the next day, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <br>The maximum rise was <b>{{= search_result.impacts[0].statistics[0].maximum_profit/10 }}%</b> and maximum fall was <b>{{= search_result.impacts[0].statistics[0].maximum_loss/10 }}%</b>
+          {{ if(search_result.rises_or_falls == "rose"){ }}
+            <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+            <i class="material-icons">trending_up</i>
+          {{ } else { }}
+            <div class="red-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+            <i class="material-icons">trending_down</i>
+          {{ } }}
+          On the next day, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span style="display:none;"><br>The maximum rise was <b>{{= search_result.impacts[0].statistics[0].maximum_profit/10 }}%</b> and maximum fall was <b>{{= search_result.impacts[0].statistics[0].maximum_loss/10 }}%</b></span>
           </div>
 
           {{ first_impact = search_result.impacts[0] }}
