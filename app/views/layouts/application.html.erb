@@ -110,7 +110,7 @@
             <div class="red-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
             <i class="material-icons">trending_down</i>
           {{ } }}
-          On the next day, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span><br> In the last 10 years, it rose on {{= search_result.impacts[0].total_up }} occassions, and fell on {{= search_result.impacts[0].total_down }} occassions. The maximum rise was <b>{{= search_result.impacts[0].statistics[0].maximum_profit/10 }}%</b> and maximum fall was <b>{{= search_result.impacts[0].statistics[0].maximum_loss/10 }}%</b></span>
+          On the next day, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span><br> In the last 10 years, it rose on {{= search_result.impacts[0].statistics[0].total_up }} occassions, and fell on {{= search_result.impacts[0].statistics[0].total_down }} occassions.</b></span>
           </div>
 
           {{ first_impact = search_result.impacts[0] }}
