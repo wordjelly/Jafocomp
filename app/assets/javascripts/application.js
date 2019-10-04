@@ -670,6 +670,7 @@ var display_search_results = function(search_results,input){
 	var total_negative = 0;
 	 // and later use a template to get this.
 	_.each(search_results,function(search_result,index,list){
+		if(index == 0){
 			// ALL THIS
 			// upto the last matching entire word.
 			// not incomplete words.
@@ -762,6 +763,7 @@ var display_search_results = function(search_results,input){
     	}
     	render_search_result_new(search_result);
     	//render_search_result(search_result);
+    	}
     });
 
     update_positive_and_negative_tab_titles(total_positive,total_negative);
