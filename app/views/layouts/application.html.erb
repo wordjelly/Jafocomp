@@ -96,26 +96,28 @@
   <!-- the contexts -->
   <script type="text/template" id="search_result_template">
     
-      <div class="card">
+      <div class="card" id="{{= search_result.div_id }}" style="display:none;">
         <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
             
             <i class="{{= search_result.entity_icon}}"></i>
             {{= search_result.setup }}
           </span>
-          {{ if(search_result.rises_or_falls == "rose"){ }}
+          {{ if(search_result.rises_or_falls == "tends to rise"){ }}
             <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
             <i class="material-icons">trending_up</i>
           {{ } else { }}
             <div class="red-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
             <i class="material-icons">trending_down</i>
           {{ } }}
-          On the next day, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span><br> In the last 10 years, it rose on {{= search_result.impacts[0].statistics[0].total_up }} occassions, and fell on {{= search_result.impacts[0].statistics[0].total_down }} occassions.</b></span>
+          Historically, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span><br> </span>
           </div>
+
+
 
           {{ first_impact = search_result.impacts[0] }}
 
-           <div class="row plain_stats" style="display:none; margin-top: 1rem;">
+          <div class="row plain_stats" style="display:none; margin-top: 1rem;">
            
             <div class="divider" style="margin-bottom: 2rem; margin-top: 2rem;"></div>
             {{ _.each(first_impact.statistics, function(val,key,list) { }}
@@ -141,11 +143,32 @@
             {{ }) }}
           </div>  
           
+          <div class="row year_wise_stats" style="margin-top: 1rem;">
+              <table class="highlight">
+                <thead>
+                  <tr>
+                      <th>Year</th>
+                      <th>Rose</th>
+                      <th>Fell</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{_.each(_.keys(search_result.year_wise_data), function(year){  }}
+                    <tr>
+                      <td>{{= year }}</td>
+                      <td>{{= search_result.year_wise_data[year][0]}}</td>
+                      <td>{{= search_result.year_wise_data[year][1]}}</td>
+                    <tr>
+                  {{ }); }}
+                </tbody>
+              </table>
+          </div>
+          
         </div>
     
       </div>
   </script>
- 
+  <!-- now we want to show the year wise data --> 
 
   <!-- STYLES -->
   <style>

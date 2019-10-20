@@ -45,18 +45,24 @@ $(document).on('click','#clear_search',function(event){
 });
 
 // first lets get this shit to display at least.
+$(document).on('input change','#autocomplete-input',function(event){
+
+	search_action($(this).val());
+
+});	
+
+
 
 $(document).on('keyup','#search',function(event){
-	// if the event is space.
-	// don't do anything.
-	
-	// handle backspace on empty.
+	search_action($(this).val());
+});
 
+var search_action = function(input){
 	if(event.keyCode == 32){
 		//console.log("got space, doing nothing.");
 	}
 	else{
-		if( !$(this).val() ) {
+		if( !input ) {
 			slide_down_logo();
 			
 		}
@@ -72,10 +78,10 @@ $(document).on('keyup','#search',function(event){
 				$(".default_sectors").first().hide();
 
 			}
-			search_new($(this).val());
+			search_new(input);
 		}
 	}
-});
+}
 
 
 var search_result_is_positive = function(search_result){
@@ -382,10 +388,10 @@ var get_offsets = function(input_text){
 
 var get_rises_or_falls = function(statistic){
 	if (statistic.total_up >= statistic.total_down){
-		return "rose";
+		return "tends to rise";
 	} 
 	else{
-		return "fell";
+		return "tends to fall";
 	}
 }
 
@@ -398,6 +404,29 @@ var get_percentage = function(statistic){
 		return Math.round((statistic.total_down/(statistic.total_up + statistic.total_down))*100);
 	}
 }
+
+/***
+@param[Array] stats
+@param[Object] search_result
+***/
+var set_year_wise_data = function(stats,search_result){
+	var year_wise_data = {}
+	var year_wise_data_string = stats[0].split("$$")[1];
+	var prev_key = null;
+	_.each(year_wise_data_string.split("$"),function(val,key){
+		if(key % 3 == 0){
+			year_wise_data[val] = [];
+			prev_key = val;
+		}
+		else{
+			if(!_.isNull(prev_key)){
+				year_wise_data[prev_key].push(val);
+			}
+		}
+	});
+	search_result.year_wise_data = year_wise_data;
+	stats[0] = stats[0].split("$$")[0];
+} 
 
 
 /***
@@ -480,6 +509,8 @@ var assign_statistics = function(search_result,text){
 	set_related_queries_from_suggestion_input(search_result,related_queries);
 	stats = stats.slice(0,12);
 	
+	set_year_wise_data(stats,search_result)
+
 	build_setup(search_result);
 
 	search_result.impacts = [];
@@ -656,10 +687,26 @@ var update_positive_and_negative_tab_titles = function(positive,negative){
 	$("#negative_count").text(negative);
 }
 
+
+function CreateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 // we fold the indicators, add it into a seperate data elemet.
 
-
+/****
+@return[Hash]
+## key => search result text
+## value => id of holder div
+## this hash is meant to populate the autocomplete suggestions.
+## clicking on one of them -> should show that particular div.
+## they are all hidden by default.
+****/
 var display_search_results = function(search_results,input){
+	var autocomplete_suggestions_hash = {}
 	clear_html();
 	$('.tabs').tabs();
 	$('#search_results').html("");
@@ -670,7 +717,7 @@ var display_search_results = function(search_results,input){
 	var total_negative = 0;
 	 // and later use a template to get this.
 	_.each(search_results,function(search_result,index,list){
-		if(index == 0){
+		//if(index == 0){
 			// ALL THIS
 			// upto the last matching entire word.
 			// not incomplete words.
@@ -678,92 +725,94 @@ var display_search_results = function(search_results,input){
 			// buy gold on
 			// and your query is buy gold o
 			// we want to stop till buy gold.
-    	//console.log(search_result);
-    	text = search_result["text"];
-    	search_result = search_result['_source'];
-    	
-    	//console.log("search result is:");
-    	//console.log(search_result);
-    	//console.log("text is:");
-    	//console.log(text);
-    	//search_result['suggest'].reverse();
-    	assign_statistics(search_result,text);
-    	search_result = update_coin_counts(search_result);
-    	search_result = update_bar_lengths(search_result);
-    	search_result = convert_n_day_change_to_superscript(search_result);
-    	search_result = replace_percentage_and_literal_numbers(search_result);
-    	
-    	// add the tooltip spans to each word.
-    	//update_last_successfull_query(input,search_result.setup);
-    	// only the thing about the sup is left.
-    	// 
-    	
-    	search_result.setup = shrink_indicators(search_result.setup);
+	    	//console.log(search_result);
+	    	text = search_result["text"];
+	    	search_result = search_result['_source'];
+	    	
+	    	//console.log("search result is:");
+	    	//console.log(search_result);
+	    	//console.log("text is:");
+	    	//console.log(text);
+	    	//search_result['suggest'].reverse();
+	    	assign_statistics(search_result,text);
+	    	search_result = update_coin_counts(search_result);
+	    	search_result = update_bar_lengths(search_result);
+	    	search_result = convert_n_day_change_to_superscript(search_result);
+	    	search_result = replace_percentage_and_literal_numbers(search_result);
+	    	
+	    	// add the tooltip spans to each word.
+	    	//update_last_successfull_query(input,search_result.setup);
+	    	// only the thing about the sup is left.
+	    	// 
+	    	
+	    	search_result.setup = shrink_indicators(search_result.setup);
 
-    	//assign_target(search_result);
-    	
-    	var arr = search_result.setup.split(" ");
-    	var concat = "";
-    	var see_more_triggered = false;
-    	_.each(arr,function(value,index){
-    		if(value == "See-More"){
-    			see_more_triggered = true;
-    			console.log("see more is triggered");
-    			concat += "<span class='see-more'>...</span>";
-    		}
-    		else{
-	    		if(index == 2){
-	    			var cls = 'blue-grey-text';
-	    			var style = 'display:inline;';
-	    			if(see_more_triggered === true){
-	    				style = 'display:none;';
-	    			}
-	    			concat+= ("<span style=" + style + " class=" + cls + ">"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
+	    	//assign_target(search_result);
+	    	
+	    	var arr = search_result.setup.split(" ");
+	    	var concat = "";
+	    	var see_more_triggered = false;
+	    	_.each(arr,function(value,index){
+	    		if(value == "See-More"){
+	    			see_more_triggered = true;
+	    			console.log("see more is triggered");
+	    			concat += "<span class='see-more'>...</span>";
 	    		}
 	    		else{
-	    			var cls = 'tooltip';
-	    			var style = 'display:inline;';
-	    			if(see_more_triggered === true){
-	    				style = 'display:none;';
-	    			}
-	    			console.log("style is:" + style);
-	    			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
+		    		if(index == 2){
+		    			var cls = 'blue-grey-text';
+		    			var style = 'display:inline;';
+		    			if(see_more_triggered === true){
+		    				style = 'display:none;';
+		    			}
+		    			concat+= ("<span style=" + style + " class=" + cls + ">"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
+		    		}
+		    		else{
+		    			var cls = 'tooltip';
+		    			var style = 'display:inline;';
+		    			if(see_more_triggered === true){
+		    				style = 'display:none;';
+		    			}
+		    			console.log("style is:" + style);
+		    			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
+		    		}
 	    		}
-    		}
 
-    	});
-    	concat += "</span>";
+	    	});
+	    	concat += "</span>";
 
-    	// replace see more with the icon.
+	    	// replace see more with the icon.
 
-    	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
-		//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
-		// previous setup was :
-		// 
-		var icon = get_icon(search_result.setup);
-		search_result.setup = icon + concat;	
+	    	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
+			//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
+			// previous setup was :
+			// 
+			var icon = get_icon(search_result.setup);
+			search_result.setup = icon + concat;	
 
-		//search_result.setup = replace_pattern_with_icons(search_result.setup);	
-		
-    	search_result = strip_period_details_from_setup(search_result);
-    	search_result = update_falls_or_rises_text(search_result);	
-    	search_result = add_time_to_setup(search_result);
+			//search_result.setup = replace_pattern_with_icons(search_result.setup);	
+			
+	    	search_result = strip_period_details_from_setup(search_result);
+	    	search_result = update_falls_or_rises_text(search_result);	
+	    	search_result = add_time_to_setup(search_result);
 
-    	//console.log(search_result);
-    	categories = _.union(search_result.categories,categories);
-    	related_queries = _.union(search_result.related_queries,related_queries);
-    	// add the total positive and negative
-    	// add that to the positive/negative text.
-    	// as a number in a bracket.
-    	if(search_result_is_positive(search_result)){
-    		++total_positive;
-    	}
-    	else{
-    		++total_negative;
-    	}
-    	render_search_result_new(search_result);
-    	//render_search_result(search_result);
-    	}
+	    	//console.log(search_result);
+	    	categories = _.union(search_result.categories,categories);
+	    	related_queries = _.union(search_result.related_queries,related_queries);
+	    	// add the total positive and negative
+	    	// add that to the positive/negative text.
+	    	// as a number in a bracket.
+	    	if(search_result_is_positive(search_result)){
+	    		++total_positive;
+	    	}
+	    	else{
+	    		++total_negative;
+	    	}
+	    	search_result.div_id = CreateUUID();
+	    	render_search_result_new(search_result);
+	    	autocomplete_suggestions_hash[search_result.setup] = search_result.div_id;
+	    	//render_search_result(search_result);
+    	//}
     });
 
     update_positive_and_negative_tab_titles(total_positive,total_negative);
@@ -827,6 +876,7 @@ var display_search_results = function(search_results,input){
 	console.log(related_queries);
 	var k = _.union(categories,related_queries);	
 	render_categories(k);
+	return autocomplete_suggestions_hash;
 }
 
 var query_pending = function(input){
@@ -850,7 +900,7 @@ var search_new = function(input){
 	} 
 	else{
 		//console.log("no pending query");
-		var ajaxTime= new Date().getTime();
+		var ajaxTime = new Date().getTime();
 		$.ajax({
 		  	url: "/search",
 		  	type: "GET",
@@ -873,7 +923,8 @@ var search_new = function(input){
 		    		$("#related_queries_title").hide();
 		    	}
 		    	else{
-		    		display_search_results(search_results,input);
+		    		var autocomplete_hash = display_search_results(search_results,input);
+		    		$('.autocomplete').autocomplete('updateData',autocomplete_hash);
 		    	}
 			},
 			complete: function(){
@@ -1500,7 +1551,15 @@ $(document).ready(function(){
 	$("#quote_author").text(quote_author); 
     //
     $('.tooltip').tooltipster();
+    $('input.autocomplete').autocomplete({
+      data: {
+        "Apple": "https://www.apple.com",
+        "Microsoft": "https://www.microsoft.com",
+        "Google": 'https://placehold.it/250x250'
+      },
+    });
 });
+
 
 
 /////////////////////////////////////////////////////////////////////////////

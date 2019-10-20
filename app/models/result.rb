@@ -651,7 +651,7 @@ class Result
 		puts input.to_s
 		stats_and_industries = nil
 		offsets = nil
-		input.scan(/#(?<stats>[0-9A-Za-z\s,\-]+)\*(?<offsets>[0-9,]+)$/) do |jj|
+		input.scan(/#(?<stats>[0-9A-Za-z\s,\-\$]+)\*(?<offsets>[0-9,]+)$/) do |jj|
 			stats_and_industries = jj[0]
 			offsets = jj[1]
 		end
