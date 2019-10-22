@@ -44,24 +44,35 @@ $(document).on('click','#clear_search',function(event){
 	slide_down_logo();
 });
 
+
 // first lets get this shit to display at least.
-$(document).on('input change','#autocomplete-input',function(event){
+$(document).on('keyup','#autocomplete-input',function(event){
+	//console.log("keydown triggered" + event.keyCode);
+	if(event.keyCode == 32){
+		var autocomplete_hash = JSON.parse($(".autocomplete").first().data('autocomplete_hash'));
 
-	search_action($(this).val());
-
+		$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
+	}
+	else{
+		search_action($(this).val());
+	}
 });	
 
-
+// that fucking hash has the div id.
+// so it tries to load that
+// if that is null, how to know /
 
 $(document).on('keyup','#search',function(event){
 	search_action($(this).val());
 });
 
 var search_action = function(input){
-	if(event.keyCode == 32){
-		//console.log("got space, doing nothing.");
-	}
-	else{
+	//console.log("triggered search action");
+	//console.log("input is: " + input);
+	//if(event.keyCode == 32){
+		////console.log("got space, doing nothing.");
+	//}
+	//else{
 		if( !input ) {
 			slide_down_logo();
 			
@@ -80,7 +91,7 @@ var search_action = function(input){
 			}
 			search_new(input);
 		}
-	}
+	//}
 }
 
 
@@ -88,8 +99,11 @@ var search_result_is_positive = function(search_result){
 	
 	return search_result.impacts[0].statistics[0].gold_coins >= search_result.impacts[0].statistics[0].other_coins;
 	
-	//console.log("----------- statistics ----------------");
-	//console.log(search_result.impacts[0].statistics[0]);
+	// sort out the space issues and other such bullshit
+	// why is it failing on space.
+	// and not searching anything else afterwards
+	////console.log("----------- statistics ----------------");
+	////console.log(search_result.impacts[0].statistics[0]);
 	//return search_result.impacts[0].statistics[0].maximum_profit >= search_result.impacts[0].statistics[0].maximum_loss*-1
 }
 
@@ -98,7 +112,7 @@ var render_search_result_new = function(search_result){
 		var template = _.template($('#search_result_template').html());
 	}
 	if(search_result_is_positive(search_result)){
-		//console.log(template(search_result));
+		////console.log(template(search_result));
 		$('#positive').append(template(search_result));
 	}
 	else{
@@ -186,8 +200,8 @@ var dotted_underline_entity_names = function(){
 var build_setup = function(search_result){
 	var complex_string = search_result.preposition + " ";
 	
-	//console.log("the search result information is:");
-	//console.log(search_result.information);
+	////console.log("the search result information is:");
+	////console.log(search_result.information);
 
 	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
@@ -240,7 +254,7 @@ var build_setup = function(search_result){
 		}
 		else if(time_subindicator_regexp.test(search_result.tags) == true){
 
-			//console.log("got a time based subindicator, by checking the tags");
+			////console.log("got a time based subindicator, by checking the tags");
 			_.map(search_result.tags,function(tag,index){
 			
 				complex_string = complex_string + tag + " ";
@@ -280,8 +294,8 @@ var build_setup = function(search_result){
 	}
 
 
-	//console.log("complex string becomes:");
-	//console.log(complex_string);
+	////console.log("complex string becomes:");
+	////console.log(complex_string);
 	// so if it comes with hyphens after the preposition and 
 	// that preposition is when, then we get rid of those hyphens.
 	// the problem is for the rollovers.
@@ -301,8 +315,8 @@ var build_setup = function(search_result){
 
 	}	
 	var rises_parts = search_result.setup.split(/(rises|falls)/);
-	//console.log("rises parts are:");
-	//console.log(rises_parts);	
+	////console.log("rises parts are:");
+	////console.log(rises_parts);	
 	// for rises falls and crosses.
 	if(_.size(rises_parts) > 1){
 		search_result.setup = rises_parts[0] + rises_parts[1]; 
@@ -347,12 +361,12 @@ sets the impacted categories using the suggestion input.
 ## we want to take up everything after the 
 ***/
 var set_impacted_categories_from_suggestion_input = function(search_result,stats){
-	//console.log("stats are:");
-	//console.log(stats);
+	////console.log("stats are:");
+	////console.log(stats);
 	var categories = stats.slice(12,stats.length);
 	search_result.categories = categories;
-	//console.log("the search result categories are:");
-	//console.log(search_result.categories);
+	////console.log("the search result categories are:");
+	////console.log(search_result.categories);
 }
 
 var set_related_queries_from_suggestion_input = function(search_result,related_queries){
@@ -371,8 +385,8 @@ var set_origin_categories = function(search_result){
 // length : , offset, length, offset
 var get_offsets = function(input_text){
 	//resulting object
-	//console.log("input text is:");
-	//console.log(input_text);
+	////console.log("input text is:");
+	////console.log(input_text);
 	var result_object = {};
 
 
@@ -380,8 +394,8 @@ var get_offsets = function(input_text){
 	var split_on_offsets = input_text.split("*");
 	text_stats_and_related_queries = split_on_offsets[0];
 	offsets = split_on_offsets[1];
-	//console.log("text stats:" + text_stats_and_related_queries);
-	//console.log("offsets:" + offsets);
+	////console.log("text stats:" + text_stats_and_related_queries);
+	////console.log("offsets:" + offsets);
 	return offsets.split(",");
 }
 
@@ -444,20 +458,20 @@ getStats()[10] = six_month_max_profit;
 getStats()[11] = six_month_max_loss;
 ***/
 var assign_statistics = function(search_result,text){
-	console.log("search result is:");
-	console.log(search_result);
+	//console.log("search result is:");
+	//console.log(search_result);
 	/***
 	if(_.isUndefined(text)){
 		// so let's see if all this works.	
 	}
 	else{
 		var text_split_on_space = text.split("#")[0].split(" ");
-		console.log("text split on space:");
-		console.log(text_split_on_space);
+		//console.log("text split on space:");
+		//console.log(text_split_on_space);
 		search_result.suggest = _.filter(search_result.suggest,function(el){
 			var satisfied = true;
-			console.log("el input is:");
-			console.log(el["input"]);
+			//console.log("el input is:");
+			//console.log(el["input"]);
 			_.each(text_split_on_space,function(word){
 				if(satisfied == true){
 					satisfied = (el['input'].indexOf(word) != -1);
@@ -467,26 +481,26 @@ var assign_statistics = function(search_result,text){
 		});
 	}
 
-	console.log("suggestions remaining");
+	//console.log("suggestions remaining");
 	
 	search_result.suggest = [_.first(search_result.suggest)];
 	**/
 
 	// so after the apostrophe we expand.
 
-	console.log("called split input text");
+	//console.log("called split input text");
 	var offsets = get_offsets(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
-	console.log("suggestion input is:");
-	console.log(suggestion.input);
+	//console.log("suggestion input is:");
+	//console.log(suggestion.input);
 	var related_queries = suggestion.input.split("%")[1].split("*")[0];
 	var pre = suggestion.input.split("%")[0];
 	var information = pre.split("#");
 
 	
 	search_result.information = information;
-	//console.log("information is:");
-	//console.log(information);
+	////console.log("information is:");
+	////console.log(information);
 
 	var stats = information[1];
 
@@ -598,25 +612,25 @@ var prepare_query_for_tooltip_search = function(origin){
 	var subindicator_name = [];
 	var query = null;
 	if(origin.data("name").toString().indexOf("_indicator") != -1){
-		//console.log("making query from indicator");
-		//console.log("new query:");
-		//console.log(expand_indicators_for_information_query(origin.data("name")));
+		////console.log("making query from indicator");
+		////console.log("new query:");
+		////console.log(expand_indicators_for_information_query(origin.data("name")));
 		query = expand_indicators_for_information_query(origin.data("name")).replace(/_period_start_\d+_(\d+_)*period_end/,"");
-		//console.log("query is:");
-		//console.log(query);
+		////console.log("query is:");
+		////console.log(query);
 	}
 	else{
 		origin.prevAll().each(function(key,el){
-			//console.log("doing prevall");
-			//console.log(el);
-			//console.log($(el).data("name"));
+			////console.log("doing prevall");
+			////console.log(el);
+			////console.log($(el).data("name"));
 			data_name = $(el).data("name");
 			if(!_.isUndefined(data_name)){
 				if(word_is_indicator(data_name.toString())){
 
 					if(_.isNull(indicator_element)){
 						indicator_element = el;
-						//console.log("making query from indicator element");
+						////console.log("making query from indicator element");
 					}
 					//break;
 				}
@@ -629,11 +643,11 @@ var prepare_query_for_tooltip_search = function(origin){
 		});
 
 
-		//console.log("subindicator name contains:");
-		//console.log(subindicator_name);
+		////console.log("subindicator name contains:");
+		////console.log(subindicator_name);
 
 		if(!_.isNull(indicator_element)){
-			//console.log("there is an indicator name");
+			////console.log("there is an indicator name");
 			query = subindicator_name.reverse().join(" ");
 			query += " " + origin.data("name"); 
 			origin.nextAll().each(function(key,el){
@@ -676,7 +690,7 @@ var clear_html = function(){
 
 
 $(document).on('click','.see-more',function(event){
-	console.log("clicked see more");
+	//console.log("clicked see more");
 	$(".tooltip").show();
 })
 // now let me solve the colloquial issue.
@@ -725,14 +739,14 @@ var display_search_results = function(search_results,input){
 			// buy gold on
 			// and your query is buy gold o
 			// we want to stop till buy gold.
-	    	//console.log(search_result);
+	    	////console.log(search_result);
 	    	text = search_result["text"];
 	    	search_result = search_result['_source'];
 	    	
-	    	//console.log("search result is:");
-	    	//console.log(search_result);
-	    	//console.log("text is:");
-	    	//console.log(text);
+	    	////console.log("search result is:");
+	    	////console.log(search_result);
+	    	////console.log("text is:");
+	    	////console.log(text);
 	    	//search_result['suggest'].reverse();
 	    	assign_statistics(search_result,text);
 	    	search_result = update_coin_counts(search_result);
@@ -755,7 +769,7 @@ var display_search_results = function(search_results,input){
 	    	_.each(arr,function(value,index){
 	    		if(value == "See-More"){
 	    			see_more_triggered = true;
-	    			console.log("see more is triggered");
+	    			//console.log("see more is triggered");
 	    			concat += "<span class='see-more'>...</span>";
 	    		}
 	    		else{
@@ -773,7 +787,7 @@ var display_search_results = function(search_results,input){
 		    			if(see_more_triggered === true){
 		    				style = 'display:none;';
 		    			}
-		    			console.log("style is:" + style);
+		    			//console.log("style is:" + style);
 		    			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
 		    		}
 	    		}
@@ -796,7 +810,7 @@ var display_search_results = function(search_results,input){
 	    	search_result = update_falls_or_rises_text(search_result);	
 	    	search_result = add_time_to_setup(search_result);
 
-	    	//console.log(search_result);
+	    	////console.log(search_result);
 	    	categories = _.union(search_result.categories,categories);
 	    	related_queries = _.union(search_result.related_queries,related_queries);
 	    	// add the total positive and negative
@@ -810,9 +824,17 @@ var display_search_results = function(search_results,input){
 	    	}
 	    	search_result.div_id = CreateUUID();
 	    	render_search_result_new(search_result);
-	    	autocomplete_suggestions_hash[search_result.setup] = search_result.div_id;
+	    	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "")] = search_result.div_id;
+	    	// problem is that the autocomplete may not work.
+	    	// words can be seperate.
 	    	//render_search_result(search_result);
     	//}
+    	// sort out result
+    	// from where to get those ?
+    	// replace the stats.
+    	// this way it will work.
+    	// now just get the search working.
+    	// i can put this into the stats.
     });
 
     update_positive_and_negative_tab_titles(total_positive,total_negative);
@@ -838,12 +860,12 @@ var display_search_results = function(search_results,input){
 
 	            $.get('/search',{information: prepare_query_for_tooltip_search($origin)}).done(function(data) {
 
-	            	//console.log("data is:");
-	            	//console.log(data);
+	            	////console.log("data is:");
+	            	////console.log(data);
 	            	if(!_.isEmpty(data["results"])){
 
 	            		result = data["results"][0]["_source"];
-	            		console.log("result is:" + result);
+	            		//console.log("result is:" + result);
 
 		            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
 
@@ -852,13 +874,13 @@ var display_search_results = function(search_results,input){
 		            	link_string = '';
 
 		            	if(!_.isEmpty(result["information_link"])){
-		            		//console.log("there is an information link");
+		            		////console.log("there is an information link");
 		            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
 		            	}
 		            	
 		            	var content = title_string + content_string + link_string
 
-		            	//console.log("content" + content);
+		            	////console.log("content" + content);
 
 		                instance.content(content);
 		               
@@ -870,10 +892,10 @@ var display_search_results = function(search_results,input){
 	        }
 	    }
 	});
-	console.log("categories are:");
-	console.log(categories);
-	console.log("related queries are:");
-	console.log(related_queries);
+	//console.log("categories are:");
+	//console.log(categories);
+	//console.log("related queries are:");
+	//console.log(related_queries);
 	var k = _.union(categories,related_queries);	
 	render_categories(k);
 	return autocomplete_suggestions_hash;
@@ -881,8 +903,8 @@ var display_search_results = function(search_results,input){
 
 var query_pending = function(input){
 	var already_running_query = $("#already_running_query").attr("data-already-running-query");
-	//console.log("already running query is:");
-	//console.log(already_running_query);
+	////console.log("already running query is:");
+	////console.log(already_running_query);
 	if(!_.isEmpty(already_running_query)){
 		$("#queued_query").attr("data-queued-query",input);
 		return true;
@@ -899,7 +921,7 @@ var search_new = function(input){
 
 	} 
 	else{
-		//console.log("no pending query");
+		////console.log("no pending query");
 		var ajaxTime = new Date().getTime();
 		$.ajax({
 		  	url: "/search",
@@ -914,26 +936,33 @@ var search_new = function(input){
 		  	success: function(response){
 		  		var totalTime = new Date().getTime()-ajaxTime;
 
-		  		//console.log("server side took:" + totalTime);
+		  		////console.log("server side took:" + totalTime);
 
 		    	$('#search_results').html("");
 		    	
 		    	var search_results = response['results']['search_results'];
 		    	if(_.isEmpty(search_results)){
+		    		//console.log("search results are empty");
 		    		$("#related_queries_title").hide();
 		    	}
 		    	else{
 		    		var autocomplete_hash = display_search_results(search_results,input);
-		    		$('.autocomplete').autocomplete('updateData',autocomplete_hash);
+		    			
+		    		$(".autocomplete").first().data('autocomplete_hash',JSON.stringify(_.object(_.map(autocomplete_hash,function(value,key){return [key.replace(/<\/?[^>]+(>|$)/g, "").trim(),value];}))));
+
+		    		$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
+
+		    		console.log("updated the autocomplete");
+
 		    	}
 			},
 			complete: function(){
 				$("#progress_bar").css("visibility","hidden");
 				$("#already_running_query").attr("data-already-running-query","");
-				//console.log("unsetting already running query");
-				//console.log($("#queued_query").attr("data-queued-query"));
+				////console.log("unsetting already running query");
+				////console.log($("#queued_query").attr("data-queued-query"));
 				if(!_.isEmpty($("#queued_query").attr("data-queued-query"))){
-					//console.log("firing search request again for queued query.");
+					////console.log("firing search request again for queued query.");
 					var queued_query = $("#queued_query").attr("data-queued-query");
 					$("#queued_query").attr("data-queued-query","");
 					search_new(queued_query);
@@ -943,22 +972,30 @@ var search_new = function(input){
 	}
 }
 
+$(document).on('click','li',function(event){
+	////console.log("clicked on a list element");
+	////console.log($(this).parent());
+	if($(this).parent().hasClass('autocomplete-content')){
+		////console.log("closing the dropdown");
+		$(".autocomplete").autocomplete("close");
+	}
+});
 
 /***
 var update_last_successfull_query = function(query,result_text){
 	if(!((_.isUndefined(query)) || (_.isNull(query)))){
 		var successfull_query = "";
-		//console.log("query is:" + query);
-		//console.log("Result text:" + result_text);
+		////console.log("query is:" + query);
+		////console.log("Result text:" + result_text);
 		_.each(query.split(" "),function(word){
 			var regex = new RegExp(word + "\\b");
-			//console.log("Regex is:" + regex);
+			////console.log("Regex is:" + regex);
 			if(regex.test(result_text) === true){
-				//console.log("matches.");
+				////console.log("matches.");
 				successfull_query += word + " ";
 			}
 		});
-		//console.log("successfull_query is:" + successfull_query);
+		////console.log("successfull_query is:" + successfull_query);
 		if(!(_.isEmpty(successfull_query))){
 			$("#last_successfull_query").attr("data-query",successfull_query);
 		}
@@ -967,13 +1004,13 @@ var update_last_successfull_query = function(query,result_text){
 
 var search = function(input){
 
-	//console.log("--------- called search with input:" + input);
+	////console.log("--------- called search with input:" + input);
 
 	var contexts_with_length = prepare_contexts(input);
 
 	
-	//console.log("contexts with length are:");
-	//console.log(contexts_with_length);
+	////console.log("contexts with length are:");
+	////console.log(contexts_with_length);
 
 	if(_.size(contexts_with_length) == 1){
 
@@ -996,7 +1033,7 @@ var search = function(input){
 	    	
 	    _.each(response['results'],function(search_result,index,list){
 	    	search_result = search_result['_source'];
-	    	//console.log(search_result);
+	    	////console.log(search_result);
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
 	    	search_result = add_impact_and_trade_action_to_setup(search_result);
@@ -1004,7 +1041,7 @@ var search = function(input){
 	    	search_result = strip_period_details_from_setup(search_result);
 	    	search_result = update_falls_or_rises_text(search_result);
 	    	search_result = set_stop_losses(search_result);
-	    	console.log(search_result);
+	    	//console.log(search_result);
 	    	if(index == 0){
 	    		// check todo for this.
 	    		$("#top_result_contexts").attr("data-context",JSON.stringify(search_result["suggest"]["contexts"]["chain"]));
@@ -1054,9 +1091,9 @@ var update_coin_counts = function(search_result){
 	if(!_.isEmpty(search_result.impacts[0].statistics)){
 		//var multiple = max_units/(_.size(search_result.impacts[0].statistics));
 		var multiple = 9;
-		//console.log("multiple is:" + multiple);
-		//console.log("size of the statistics of the first impact is:");
-		//console.log(_.size(search_result.impacts[0].statistics));
+		////console.log("multiple is:" + multiple);
+		////console.log("size of the statistics of the first impact is:");
+		////console.log(_.size(search_result.impacts[0].statistics));
 		
 		var gold = [];
 		var total_time_units = [];
@@ -1069,8 +1106,8 @@ var update_coin_counts = function(search_result){
 		});
 		gold = _.flatten(gold);
 		search_result.impacts[0].statistics[0]["gold_coins"] = gold;
-		//console.log("the gold coins become:");
-		//console.log(gold);
+		////console.log("the gold coins become:");
+		////console.log(gold);
 		search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold.length);
 	}
 	return search_result;
@@ -1191,13 +1228,13 @@ var convert_n_day_change_to_superscript = function(search_result){
 
 
 var strip_period_details_from_setup = function(search_result){
-	console.log("came to split period details");
+	//console.log("came to split period details");
 	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+(_\d+)?_period_end)([^<>]*?<.+?>)/g
 	
 	var match = pattern.exec(search_result.setup);
 	if(!_.isNull(match)){
-		//console.log("match is:");
-		//console.log(match);
+		////console.log("match is:");
+		////console.log(match);
 		if(match.length == 5){
 			search_result.setup = search_result.setup.replace(pattern,'$1 $4');
 		}
@@ -1206,11 +1243,11 @@ var strip_period_details_from_setup = function(search_result){
 			search_results.setup = search_result.setup.replace(pattern,'$1 $3');
 		}
 	}
-	//console.log("setup is:");
-	//console.log(search_result.setup);
+	////console.log("setup is:");
+	////console.log(search_result.setup);
 	//search_result.setup = search_result.setup.replace(/\'s\sclose/g,'');
-	//console.log("Replaced close:");
-	//console.log(search_result.setup);
+	////console.log("Replaced close:");
+	////console.log(search_result.setup);
 	return search_result;
 }
 
@@ -1369,14 +1406,14 @@ var process_setup_component = function(component,search_result,component_data_na
 - keeps only the first word in the entity, removes everything after and including the first underscore.
 **/
 var trim_entity_name = function(search_result,entity_name){
-	//console.log("came to trim with entity name:" + entity_name);
+	////console.log("came to trim with entity name:" + entity_name);
 	if(entity_name.indexOf("_") != -1){
 
 		var idx = entity_name.indexOf("_");
 		var part_after_underscore = entity_name.slice(idx,entity_name.length);
 		var part_before_underscore = entity_name.slice(0,idx);
 		search_result.setup = search_result.setup.replace(part_after_underscore,'');
-		//console.log("part before underscore:");
+		////console.log("part before underscore:");
 
 		search_result = process_setup_component(part_before_underscore,search_result,entity_name);
 	}
@@ -1450,7 +1487,7 @@ $(document).on("click",'.index_chip',function(event){
 
 
 $(document).on('click','.chip',function(event){
-	//console.log("clicked chip with category:" + $(this).attr("data-category"));
+	////console.log("clicked chip with category:" + $(this).attr("data-category"));
 	// if its parent is the row chip.
 	if($(this).hasClass("show_more_chips")){
 		// so its show more.
@@ -1553,10 +1590,17 @@ $(document).ready(function(){
     $('.tooltip').tooltipster();
     $('input.autocomplete').autocomplete({
       data: {
-        "Apple": "https://www.apple.com",
-        "Microsoft": "https://www.microsoft.com",
-        "Google": 'https://placehold.it/250x250'
+        "Apple Java" : null,
+        "M Dog" : null
       },
+      onAutocomplete: function(val) {
+        var data = JSON.parse($(".autocomplete").first().data("autocomplete_hash"));
+      	var div_id = data[val];
+      	//console.log("div id is: " + div_id);
+      	if(!_.isUndefined(div_id)){
+      		$("#" + div_id).show();
+      	}
+      }
     });
 });
 

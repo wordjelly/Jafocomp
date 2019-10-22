@@ -379,7 +379,12 @@ class Result
 				end
 			end
 
-			input = entity_name + "#" +  object_to_use["_source"]["stats"].join(",") + "," + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
+			## so the stats here is the year wise data.
+			## how is it coming currently
+			## there are two things.
+			## and then the total up and down
+			## then $$start
+			input = entity_name + "#" +  "0$$" + object_to_use["_source"]["stats"].join("$") + "," + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
 
 		
 			hit = {
@@ -648,7 +653,7 @@ class Result
 		#puts "the input is:"
 		#puts input.to_s
 		#we need part between # and start
-		puts input.to_s
+		#puts input.to_s
 		stats_and_industries = nil
 		offsets = nil
 		input.scan(/#(?<stats>[0-9A-Za-z\s,\-\$]+)\*(?<offsets>[0-9,]+)$/) do |jj|
