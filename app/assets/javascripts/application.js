@@ -1,4 +1,5 @@
 //= require search.js
+//= require autocomplete_patch.js
 
 /****
 DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject. I'm a doctor, and God Bless America.
@@ -111,6 +112,8 @@ var render_search_result_new = function(search_result){
 	if(_.isUndefined(template)){
 		var template = _.template($('#search_result_template').html());
 	}
+	$('#none').append(template(search_result));
+	/****
 	if(search_result_is_positive(search_result)){
 		////console.log(template(search_result));
 		$('#positive').append(template(search_result));
@@ -118,6 +121,7 @@ var render_search_result_new = function(search_result){
 	else{
 		$('#negative').append(template(search_result));
 	}
+	****/
 	$("time.timeago").timeago();
 }
 
@@ -683,6 +687,7 @@ var assign_target = function(search_result){
 
 
 var clear_html = function(){
+	$("#none").html("");
 	$("#positive").html('<div style="visibility:hidden">doggy</div>');
 	$("#negative").html('<div style="visibility:hidden">doggy</div>');
 	$("#new_search_results").show();
