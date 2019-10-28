@@ -736,38 +736,31 @@ var display_search_results = function(search_results,input){
 	var total_negative = 0;
 	 // and later use a template to get this.
 	_.each(search_results,function(search_result,index,list){
-		//if(index == 0){
-			// ALL THIS
-			// upto the last matching entire word.
-			// not incomplete words.
-			// so if the search result's text is 
-			// buy gold on
-			// and your query is buy gold o
-			// we want to stop till buy gold.
-	    	////console.log(search_result);
+		
 	    	text = search_result["text"];
 	    	search_result = search_result['_source'];
-	    	
-	    	////console.log("search result is:");
-	    	////console.log(search_result);
-	    	////console.log("text is:");
-	    	////console.log(text);
-	    	//search_result['suggest'].reverse();
 	    	assign_statistics(search_result,text);
 	    	search_result = update_coin_counts(search_result);
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = convert_n_day_change_to_superscript(search_result);
 	    	search_result = replace_percentage_and_literal_numbers(search_result);
-	    	
-	    	// add the tooltip spans to each word.
-	    	//update_last_successfull_query(input,search_result.setup);
-	    	// only the thing about the sup is left.
-	    	// 
-	    	
 	    	search_result.setup = shrink_indicators(search_result.setup);
+	    	search_result = strip_period(search_result);
+	    	search_result = update_falls_or_rises_text(search_result);	
+	    	search_result = add_time_to_setup(search_result);
+	    	// okay so what next.
+	    	// do we knock off the dates ?
+	    	// what about the dots ?
+	    	// let me sort out search.
+	    	search_result.div_id = CreateUUID();
+	    	console.log("search result setup becomes:");
+	    	console.log(search_result.setup);
+	    	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = search_result.div_id;
 
-	    	//assign_target(search_result);
-	    	
+	    	// knock off see-more
+	    	// and add the arrows and superscript after the highlight.
+
+
 	    	var arr = search_result.setup.split(" ");
 	    	var concat = "";
 	    	var see_more_triggered = false;
@@ -799,47 +792,19 @@ var display_search_results = function(search_results,input){
 
 	    	});
 	    	concat += "</span>";
-
-	    	// replace see more with the icon.
-
-	    	//pattern = /\s([A-Za-z0-9\-\_\/\\\.]+)/g
-			//search_result.setup = search_result.setup.replace(pattern,' <span>$1</span>');
-			// previous setup was :
-			// 
 			var icon = get_icon(search_result.setup);
 			search_result.setup = icon + concat;	
-
-			//search_result.setup = replace_pattern_with_icons(search_result.setup);	
-			
-	    	search_result = strip_period_details_from_setup(search_result);
-	    	search_result = update_falls_or_rises_text(search_result);	
-	    	search_result = add_time_to_setup(search_result);
-
-	    	////console.log(search_result);
+	    	
 	    	categories = _.union(search_result.categories,categories);
 	    	related_queries = _.union(search_result.related_queries,related_queries);
-	    	// add the total positive and negative
-	    	// add that to the positive/negative text.
-	    	// as a number in a bracket.
 	    	if(search_result_is_positive(search_result)){
 	    		++total_positive;
 	    	}
 	    	else{
 	    		++total_negative;
 	    	}
-	    	search_result.div_id = CreateUUID();
 	    	render_search_result_new(search_result);
-	    	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "")] = search_result.div_id;
-	    	// problem is that the autocomplete may not work.
-	    	// words can be seperate.
-	    	//render_search_result(search_result);
-    	//}
-    	// sort out result
-    	// from where to get those ?
-    	// replace the stats.
-    	// this way it will work.
-    	// now just get the search working.
-    	// i can put this into the stats.
+	    	
     });
 
     update_positive_and_negative_tab_titles(total_positive,total_negative);
@@ -1231,6 +1196,18 @@ var convert_n_day_change_to_superscript = function(search_result){
 	return search_result;
 }
 
+var strip_period = function(search_result){
+	console.log(search_result.setup);
+	var pattern = /(_period_start_\d+(_\d+)?_period_end)/g
+	
+	var match = pattern.exec(search_result.setup);
+	if(!_.isNull(match)){
+		
+		search_result.setup = search_result.setup.replace(pattern,'');
+
+	}
+	return search_result;
+}
 
 var strip_period_details_from_setup = function(search_result){
 	//console.log("came to split period details");
@@ -1238,8 +1215,6 @@ var strip_period_details_from_setup = function(search_result){
 	
 	var match = pattern.exec(search_result.setup);
 	if(!_.isNull(match)){
-		////console.log("match is:");
-		////console.log(match);
 		if(match.length == 5){
 			search_result.setup = search_result.setup.replace(pattern,'$1 $4');
 		}
@@ -1248,11 +1223,7 @@ var strip_period_details_from_setup = function(search_result){
 			search_results.setup = search_result.setup.replace(pattern,'$1 $3');
 		}
 	}
-	////console.log("setup is:");
-	////console.log(search_result.setup);
-	//search_result.setup = search_result.setup.replace(/\'s\sclose/g,'');
-	////console.log("Replaced close:");
-	////console.log(search_result.setup);
+	
 	return search_result;
 }
 
@@ -1285,6 +1256,7 @@ var replacer = function(match,ud,offset,string){
 	}
 }
 
+// so it already has the html tags.
 // next step is further normalization of the UI.
 
 var replace_pattern_with_icons = function(setup){

@@ -1,5 +1,27 @@
+M.Autocomplete.prototype._getIndicesOf = function(searchStr, str, caseSensitive){
+
+	var searchStrLen = searchStr.length;
+    if (searchStrLen == 0) {
+        return [];
+    }
+    var startIndex = 0, index, indices = [];
+    if (!caseSensitive) {
+        str = str.toLowerCase();
+        searchStr = searchStr.toLowerCase();
+    }
+    while ((index = str.indexOf(searchStr, startIndex)) > -1) {
+        indices.push(index);
+        startIndex = index + searchStrLen;
+    }
+    return indices;
+
+}
+
+// patient consent sign.
+
 M.Autocomplete.prototype._highlight = function(string, $el) {
-  	//console.log("incoming string is:" + string);
+  	console.log("incoming string is:" + string);
+ 
   	var start_end_positions = {};
   	var arr = []
   	_.each(string.split(" "), function(st){
@@ -7,6 +29,10 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
   		if(_.isEmpty(st)){
   		}
   		else{
+  			_.each(M.Autocomplete.prototype._getIndicesOf(st.toLowerCase(),$el.text().toLowerCase()),function(index){
+  				arr.push([index,index + st.length]);
+  			});
+  			/****
 	  		let img = $el.find('img');
 		  	let matchStart = $el
 		      .text()
@@ -17,12 +43,17 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
 		    	var matchEnd = matchStart + st.length
 		    	arr.push([matchStart,matchEnd]);
 			}
+			*****/
 	    }
   	});
 
-  	// knock of positive and negative
-  	// fix the 
+  	// sometimes its getting multiple matches on the same word
+  	// so we use only one match starting on the same begin position.
+  	arr = _.uniq(arr,function(el){
+  		return el[0];
+  	});
 
+  	
   	var sorted = _.sortBy(arr, function(item) { 
 	   return item[0]; 
 	});
@@ -65,26 +96,6 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
 
 
 }
-
-
-// the software will solve
-// report typing
-// interfacing
-// printing -> scheduling of tasks
-// cleaning schedules
-// payment clarity 
-// reminders for the status and schedules
-// inventory management
-// that will be the end of it
-// payumoney (27th)
-// balance and top up tests -> (31st)
-// order accessibility and statment tests -> 10 november
-// rates, packages, notifications -> 20 november
-// status, inventory revamp -> 10 december.
-// dr sneha joins from the 15th of december and maybe mundhada
-// so we have the team, the software and the people in place
-// hopefully nabl is moving substantially forward.
-// 45 days -> i should be able to make 45 crucial tests pass.
 
 
 M.Autocomplete.prototype._renderDropdown = function(data,val){

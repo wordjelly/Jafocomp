@@ -384,7 +384,14 @@ class Result
 			## there are two things.
 			## and then the total up and down
 			## then $$start
-			input = entity_name + "#" +  "0$$" + object_to_use["_source"]["stats"].join("$") + "," + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
+			total_up = 0
+			total_down = 0
+			object_to_use["_source"]["stats"].each_slice(3) do |year_data|
+				total_up += year_data[1]
+				total_down += year_data[2]
+			end
+
+			input = entity_name + "#" +  "#{total_up}$$" + object_to_use["_source"]["stats"].join("$") + ",#{total_down}" + ",0,0,0,0,0,0,0,0,0,0,0" + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
 
 		
 			hit = {
@@ -580,6 +587,7 @@ class Result
 		#puts "search results size:"
 		#puts search_results["hits"]["hits"].size
 		search_results = search_results["hits"]["hits"].map{|hit|
+			puts "this is the hit------------->"
 			puts JSON.generate(hit)
 			## so it depends which hit matched.
 			## either tags or industries.
@@ -618,8 +626,8 @@ class Result
 
 			## could become problematic.
 
-			#puts "input becomes:"
-			#puts input.to_s
+			puts "input becomes --------------------------- >"
+			puts input.to_s
 			## here add the industries.
 			## and we are in business
 			## and then add the chips to the top of the page.
@@ -656,6 +664,11 @@ class Result
 		#puts input.to_s
 		stats_and_industries = nil
 		offsets = nil
+		#puts "the input is:"
+		#puts input.to_s
+		#so i will add the week total up.
+		#as the first two.
+		#and transpose the rest to it.
 		input.scan(/#(?<stats>[0-9A-Za-z\s,\-\$]+)\*(?<offsets>[0-9,]+)$/) do |jj|
 			stats_and_industries = jj[0]
 			offsets = jj[1]
@@ -670,6 +683,10 @@ class Result
 			end
 		end
 =end
+		puts "stats and industries #{stats_and_industries}"
+		puts "offsets:#{offsets}"
+		stats = stats_and_industries.split(",")[0]
+		
 		stats_and_industries.split(",")[12..-1].each do |industry_name|
 			#unless $sectors[industry_code.to_s].blank?
 				#industry_name = $sectors[industry_code.to_s].information_name
@@ -680,13 +697,14 @@ class Result
 				end
 			#end
 		end
-		#puts "the sectors are:"
-		#puts sectors.to_s
-		#puts "stats are:"
+		puts "the sectors are:"
+		puts sectors.to_s
+		puts "stats are:"
+		puts stats.to_s
 		#okay so here we have to manage it.
-		input = parts[0] + "#" + stats[0..11].join(",") + "," + sectors.join(",") + "%" + related_queries.flatten.join(",") + "*" + offsets
-		#puts "the input becomes:"
-		#puts input
+		input = parts[0] + "#" + stats_and_industries.split(",")[0..11].join(",") + "," + sectors.join(",") + "%" + related_queries.flatten.join(",") + "*" + offsets
+		puts "the input becomes:"
+		puts input
 		input
 	end
 
