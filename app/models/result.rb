@@ -359,7 +359,7 @@ class Result
 
 		search_results = search_results["hits"]["hits"].map{|hit|
 			#puts JSON.generate(hit)
-			puts JSON.generate(hit["inner_hits"]["complex_derivations"]["hits"]["hits"])
+			
 			object_to_use = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]
 
 			# if it doesn't contain the time tag_text
@@ -391,9 +391,10 @@ class Result
 				total_down += year_data[2]
 			end
 
+			## so there is some issue here.
+			## tso problem
 			input = entity_name + "#" +  "#{total_up}$$" + object_to_use["_source"]["stats"].join("$") + ",#{total_down}" + ",0,0,0,0,0,0,0,0,0,0,0" + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
 
-		
 			hit = {
 				_id: hit["_id"],
 				_source: {
@@ -683,8 +684,8 @@ class Result
 			end
 		end
 =end
-		puts "stats and industries #{stats_and_industries}"
-		puts "offsets:#{offsets}"
+		#puts "stats and industries #{stats_and_industries}"
+		#puts "offsets:#{offsets}"
 		stats = stats_and_industries.split(",")[0]
 		
 		stats_and_industries.split(",")[12..-1].each do |industry_name|
@@ -697,14 +698,13 @@ class Result
 				end
 			#end
 		end
-		puts "the sectors are:"
-		puts sectors.to_s
-		puts "stats are:"
-		puts stats.to_s
+		#puts "the sectors are:"
+		#puts sectors.to_s
+		#puts "stats are:"
+		#puts stats.to_s
 		#okay so here we have to manage it.
 		input = parts[0] + "#" + stats_and_industries.split(",")[0..11].join(",") + "," + sectors.join(",") + "%" + related_queries.flatten.join(",") + "*" + offsets
-		puts "the input becomes:"
-		puts input
+		
 		input
 	end
 
@@ -776,6 +776,9 @@ class Result
 			#new_match_query(args[:prefix])
 			search_results = nested_function_score_query(args[:prefix])
 		end
+
+		puts "the search results are;"
+		puts JSON.pretty_generate(search_results)
 
 		results = {
 			#:search_results => search_results,

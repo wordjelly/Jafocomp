@@ -11,6 +11,9 @@ DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my kno
 // use the week display technique.
 
 
+// remove **Indian Stocks**
+// remove 
+
 _.templateSettings = {
     interpolate: /\{\{\=(.+?)\}\}/g,
     evaluate: /\{\{(.+?)\}\}/g
@@ -217,25 +220,30 @@ var build_setup = function(search_result){
 	if(non_time_subindicator.test(search_result.tags) == true){
 		
 
-		// if humanize tags returns true, then 
-		//humanize_tags(search_result.tags);
-		// if on humanization it returns, true, then we don't need any see more.
-		// so that is defined here.
+		var prev_tag_is_colloquial = 0
 		_.map(search_result.tags,function(tag,index){
 
 			// okay so handle colloquial seperator here.
-			if(tag.startsWith("**") && tag.endsWith("**")){
+			if(tag.startsWith("**")){
 				// this is the colloquial, ignore it.
+				if(!tag.endsWith("**")){
+				 prev_tag_is_colloquial = 1;
+				}
+			}
+			else if(tag.endsWith("**")){
+				prev_tag_is_colloquial = 0;
 			}
 			else{
-				if(index == 0){
-					complex_string =  complex_string + tag + "'s" + " "  ;
-				}
-				else if(index == 2){
-					complex_string = complex_string + tag + " " + "See-More ";
-				}
-				else{
-					complex_string = complex_string + tag + " ";
+				if(prev_tag_is_colloquial == 0){
+					if(index == 0){
+						complex_string =  complex_string + tag + "'s" + " "  ;
+					}
+					else if(index == 2){
+						complex_string = complex_string + tag + " " + "See-More ";
+					}
+					else{
+						complex_string = complex_string + tag + " ";
+					}
 				}
 			}
 		});
@@ -264,30 +272,41 @@ var build_setup = function(search_result){
 				complex_string = complex_string + tag + " ";
 			
 			});
-
-		}
+			// gotta debug this
+			// next step would be to make it easier to read.
+			// up_down patter html.
+			// 
+		}		
 		else
 		{
 			// non time subindicator.
 			_.map(search_result.tags,function(tag,index){
 
-				if(tag.startsWith("**") && tag.endsWith("**")){
-					// this is the colloquial, ignore it.
+				if(tag.startsWith("**")){
+				// this is the colloquial, ignore it.
+				 	if(!tag.endsWith("**")){
+				 		prev_tag_is_colloquial = 1;
+				 	}
+				}
+				else if(tag.endsWith("**")){
+					prev_tag_is_colloquial = 0;
 				}
 				else{
-					if(index == 0){
-						// full name.
-						complex_string =  complex_string + tag + "'s" + " ";
-					}
-					else if(index == 1){
-						// symbol
+					if(prev_tag_is_colloquial == 0){
+						if(index == 0){
+							// full name.
+							complex_string =  complex_string + tag + "'s" + " ";
+						}
+						else if(index == 1){
+							// symbol
 
-					}
-					else if(index == 2){
-						complex_string = complex_string + "See-More ";
-					}
-					else{
-						complex_string = complex_string + tag + " ";
+						}
+						else if(index == 2){
+							complex_string = complex_string + "See-More ";
+						}
+						else{
+							complex_string = complex_string + tag + " ";
+						}
 					}
 				}
 			});	

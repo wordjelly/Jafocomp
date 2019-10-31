@@ -35,7 +35,7 @@ class WelcomeController < ApplicationController
 
 		respond_to do |format|
 			format.json do 
-				puts "came to render json"
+				#puts "came to render json"
 				render :json => {results: results, status: 200}
 			end
 		end	
