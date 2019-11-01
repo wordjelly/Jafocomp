@@ -56,12 +56,12 @@
 
 see what's the issue here.
 
-what happens to IT index? -> why not nifty (nifty 50 nifty bank index) 
-prefix search
+prefix search - index_prefixes (4 chars starting, max 5 chars)
 up_down
 see-more
-solve the space issues.
-get rid of close(this should happen at which end, at the backend? =>) tag totally.
-
-underline or tags for the names of the entities.
-calendar symbol.
+solve the space issues - done
+underline or tags for the names of the entities
+calendar symbol
+time relevance -> searching for thursday doesnt show it. at all.
+better presentation for the time data
+checking the calculation accuracy.

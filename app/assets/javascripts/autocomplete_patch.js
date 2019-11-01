@@ -17,10 +17,19 @@ M.Autocomplete.prototype._getIndicesOf = function(searchStr, str, caseSensitive)
 
 }
 
+M.Autocomplete.prototype.updateData = function(data) {
+  	let val = this.el.value.toLowerCase();
+  	this.options.data = data;
+
+  	//if (this.isOpen) {
+    	this._renderDropdown(data, val);
+  	//}
+}
+
 // patient consent sign.
 
 M.Autocomplete.prototype._highlight = function(string, $el) {
-  	console.log("incoming string is:" + string);
+ // 	console.log("incoming string is:" + string);
  
   	var start_end_positions = {};
   	var arr = []

@@ -308,6 +308,8 @@ class Result
 		#add it to the function score filter.
 
 		#puts "query split is: #{query_split}"
+		#you want prefixes it will get too complicated.
+		#
 		base_boost = 100
 		query_split.each_with_index {|word,key|
 			## add to the function score filter.
@@ -317,6 +319,8 @@ class Result
 				}
 			}
 			if (key < (query_split.size - 1)) 
+					
+
 				body[:query][:nested][:query][:function_score][:query][:bool][:should] << {
 					span_near: {
 						clauses: [
@@ -778,7 +782,7 @@ class Result
 		end
 
 		puts "the search results are;"
-		puts JSON.pretty_generate(search_results)
+		puts JSON.pretty_generate(search_results[0])
 
 		results = {
 			#:search_results => search_results,
