@@ -267,8 +267,62 @@ class Result
 
 	end
 
+	def self.query_builder(query)
+
+		body = 
+		{
+	  		_source: ["tags","preposition","epoch","_id"],
+		  	query: {
+			  	nested: {
+			  		path: "complex_derivations",
+			  		query: {
+			  			function_score: {
+			  				query: {
+			  					bool: {
+			  						should: [
+			  							{
+				  							span_near: {
+												clauses: query.split(" ").map{|word|
+													{
+														span_term: {
+											                "complex_derivations.tag_text".to_sym => {
+											                  value: word
+											                }
+										            	}
+										        	}
+												}
+											}
+										},
+										{
+											match: {
+												"complex_derivations.tag_text".to_sym => query
+											}
+										}
+			  						]
+			  					}
+			  				},
+			  				functions: [
+			  					{
+				                    field_value_factor: {
+				                      	field: "complex_derivations.profitability"
+				                    }
+				                }
+			  				],
+			  				boost_mode: "sum"
+			  			}
+			  		},
+			  		inner_hits: {}
+			  	}
+		  	}
+		}
+
+	end
+
 	def self.nested_function_score_query(query)
 
+		body = query_builder(query)
+
+=begin
 		body = 
 		{
 	  		_source: ["tags","preposition","epoch","_id"],
@@ -305,19 +359,26 @@ class Result
 		}
 
 		query_split = query.split(" ")
-		#add it to the function score filter.
-
-		#puts "query split is: #{query_split}"
-		#you want prefixes it will get too complicated.
-		#
+	
 		base_boost = 100
 		query_split.each_with_index {|word,key|
 			## add to the function score filter.
-			body[:query][:nested][:query][:function_score][:functions][0][:filter][:bool][:must] << {
-				match: {
-					"complex_derivations.tag_text".to_sym => word
+			
+			body[:query][:nested][:query][:function_score][:query][:bool][:should] << {
+					span_near: {
+						clauses: [
+							{
+								span_term: {
+					                "complex_derivations.tag_text".to_sym => {
+					                  value: word
+					                }
+				            	}
+				        	}
+				        ],
+				        boost: 100
+				    }
 				}
-			}
+			
 			if (key < (query_split.size - 1)) 
 					
 
@@ -353,6 +414,9 @@ class Result
 			body[:query][:nested][:query][:function_score][:query][:bool][:should].pop
 		end
 
+=end
+		puts JSON.pretty_generate(body)
+
 		search_results = gateway.client.search index: "correlations", body: body
 
 		## as far as industries are concerned
@@ -360,6 +424,7 @@ class Result
 		## buy bmw?
 		## buy what?
 		## so search inside inner hits.
+		## i dont want the search field to be filled with that.
 
 		search_results = search_results["hits"]["hits"].map{|hit|
 			#puts JSON.generate(hit)
@@ -782,7 +847,12 @@ class Result
 		end
 
 		puts "the search results are;"
-		puts JSON.pretty_generate(search_results[0])
+
+		if search_results.blank?
+			puts JSON.pretty_generate(search_results)
+		else
+			puts JSON.pretty_generate(search_results[0])
+		end
 
 		results = {
 			#:search_results => search_results,

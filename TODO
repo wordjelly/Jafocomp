@@ -56,12 +56,32 @@
 
 see what's the issue here.
 
-prefix search - index_prefixes (4 chars starting, max 5 chars)
-up_down
+-- let me solve these problems.
+-- then go forwards.
+
+1.adani ports ni -> causes adani ports to become adanin ports - DONE
+2.adani ports nifty 50 -> does not work , gives nifty it index  - DONE.
+3.nifty 50 monday -> gives the first two as the closest mondays, but is not giving simple monday -> directly jumps to further shit.
+4.should not calculate any sunday/saturdays - done.
+5.adani ports indian stocks rises -> order goes wrong, it gives the inverse order - solved
+
+6.nifty bank index sets a 3 day high, in 2016 there are only 3 incidences ?
+
+7. What happens to Nifty Bank Index when Nifty It Index **Indian IT Stocks** falls -- why these stars are not going.
+
+
+8. for time based -> more weightage for nearness
+9. for correlation -> more weightage for profit.
+1o. what happens in 2019 -> should not come for a year which has not ended (DONE)
+11. if typing indian-stocks -> should show that and not nifty-50, and vice versa. (NEXT)
+12. should not do correlations with self (should this be blocked ? i think so, it confuses things, we will put it as optional, with an option in stockconstants.)
+
+
+up_down -, standard deviation days.
+skewing the data to show more recent stuff.
 see-more
-solve the space issues - done
 underline or tags for the names of the entities
 calendar symbol
-time relevance -> searching for thursday doesnt show it. at all.
-better presentation for the time data
+better presentation for the time data -> need nice charts from d3.
 checking the calculation accuracy.
+i want to cover this on sunday i.e tomorrow -> i want to finish.

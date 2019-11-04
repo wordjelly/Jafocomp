@@ -17,6 +17,20 @@ M.Autocomplete.prototype._getIndicesOf = function(searchStr, str, caseSensitive)
 
 }
 
+M.Autocomplete.prototype.selectOption = function(el) {
+  	let text = el.text().trim();
+  	// comment this so that it does not fill the autocomplete totally.
+  	//this.el.value = text;
+  	this.$el.trigger('change');
+  	this._resetAutocomplete();
+  	this.close();
+
+  	// Handle onAutocomplete callback.
+  	if (typeof this.options.onAutocomplete === 'function') {
+   	 this.options.onAutocomplete.call(this, text);
+  	}
+}
+
 M.Autocomplete.prototype.updateData = function(data) {
   	let val = this.el.value.toLowerCase();
   	this.options.data = data;
@@ -29,50 +43,45 @@ M.Autocomplete.prototype.updateData = function(data) {
 // patient consent sign.
 
 M.Autocomplete.prototype._highlight = function(string, $el) {
- // 	console.log("incoming string is:" + string);
  
   	var start_end_positions = {};
   	var arr = []
+
   	_.each(string.split(" "), function(st){
-  		//console.log("searching for: " + st + "in string:" + $el.text());
+  		
   		if(_.isEmpty(st)){
   		}
   		else{
   			_.each(M.Autocomplete.prototype._getIndicesOf(st.toLowerCase(),$el.text().toLowerCase()),function(index){
   				arr.push([index,index + st.length]);
   			});
-  			/****
-	  		let img = $el.find('img');
-		  	let matchStart = $el
-		      .text()
-		      .toLowerCase()
-		      .indexOf(st.toLowerCase())
-
-		    if(matchStart !== -1){
-		    	var matchEnd = matchStart + st.length
-		    	arr.push([matchStart,matchEnd]);
-			}
-			*****/
+  		
 	    }
   	});
 
-  	// sometimes its getting multiple matches on the same word
-  	// so we use only one match starting on the same begin position.
+  	
   	arr = _.uniq(arr,function(el){
   		return el[0];
   	});
 
+  	arr = _.uniq(arr,function(el){
+  		return el[1];
+  	});
   	
   	var sorted = _.sortBy(arr, function(item) { 
 	   return item[0]; 
 	});
 
+  	console.log("sorted is");
+  	console.log(sorted);
+
+  	// whichever is the larger word.
+  	// for eg -> 
+  	// remove the 
   	
   	var segments = [];
   	var prev_end = 0;
-  	//console.log("string is: " + string);
-  	//console.log("sorted is:");
-  	//console.log(sorted);
+  	
 	_.each(sorted, function(arr,key,list){
 		if(key == 0){
 			if(arr[0] == 0){
@@ -99,8 +108,7 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
 			segments.push('</span>');
 		}
 	});
-		
-	//console.log(segments);
+			
 	$el.html(segments.join(''));
 
 

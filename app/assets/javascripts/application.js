@@ -129,6 +129,12 @@ var render_search_result_new = function(search_result){
 	$("time.timeago").timeago();
 }
 
+var use_colloquial_if_query_has_it = function(search_result){
+
+
+
+}
+
 /***
 so how would this work exactly 
 suppose i say buy gold when 
@@ -205,18 +211,23 @@ var dotted_underline_entity_names = function(){
 }
 
 
-var build_setup = function(search_result){
+var build_setup = function(search_result,text){
+
+	// if the query contains the colloquial, 
+	// then 
+
 	var complex_string = search_result.preposition + " ";
 	
-	//////console.log("the search result information is:");
-	//////console.log(search_result.information);
-
 	var time_subindicator_regexp = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 
 	// first test the tags to see if they contain period_start_period_end.
 	// then that is not a time based subindciator.
 	var non_time_subindicator = new RegExp(/period_start_\d/g)
 
+	// this has to be done better.
+	// if the part inside the ** contains the text
+	// then we keep it and knock off the other part.
+	// this is not going to be easy.
 	// same thing is repeated below in the final else.
 	if(non_time_subindicator.test(search_result.tags) == true){
 		
@@ -335,7 +346,7 @@ var build_setup = function(search_result){
 
 	}
 
-
+	////// so it ignores that.
 	//////console.log("complex string becomes:");
 	//////console.log(complex_string);
 	// so if it comes with hyphens after the preposition and 
@@ -501,37 +512,7 @@ getStats()[10] = six_month_max_profit;
 getStats()[11] = six_month_max_loss;
 ***/
 var assign_statistics = function(search_result,text){
-	////console.log("search result is:");
-	////console.log(search_result);
-	/***
-	if(_.isUndefined(text)){
-		// so let's see if all this works.	
-	}
-	else{
-		var text_split_on_space = text.split("#")[0].split(" ");
-		////console.log("text split on space:");
-		////console.log(text_split_on_space);
-		search_result.suggest = _.filter(search_result.suggest,function(el){
-			var satisfied = true;
-			////console.log("el input is:");
-			////console.log(el["input"]);
-			_.each(text_split_on_space,function(word){
-				if(satisfied == true){
-					satisfied = (el['input'].indexOf(word) != -1);
-				}
-			});
-			return satisfied;
-		});
-	}
-
-	////console.log("suggestions remaining");
 	
-	search_result.suggest = [_.first(search_result.suggest)];
-	**/
-
-	// so after the apostrophe we expand.
-
-	////console.log("called split input text");
 	var offsets = get_offsets(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
 	////console.log("suggestion input is:");
@@ -568,7 +549,7 @@ var assign_statistics = function(search_result,text){
 	
 	set_year_wise_data(stats,search_result)
 
-	build_setup(search_result);
+	build_setup(search_result,text);
 
 	search_result.impacts = [];
 
