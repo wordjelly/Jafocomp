@@ -290,7 +290,10 @@ class Result
 											                }
 										            	}
 										        	}
-												}
+												},
+												slop: 20,
+												in_order: true,
+												boost: 110
 											}
 										},
 										{

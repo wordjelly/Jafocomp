@@ -71,15 +71,9 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
   	var sorted = _.sortBy(arr, function(item) { 
 	   return item[0]; 
 	});
-
-  	console.log("sorted is");
-  	console.log(sorted);
-
-  	// whichever is the larger word.
-  	// for eg -> 
-  	// remove the 
-  	
+	
   	var segments = [];
+
   	var prev_end = 0;
   	
 	_.each(sorted, function(arr,key,list){
@@ -108,9 +102,12 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
 			segments.push('</span>');
 		}
 	});
-			
+	
+	segments = _.map(segments,function(val){
+		return M.Autocomplete.prototype._process_segments(val);
+	});
+	
 	$el.html(segments.join(''));
-
 
 }
 
@@ -167,5 +164,53 @@ M.Autocomplete.prototype._renderDropdown = function(data,val){
 	    $(this.container).append($autocompleteOption);
 	    this._highlight(val, $autocompleteOption);
 	}
-
 };
+	
+
+M.Autocomplete.prototype.replacer = function(match,ud,offset,string){
+	if(ud == "up"){
+		return "<i class='material-icons'>arrow_upward</i>";
+	}
+	else{
+		return "<i class='material-icons'>arrow_downward</i>";
+	}
+}
+
+// so it already has the html tags.
+// next step is further normalization of the UI.
+
+M.Autocomplete.prototype.replace_pattern_with_icons = function(setup){
+	
+	// do we have something like 
+	var end_pattern = new RegExp(/_(up|down)($|\spattern)/g);
+	// if this pattern matches, then knock of the last up/down, with the replacer.
+	var pattern = new RegExp(/(up|down)(?=_(down|up))/g);
+	var newText = setup;
+	if(!_.isNull(pattern.exec(setup))){
+		console.log("got a match" + setup);
+		newText = setup.replace(pattern,this.replacer);
+		console.log("after replacing:" + newText);
+	}
+
+
+
+	if(!_.isNull(end_pattern.exec(setup))){
+		// we have to repalce that.
+		console.log("end pattern matches the setup:");
+		console.log("setup" + setup);
+		
+		newText = newText.replace(/_(up|down)\spattern/g,this.replacer);
+		console.log("new text:" + newText);
+		//newText = newText.replace(/>(_)</g,function(match,ud,offset,string){return '';});
+	}
+
+
+	return newText;
+}
+
+M.Autocomplete.prototype._process_segments = function(segment){
+	if(segment.indexOf("span") == -1){
+		segment = this.replace_pattern_with_icons(segment);
+	}
+	return segment;
+}

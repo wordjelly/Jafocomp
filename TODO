@@ -59,28 +59,35 @@ see what's the issue here.
 -- let me solve these problems.
 -- then go forwards.
 
-1.adani ports ni -> causes adani ports to become adanin ports - DONE
-2.adani ports nifty 50 -> does not work , gives nifty it index  - DONE.
-3.nifty 50 monday -> gives the first two as the closest mondays, but is not giving simple monday -> directly jumps to further shit.
-4.should not calculate any sunday/saturdays - done.
-5.adani ports indian stocks rises -> order goes wrong, it gives the inverse order - solved
+-- so how to manage this ?
+-- we hook into the highlight step
+-- there is no other way really.
+
+1. up_down
+2. standard deviation days
+3. sma_cross
+4. underline or tags for the names of the entities
+5. remove see-more
+6. d3 charts
+
+after this we go for better sorting. 
+that will be the end of it.
+by this weekend i think this project stage one will be completed.
+
+## these three are the main things.
+
+
+3.nifty 50 monday -> gives the first two as the closest mondays, but is not giving simple monday -> directly jumps to further shit - this is again about weightage and proximity and nothing more.
+
 
 6.nifty bank index sets a 3 day high, in 2016 there are only 3 incidences ?
 
-7. What happens to Nifty Bank Index when Nifty It Index **Indian IT Stocks** falls -- why these stars are not going.
 
 
 8. for time based -> more weightage for nearness
 9. for correlation -> more weightage for profit.
-1o. what happens in 2019 -> should not come for a year which has not ended (DONE)
-11. if typing indian-stocks -> should show that and not nifty-50, and vice versa. (NEXT)
-12. should not do correlations with self (should this be blocked ? i think so, it confuses things, we will put it as optional, with an option in stockconstants.)
 
 
-up_down -, standard deviation days.
-skewing the data to show more recent stuff.
-see-more
-underline or tags for the names of the entities
 calendar symbol
 better presentation for the time data -> need nice charts from d3.
 checking the calculation accuracy.

@@ -58,7 +58,7 @@ $(document).on('input','#autocomplete-input',function(event){
 		$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
 	}
 	else{
-		console.log("the val is:" + $(this).val());
+		//console.log("the val is:" + $(this).val());
 		search_action($(this).val());
 	}
 });	
@@ -206,15 +206,17 @@ var humanize_tags = function(tags){
 
 }
 
-var dotted_underline_entity_names = function(){
 
-}
+
+// keep the part between the stars and replace what my dear ?
+// 
 
 
 var build_setup = function(search_result,text){
 
-	// if the query contains the colloquial, 
-	// then 
+	// see the tags have to be assembled
+	// i dont' know what the fuck your're doing with this.
+
 
 	var complex_string = search_result.preposition + " ";
 	
@@ -231,25 +233,30 @@ var build_setup = function(search_result,text){
 	// same thing is repeated below in the final else.
 	if(non_time_subindicator.test(search_result.tags) == true){
 		
-
+		//console.log("Tags are");
+		//console.log(search_result.tags);
 		var prev_tag_is_colloquial = 0
 		_.map(search_result.tags,function(tag,index){
 
 			// okay so handle colloquial seperator here.
 			if(tag.startsWith("**")){
+				//console.log("starts with double star:" + tag);
 				// this is the colloquial, ignore it.
 				if(!tag.endsWith("**")){
+					//console.log("endswith double star");
 				 prev_tag_is_colloquial = 1;
 				}
 			}
 			else if(tag.endsWith("**")){
+				//console.log("directy ends with double star" + tag);
 				prev_tag_is_colloquial = 0;
 			}
 			else if(tag.startsWith("**") && tag.endsWith("**")){
-
+				//console.log("starts and ends with:" + tag);
 			}
 			else{
 				if(prev_tag_is_colloquial == 0){
+					//console.log("neither starts with and neither ends with double star ad goes forward" + tag);
 					if(index == 0){
 						complex_string =  complex_string + tag + "'s" + " "  ;
 					}
@@ -269,17 +276,34 @@ var build_setup = function(search_result,text){
 
 		if(time_subindicator_regexp.test(search_result.information) == true){
 
+			//console.log("information test worked.");
+			//console.log(search_result.tags);
 			// if any of the tags have 
 			// period_start_period_end
-			// then 
+			// then
+			var prev_tag_is_colloquial = 0
+ 
 			_.map(search_result.tags,function(tag,index){
 				
-				if(tag.startsWith("**") && tag.endsWith("**")){
-
+				if(tag.startsWith("**")){
+					//console.log("starts with double star:" + tag);
+					// this is the colloquial, ignore it.
+					if(!tag.endsWith("**")){
+						//console.log("endswith double star");
+					 prev_tag_is_colloquial = 1;
+					}
+				}
+				else if(tag.endsWith("**")){
+					//console.log("directy ends with double star" + tag);
+					prev_tag_is_colloquial = 0;
+				}
+				else if(tag.startsWith("**") && tag.endsWith("**")){
+					//console.log("starts and ends with:" + tag);
 				}
 				else{
-
-					complex_string = complex_string + tag + " ";
+					if(prev_tag_is_colloquial == 0){
+						complex_string = complex_string + tag + " ";
+					}
 				}
 			
 			});
@@ -287,7 +311,8 @@ var build_setup = function(search_result,text){
 		}
 		else if(time_subindicator_regexp.test(search_result.tags) == true){
 
-			//////console.log("got a time based subindicator, by checking the tags");
+
+			console.log("got a time based subindicator, by checking the tags");
 			_.map(search_result.tags,function(tag,index){
 			
 				if(tag.startsWith("**") && tag.endsWith("**")){
@@ -307,6 +332,8 @@ var build_setup = function(search_result,text){
 		else
 		{
 			// non time subindicator.
+			console.log("tags are");
+			console.log(tags);
 			_.map(search_result.tags,function(tag,index){
 
 				if(tag.startsWith("**")){
@@ -530,7 +557,13 @@ var assign_statistics = function(search_result,text){
 
 	stats = stats.split(",");
 
-	
+	// so we are using offsets here.
+	// this picks the target
+	// basically using these offsets
+	// so why are sometimes 
+	// and that is not a part of the tags anyways.
+	// the tags can have the stars
+	// my problem is that 
 	search_result.setup = "What happens to " + information[0].substring(offsets[0],offsets[1]);
 
 	// remove hyphens from the namess. like Indian-Stocks
@@ -926,7 +959,7 @@ var search_new = function(input){
 		      $("#already_running_query").attr("data-already-running-query",input);
 		    }, 
 		  	success: function(response,status,jqxhr){
-		  		console.log(jqxhr);
+		  		//console.log(jqxhr);
 		  		var totalTime = new Date().getTime()-ajaxTime;
 
 		  		//////console.log("server side took:" + totalTime);
