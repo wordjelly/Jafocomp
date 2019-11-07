@@ -63,12 +63,31 @@ see what's the issue here.
 -- we hook into the highlight step
 -- there is no other way really.
 
-1. up_down
-2. standard deviation days
-3. sma_cross
-4. underline or tags for the names of the entities
-5. remove see-more
-6. d3 charts
+1. up_down - DONE
+2. standard deviation days - the superscript issue.
+3. sma_cross - summarizing this - okay here we have a small problem.(we change the way the indicator is named -> simple moving averages cross (3 -> 17))
+4. remove see-more
+5. d3 charts -> sharable.
+6. underline or tags for the names of the entities
+7. proximity and rescoring search
+8. adding icons for calendar events/for the stocks themselves.
+9. description of the subindicator can be given below, as well as the indicator
+10.notable points simple english summary.
+11. checking the calculation accuracy.
+
+if you want it to work, that is what it will take.
+=============================================================
+no more features beyond this will be implemented.
+current progress is approximately 3 features per day.
+based on that timeline, this project should be completed by sunday evening, come what may.
+after that we design google ads for one week, or take the decision for climate data -> for the wow factor (max one week => actually both)
+=============================================================
+
+# just make it a superscript, you can't solve it all.
+
+--> i think i am within 1 week of getting this done -> maybe if i can manage the d3 and icons, part, then i can leave the proximity scoring for the end -> and that will be the end of all things, and then the checking why all the calculations are wrong.
+
+9. calling it a day.
 
 after this we go for better sorting. 
 that will be the end of it.

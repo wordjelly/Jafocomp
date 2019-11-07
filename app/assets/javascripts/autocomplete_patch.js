@@ -47,12 +47,21 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
   	var start_end_positions = {};
   	var arr = []
 
+
+  	// even if we add the html here.
+  	// and then get the positions.
+  	// later on its going to take that text
+  	// but for what take the string directly.
+  	var el_text = $el.text();
+  	// do the replacer shit here.
+  	el_text = this._process_segments(el_text);
+
   	_.each(string.split(" "), function(st){
   		
   		if(_.isEmpty(st)){
   		}
   		else{
-  			_.each(M.Autocomplete.prototype._getIndicesOf(st.toLowerCase(),$el.text().toLowerCase()),function(index){
+  			_.each(M.Autocomplete.prototype._getIndicesOf(st.toLowerCase(),el_text.toLowerCase()),function(index){
   				arr.push([index,index + st.length]);
   			});
   		
@@ -84,28 +93,30 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
 			}	
 			else{
 				segments.push('<span>');
-				segments.push($el.text().slice(0,arr[0]));
+				segments.push(el_text.slice(0,arr[0]));
 				segments.push('<span class="highlight">');
 			}
-			segments.push($el.text().slice(arr[0],arr[1]));
+			segments.push(el_text.slice(arr[0],arr[1]));
 			segments.push('</span>');
 		}
 		else{
 			prev_el = sorted[key - 1];
-			segments.push($el.text().slice(prev_el[1],arr[0]));
+			segments.push(el_text.slice(prev_el[1],arr[0]));
 			segments.push('<span class="highlight">');
-			segments.push($el.text().slice(arr[0],arr[1]));
+			segments.push(el_text.slice(arr[0],arr[1]));
 			segments.push('</span>');
 		}
 		if(key == (_.size(list) - 1)){
-			segments.push($el.text().slice(arr[1],$el.text().length));
+			segments.push(el_text.slice(arr[1],el_text.length));
 			segments.push('</span>');
 		}
 	});
 	
+	/***
 	segments = _.map(segments,function(val){
 		return M.Autocomplete.prototype._process_segments(val);
 	});
+	***/
 	
 	$el.html(segments.join(''));
 
@@ -167,50 +178,75 @@ M.Autocomplete.prototype._renderDropdown = function(data,val){
 };
 	
 
-M.Autocomplete.prototype.replacer = function(match,ud,offset,string){
+M.Autocomplete.prototype.replace_up_down = function(match,ud,offset,string){
+
 	if(ud == "up"){
-		return "<i class='material-icons'>arrow_upward</i>";
+		if(match.indexOf("pattern") != -1){
+			return "<i class='material-icons'>arrow_upward</i> pattern";
+		}
+		else{
+			return "<i class='material-icons'>arrow_upward</i>";
+		}
 	}
 	else{
-		return "<i class='material-icons'>arrow_downward</i>";
+		if(match.indexOf("pattern") != -1){
+			return "<i class='material-icons'>arrow_downward</i> pattern";
+		}
+		else{
+			return "<i class='material-icons'>arrow_downward</i>";
+		}
 	}
 }
+
 
 // so it already has the html tags.
 // next step is further normalization of the UI.
 
+M.Autocomplete.prototype.add_superscript_to_standard_deviation = function(setup){
+
+	var pattern = new RegExp(/deviation\s(\d+)/);
+	if(! _.isNull(pattern.exec(setup))){
+		setup = setup.replace(pattern,function(match,ud,offset,string){
+			
+			return "deviation <sup>" + ud + "</sup>";
+		});
+	}
+	return setup;
+}
+
+
+M.Autocomplete.prototype.summarize_sma_cross = function(setup){
+
+	// pattern is deviation (number)
+	// replace with deviation
+
+	return setup;
+}
+
 M.Autocomplete.prototype.replace_pattern_with_icons = function(setup){
 	
 	// do we have something like 
-	var end_pattern = new RegExp(/_(up|down)($|\spattern)/g);
-	// if this pattern matches, then knock of the last up/down, with the replacer.
+	var end_pattern = new RegExp(/_(up|down)\s($|pattern)/g);
 	var pattern = new RegExp(/(up|down)(?=_(down|up))/g);
 	var newText = setup;
 	if(!_.isNull(pattern.exec(setup))){
-		console.log("got a match" + setup);
-		newText = setup.replace(pattern,this.replacer);
-		console.log("after replacing:" + newText);
+		newText = setup.replace(pattern,this.replace_up_down).replace(/>_</,'');
 	}
-
-
-
 	if(!_.isNull(end_pattern.exec(setup))){
-		// we have to repalce that.
-		console.log("end pattern matches the setup:");
-		console.log("setup" + setup);
-		
-		newText = newText.replace(/_(up|down)\spattern/g,this.replacer);
-		console.log("new text:" + newText);
-		//newText = newText.replace(/>(_)</g,function(match,ud,offset,string){return '';});
+		//console.log("check now ----------------------->");
+		newText = newText.replace(/_(up|down)\s($|pattern)/g,this.replace_up_down).replace(/>_</,'');
+		//console.log("check ends ------------------------>");
 	}
 
 
 	return newText;
 }
 
+
+
 M.Autocomplete.prototype._process_segments = function(segment){
-	if(segment.indexOf("span") == -1){
-		segment = this.replace_pattern_with_icons(segment);
-	}
+	segment = this.replace_pattern_with_icons(segment);
+	segment = this.add_superscript_to_standard_deviation(segment);
+	segment = this.summarize_sma_cross(segment);
 	return segment;
 }
