@@ -260,9 +260,11 @@ var build_setup = function(search_result,text){
 					if(index == 0){
 						complex_string =  complex_string + tag + "'s" + " "  ;
 					}
+					/****
 					else if(index == 2){
 						complex_string = complex_string + tag + " " + "See-More ";
 					}
+					***/
 					else{
 						complex_string = complex_string + tag + " ";
 					}
@@ -358,9 +360,11 @@ var build_setup = function(search_result,text){
 							// symbol
 
 						}
+						/***
 						else if(index == 2){
 							complex_string = complex_string + "See-More ";
 						}
+						***/
 						else{
 							complex_string = complex_string + tag + " ";
 						}

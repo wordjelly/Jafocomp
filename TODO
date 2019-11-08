@@ -25,55 +25,33 @@
     <div class="black-text" style="font-size: 18px;">{{= val.average_loss }}%</div>
 </div>
 
-
-//  buy gold when oil's aroon_up first trading day of the week (21 Jan 2019)
-
-// there is no role for the indicator here , also text formulation is incorrect.
-
-// least profitable trade is showing zero everywhere.
-
-// --------------------------------------------
-
-// for multi word stuff -> we have to split on the underscores.
-// gotta sort all that out, also the different things being truncated.
-// so for sma -> we will use (shows a moving average divergence)
-// shortening of the sma cross and such things, and close
-// the defaults -> to show a new user
-// and fixing the search queries.
-// showing close falls -> defaulting to that.
-// fixing the profit and loss explanations
-// if there are multiple sma cross types, then 
-// like 4 day sma crosses above 12 day sma
-// 22 day sma crosses above 12 day sma.
-
----------------------------------------------------------------
-// hook the positive and negative counts using profit and loss
-// do the t-test for complexes and indicators.
-// sort by that, and gauss of the epoch.
-// add chart js to show the yearly trends for the indicator.
-// and then market that bitch.
----------------------------------------------------------------
-
-see what's the issue here.
-
--- let me solve these problems.
--- then go forwards.
-
--- so how to manage this ?
--- we hook into the highlight step
--- there is no other way really.
-
 1. up_down - DONE
 2. standard deviation days - the superscript issue.
-3. sma_cross - summarizing this - okay here we have a small problem.(we change the way the indicator is named -> simple moving averages cross (3 -> 17))
-4. remove see-more
-5. d3 charts -> sharable.
+-----------------------------------------------------------
+8th november
+------------
+3. sma_cross - summarizing this - okay here we have a small problem.(we change the way the indicator is named -> simple moving averages cross (3 -> 17)) -> on click it should transform ? so let us see how it looks, also the charting options.(this is pending.)
+4. remove see-more - DONE
+5. d3 charts -> sharable(this is pending)
 6. underline or tags for the names of the entities
+--> so we have a smaller description line below, and that same line is shown in the thing below.
+so in the main thing will read only moving averages cross.
+what about the charts ?
+
+** this has to finish today.
+
+-----------------------------------------------------------
+9th november
+------------
 7. proximity and rescoring search
 8. adding icons for calendar events/for the stocks themselves.
 9. description of the subindicator can be given below, as well as the indicator
+-----------------------------------------------------------
+10th november
+-------------
 10.notable points simple english summary.
 11. checking the calculation accuracy.
+-----------------------------------------------------------
 
 if you want it to work, that is what it will take.
 =============================================================
