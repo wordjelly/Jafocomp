@@ -112,10 +112,27 @@ var search_result_is_positive = function(search_result){
 	//return search_result.impacts[0].statistics[0].maximum_profit >= search_result.impacts[0].statistics[0].maximum_loss*-1
 }
 
+// so after rendering, we show the populating indicators.
+var show_indicator_description = function(search_result){
+	// this is an ajax request.
+}
+
+var show_primary_entity_description = function(search_result){
+
+}
+
+var show_impacted_entity_description = function(search_result){
+
+}
+
+
+
 var render_search_result_new = function(search_result){
 	if(_.isUndefined(template)){
 		var template = _.template($('#search_result_template').html());
 	}
+	// first modify the search result template
+	// give it space for the indicator description, 
 	$('#none').append(template(search_result));
 	/****
 	if(search_result_is_positive(search_result)){
@@ -127,12 +144,6 @@ var render_search_result_new = function(search_result){
 	}
 	****/
 	$("time.timeago").timeago();
-}
-
-var use_colloquial_if_query_has_it = function(search_result){
-
-
-
 }
 
 /***
@@ -207,9 +218,19 @@ var humanize_tags = function(tags){
 }
 
 
-
-// keep the part between the stars and replace what my dear ?
-// 
+var get_primary_entity_and_indicator = function(setup){
+	var pattern = new RegExp(/when\s([A-Za-z\s+]\'s)\s([A-Za-z+])(\sindicator)?/gi);
+	var result = pattern.exec(setup);
+	if(!_.isNull(result)){
+		setup.primary_entity = result[1];
+		setup.indicator = result[2];
+		if(!_.isUndefined(result[3])){
+			setup.indicator += (" " + result[3])
+		}
+	}
+	console.log("primary entity is:" + setup.primary_entity);
+	console.log("indicator is:" + setup.)
+}
 
 
 var build_setup = function(search_result,text){
@@ -386,6 +407,8 @@ var build_setup = function(search_result,text){
 
 	search_result.setup = search_result.setup + " " + complex_string;	
 	assign_target(search_result);
+	get_primary_entity_and_indicator(search_result);
+	//console.log(search_result);
 	//remove_close(search_result);
 
 	// indicator rises by 90 percent in 10 days.

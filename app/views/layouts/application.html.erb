@@ -94,9 +94,15 @@
 
   <!-- basially we want to store the things of the topmost result here -->
   <!-- the contexts -->
+  <!-- and where to show the chart ? -->
+  <!-- main is the chart UI + the indicator definition -->
+  <!-- we can have the indicator, subindicator, and the stocks there, to expalin to the people what it is.-->
+  <!-- so the indicator, the primary stock and the secondary stock -->
   <script type="text/template" id="search_result_template">
-    
-      <div class="card" id="{{= search_result.div_id }}" style="display:none;">
+      
+    <div id="{{= search_result.div_id }}" style="display:none;">
+
+      <div class="card">
         <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
             
@@ -163,10 +169,84 @@
                 </tbody>
               </table>
           </div>
-          
+
         </div>
     
       </div>
+
+
+      <div class="row explanations">
+        <div class="col l4 m4 s12 indicator" style="display:none;">
+          <div class="card">
+            <div class="card-content">
+              <div class="card-title">
+
+              </div>
+              <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div>
+                  <div class="gap-patch">
+                    <div class="circle"></div>
+                  </div>
+                  <div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col l4 m4 s12 primary_entity" style="display:none;">
+          <div class="card">
+            <div class="card-content">
+              <div class="card-title">
+
+              </div>
+              <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div>
+                  <div class="gap-patch">
+                    <div class="circle"></div>
+                  </div>
+                  <div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col l4 m4 s12 impacted_entity" style="display:none;">
+          <div class="card">
+            <div class="card-content">
+              <div class="card-title">
+
+              </div>
+              <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div>
+                  <div class="gap-patch">
+                    <div class="circle"></div>
+                  </div>
+                  <div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> 
+
+    </div>
+
+
   </script>
   <!-- now we want to show the year wise data --> 
 

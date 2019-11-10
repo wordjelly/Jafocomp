@@ -112,14 +112,60 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
 		}
 	});
 	
-	/***
-	segments = _.map(segments,function(val){
-		return M.Autocomplete.prototype._process_segments(val);
-	});
-	***/
-	
-	$el.html(segments.join(''));
+	///var final_string = this.hide_sma_brackets(segments.join(''));
 
+	$el.html(segments.join(""));
+}
+	
+	
+
+M.Autocomplete.prototype.hide_sma_brackets = function(string){
+	var pattern = new RegExp(/(\(\d+\,\d+\))/);
+	if(!_.isNull(pattern.exec(string))){
+		string = string.replace(pattern,'');
+	}
+	return string;
+}
+
+// here there are some brackets.
+// in the end.
+// how do i hide that ?
+// in the final segment ?
+// add it to the subtext on the stup.
+M.Autocomplete.prototype._add_subtext = function(primary_text){
+
+	var moving_average_pattern = new RegExp(/([A-Za-z\'\`]+)\s([A-Za-z]+)?\s?moving\saverages\scross\s\((\d+)\,(\d+)\)/);
+	var result = moving_average_pattern.exec(primary_text);
+	var indicator = "";
+	if(!_.isNull(result)){
+		console.log("result is:");
+		console.log(result);
+		
+		if(!_.isUndefined(result[1])){
+			if(result[1].indexOf("\'") == -1){
+				indicator += result[1];
+			}
+		}
+
+		if(!_.isUndefined(result[2])){
+			indicator += (" " + result[2]);
+		}
+
+		if(indicator == ""){
+			indicator = "close";
+		}
+		var text = "The " + result[3] + " day average of the " + indicator + " crosses the " + result[4] + " day average";
+
+		
+		// so here we will add the subtext
+		// also will have to be done in the 
+		return "<div class='black-text text-lighten-2' style='font-size: 12px; padding:0px 16px;'><span>" + text + "</span></div>";
+	}
+
+	// this has to be called on the damn shit also.
+
+
+	return "";
 }
 
 
@@ -174,6 +220,7 @@ M.Autocomplete.prototype._renderDropdown = function(data,val){
 
 	    $(this.container).append($autocompleteOption);
 	    this._highlight(val, $autocompleteOption);
+	    $autocompleteOption.append(this._add_subtext(entry.key));
 	}
 };
 	
@@ -215,12 +262,11 @@ M.Autocomplete.prototype.add_superscript_to_standard_deviation = function(setup)
 }
 
 
-M.Autocomplete.prototype.summarize_sma_cross = function(setup){
+M.Autocomplete.prototype.summarize_sma_cross = function(primary_text){
 
-	// pattern is deviation (number)
-	// replace with deviation
+	primary_text = primary_text.replace(new RegExp(/\'([A-Za-z\s]+)(moving\saverages\scross)(\s\(\d+\,\d+\))/),"\'s moving averages cross");
 
-	return setup;
+	return primary_text;
 }
 
 M.Autocomplete.prototype.replace_pattern_with_icons = function(setup){
@@ -248,5 +294,6 @@ M.Autocomplete.prototype._process_segments = function(segment){
 	segment = this.replace_pattern_with_icons(segment);
 	segment = this.add_superscript_to_standard_deviation(segment);
 	segment = this.summarize_sma_cross(segment);
+
 	return segment;
 }

@@ -31,25 +31,27 @@
 8th november
 ------------
 3. sma_cross - summarizing this - okay here we have a small problem.(we change the way the indicator is named -> simple moving averages cross (3 -> 17)) -> on click it should transform ? so let us see how it looks, also the charting options.(this is pending.)
+so we have a regex on the setup, and add a 
+we are trying to modify the element itself.
 4. remove see-more - DONE
-5. d3 charts -> sharable(this is pending)
+5. d3 charts -> sharable(this is pending) --> so this one is pending, and the other one also (we use the bubble charts, and also summarize the findings, both come in the same thing.)
 6. underline or tags for the names of the entities
---> so we have a smaller description line below, and that same line is shown in the thing below.
-so in the main thing will read only moving averages cross.
-what about the charts ?
 
-** this has to finish today.
-
+## gathering of inferences.
+## like -. 
+impression : microcytosis, hypochromasia, moderate anemia, polychromaisa.
+advise : iron studies, vitamin b12, hb electrophoresis.
 -----------------------------------------------------------
-9th november
+9th november -> was supposed to finish all this today.
 ------------
-7. proximity and rescoring search
+7. notable points simple english summary
 8. adding icons for calendar events/for the stocks themselves.
-9. description of the subindicator can be given below, as well as the indicator
+9. description of the subindicator can be given below, as well as the indicator -> this i want to finish today
+together with range tests, and do the payumoney.
 -----------------------------------------------------------
 10th november
 -------------
-10.notable points simple english summary.
+10. proximity and rescoring search -> this i will do last.
 11. checking the calculation accuracy.
 -----------------------------------------------------------
 

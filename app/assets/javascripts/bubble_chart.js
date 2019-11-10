@@ -2,11 +2,23 @@
 data should be an array of json arrays
 [
   {
-    
+    "key" : "2011",
+    "color" : "red/green",
+    "value" : 123
+  },
+  {
+    "key" : "2012",
+    "color" : "red/green",
+    "value" : 445
   }
 ]
+so this and the rest of the major stuff can be managed tomorrow.
+today i want range tests out of the way
+the range interpretation.
+the js chart, and basic indicator information
+and the 
 ***/
-var draw_chart = function(data){
+var draw_chart = function(data,max_obs){
 
   var width = 460
   var height = 460
@@ -26,16 +38,17 @@ var draw_chart = function(data){
     // "year" => "up","down"
     // so we want the size to equal the difference.
     // Filter a bit the data -> more than 1 million inhabitants
-    data = data.filter(function(d){ return d.value>10000000 })
+    data = data.filter(function(d){ return d.value>0 })
 
     // Color palette for continents?
+    /****
     var color = d3.scaleOrdinal()
       .domain(["Asia", "Europe", "Africa", "Oceania", "Americas"])
       .range(d3.schemeSet1);
-
+    ***/
     // Size scale for countries
     var size = d3.scaleLinear()
-      .domain([0, 1400000000])
+      .domain([0, max_obs])
       .range([7,55])  // circle will be between 7 and 55 px wide
 
     // create a tooltip
@@ -75,7 +88,7 @@ var draw_chart = function(data){
         .attr("r", function(d){ return size(d.value)})
         .attr("cx", width / 2)
         .attr("cy", height / 2)
-        .style("fill", function(d){ return color(d.region)})
+        .style("fill", function(d){ return d.color})
         .style("fill-opacity", 0.8)
         .attr("stroke", "black")
         .style("stroke-width", 1)
