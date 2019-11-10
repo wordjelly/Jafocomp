@@ -218,18 +218,19 @@ var humanize_tags = function(tags){
 }
 
 
-var get_primary_entity_and_indicator = function(setup){
-	var pattern = new RegExp(/when\s([A-Za-z\s+]\'s)\s([A-Za-z+])(\sindicator)?/gi);
+var get_primary_entity_and_indicator = function(search_result){
+	var setup = search_result.setup;
+	//console.log("setup is:" + setup);
+	var pattern = new RegExp(/when([A-Za-z\s]+)\'s\s([A-Za-z_\d+]+)\s(indicator)?/gi);
 	var result = pattern.exec(setup);
+	//console.log("result is:" + result);
 	if(!_.isNull(result)){
-		setup.primary_entity = result[1];
-		setup.indicator = result[2];
+		search_result.primary_entity = result[1].replace(/_period_start_\d+_period_end/,'');
+		search_result.indicator = result[2];
 		if(!_.isUndefined(result[3])){
-			setup.indicator += (" " + result[3])
+			search_result.indicator += (" " + result[3])
 		}
 	}
-	console.log("primary entity is:" + setup.primary_entity);
-	console.log("indicator is:" + setup.)
 }
 
 
@@ -1647,6 +1648,14 @@ var numeric_literals = {
 // and a link.
 // and entity should have an icon attribute, basically as well, that is assigned when it is created, and transferred to it, 
 // in the correlation.
+var update_information_cards = function(text,div_id){
+	$.get(
+		'/search',
+		{information: prepare_query_for_tooltip_search($origin)}).done(function(data) {
+		
+	});
+}
+
 
 
 $(document).ready(function(){
@@ -1667,6 +1676,7 @@ $(document).ready(function(){
       	////console.log("div id is: " + div_id);
       	if(!_.isUndefined(div_id)){
       		$("#" + div_id).show();
+
       	}
       }
     });

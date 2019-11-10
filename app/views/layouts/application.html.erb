@@ -100,7 +100,7 @@
   <!-- so the indicator, the primary stock and the secondary stock -->
   <script type="text/template" id="search_result_template">
       
-    <div id="{{= search_result.div_id }}" style="display:none;">
+    <div id="{{= search_result.div_id }}" style="display:none;" data-primary-entity="{{= search_result.primary_entity }}" data-indicator="{{= search_result.indicator }}" data-impacted-entity="{{= search_result.target }}">
 
       <div class="card">
         <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
