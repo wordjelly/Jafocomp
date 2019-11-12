@@ -98,6 +98,45 @@
   <!-- main is the chart UI + the indicator definition -->
   <!-- we can have the indicator, subindicator, and the stocks there, to expalin to the people what it is.-->
   <!-- so the indicator, the primary stock and the secondary stock -->
+  <!-- i want to do the chart now -->
+  <!-- and the summary, what about related. -->
+  <!-- what about more information ? -->
+  <!-- about the profitability -->
+  <!-- is it required ? -->
+  <!-- is the chart required -->
+  <script type="text/template" id="information_card_template">
+    <div class="col l4 m4 s12">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-title blue-grey-text" style="font-weight: 400;">
+            <i class="material-icons">{{= search_result.icon }}</i> {{= search_result.title }}
+          </div>
+          <div class="card-content-main green-text">
+            {{= search_result.content }}
+            {{ if(search_result.entity == 1) { }}
+              <a href="{{= search_result.link }}">
+                  Wikipedia
+              </a>
+            {{ } }}
+          </div>
+        </div>
+        <div class="card-action">
+            {{ if(search_result.entity == 1) { }}
+              <a href="https://www.bing.com/search?q={{= search_result.stock_quote_link }}">Get Latest Price</a>
+            {{ } }}
+            {{ if(search_result.indicator == 1) { }}
+              <a href="{{= search_result.link }}">Read More</a>
+            {{ } }}
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <!-- 
+  curl -i -H "Accept: application/json" "localhost:8080/match/1" 
+
+  -->
+
   <script type="text/template" id="search_result_template">
       
     <div id="{{= search_result.div_id }}" style="display:none;" data-primary-entity="{{= search_result.primary_entity }}" data-indicator="{{= search_result.indicator }}" data-impacted-entity="{{= search_result.target }}">
@@ -173,75 +212,8 @@
         </div>
     
       </div>
-
-
-      <div class="row explanations">
-        <div class="col l4 m4 s12 indicator" style="display:none;">
-          <div class="card">
-            <div class="card-content">
-              <div class="card-title">
-
-              </div>
-              <div class="preloader-wrapper big active">
-                <div class="spinner-layer spinner-blue">
-                  <div class="circle-clipper left">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="gap-patch">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="circle-clipper right">
-                    <div class="circle"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col l4 m4 s12 primary_entity" style="display:none;">
-          <div class="card">
-            <div class="card-content">
-              <div class="card-title">
-
-              </div>
-              <div class="preloader-wrapper big active">
-                <div class="spinner-layer spinner-blue">
-                  <div class="circle-clipper left">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="gap-patch">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="circle-clipper right">
-                    <div class="circle"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col l4 m4 s12 impacted_entity" style="display:none;">
-          <div class="card">
-            <div class="card-content">
-              <div class="card-title">
-
-              </div>
-              <div class="preloader-wrapper big active">
-                <div class="spinner-layer spinner-blue">
-                  <div class="circle-clipper left">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="gap-patch">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="circle-clipper right">
-                    <div class="circle"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="row information">
+        
       </div> 
 
     </div>

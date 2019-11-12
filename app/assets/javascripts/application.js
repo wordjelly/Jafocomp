@@ -223,14 +223,14 @@ var get_primary_entity_and_indicator = function(search_result){
 	//console.log("setup is:" + setup);
 	var pattern = new RegExp(/when([A-Za-z\s]+)\'s\s([A-Za-z_\d+]+)\s(indicator)?/gi);
 	var result = pattern.exec(setup);
-	//console.log("result is:" + result);
 	if(!_.isNull(result)){
-		search_result.primary_entity = result[1].replace(/_period_start_\d+_period_end/,'');
-		search_result.indicator = result[2];
+		search_result.primary_entity = result[1];
+		search_result.indicator = result[2].replace(/_period_start_\d+_period_end/,'');
 		if(!_.isUndefined(result[3])){
 			search_result.indicator += (" " + result[3])
 		}
 	}
+	console.log("search result primary entity:" + search_result.primary_entity + " indicator: " + search_result.indicator);
 }
 
 
@@ -356,8 +356,8 @@ var build_setup = function(search_result,text){
 		else
 		{
 			// non time subindicator.
-			console.log("tags are");
-			console.log(tags);
+			//console.log("tags are");
+			//console.log(tags);
 			_.map(search_result.tags,function(tag,index){
 
 				if(tag.startsWith("**")){
@@ -1639,23 +1639,67 @@ var numeric_literals = {
 	" percent" : "%"
 }
 
-// so entity icons.
-// indicator and subindicator information.
-// something like more_info, for all the items.
-// i can have an index, where we have the name, and we have an information box for it.
-// direct entity search.
-// maybe an image and an icon.
-// and a link.
-// and entity should have an icon attribute, basically as well, that is assigned when it is created, and transferred to it, 
-// in the correlation.
-var update_information_cards = function(text,div_id){
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+
+/***
+text -> whatever
+div_id -> the div_id of the main card
+type -> indicator/primary_entity/impacted_entity
+***/
+var update_information_cards = function(text,div_id,type){
 	$.get(
 		'/search',
-		{information: prepare_query_for_tooltip_search($origin)}).done(function(data) {
+		{information: expand_indicators_for_information_query(text)}).done(function(data) {
 		
+		 	if(!_.isEmpty(data["results"])){
+
+        		result = data["results"][0]["_source"];
+
+            	title = capitalizeFirstLetter(result["information_name"]).replace(/_/g," ");
+
+            	content = capitalizeFirstLetter(result["information_description"]).replace(/\[\d+\]/,'').substring(0,150) + "...";
+
+            	link = result["information_link"];
+
+            	var icon = null;
+
+            	var obj = {title: title, content: content, link: link};
+
+            	if(type == "primary_entity"){
+            		obj.entity = 1
+            		obj.icon = "dns";
+            		obj.stock_quote_link = obj.title.replace(/\s/,'+');
+            	}
+            	else if(type == "impacted_entity"){
+            		obj.entity = 1
+            		obj.icon = "dns";
+            		obj.stock_quote_link = obj.title.replace(/\s/,'+');
+            	}
+
+            	else if(type == "indicator"){
+            		obj.indicator = 1;
+            		obj.icon = "timeline";
+            	}
+
+            	if(_.isUndefined(template)){
+					var template = _.template($('#information_card_template').html());
+					$('#' + div_id).find(".information").first().append(template(obj));
+				}
+
+        	}
+
 	});
 }
 
+_.mixin({
+    isBlank: function(string) {
+      return (_.isUndefined(string) || _.isNull(string) || string.trim().length === 0)
+    }
+});
 
 
 $(document).ready(function(){
@@ -1673,9 +1717,34 @@ $(document).ready(function(){
       onAutocomplete: function(val) {
         var data = JSON.parse($(".autocomplete").first().data("autocomplete_hash"));
       	var div_id = data[val];
-      	////console.log("div id is: " + div_id);
       	if(!_.isUndefined(div_id)){
-      		$("#" + div_id).show();
+      		var the_div = $("#" + div_id);
+      		$(the_div).show();
+      		// we want to also show these cards.
+      		var primary_entity = the_div.attr("data-primary-entity");
+      		var impacted_entity = the_div.attr("data-impacted-entity");
+      		var indicator = the_div.attr("data-indicator");
+
+      		console.log("primary entity:" + primary_entity);
+      		console.log("impacted entity:" + impacted_entity);
+      		console.log("indicator:" + indicator);
+
+      		console.log(indicator)
+
+      		if(!_.isBlank(primary_entity)){
+      			console.log("primary entity not undefined and is:" + primary_entity);
+      			update_information_cards(primary_entity,div_id,"primary_entity");
+      		}
+      		
+      		if(!_.isBlank(impacted_entity)){
+      			console.log("impacted entity not undefined and is:" + impacted_entity);
+      			update_information_cards(impacted_entity,div_id,"impacted_entity");
+      		}
+      		
+      		if(!_.isBlank(indicator)){
+      			console.log("indicator not undefined and is:" + indicator);
+      			update_information_cards(indicator,div_id,"indicator");
+      		}
 
       	}
       }
