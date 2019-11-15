@@ -137,6 +137,10 @@
 
   -->
 
+  <script type="text/template" id="indicator_performance_template">
+
+  </script>
+
   <script type="text/template" id="search_result_template">
       
     <div id="{{= search_result.div_id }}" style="display:none;" data-primary-entity="{{= search_result.primary_entity }}" data-indicator="{{= search_result.indicator }}" data-impacted-entity="{{= search_result.target }}">
@@ -212,6 +216,37 @@
         </div>
     
       </div>
+
+    
+
+      <div class="indicator_performance">
+        <div class="card">
+          <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
+            <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
+              <i class="{{= search_result.entity_icon}}"></i>
+              What has the trend been, over the years?
+            </span>
+            <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+              {{= search_result.summary }}
+            </div>
+            <div id="chart"></div>
+          </div>
+        </div>
+      </div>
+      <div class="indicator_table_stats">
+        <div class="card">
+          <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
+            <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
+              <i class="{{= search_result.entity_icon}}"></i>
+              Year Wise Performance
+            </span>
+            <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+              {{= search_result.summary }}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row information">
         
       </div> 

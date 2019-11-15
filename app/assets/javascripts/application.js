@@ -230,7 +230,7 @@ var get_primary_entity_and_indicator = function(search_result){
 			search_result.indicator += (" " + result[3])
 		}
 	}
-	console.log("search result primary entity:" + search_result.primary_entity + " indicator: " + search_result.indicator);
+	//console.log("search result primary entity:" + search_result.primary_entity + " indicator: " + search_result.indicator);
 }
 
 
@@ -336,7 +336,7 @@ var build_setup = function(search_result,text){
 		else if(time_subindicator_regexp.test(search_result.tags) == true){
 
 
-			console.log("got a time based subindicator, by checking the tags");
+			//console.log("got a time based subindicator, by checking the tags");
 			_.map(search_result.tags,function(tag,index){
 			
 				if(tag.startsWith("**") && tag.endsWith("**")){
@@ -834,6 +834,8 @@ var display_search_results = function(search_results,input){
 	    	// what about the dots ?
 	    	// let me sort out search.
 	    	search_result.div_id = CreateUUID();
+	    	search_result = get_statistical_summary(search_result);
+	    	build_time_based_indicator_summary(search_result);
 	    	//console.log("search result setup becomes:");
 	    	//console.log(search_result.setup);
 	    	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = search_result.div_id;
@@ -1257,10 +1259,12 @@ var update_falls_or_rises_text = function(search_result){
 		if(statistic.total_up >= statistic.total_down){
 			statistic["up_down_text"] = "<i class='material-icons'>call_made</i>Rises " + statistic.total_up + "/" + (total_times) + " times";
 			statistic["up_down_text_color"] = "green";
+			search_result.bias = 1
 		}
 		else{
 			statistic["up_down_text"] = "<i class='material-icons'>call_received</i>Falls " + statistic.total_down + "/" + (total_times) + " times";
 			statistic["up_down_text_color"] = "red";	
+			search_result.bias = -1
 		}
 	});
 	return search_result;
@@ -1485,6 +1489,242 @@ var trim_entity_name = function(search_result,entity_name){
 }
 
 
+
+// for eg
+// is it either true/false for the indicator/subindicator.
+var is_binary = function(year_wise_data){
+	//console.log("checking binary with year wise data");
+	//console.log(year_wise_data);
+	var result = true;
+	for(year in year_wise_data){
+		//console.log("sum-===--==============>");
+		//console.log(Number(year_wise_data[year][0]) + Number(year_wise_data[year][1]));
+		//console.log("sum-===--==============>");
+		if((Number(year_wise_data[year][0]) + Number(year_wise_data[year][1])) > 2){
+			result = false
+		}	
+	}
+	return result;
+}
+
+var is_time_based_subindicator = function(search_result){
+	var time_based_pattern = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
+	var a = _.isNull(time_based_pattern.exec(search_result.tags));
+	var b = _.isNull(time_based_pattern.exec(search_result.information));
+	if((a == true) && (b == true)){
+		return false;
+	}
+	else{
+		return true;
+	}
+}
+
+var get_predicate = function(search_result){
+	var pattern = new RegExp(/\s(in|on)\s(.*)$/);
+	var result = pattern.exec(search_result.setup);
+	var predicate = null;
+	if(!_.isUndefined(result[2])){
+		predicate = result[2];
+	}
+	return predicate;
+}
+
+var get_preposition = function(search_result){
+	var pattern = new RegExp(/\s(in|on)\s/);
+	var result = pattern.exec(search_result.setup);
+	var predicate = null;
+	if(!_.isUndefined(result[1])){
+		predicate = result[1];
+	}
+	return predicate;
+}
+
+/***
+Should return
+rose_or_fell : "rose" || "fell",
+rose_or_fell_times : integer,
+strongly_positive_years : [],
+strongly_negative_years : [],
+last_couple_of_years : "positive/negative/mixed";
+best_year : 
+worst_year : 
+
+***/	
+var get_trend = function(year_wise_data){
+	var summary = "";
+	var current_year = (new Date()).getFullYear();
+	var _sorted = {}
+	var strong_threshold = 68;
+	// starts from penultimate year.
+	var total_years_to_consider_as_last_couple = 3;
+	var rose_times = 0;
+	var fell_times = 0;
+	var strongly_positive_years = [];
+	var strongly_negative_years = [];
+
+	for(year in year_wise_data){
+		var k = year_wise_data[year];
+		var percentage_rise = (k[0]/(k[0] + k[1]))*100.0;
+		var percentage_fall = (k[1]/(k[0] + k[1]))*100.0;
+		
+		if(percentage_rise >= strong_threshold){
+			strongly_positive_years.push(year);
+		}
+		else if(percentage_fall >= strong_threshold){
+			strongly_negative_years.push(year);
+		}
+
+		_sorted[year] = [percentage_rise,percentage_fall];
+		if(k[0] > k[1]){
+			rose_times += 1;
+		}
+		else if(k[0] < k[1]){
+			fell_times += 1;
+		}
+	}
+
+	_.sortKeysBy(year_wise_data,function(value,key){
+		return key;
+	});
+
+
+
+	_.sortKeysBy(_sorted, function (value, key) {
+	    return value[0];
+	});
+
+	// penultimate three.
+	var best_year = _.last(Object.keys(_sorted));
+	var worst_year = _.first(Object.keys(_sorted));
+
+	var last_couple_positive = 0;
+	var last_couple_negative = 0;
+	
+	_.map((Object.keys(year_wise_data).reverse()),function(val,key){
+		if(key > 0 && key < total_years_to_consider_as_last_couple){
+			if(_sorted[year][0] > _sorted[year][1]){
+				last_couple_positive+=1;
+			}
+			else if(_sorted[year][1] > _sorted[year][0]){
+				last_couple_negative+=1;
+			}
+			else{
+
+			}
+		}
+	});
+
+	return {
+		rose_times: rose_times,
+		fell_times: fell_times,
+		strongly_positive_years: strongly_positive_years,
+		strongly_negative_years: strongly_negative_years,
+		best_year: best_year,
+		worst_year: worst_year
+	}
+}
+
+
+var build_time_based_indicator_summary = function(search_result){
+	var summary = null;
+	var trend = get_trend(search_result.year_wise_data);
+	console.log(trend);
+	/****
+	if(is_time_based_subindicator(search_result) == true){
+		console.log("is time based" + search_result.setup);
+		if(is_binary(search_result.year_wise_data)){
+			console.log("is binary");
+			if(!_.isNull(get_predicate(search_result))){
+				console.log("predicate is not null");
+				// Nifty 
+				summary = "In the last 10 years " + search_result.target + " " + rose_or_fell + " " + get_preposition(search_result) + " " + get_predicate(search_result) + " "+ rose_or_fell_times;
+				// in the last couple of years, the trend has been positive.
+			}
+		}
+		else{
+			// The "third friday of the month", was strongly positive for the Nifty-50 in 2011,12,2013 and 2015. In the last couple of years, the trend has been mixed.
+		}
+
+	}
+	else{
+		return;
+	}
+	*****/
+
+}
+
+/***
+Adani-ports reacted positively to this indicator in 2012, 13, 15 with the best performance in 2015, when it rose nearly 70% of the times.
+In recent years the trend has been positive.
+This year, Adani-Ports has reacted positively to this indicator. 
+
+Will generate something like this:
+This indicator performed best in the year 2014, with Nifty 50 rising 68% of the times.
+The indicator performed worst in the year 2011, with Nifty 50 rising 50% of the times.
+The current year has seen Nifty-50 rise 68% of the times whenever this indicator is triggered.
+
+-- okay so after this is what exactly ?
+-- summaries -> finish today, with the new templates
+-- chart also today
+-- running from 8 - 9.30 : then 1 hour prograaming.
+-- so i have 4 hours till then,
+-- maybe minor highlighting
+-- but that's about it.
+-- and then checking the calculation accuracy
+-- minimum one week more is necessary.
+
+****/
+var get_statistical_summary = function(search_result){
+	var summary = "";
+	var current_year = (new Date()).getFullYear();
+	var _sorted = {}
+
+	for(year in search_result.year_wise_data){
+		var k = search_result.year_wise_data[year];
+		var percentage_rise = (k[0]/(k[0] + k[1]))*100.0;
+		var percentage_fall = (k[1]/(k[0] + k[1]))*100.0;
+		_sorted[year] = [percentage_rise,percentage_fall];
+	}	
+	if(search_result.bias == 1){
+		_.sortKeysBy(_sorted, function (value, key) {
+		    return value[0];
+		});
+	}
+	else{
+		_.sortKeysBy(_sorted, function (value, key) {
+		    return value[1];
+		});	
+	}
+
+	//console.log("sorted is:");
+	//console.log(_sorted);
+
+
+	var current_year_data = {current_year: _sorted[current_year]};
+
+	delete _sorted[current_year];
+
+	var rising_or_falling = (search_result.bias == 1) ? "rising" : "falling";
+
+	var percentage_index = (search_result.bias == 1) ? 0 : 1
+
+	summary += "This indicator performed the best in the year " + _.last(Object.keys(_sorted)) + " with " + search_result.target + " " + rising_or_falling + " " +  _.last(Object.values(_sorted)[percentage_index]) + "% of the times.";
+
+	// now how to display this ?
+	summary += "This indicator performed worst in the year " + _.first(Object.keys(_sorted)) + " with " + search_result.target + " " +rising_or_falling + " " +  _.first(Object.values(_sorted)[percentage_index]) + "% of the times.";
+
+	if(!_.isUndefined(current_year_data[percentage_index])){
+		summary += "The current year has seen " + search_result.target + rising_or_falling + current_year_data[percentage_index] + "% of the times when this indicator is triggered.";
+	}
+
+	search_result.summary = summary;
+	//console.log("summary is:");
+	//console.log(summary);
+	return search_result ;
+
+}
+
+
 var add_data_information_to_primary_entity = function(search_result){
 	var entity_name = search_result.entity_name;
 	if(entity_name.indexOf("_") != -1){
@@ -1701,6 +1941,19 @@ _.mixin({
     }
 });
 
+_.mixin({
+    sortKeysBy: function (obj, comparator) {
+        var keys = _.sortBy(_.keys(obj), function (key) {
+            return comparator ? comparator(obj[key], key) : key;
+        });
+    
+        return _.object(keys, _.map(keys, function (key) {
+            return obj[key];
+        }));
+    }
+});
+
+
 
 $(document).ready(function(){
 	var quote = _.sample(Object.keys(quotes), 1);
@@ -1725,24 +1978,24 @@ $(document).ready(function(){
       		var impacted_entity = the_div.attr("data-impacted-entity");
       		var indicator = the_div.attr("data-indicator");
 
-      		console.log("primary entity:" + primary_entity);
-      		console.log("impacted entity:" + impacted_entity);
-      		console.log("indicator:" + indicator);
+      		//console.log("primary entity:" + primary_entity);
+      		//console.log("impacted entity:" + impacted_entity);
+      		//console.log("indicator:" + indicator);
 
-      		console.log(indicator)
+      		//console.log(indicator)
 
       		if(!_.isBlank(primary_entity)){
-      			console.log("primary entity not undefined and is:" + primary_entity);
+      			//console.log("primary entity not undefined and is:" + primary_entity);
       			update_information_cards(primary_entity,div_id,"primary_entity");
       		}
       		
       		if(!_.isBlank(impacted_entity)){
-      			console.log("impacted entity not undefined and is:" + impacted_entity);
+      			//console.log("impacted entity not undefined and is:" + impacted_entity);
       			update_information_cards(impacted_entity,div_id,"impacted_entity");
       		}
       		
       		if(!_.isBlank(indicator)){
-      			console.log("indicator not undefined and is:" + indicator);
+      			//console.log("indicator not undefined and is:" + indicator);
       			update_information_cards(indicator,div_id,"indicator");
       		}
 
