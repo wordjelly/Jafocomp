@@ -1508,13 +1508,25 @@ var is_binary = function(year_wise_data){
 }
 
 var is_time_based_subindicator = function(search_result){
+	//console.log("************************");
+	//console.log("came to check time based subindicator with setup:" + search_result.setup);
+	
 	var time_based_pattern = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
+	
 	var a = _.isNull(time_based_pattern.exec(search_result.tags));
-	var b = _.isNull(time_based_pattern.exec(search_result.information));
+	
+	var b = _.isNull(time_based_pattern.exec(search_result.information[0]));
+	
 	if((a == true) && (b == true)){
+		//console.log("returning false");
 		return false;
 	}
 	else{
+		//console.log("a is: " + a);
+		//console.log("b is:" + b);
+		//console.log("informatino:");
+		//console.log(search_result.information);
+		//console.log("returning true");
 		return true;
 	}
 }
@@ -1523,9 +1535,10 @@ var get_predicate = function(search_result){
 	var pattern = new RegExp(/\s(in|on)\s(.*)$/);
 	var result = pattern.exec(search_result.setup);
 	var predicate = null;
-	if(!_.isUndefined(result[2])){
-		predicate = result[2];
+	if(!_.isNull(result)){
+		predicate = result[2].replace(/(\(.*\))/,'');
 	}
+
 	return predicate;
 }
 
@@ -1554,7 +1567,7 @@ var get_trend = function(year_wise_data){
 	var summary = "";
 	var current_year = (new Date()).getFullYear();
 	var _sorted = {}
-	var strong_threshold = 68;
+	var strong_threshold = 60;
 	// starts from penultimate year.
 	var total_years_to_consider_as_last_couple = 3;
 	var rose_times = 0;
@@ -1564,13 +1577,16 @@ var get_trend = function(year_wise_data){
 
 	for(year in year_wise_data){
 		var k = year_wise_data[year];
-		var percentage_rise = (k[0]/(k[0] + k[1]))*100.0;
-		var percentage_fall = (k[1]/(k[0] + k[1]))*100.0;
-		
+		var percentage_rise = (Number(k[0])/(Number(k[0]) + Number(k[1])))*100;
+		var percentage_fall = (Number(k[1])/(Number(k[0]) + Number(k[1])))*100;
+		//console.log("year" + year + " fall :" + percentage_fall + " rise :" + percentage_rise);
+		//console.log("percentage rise is:" + percentage_rise);
+		//console.log("percentage fall is:" + percentage_fall);
 		if(percentage_rise >= strong_threshold){
 			strongly_positive_years.push(year);
 		}
-		else if(percentage_fall >= strong_threshold){
+		
+		if(percentage_fall >= strong_threshold){
 			strongly_negative_years.push(year);
 		}
 
@@ -1594,14 +1610,17 @@ var get_trend = function(year_wise_data){
 	});
 
 	// penultimate three.
+	console.log("sorted is:");
+	console.log(_sorted);
 	var best_year = _.last(Object.keys(_sorted));
 	var worst_year = _.first(Object.keys(_sorted));
 
 	var last_couple_positive = 0;
 	var last_couple_negative = 0;
-	
+	var last_couple_total = 0;
 	_.map((Object.keys(year_wise_data).reverse()),function(val,key){
 		if(key > 0 && key < total_years_to_consider_as_last_couple){
+			last_couple_total++;
 			if(_sorted[year][0] > _sorted[year][1]){
 				last_couple_positive+=1;
 			}
@@ -1614,49 +1633,140 @@ var get_trend = function(year_wise_data){
 		}
 	});
 
+	var last_couple_of_years_trend = null;
+
+	if(last_couple_positive >= 2){
+		last_couple_of_years_trend = "mostly positive";
+	}
+	else if(last_couple_negative >= 2){
+		last_couple_of_years_trend = "mostly negative";
+	}
+	else{
+		if(last_couple_total >= 3){
+			last_couple_of_years_trend = "mixed";
+		}
+	}
+
+	var rose_or_fell = null;
+	
+	var rose_or_fell_times = null;
+	
+	if(rose_times >= fell_times){
+		rose_or_fell = "rose";
+		rose_or_fell_times = rose_times;
+	}
+	else{
+		rose_or_fell = "fell";
+		rose_or_fell_times = fell_times;
+	}
+
+
 	return {
 		rose_times: rose_times,
 		fell_times: fell_times,
+		rose_or_fell_times: rose_or_fell_times,
+		rose_or_fell: rose_or_fell,
 		strongly_positive_years: strongly_positive_years,
 		strongly_negative_years: strongly_negative_years,
 		best_year: best_year,
-		worst_year: worst_year
+		worst_year: worst_year,
+		last_couple_of_years_trend: last_couple_of_years_trend
 	}
 }
 
+var add_comma_seperated_list = function(list,text,trend_object){
+
+	_.map(list,function(year,key){
+		text +=  year;
+		if(_.size(list) == 1){
+			text += ".";
+		}
+		else{
+			if(key == (_.size(list)) - 2){
+				text += "and";
+			}
+			else if(key == (_.size(list)) - 1){
+				text += ".";
+			}
+			else{
+				text += ",";
+			}
+		}
+	});
+	return text;
+}
+
+var add_best_worst_year = function(summary,trend_obj){
+	summary += (" The most positive year was: " + trend_obj["best_year"]);
+	summary += (" The most negative year was: " + trend_obj["worst_year"]);
+	return summary;
+}
 
 var build_time_based_indicator_summary = function(search_result){
-	var summary = null;
+	var summary = "";
+	console.log("------------------------------>");
+	console.log(search_result.setup);
 	var trend = get_trend(search_result.year_wise_data);
+	
 	console.log(trend);
-	/****
+	console.log("------------------------------>");
+	
 	if(is_time_based_subindicator(search_result) == true){
-		console.log("is time based" + search_result.setup);
+		//console.log("is time based" + search_result.setup);
 		if(is_binary(search_result.year_wise_data)){
-			console.log("is binary");
+			//console.log("is binary");
 			if(!_.isNull(get_predicate(search_result))){
-				console.log("predicate is not null");
+				//console.log("predicate is not null");
 				// Nifty 
-				summary = "In the last 10 years " + search_result.target + " " + rose_or_fell + " " + get_preposition(search_result) + " " + get_predicate(search_result) + " "+ rose_or_fell_times;
+				// first fix the trend.
+				summary = "In the last " + _.size(Object.keys(search_result.year_wise_data)) + " years, " + search_result.target + " " + trend["rose_or_fell"] + " " + get_preposition(search_result) + " " + get_predicate(search_result) + " " + trend["rose_or_fell_times"];
 				// in the last couple of years, the trend has been positive.
 			}
 		}
 		else{
-			// The "third friday of the month", was strongly positive for the Nifty-50 in 2011,12,2013 and 2015. In the last couple of years, the trend has been mixed.
+			
+			if(_.size(trend["strongly_positive_years"]) > 0){
+				summary = get_predicate(search_result) + " was ";
+				summary += "strongly positive for " + search_result.target +  " in ";
+				summary = add_comma_seperated_list(trend["strongly_positive_years"],text,trend);
+				summary += ".";
+				
+			}
+			if(_.size(trend["strongly_negative_years"]) > 0){
+				summary = get_predicate(search_result) + " was ";
+				summary += "strongly negative for " + search_result.target +  " in ";
+				summary = add_comma_seperated_list(trend["strongly_negative_years"],text,trend);
+				summary += ".";
+			}
+			summary = add_best_worst_year(summary,trend);
 		}
 
 	}
 	else{
-		return;
+		if(_.size(trend["strongly_negative_years"]) > 0){
+			summary = search_result.target + " reacted ";
+			summary += "negatively to this indicator in ";
+			summary = add_comma_seperated_list(trend["strongly_negative_years"],summary);
+			summary += ". It reacted positively to this indicator in ";
+			summary = add_comma_seperated_list(trend["strongly_positive_years"],summary);
+		}
+		else if(_.size(trend["strongly_positive_years"]) > 0){
+			summary = search_result.target + " reacted ";
+			summary += "positively to this indicator in ";
+			summary = add_comma_seperated_list(trend["strongly_positive_years"],summary);
+		}
+		summary = add_best_worst_year(summary,trend);
 	}
-	*****/
 
+	search_result.summary = summary;
+
+	if(!_.isNull(trend["last_couple_of_years_trend"])){
+		search_result.last_couple_of_years = (" In the last couple of years, the trend has been " + trend["last_couple_of_years_trend"]); 
+	}	
+	
 }
 
 /***
-Adani-ports reacted positively to this indicator in 2012, 13, 15 with the best performance in 2015, when it rose nearly 70% of the times.
-In recent years the trend has been positive.
-This year, Adani-Ports has reacted positively to this indicator. 
 
 Will generate something like this:
 This indicator performed best in the year 2014, with Nifty 50 rising 68% of the times.
@@ -1855,7 +1965,8 @@ var quotes = {
 	"Forethought we may have, undoubtedly, but not foresight" : "Napoleon Bonaparte",
 	"The worse a situation becomes, the less it takes to turn it around." : "George Soros",
 	"There's only one boss, the customer. He can fire everyone from the Chairman down, simply by spending his money somewhere else." : "Sam Walton",
-	"I am become death, the destroyer of worlds" : "Oppenheimer after the first nuclear test, quoting the Bhagavad Gita."
+	"I am become death, the destroyer of worlds" : "Oppenheimer after the first nuclear test, quoting the Bhagavad Gita.",
+	"The way to become rich is to put all your eggs in one basket and then watch that basket" : "Andrew Carnegie"
 }
 
 var numeric_literals = {
