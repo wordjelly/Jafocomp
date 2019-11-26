@@ -192,7 +192,7 @@
             {{ }) }}
           </div>  
           
-          <div class="row year_wise_stats" style="margin-top: 1rem;">
+          <div class="row year_wise_stats" style="display:none; margin-top: 1rem;">
               <table class="highlight">
                 <thead>
                   <tr>
@@ -219,12 +219,12 @@
 
       <div class="indicator_performance">
         <div class="card">
-          <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
+          <div class="card-content blue-grey-text text-lighten-1" style="padding-bottom:20px !important;">
             <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
               <i class="{{= search_result.entity_icon}}"></i>
               What has the trend been, over the years?
             </span>
-            <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+            <div class="grey-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
               {{= search_result.summary }}
             </div>
             <div id="chart"></div>
@@ -233,13 +233,36 @@
       </div>
       <div class="indicator_table_stats">
         <div class="card">
-          <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
+          <div class="card-content blue-grey-text text-lighten-1" style="padding-bottom:20px !important;">
             <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
               <i class="{{= search_result.entity_icon}}"></i>
               How Have the Last Couple of Years Been?
             </span>
-            <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+            <div class="grey-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
               {{= search_result.last_couple_of_years }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="indicator_table_stats">
+        <div class="card">
+          <div class="card-content blue-grey-text text-lighten-1" style="padding-bottom:20px !important;">
+            <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
+              <i class="{{= search_result.entity_icon}}"></i>
+              {{ if(search_result.rises_or_falls.indexOf("rise") !== -1)  { }}
+                What was the maximum gain?  
+              {{ } }}
+              {{ if(search_result.rises_or_falls.indexOf("fall") !== -1)  { }}
+                What was the maximum fall?  
+              {{ } }}
+            </span>
+            <div class="grey-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+              {{ if(search_result.rises_or_falls.indexOf("rise") !== -1)  { }}
+                <span class="green-text">The maximum gain was in {{= get_month(search_result.maximum_rise_month) }} {{= search_result.maximum_rise_year }}, when {{= search_result.target }} rose  by {{= search_result.maximum_rise_amount }}%</span>
+              {{ } }}
+              {{ if(search_result.rises_or_falls.indexOf("fall") !== -1)  { }}
+                <span class="red-text">The maximum fall was in {{= get_month(search_result.maximum_fall_month) }} {{= search_result.maximum_fall_year }}, when {{= search_result.target }} fell  by {{= search_result.maximum_rise_amount }}%</span> 
+              {{ } }}
             </div>
           </div>
         </div>
