@@ -134,6 +134,8 @@ var render_search_result_new = function(search_result){
 	// first modify the search result template
 	// give it space for the indicator description, 
 	$('#none').append(template(search_result));
+	// knock of last_couple of years
+
 	/****
 	if(search_result_is_positive(search_result)){
 		////////console.log(template(search_result));
@@ -557,11 +559,11 @@ var set_year_wise_data = function(stats,search_result){
 
 	search_result.maximum_rise_year = max_rise_fall_data[0];
 	search_result.maximum_rise_month = max_rise_fall_data[1];
-	search_result.maximum_rise_amount = max_rise_fall_data[2];
+	search_result.maximum_rise_amount = (Number(max_rise_fall_data[2]))/10;
 
 	search_result.maximum_fall_year = max_rise_fall_data[3];
 	search_result.maximum_fall_month = max_rise_fall_data[4];
-	search_result.maximum_fall_amount = max_rise_fall_data[5];
+	search_result.maximum_fall_amount = (Number(max_rise_fall_data[5]))/10;
 
 	_.each(yw_data,function(val,key){
 		if(key % 3 == 0){
@@ -1677,7 +1679,7 @@ var get_trend = function(year_wise_data){
 	});
 
 	var last_couple_of_years_trend = null;
-	var last_couple_of_years_color = "amber-text";
+	var last_couple_of_years_color = "grey-text text-darken-2";
 
 	////console.log("last couple positive:" + last_couple_positive);
 	////console.log("last couple negative:" + last_couple_negative);
@@ -1690,9 +1692,9 @@ var get_trend = function(year_wise_data){
 		last_couple_of_years_trend = "mostly negative";
 	}
 	else{
-		if(last_couple_total >= 3){
-			last_couple_of_years_trend = "mixed";
-		}
+		//if(last_couple_total >= 3){
+		last_couple_of_years_trend = "mixed";
+		//}
 	}
 
 	var rose_or_fell = null;
@@ -1768,6 +1770,7 @@ var build_time_based_indicator_summary = function(search_result){
 	console.log(trend);
 	console.log("------------------------------>");
 	
+	// i think this is being interpreted as time based.
 	if(is_time_based_subindicator(search_result) == true){
 		////console.log("is time based" + search_result.setup);
 		if(is_binary(search_result.year_wise_data)){

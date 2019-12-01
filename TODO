@@ -99,3 +99,13 @@ i want to cover this on sunday i.e tomorrow -> i want to finish.
 ## Nifty-50 rose in November in 9 out of the last 10 years
 ## The maximum rises was in 2010, the maximum fall in 2020
 ## Over the last 10 years, Nifty-50 rose in November 8 times.  
+
+---------------------------------------------------------
+1. too many confusing options in the dropdown -> i want the nearest one first
+2. 2020 is coming in too many time based results
+3. cross correlations are not being calculated at all, probably because its a sunday ? -> check for this.
+4. What happens to Nifty 50 when Adani Ports sets a 1 week high -- wrongly interpreted as a time based subindicator.
+5. tell that it is for the next day.
+6. clicking on the pattern's doesn't show the result.
+7. What happens to Nifty Bank Index in December(999.99 % is getting considered in this result)
+---------------------------------------------------------
