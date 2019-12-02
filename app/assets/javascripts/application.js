@@ -55,7 +55,10 @@ $(document).on('input','#autocomplete-input',function(event){
 	if(event.keyCode == 32){
 		var autocomplete_hash = JSON.parse($(".autocomplete").first().data('autocomplete_hash'));
 
-		$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
+		//$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
+		console.log("autocomplete hash:");
+		console.log(autocomplete_hash);
+		$('.autocomplete').autocomplete('updateData',autocomplete_hash);
 	}
 	else{
 		////console.log("the val is:" + $(this).val());
@@ -872,6 +875,8 @@ var display_search_results = function(search_results,input){
 	    	build_time_based_indicator_summary(search_result);
 	    	////console.log("search result setup becomes:");
 	    	////console.log(search_result.setup);
+	    	//// okay so by the time we get done on this, 
+	    	//// its changed.
 	    	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = search_result.div_id;
 
 	    	// knock off see-more
@@ -1040,8 +1045,10 @@ var search_new = function(input){
 		    			
 		    		$(".autocomplete").first().data('autocomplete_hash',JSON.stringify(_.object(_.map(autocomplete_hash,function(value,key){return [key.replace(/<\/?[^>]+(>|$)/g, "").trim(),value];}))));
 
-		    		$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
 
+
+		    		//$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
+		    		$('.autocomplete').autocomplete('updateData',autocomplete_hash);
 		    		////console.log("updated the autocomplete");
 
 		    	}
@@ -2166,9 +2173,11 @@ $(document).ready(function(){
         "Apple Java" : null,
         "M Dog" : null
       },
-      onAutocomplete: function(val) {
-        var data = JSON.parse($(".autocomplete").first().data("autocomplete_hash"));
-      	var div_id = data[val];
+      onAutocomplete: function(val,div_id) {
+      	console.log("val is:" + val);
+      	console.log("div id is:" + div_id);
+        //var data = JSON.parse($(".autocomplete").first().data("autocomplete_hash"));
+      	//var div_id = data[val];
       	if(!_.isUndefined(div_id)){
       		var the_div = $("#" + div_id);
       		$(the_div).show();

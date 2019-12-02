@@ -27,11 +27,14 @@ M.Autocomplete.prototype.selectOption = function(el) {
 
   	// Handle onAutocomplete callback.
   	if (typeof this.options.onAutocomplete === 'function') {
-   	 this.options.onAutocomplete.call(this, text);
+     //console.log(el);
+  	 //console.log(el.attr("data-div-id"));
+   	 this.options.onAutocomplete.call(this, text,el.attr("data-div-id"));
   	}
 }
 
 M.Autocomplete.prototype.updateData = function(data) {
+  	
   	let val = this.el.value.toLowerCase();
   	this.options.data = data;
 
@@ -138,8 +141,8 @@ M.Autocomplete.prototype._add_subtext = function(primary_text){
 	var result = moving_average_pattern.exec(primary_text);
 	var indicator = "";
 	if(!_.isNull(result)){
-		console.log("result is:");
-		console.log(result);
+		//console.log("result is:");
+		//console.log(result);
 		
 		if(!_.isUndefined(result[1])){
 			if(result[1].indexOf("\'") == -1){
@@ -177,6 +180,7 @@ M.Autocomplete.prototype._renderDropdown = function(data,val){
 
   	//console.log("data is:");
   	//console.log(data);
+  	//console.log("-------------------------------->");
 
   	// Gather all matching data
   	for (let key in data) {
@@ -206,17 +210,21 @@ M.Autocomplete.prototype._renderDropdown = function(data,val){
   	// Limit
   	matchingData = matchingData.slice(0, this.options.limit);
 
+  	//console.log("matching data is:");
+  	//console.log(matchingData);
+  	//console.log("----------------------------");
+
   	// Render
 	for (let i = 0; i < matchingData.length; i++) {
 	    let entry = matchingData[i];
-	    let $autocompleteOption = $('<li></li>');
-	    if (!!entry.data) {
-	      $autocompleteOption.append(
-	        `<img src="${entry.data}" class="right circle"><span>${entry.key}</span>`
-	      );
-	    } else {
-	      $autocompleteOption.append('<span>' + entry.key + '</span>');
-	    }
+	    let $autocompleteOption = $('<li data-div-id="' + entry.data + '"></li>');
+	    //if (!!entry.data) {
+	    //  $autocompleteOption.append(
+	    //    `<img src="${entry.data}" class="right circle"><span>${entry.key}</span>`
+	    //  );
+	    //} else {
+	    $autocompleteOption.append('<span>' + entry.key + '</span>');
+	    //}
 
 	    $(this.container).append($autocompleteOption);
 	    this._highlight(val, $autocompleteOption);
