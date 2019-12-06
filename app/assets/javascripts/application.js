@@ -872,6 +872,9 @@ var display_search_results = function(search_results,input){
 	    	// let me sort out search.
 	    	search_result.div_id = CreateUUID();
 	    	search_result = get_statistical_summary(search_result);
+	    	// knock of years without any kind of data.
+	    	// 
+
 	    	build_time_based_indicator_summary(search_result);
 	    	////console.log("search result setup becomes:");
 	    	////console.log(search_result.setup);
@@ -1620,26 +1623,34 @@ var get_trend = function(year_wise_data){
 	var strongly_negative_years = [];
 
 	for(year in year_wise_data){
-		var k = year_wise_data[year];
-		var percentage_rise = (Number(k[0])/(Number(k[0]) + Number(k[1])))*100;
-		var percentage_fall = (Number(k[1])/(Number(k[0]) + Number(k[1])))*100;
-		////console.log("year" + year + " fall :" + percentage_fall + " rise :" + percentage_rise);
-		////console.log("percentage rise is:" + percentage_rise);
-		////console.log("percentage fall is:" + percentage_fall);
-		if(percentage_rise >= strong_threshold){
-			strongly_positive_years.push(year);
-		}
 		
-		if(percentage_fall >= strong_threshold){
-			strongly_negative_years.push(year);
-		}
+		var k = year_wise_data[year];
 
-		_sorted[year] = [percentage_rise,percentage_fall];
-		if(k[0] > k[1]){
-			rose_times += 1;
+		if((k[0] + k[1]) == 0){
+			console.log("year:" + year + " has no rise or fall data");
 		}
-		else if(k[0] < k[1]){
-			fell_times += 1;
+		else
+		{
+			var percentage_rise = (Number(k[0])/(Number(k[0]) + Number(k[1])))*100;
+			var percentage_fall = (Number(k[1])/(Number(k[0]) + Number(k[1])))*100;
+			////console.log("year" + year + " fall :" + percentage_fall + " rise :" + percentage_rise);
+			////console.log("percentage rise is:" + percentage_rise);
+			////console.log("percentage fall is:" + percentage_fall);
+			if(percentage_rise >= strong_threshold){
+				strongly_positive_years.push(year);
+			}
+			
+			if(percentage_fall >= strong_threshold){
+				strongly_negative_years.push(year);
+			}
+
+			_sorted[year] = [percentage_rise,percentage_fall];
+			if(k[0] > k[1]){
+				rose_times += 1;
+			}
+			else if(k[0] < k[1]){
+				fell_times += 1;
+			}
 		}
 	}
 

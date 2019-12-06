@@ -218,6 +218,7 @@ M.Autocomplete.prototype._renderDropdown = function(data,val){
 	for (let i = 0; i < matchingData.length; i++) {
 	    let entry = matchingData[i];
 	    let $autocompleteOption = $('<li data-div-id="' + entry.data + '"></li>');
+	    //sort out 2020.
 	    //if (!!entry.data) {
 	    //  $autocompleteOption.append(
 	    //    `<img src="${entry.data}" class="right circle"><span>${entry.key}</span>`
