@@ -325,109 +325,9 @@ class Result
 
 		body = query_builder(query)
 
-=begin
-		body = 
-		{
-	  		_source: ["tags","preposition","epoch","_id"],
-		  	query: {
-			  	nested: {
-			  		path: "complex_derivations",
-			  		query: {
-			  			function_score: {
-			  				query: {
-			  					bool: {
-			  						should: []
-			  					}
-			  				},
-			  				functions: [
-			  					{
-			  						filter: {
-			  							bool: {
-			  								must: [
-
-			  								]
-			  							}
-			  						},
-				                    field_value_factor: {
-				                      	field: "complex_derivations.profitability"
-				                    }
-				                }
-			  				],
-			  				boost_mode: "sum"
-			  			}
-			  		},
-			  		inner_hits: {}
-			  	}
-		  	}
-		}
-
-		query_split = query.split(" ")
-	
-		base_boost = 100
-		query_split.each_with_index {|word,key|
-			## add to the function score filter.
-			
-			body[:query][:nested][:query][:function_score][:query][:bool][:should] << {
-					span_near: {
-						clauses: [
-							{
-								span_term: {
-					                "complex_derivations.tag_text".to_sym => {
-					                  value: word
-					                }
-				            	}
-				        	}
-				        ],
-				        boost: 100
-				    }
-				}
-			
-			if (key < (query_split.size - 1)) 
-					
-
-				body[:query][:nested][:query][:function_score][:query][:bool][:should] << {
-					span_near: {
-						clauses: [
-							{
-								span_term: {
-					                "complex_derivations.tag_text".to_sym => {
-					                  value: query_split[key]
-					                }
-				            	}
-				        	},
-				        	{
-					            span_term: {
-					                "complex_derivations.tag_text".to_sym => {
-					                  value: query_split[key + 1]
-					                }
-					            }
-				        	}
-						],
-						slop: 10,
-						in_order: true,
-						boost: 100
-					}
-				}
-				base_boost = base_boost/2
-			end
-		}
-
-		
-		if body[:query][:nested][:query][:function_score][:query][:bool][:should].blank?
-			body[:query][:nested][:query][:function_score][:query][:bool][:should].pop
-		end
-
-=end
 		puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
-
-		## as far as industries are concerned
-		## i want to know what.
-		## buy bmw?
-		## buy what?
-		## so search inside inner hits.
-		## i dont want the search field to be filled with that.
 
 		search_results = search_results["hits"]["hits"].map{|hit|
 			#puts JSON.generate(hit)
@@ -458,7 +358,9 @@ class Result
 			## then $$start
 			total_up = 0
 			total_down = 0
-			object_to_use["_source"]["stats"].each_slice(3) do |year_data|
+			object_to_use["_source"]["stats"][0..-7].each_slice(3) do |year_data|
+				#puts "year data is:"
+				#puts year_data.to_s
 				total_up += year_data[1]
 				total_down += year_data[2]
 			end
