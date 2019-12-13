@@ -700,7 +700,7 @@ class Result
 					text: args[:prefix],
 					completion: {
 		                field: "suggest",
-		                size: 10
+		                size: 30
 		            }
 				}
 			}
@@ -756,7 +756,7 @@ class Result
 		if search_results.blank?
 			puts JSON.pretty_generate(search_results)
 		else
-			puts JSON.pretty_generate(search_results[0])
+			puts JSON.pretty_generate(search_results)
 		end
 
 		results = {
