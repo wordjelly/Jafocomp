@@ -602,6 +602,8 @@ getStats()[11] = six_month_max_loss;
 ***/
 var assign_statistics = function(search_result,text){
 	
+	console.log(search_result);
+
 	var offsets = get_offsets(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
 	////////console.log("suggestion input is:");
@@ -643,8 +645,8 @@ var assign_statistics = function(search_result,text){
 	set_related_queries_from_suggestion_input(search_result,related_queries);
 	stats = stats.slice(0,12);
 	
-	console.log("stats before going in:");
-	console.log(stats);
+	//console.log("stats before going in:");
+	//console.log(stats);
 	set_year_wise_data(stats,search_result)
 
 	build_setup(search_result,text);
@@ -655,11 +657,11 @@ var assign_statistics = function(search_result,text){
 		statistics: []
 	}
 
-	console.log("setup is:");
-	console.log(search_result.setup);
-	console.log("stats are:");
-	console.log(stats);
-	console.log("-----------------------");
+	//console.log("setup is:");
+	//console.log(search_result.setup);
+	//console.log("stats are:");
+	//console.log(stats);
+	//console.log("-----------------------");
 
 	/// add week.
 	if((Number(stats[0]) == 0) && (Number(stats[1]) == 0)){
