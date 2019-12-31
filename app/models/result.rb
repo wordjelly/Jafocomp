@@ -18,6 +18,10 @@ class Result
 	field :trade_action_end_name, type: String
 	embeds_many :impacts, :class_name => "Impact"
 
+	def self.front_page_trend
+		gateway.client.get index: "correlations", id: "R-front_page_trend"
+	end
+
 	## @param[Hash] args : expected to have one key called information.
 	def self.information(args)
 

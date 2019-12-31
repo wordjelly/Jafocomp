@@ -1,14 +1,19 @@
 class WelcomeController < ApplicationController
 
 	def index
-
+		@result = Result.front_page_trend["_source"]
+=begin
+		respond_to do |format|
+			format.json do 
+				render :json => {results: results, status: 200}
+			end
+		end	
+=end
 	end	
 
 	## so we have a tooltip request.
 	## for things that are to be shown as the information.
 	## we send the match_query and show the first hit, as the result.
-
-
 	def search
 		#sleep(10)
 		puts "params are:"

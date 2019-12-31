@@ -12,8 +12,8 @@
 		</div>
 	</div>
 	<!-- so we have to hide on small -->
-
-	<div class="row center chips hide-on-large-only" style="margin-bottom: 2rem; border-bottom: none;">
+	<!-- hide-on-large-only -->
+	<div class="row center chips" style="margin-bottom: 2rem; border-bottom: none;">
 		<!-- so here we add the chips -->
 		<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="forex" style="border-bottom: none; cursor: pointer;">
 			  FRX
@@ -35,7 +35,7 @@
 		</div>
 	</div>
 
-	<div class="row hide-on-med-and-down" style="margin-top:1rem !important;">
+	<div class="row hide-on-med-and-down" style="margin-top:1rem !important; display:none;">
 		<div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
 	      <h4 data-related-query="forex" class="z-depth-1 index_chip shadow-demo amber center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">FRX</h4>
 	    </div>
@@ -80,7 +80,7 @@
 	        </div>
 	</div>
 
-	<div class="row default_sectors center" style="margin-top: 1rem;">
+	<div class="row default_sectors center" style="margin-top: 1rem; display:none;">
 		<% index = 0 %>
 		<% last_index = $sectors.keys.size %>
 		<% $sectors.keys[0..28].each_slice(4) do |sector_row|%>
@@ -166,7 +166,21 @@
 		</div>
 	</div>
 
-	<div class="row center quote_holder" style="margin-top:1rem;">
+	<div class="row center tip">
+		
+		
+		<div id="front_page_trend" class="card col l6 offset-l3" data-trends="<%= JSON.generate(@result['trends']) %>" style="font-size:22px; margin-top:0.5rem;">
+			<div class="card-content">
+			<div class="card-title">Quick Trends<i class="material-icons refresh_trend" style="vertical-align: super; font-size:18px;">autorenew</i></div>
+			<i style="vertical-align: middle; margin-right:1rem;" class="material-icons <%= @result['trends'][0]["trend_direction"] == 'rise' ? 'green' : 'red' %>-text front_page_trend_icon">trending_<%= @result["trends"][0]["trend_direction"] == "rise" ? "up" : "down" %></i><span id="front_page_trend_setup" class="grey-text"><%= @result["trends"][0]["setup"] %> (<%= @result["trends"][0]["dateString"] %>)</span>
+			</div>
+		</div>
+		<div class="divider col l2 m2 s2 offset-l5 offset-m5 offset-s5" style="margin-top:1rem;">
+		</div>
+	</div>
+
+
+	<div class="row center quote_holder" style="margin-top:1rem; display:none;">
 		<div class="grey-text quote" style="font-size:14px; margin-top:1rem;">
 			<span id="quote"></span><br><span class="blue-grey-text" id="quote_author"></span>
 		</div>

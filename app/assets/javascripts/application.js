@@ -128,7 +128,29 @@ var show_impacted_entity_description = function(search_result){
 
 }
 
+$(document).on('click','.refresh_trend',function(event){
+	// we cycle forwards.
+	var trends = JSON.parse($("#front_page_trend").attr("data-trends"));
+	var trend = _.sample(trends);
+	$("#front_page_trend_setup").text(trend["setup"] + "(" + trend["dateString"] + ")");
+	var icon_text = null;
+	var icon_color = null;
+	if(trend["trend_direction"] == "rise"){
+		icon_text = "trending_up";
+		icon_color = "green";
+	}
+	else if(trend["trend_direction"] == "fall"){
+		icon_text = "trending_down";
+		icon_color = "red";
+	}
+	$("#front_page_trend_setup").prev().attr("class","material-icons " + icon_color + "-text");
+	$("#front_page_trend_setup").prev().text(icon_text);
+});
 
+
+	
+// what would be the right thing to do ?
+// to paginate this stuff.
 
 var render_search_result_new = function(search_result){
 	if(_.isUndefined(template)){
