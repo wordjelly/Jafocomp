@@ -2224,19 +2224,16 @@ $(document).ready(function(){
       	//console.log("div id is:" + div_id);
         //var data = JSON.parse($(".autocomplete").first().data("autocomplete_hash"));
       	//var div_id = data[val];
+      	// we sort this out.
+      	// first.
       	if(!_.isUndefined(div_id)){
+      		$(".search_result_card").hide();
       		var the_div = $("#" + div_id);
       		$(the_div).show();
       		// we want to also show these cards.
       		var primary_entity = the_div.attr("data-primary-entity");
       		var impacted_entity = the_div.attr("data-impacted-entity");
       		var indicator = the_div.attr("data-indicator");
-
-      		//////console.log("primary entity:" + primary_entity);
-      		//////console.log("impacted entity:" + impacted_entity);
-      		//////console.log("indicator:" + indicator);
-
-      		//////console.log(indicator)
 
       		if(!_.isBlank(primary_entity)){
       			//////console.log("primary entity not undefined and is:" + primary_entity);
