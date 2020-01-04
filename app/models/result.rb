@@ -315,7 +315,7 @@ class Result
 				                    }
 				                }
 			  				],
-			  				boost_mode: "sum"
+			  				boost_mode: "multiply"
 			  			}
 			  		},
 			  		inner_hits: {}
