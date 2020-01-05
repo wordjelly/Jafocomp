@@ -271,6 +271,51 @@ class Result
 
 	end
 
+	def self.match_phrase_query_builder(query)
+		qs = query.split(" ")
+		body = {
+			_source: ["tags","preposition","epoch","_id"],
+			query: {
+				nested: {
+					path: "complex_derivations",
+					query: {
+						function_score: {
+							query: {
+								bool: {
+									should: [
+										qs.[0..-2].map.each_with_index{|val,key|
+											{
+												match_phrase: {
+													"complex_derivations.tag_text".to_sym =>  {
+														query: val + " " + qs[key + 1],
+														slop: 10
+													}
+												}
+											}
+										}
+									]
+								}
+							},
+							functions: [
+								{
+									field_value_factor: {
+										field: "complex_derivations.profitability",
+										modifier: "sqrt"
+									}
+								}
+							],
+							boost_mode: "sum"
+						}
+					},
+					inner_hits: {
+						size: 1
+					},
+					score_mode: "max"
+				}
+			}
+		}
+	end
+
 	def self.query_builder(query)
 
 		body = 
@@ -327,7 +372,7 @@ class Result
 
 	def self.nested_function_score_query(query)
 
-		body = query_builder(query)
+		body = match_phrase_query_builder(query)
 
 		puts JSON.pretty_generate(body)
 
