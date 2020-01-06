@@ -283,7 +283,7 @@ class Result
 							query: {
 								bool: {
 									should: [
-										qs.[0..-2].map.each_with_index{|val,key|
+										qs[0..-2].map.each_with_index{|val,key|
 											{
 												match_phrase: {
 													"complex_derivations.tag_text".to_sym =>  {
