@@ -824,12 +824,27 @@ var prepare_query_for_tooltip_search = function(origin){
 	return restore_percentage_and_literal_names_for_information_query(query);
 }
 
-
+/***
+had to run this twice with regexes k1, k2, because sometimes we have a string like
+what happens to adani ports when nifty 50 falls by 10% in 2 weeks.
+so there is 'when' and 'in'
+so the first regex keeps the part upto 'in', and the second regex then gets the actual thing.
+***/
 var assign_target = function(search_result){
-	var k = new RegExp(/to([a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/)
+	var k = new RegExp(/to\s([a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/);
+	var k2 = new RegExp(/([a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/);
+	console.log("setup is:" + search_result.setup);
 	var target = k.exec(search_result.setup);
+	console.log("target is:");
+	console.log(target);
 	if(_.size(target) >= 1){
-		search_result.target = target[1];
+		var target_2 = k2.exec(target[1]);
+		if(_.size(target_2) >= 1){
+			search_result.target = target_2[1];
+		}
+		else{
+			search_result.target = target[1];
+		}
 	}
 }
 
