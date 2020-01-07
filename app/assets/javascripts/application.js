@@ -824,6 +824,9 @@ var prepare_query_for_tooltip_search = function(origin){
 	return restore_percentage_and_literal_names_for_information_query(query);
 }
 
+// empty div should not be shown.
+// 
+
 /***
 had to run this twice with regexes k1, k2, because sometimes we have a string like
 what happens to adani ports when nifty 50 falls by 10% in 2 weeks.
@@ -921,6 +924,14 @@ var display_search_results = function(search_results,input){
 	    	// 
 
 	    	build_time_based_indicator_summary(search_result);
+
+	    	search_result.summary_style = "";
+	    	
+	    	if(_.isNull(search_result.summary) || _.isEmpty(search_result.summary.trim()) || _.isUndefined(search_result.summary)){
+	    		search_result.summary_style = "display:none;"
+	    	}
+
+	    	//search_result.summary_style = "display:none;"
 	    	//////console.log("search result setup becomes:");
 	    	//////console.log(search_result.setup);
 	    	//// okay so by the time we get done on this, 
