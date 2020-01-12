@@ -30,9 +30,10 @@ var slide_down_logo = function(event){
 		$('.show_more_query_chips').remove();
 		$('.query_chips').remove();
 		$('.related_chips').remove();
-		$('.default_sectors').first().show();
+		//$('.default_sectors').first().show();
 		$("#related_queries_holder").empty();
 		$("#related_queries_title").hide();
+		$("#exchanges").show();
 	});
 }
 
@@ -74,6 +75,30 @@ $(document).on('keydown','#search',function(event){
 	search_action($(this).val());
 });
 
+$(document).on('focus','#autocomplete-input',function(event){
+	$("#logo,#exchanges").slideUp('fast',function(){
+						
+	});
+	$(".default_sectors").first().hide();
+
+});
+
+$(document).on('focusout','#autocomplete-input',function(event){
+
+	
+		if(!$(event.relatedTarget).hasClass("autocomplete-content")){
+			if(($("#new_search_results").find(".search_result_card").length) == 0){
+
+				console.log("length is:" + $("#new_search_results").find(".search_result_card").length);
+				console.log(_.isEmpty($("#new_search_results").find(".search_result_card").length));
+				$("#logo,#exchanges").slideDown('fast',function(){
+				
+				});
+			}
+		}
+	
+});
+
 var search_action = function(input){
 	////////console.log("triggered search action");
 	////////console.log("input is: " + input);
@@ -83,7 +108,6 @@ var search_action = function(input){
 	//else{
 		if( !input ) {
 			slide_down_logo();
-			
 		}
 		else{
 			if($('#logo').css('display') == 'none'){
@@ -930,7 +954,8 @@ var display_search_results = function(search_results,input){
 	    	if(_.isNull(search_result.summary) || _.isEmpty(search_result.summary.trim()) || _.isUndefined(search_result.summary)){
 	    		search_result.summary_style = "display:none;"
 	    	}
-
+	    	// okay so lets hope this shit works.
+	    	// now what next ?
 	    	//search_result.summary_style = "display:none;"
 	    	//////console.log("search result setup becomes:");
 	    	//////console.log(search_result.setup);
@@ -2066,8 +2091,12 @@ $(document).on("click",'.index_chip',function(event){
 				
 	});
 	$(".default_sectors").first().hide();
-	$("#search").val($(this).attr("data-related-query"));
 	search_new($(this).attr("data-related-query"));
+	$("#autocomplete-input").val($(this).attr("data-related-query"));
+	$("#autocomplete-input").trigger("click");
+	
+
+	//
 });
 
 
@@ -2096,6 +2125,8 @@ $(document).on('click','.chip',function(event){
 
 		}
 		search_new($(this).attr("data-category"));
+		$("#autocomplete-input").val($(this).attr("data-category"));
+		$("#autocomplete-input").trigger("click");
 	}
 });
 
@@ -2242,8 +2273,7 @@ $(document).ready(function(){
     $('.tooltip').tooltipster();
     $('input.autocomplete').autocomplete({
       data: {
-        "Apple Java" : null,
-        "M Dog" : null
+        
       },
       onAutocomplete: function(val,div_id) {
       	//console.log("val is:" + val);

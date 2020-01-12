@@ -271,6 +271,44 @@ class Result
 
 	end
 
+	def self.should_query_builder(query_string)
+		unless $sectors_name_to_counter[query_string].blank?
+			{
+					match_phrase: {
+						"complex_derivations.industries".to_sym =>  {
+							query: query_string,
+							slop: 10
+						}
+					}
+			}
+		else
+			qs = query_string.split(" ")
+			if qs.size == 1
+				{
+					match_phrase: {
+						"complex_derivations.tag_text".to_sym =>  {
+							query: qs[0],
+							slop: 10
+						}
+					}
+				}
+			else
+				qs[0..-2].map.each_with_index{|val,key|
+					{
+						match_phrase: {
+							"complex_derivations.tag_text".to_sym =>  {
+								query: val + " " + qs[key + 1],
+								slop: 10
+							}
+						}
+					}
+				}
+			end
+		end
+	end
+
+
+
 	def self.match_phrase_query_builder(query)
 		qs = query.split(" ")
 		body = {
@@ -283,16 +321,7 @@ class Result
 							query: {
 								bool: {
 									should: [
-										qs[0..-2].map.each_with_index{|val,key|
-											{
-												match_phrase: {
-													"complex_derivations.tag_text".to_sym =>  {
-														query: val + " " + qs[key + 1],
-														slop: 10
-													}
-												}
-											}
-										}
+										should_query_builder(qs)
 									]
 								}
 							},
