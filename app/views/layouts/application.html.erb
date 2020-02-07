@@ -48,6 +48,105 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 
+  <!-- we have multiple download sessions, it should show a summary of the results of that session, and should be able to click on individual exchanges -->
+  <!-- it will be a card, with the time -->
+  <!-- do sort and collapse, filter unnecessary stuff -->
+  <!-- add the errors to the information -->
+  <!-- we need an entity view -->
+  <!-- and an exchange view -->
+  <script type="text/template" id="download_session_template">
+    <div class="card">
+      <div class="card-content">
+        <div class="card-title">
+          {{= search_result.human_readable_date }}
+        </div>
+        {{ _.each(search_result.exchanges,function(exchange){   }}
+          
+            <h6 class="exchange">{{= exchange.name }}<span class="filter_exchange" data-exchange-name="{{= exchange.name }}">Filter</span></h6>
+            <table class="striped exchange_table" style="display:none;">
+              <thead>
+                <tr>
+                  <th>Event Name</th>
+                  <th>Information</th>
+                  <th colspan="2">Details</th>
+                </tr>
+              </thead>  
+              <tbody>
+              {{ _.each(exchange.events, function(event){  }}
+                  
+                  {{ _.each(event.information, function(information,index){  }}
+
+                    {{if(index == 0)  { }}
+                    <tr>
+                      <td rowspan="{{= _.size(event.information) }}">{{= event.name }}</td>
+                      <td>{{= information.name }}</td>
+                      <td>{{= _.map(information.entities,function(en){return ( '<span class="filter_entity" data-entity-name="' + en.name +'">' + en.name + '</span>');}) }}</td>
+                    </tr>
+                    {{ } else { }}
+                    <tr>
+                    <td>{{= information.name }}</td>
+                    <td>{{= _.map(information.entities,function(en){return ( '<span class="filter_entity" data-entity-name="' + en.name +'">' + en.name + '</span>');}) }}</td>
+                    </tr>
+                    {{ } }}
+
+                    {{ _.each(information.entities, function(entity,index){  }}
+                      
+                    {{ }); }}
+
+                  {{ }); }}
+                
+              {{ }); }}
+              </tbody>
+            </table>
+        {{ }) }}
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="entity_template">
+
+  </script>
+
+  <!-- when you query by exchange, and see a list by download session of summaries and entity names -->
+  <script type="text/template" id="exchange_template">
+    <div class="card">
+      <div class="card-content">
+        <div class="card-title">
+          {{= search_result.name }}
+        </div>
+        {{ _.each(search_result.exchanges,function(exchange){   )}}
+          {{ _.each(exchange.download_sessions,function(download_session){   ) }}
+            <h6>{{= download_session.human_readable }}</h6>
+            <table>
+              <thead>
+                <th>Event Name</th>
+                <th>Total Entities</th>
+                <th>Details</th>
+              </thead>  
+            </table>
+            <tbody>
+            {{ _.each(download_session.events, function(event){ ) }}
+              <tr>
+                <td>{{= event.name }}</td>
+                <td>{{= _.size(event.entities)}}</td>
+                <td>{{ _.each(event.entities, function(entity){  )}}
+                  <a href="#">{{= entity.name }}</a>
+                {{ }); }}
+                </td>
+              </tr>
+            {{ }); }}
+            </tbody>
+          {{ }); }}
+        {{ }) }}
+      </div>
+    </div>
+  </script>
+
+  <!-- when you query by entity, and show a list of events, and summaries, per download session -->
+  <script type="text/template" id="entity_template">
+
+  </script>
+
   <script type="text/template" id="suggest_query_template">
     <li class="collection-item">{{= search_result.suggest_query_payload }}</li>
   </script>

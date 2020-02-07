@@ -7,6 +7,10 @@ Rails.application.routes.draw do
 
   get 'search' => 'welcome#search'
 
+  get 'download_sessions' => 'welcome#download_sessions'
+
+  get 'exchange/:exchange' => 'welcome#exchange'
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

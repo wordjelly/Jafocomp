@@ -133,3 +133,17 @@ ON CLICK THE SEARCH MOVE IT ALL UP IMMEDIATELY.
 - quarter issue.
 - space query firing.
 - integrate clicking on icons for searching also sectors.
+- What happens to Adani Ports when Nifty Bank Index 's high rises (17 Jan 2020)(price for bank index was not there on the 17th so it could not have been generated like this, so we need to check this)
+- typing nifty-50 should yield thursday(16th) as the first result, it is giving friday (17th), when again there was no value on the 17th but it was just run on the 17th.
+- so why is it giving the date on which it was run(check nifty bank index, last date -> that is the first issue actually, check its latest price.)
+
+- currently if a download is runnning, the poller does not run
+- and if the job publisher list is not empty, the download does not run.
+- we want that the download cycle is run every hour
+- it should only download an exchange if at least 2 hours have passed after its closing time
+- so we start at that time.
+- and if to download the exchange or not is decide at exchange_builder_level itself.
+- what about scoring issue.
+
+- basically at this stage if i wanted to know what had happened what do i want to know
+

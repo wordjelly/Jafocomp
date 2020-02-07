@@ -46,10 +46,19 @@ class WelcomeController < ApplicationController
 		end	
 	end
 
+	def download_sessions
+		download_sessions = Logs::DownloadSession.view({"exchanges" => params[:exchanges], "entities" => params[:entities]})
+		respond_to do |format|
+			format.json do 
+				render :json => {download_sessions: download_sessions, status: 200}
+			end
+		end	
+	end
+
 
 	def permitted_params
 		## context will be a single string.
-		params.permit(:query,{:context => []},:suggest_query,:information, :last_successfull_query, :basic_query)
+		params.permit(:query,{:context => []},:suggest_query,:information, :last_successfull_query, :basic_query, :exchange)
 	end
 
 end

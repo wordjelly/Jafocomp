@@ -1,4 +1,5 @@
 //= require search.js
+//= require logs.js
 //= require autocomplete_patch.js
 
 /****
@@ -18,6 +19,7 @@ _.templateSettings = {
     interpolate: /\{\{\=(.+?)\}\}/g,
     evaluate: /\{\{(.+?)\}\}/g
 };
+
 
 _.templateSettings.variable = 'search_result'; 
 
