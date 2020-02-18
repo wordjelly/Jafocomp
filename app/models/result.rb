@@ -704,6 +704,7 @@ class Result
 	end
 
 	def self.plug_industries(input)
+		puts "input is: #{input}" 
 		sectors = []
 		parts = input.split("#")
 		stats = parts[1].split(",")
