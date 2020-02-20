@@ -272,7 +272,9 @@ class Result
 	end
 
 	def self.should_query_builder(query_string)
+		#puts "query string is :#{query_string}"
 		unless $sectors_name_to_counter[query_string].blank?
+			#puts "Sectors not blank."
 			{
 					match_phrase: {
 						"complex_derivations.industries".to_sym =>  {
@@ -282,8 +284,11 @@ class Result
 					}
 			}
 		else
-			qs = query_string.split(" ")
+			#puts "sectors blank."
+			qs = query_string
+			#puts "qs becomes: #{qs}"
 			if qs.size == 1
+				#puts "Size is 1, qs 0 is #{qs[0]}"
 				{
 					match_phrase: {
 						"complex_derivations.tag_text".to_sym =>  {
@@ -293,6 +298,7 @@ class Result
 					}
 				}
 			else
+				#puts "size is more than one."
 				qs[0..-2].map.each_with_index{|val,key|
 					{
 						match_phrase: {
