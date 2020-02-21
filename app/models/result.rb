@@ -785,7 +785,7 @@ class Result
 					text: args[:prefix],
 					completion: {
 		                field: "suggest",
-		                size: 30
+		                size: 8
 		            }
 				}
 			}
