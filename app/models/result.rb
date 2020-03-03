@@ -314,6 +314,16 @@ class Result
 	end
 
 
+	def get_positive_indicators
+		## sort by p_val, and search for trend_direction "rise"
+		## or sort by profitability.
+		## or sort by trend_percentage -> just the precentages.
+	end
+
+	def get_negative_indicators
+		## sort by p_val, and search for trend_direction "fall"
+	end
+
 
 	def self.match_phrase_query_builder(query)
 		qs = query.split(" ")
