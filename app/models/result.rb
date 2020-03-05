@@ -271,6 +271,22 @@ class Result
 
 	end
 
+	def self.must_query_builder(direction)
+		if direction.blank?
+			{
+				terms: {
+					"complex_derivations.trend_direction".to_sym => ["rise","fall"]
+				}
+			}
+		else
+			{
+				term: {
+					"complex_derivations.trend_direction".to_sym => direction
+				}
+			}
+		end
+	end
+
 	def self.should_query_builder(query_string)
 		#puts "query string is :#{query_string}"
 		unless $sectors_name_to_counter[query_string].blank?
@@ -324,8 +340,7 @@ class Result
 		## sort by p_val, and search for trend_direction "fall"
 	end
 
-
-	def self.match_phrase_query_builder(query)
+	def self.match_phrase_query_builder(query,direction)
 		qs = query.split(" ")
 		body = {
 			_source: ["tags","preposition","epoch","_id"],
@@ -338,6 +353,9 @@ class Result
 								bool: {
 									should: [
 										should_query_builder(qs)
+									],
+									must: [
+										must_query_builder(direction)
 									]
 								}
 							},
@@ -415,9 +433,9 @@ class Result
 
 	end
 
-	def self.nested_function_score_query(query)
+	def self.nested_function_score_query(query,direction=nil)
 
-		body = match_phrase_query_builder(query)
+		body = match_phrase_query_builder(query,direction)
 
 		puts JSON.pretty_generate(body)
 
@@ -777,73 +795,85 @@ class Result
 		input
 	end
 
+	def self.directional_query(query,direction)
+
+	end
+
 	## default values for prefix and context are provided in the method as '' and [] respectively.
 	def self.suggest_r(args)
-		
+			
 		search_results = []
-		
-		#puts "came to suggest_r with args"
-		#puts args.to_s
 
-		args[:prefix] ||= ''
-		args[:context] ||= []
+		unless args[:direction].blank?
 
-		body = {
-			_source: ["suggest","tags","preposition","epoch","_id"], 
-			suggest: {
-				correlation_suggestion: {
-					text: args[:prefix],
-					completion: {
-		                field: "suggest",
-		                size: 8
-		            }
+			search_results = nested_function_score_query(args[:prefix],args[:direction])
+
+		else
+			
+			#puts "came to suggest_r with args"
+			#puts args.to_s
+
+			args[:prefix] ||= ''
+			args[:context] ||= []
+
+			body = {
+				_source: ["suggest","tags","preposition","epoch","_id"], 
+				suggest: {
+					correlation_suggestion: {
+						text: args[:prefix],
+						completion: {
+			                field: "suggest",
+			                size: 8
+			            }
+					}
 				}
 			}
-		}
 
-		query_suggestion_results = []
+			query_suggestion_results = []
 
-		search_start_time = Time.now.to_i
-		search_results = gateway.client.search index: "correlations", body: body
-		#puts search_results["suggest"].to_s
-		search_end_time = Time.now.to_i
-		#puts "elasticsearch query took-----------6+--"
-		#puts (search_end_time - search_start_time)
+			search_start_time = Time.now.to_i
+			search_results = gateway.client.search index: "correlations", body: body
+			#puts search_results["suggest"].to_s
+			search_end_time = Time.now.to_i
+			#puts "elasticsearch query took-----------6+--"
+			#puts (search_end_time - search_start_time)
 
-		if search_results["suggest"]
-			search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-			
-			search_results.map!{|c|
-				txt = c["text"]
-				txt = txt.split("#")[0].split(" ")
-				#puts "the text parts are:"
-				#puts txt.to_s
-				c["_source"]["suggest"] = c["_source"]["suggest"].select{|d|
-					results = txt.map{|k|
-						d["input"] =~ /#{k}/
-					}.compact
-					results.size == txt.size
-				}[0..0]
-				c["_source"]["suggest"][0]["input"] = plug_industries(c["_source"]["suggest"][0]["input"])
-				c
-			}
+			if search_results["suggest"]
+				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+				
+				search_results.map!{|c|
+					txt = c["text"]
+					txt = txt.split("#")[0].split(" ")
+					#puts "the text parts are:"
+					#puts txt.to_s
+					c["_source"]["suggest"] = c["_source"]["suggest"].select{|d|
+						results = txt.map{|k|
+							d["input"] =~ /#{k}/
+						}.compact
+						results.size == txt.size
+					}[0..0]
+					c["_source"]["suggest"][0]["input"] = plug_industries(c["_source"]["suggest"][0]["input"])
+					c
+				}
 
-			## write what is / explain
-			## 
-			
-		else
-			search_results = []
-		end
+				## write what is / explain
+				## 
+				
+			else
+				search_results = []
+			end
 
-#			end
+	#			end
 
-		#end
+			#end
 
-		if search_results.blank?
-			puts "search results were blank."
-			## now we have a situation where we have to fall back onto the ngram query.
-			#new_match_query(args[:prefix])
-			search_results = nested_function_score_query(args[:prefix])
+			if search_results.blank?
+				puts "search results were blank."
+				## now we have a situation where we have to fall back onto the ngram query.
+				#new_match_query(args[:prefix])
+				search_results = nested_function_score_query(args[:prefix])
+			end
+
 		end
 
 		puts "the search results are;"
@@ -853,6 +883,8 @@ class Result
 		else
 			puts JSON.pretty_generate(search_results)
 		end
+
+
 
 		results = {
 			#:search_results => search_results,
