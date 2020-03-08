@@ -18,6 +18,24 @@ class Result
 	field :trade_action_end_name, type: String
 	embeds_many :impacts, :class_name => "Impact"
 
+	def self.reload_front_page_trend
+		puts "came to reload front page trend."
+		$front_page_trend_loaded_at ||= Time.now - 6.hours
+		if Time.now.to_i > $front_page_trend_loaded_at.to_i
+			puts "current time is greater #{(Time.now.to_i - $front_page_trend_loaded_at.to_i)}"
+			if ((Time.now.to_i - $front_page_trend_loaded_at.to_i) > 3600*4)
+				puts "setting front page trend."
+				$front_page_trend = front_page_trend
+				puts "front page trend is;"
+				puts $front_page_trend
+				$front_page_trend_loaded_at = Time.now
+			end
+		end
+	end
+	## maybe i can get just the first 5 or something.
+	## so any number of trends.
+	## we can store.
+	## but it will become an ajax call whichever way you go for it.
 	def self.front_page_trend
 		gateway.client.get index: "correlations", id: "R-front_page_trend"
 	end
@@ -379,6 +397,9 @@ class Result
 		}
 	end
 
+
+	## so if you click see more positive indicators, what is it expected to show ?
+	## actually ?
 	def self.query_builder(query)
 
 		body = 
@@ -491,7 +512,14 @@ class Result
 						{
 							input: plug_industries(input)
 						}
-					]
+					],
+					## debug here.
+					trend_direction: object_to_use["_source"]["trend_direction"],
+					nearest_epoch: object_to_use["_source"]["nearest_epoch"],
+					epoch_score: object_to_use["_source"]["epoch_score"],
+					gd_forward_epoch_score: object_to_use["_source"]["gd_forward_epoch_score"],
+					current_datapoint_epoch: object_to_use["_source"]["current_datapoint_epoch"],
+					p_val: object_to_use["_source"]["p_val"]
 				}
 			}
 
@@ -796,6 +824,29 @@ class Result
 	end
 
 	def self.directional_query(query,direction)
+
+	end
+
+	def self.debug_suggest_r(args)
+
+		search_results = nested_function_score_query(args[:prefix])
+
+		puts "the search results are;"
+
+		if search_results.blank?
+			puts JSON.pretty_generate(search_results)
+		else
+			puts JSON.pretty_generate(search_results)
+		end
+
+		results = {
+			#:search_results => search_results,
+			:search_results => search_results,
+			:query_suggestion_results => [],
+			:effective_query => nil
+		}
+
+		results
 
 	end
 

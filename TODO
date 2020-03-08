@@ -154,12 +154,20 @@ ON CLICK THE SEARCH MOVE IT ALL UP IMMEDIATELY.
 - timing logging not working for complex calcultion
 
 ---> how to make it easier for the user to understand and use?
-- mainly easier discoverability of the deeper indicators, currently we are only on top level patterns, and indicators., we don't get much else.
-- share predictions.
-- give some randomized company names and indicator name combinations as search results
+-------------------------------------------------------------
+
+- share the result cards somehow ->(facebook, twitter)
+
+- EXPLORE
+- give some randomized company names and indicator name combinations as search results, together with positive and negatives.
+
 - show the yearwise splitup.
-- other positive indicators for reliance / other negative indicators for reliance.
-- filter on positive or negative indicators (somehow, and with a query string also -> give such links.)
+
+- give information about when the latest indicators will be available.
+
+- give trace UI to understand the scoring -> and solve all the reminaing bugs
+
+- hide the trend box, make the trend box load 10x faster.
 
 ----------------------------------------------------------------------
 ERRORS AND BUG FIXING:

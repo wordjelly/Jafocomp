@@ -36,6 +36,7 @@ var slide_down_logo = function(event){
 		$("#related_queries_holder").empty();
 		$("#related_queries_title").hide();
 		$("#exchanges").show();
+		$(".tip").show();
 	});
 }
 
@@ -82,6 +83,7 @@ $(document).on('focus','#autocomplete-input',function(event){
 						
 	});
 	$(".default_sectors").first().hide();
+	$(".tip").hide();
 
 });
 

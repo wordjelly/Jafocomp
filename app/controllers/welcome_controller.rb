@@ -1,14 +1,9 @@
 class WelcomeController < ApplicationController
 
 	def index
-		@result = Result.front_page_trend["_source"]
-=begin
-		respond_to do |format|
-			format.json do 
-				render :json => {results: results, status: 200}
-			end
-		end	
-=end
+		Result.reload_front_page_trend
+		@result = $front_page_trend["_source"]
+		@result["trends"] = @result["trends"][0..10]
 	end	
 
 	## so we have a tooltip request.
@@ -36,7 +31,7 @@ class WelcomeController < ApplicationController
 			results = Result.information({:information => information})
 		else
 			# so the prefix is either the suggest_query, or the whole_Query.
-			results = Result.suggest_r({:prefix => (suggest_query || query), :whole_query => query, :context => context, :last_successfull_query => last_successfull_query, :basic_query => params[:basic_query], :direction => direction})
+			results = Result.debug_suggest_r({:prefix => (suggest_query || query), :whole_query => query, :context => context, :last_successfull_query => last_successfull_query, :basic_query => params[:basic_query], :direction => direction})
 		end
 
 		respond_to do |format|

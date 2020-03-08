@@ -231,7 +231,17 @@
       </div>
     </div>
   </script>
-  
+
+  <script type="text/template" id="explore_template">
+    <div class="section">
+      <h2 class="center">Explore</h2>
+      <div class="divider"></div> 
+
+    </div>
+  </script>
+    
+  <!-- and how will we display the results -->
+
   <!-- 
   curl -i -H "Accept: application/json" "localhost:8080/match/1" 
 
@@ -313,8 +323,7 @@
               </table>
           </div>
 
-        </div>
-    
+        </div>    
       </div>
 
       <div class="indicator_performance" style="{{= search_result.summary_style }}">
@@ -364,6 +373,28 @@
                 <span class="red-text">The maximum fall was in {{= get_month(search_result.maximum_fall_month) }} {{= search_result.maximum_fall_year }}, when {{= search_result.target }} fell  by {{= search_result.maximum_rise_amount }}%</span> 
               {{ } }}
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="suggestions">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Related</span>
+            <i class="material-icons">chevron_right</i>Positive Indicators For {{= search_result.target }}
+            <br>
+            <i class="material-icons">chevron_right</i>Negative Indicators For {{= search_result.target }}
+          </div>
+        </div>
+      </div>
+      <div class="debug">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              Debug
+            </span>
+            <i class="material-icons">chevron_right</i>Current Datapoint epoch {{= search_result.current_datapoint_epoch }}
+            <br>
+            <i class="material-icons">chevron_right</i>Epoch SCore {{= search_result.gd_epoch_score_new }}
           </div>
         </div>
       </div>
