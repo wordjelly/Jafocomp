@@ -156,10 +156,15 @@ ON CLICK THE SEARCH MOVE IT ALL UP IMMEDIATELY.
 ---> how to make it easier for the user to understand and use?
 -------------------------------------------------------------
 
+- indicator names, subindicator names, and exchange/entity names.
+- those can be loaded at startup.
+
 - share the result cards somehow ->(facebook, twitter)
 
 - EXPLORE
-- give some randomized company names and indicator name combinations as search results, together with positive and negatives.
+- give some randomized company names and indicator name combinations as search results, together with positive and negatives, based on market cap it can be scraped.
+- thereafter, we need indicator and subindicator names.
+- they should be able to somehow browse the indicators.
 
 - show the yearwise splitup.
 

@@ -2,6 +2,9 @@ require 'elasticsearch/persistence/model'
 
 class Result
 	include Mongoid::Document
+	SUBINDICATOR_SUGGESTIONS = ["moving averages cross","pattern","standard deviation","falls","rises","sets a high","sets a low"]
+	INDICATOR_SUGGESTIONS = ["Acceleration Decelaration","Awesome Oscillator","Relative Strength","Average Directional Movement","Moving Average Convergence Divergence","Simple Moving Average","Exponential Moving Average","Double Exponential Moving Average","Triple Exponential Moving Average","CCI Indicator","Williams R Indicator","Stochastic Oscillator K Indicator","Stochastic Osciallator D Indicator","Aroon Up","Aroon Down"]
+	#generate permutataions, and see what has gone wrong.
 	#include Mongoid::Elasticsearch
   	#elasticsearch!
   	SEPARATOR_FOR_TAG_TEXT = "^^"
