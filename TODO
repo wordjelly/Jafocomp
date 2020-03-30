@@ -81,7 +81,23 @@ by this weekend i think this project stage one will be completed.
 
 6.nifty bank index sets a 3 day high, in 2016 there are only 3 incidences ?
 
-
+## so if we returned only one ?
+## what happens to Reliance when Nasdaq's shit falls by 3 percent.
+## if searching for this can provide the result ?
+## or we want a result id, and some kind of an entity id as a response -> and use that ?
+## could that be simpler ? i think yes.
+## so we have to explore that concept.
+## but also need a query string response method.
+## that's one way.
+## i need to build all that then.
+## via js-erb.
+## query string
+## simple correlations for crawlers.
+## search by exchange -> dropdown lists of companies
+## algorini.com/exchange/company -> search for that company by query string.
+## algorini.com/exchanges -> cards
+## algorini.com/NASDAQ/AAPL
+## algorini.com/exchange/NASDAQ/entity/AAPL
 
 8. for time based -> more weightage for nearness
 9. for correlation -> more weightage for profit.
@@ -158,22 +174,21 @@ ON CLICK THE SEARCH MOVE IT ALL UP IMMEDIATELY.
 
 - indicator names, subindicator names, and exchange/entity names.
 - those can be loaded at startup.
-
-- share the result cards somehow ->(facebook, twitter)
+-----------------------------------------------------------------
+|- share the result cards somehow ->(facebook, twitter), put the| |chart in the top result, - show the yearwise splitup, as an svg|
+|so i can get on with this - ok do this.                        |
+-----------------------------------------------------------------
 
 - EXPLORE
 - give some randomized company names and indicator name combinations as search results, together with positive and negatives, based on market cap it can be scraped.
 - thereafter, we need indicator and subindicator names.
 - they should be able to somehow browse the indicators.
 
-- show the yearwise splitup.
-
 - give information about when the latest indicators will be available.
 
 - give trace UI to understand the scoring -> and solve all the reminaing bugs
-
-- hide the trend box, make the trend box load 10x faster.
-
 ----------------------------------------------------------------------
 ERRORS AND BUG FIXING:
 reliance nasdaq 100 - shows only 2 results, when there should be many more.
+-----------------------------------------------------------------------
+make the full text much faster, how.

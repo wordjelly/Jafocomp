@@ -33,6 +33,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/tooltipster@4.2.6/dist/js/tooltipster.bundle.min.js"></script>
 
+
+  <!-- chart js -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
   
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tooltipster@4.2.6/dist/css/tooltipster.bundle.min.css">
@@ -48,6 +52,7 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 
+  
   
   <!-- now the required logs have to work -->
   <!-- for eg time based subindicators -->
@@ -270,7 +275,7 @@
             <i class="material-icons">trending_down</i>
           {{ } }}
           Historically, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span><br> </span>
-          </div>
+        </div>
 
 
 
@@ -336,7 +341,7 @@
             <div class="grey-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
               {{= search_result.summary }}
             </div>
-            <div id="chart"></div>
+            <canvas id="search_result_chart_{{= search_result.div_id }}" width="400" height="150"></canvas>
           </div>
         </div>
       </div>

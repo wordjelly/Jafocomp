@@ -1,5 +1,6 @@
 //= require search.js
 //= require logs.js
+//= require search_result_chart.js
 //= require autocomplete_patch.js
 
 /****
@@ -176,9 +177,16 @@ $(document).on('click','.refresh_trend',function(event){
 });
 
 
+
+var build_chart_dataset = function(serach_result){
+
+}
 	
 // what would be the right thing to do ?
 // to paginate this stuff.
+// get it postable to facebook and twitter at the least.
+// and shareable on everything else.
+// 
 
 var render_search_result_new = function(search_result){
 	if(_.isUndefined(template)){
@@ -188,7 +196,20 @@ var render_search_result_new = function(search_result){
 	// give it space for the indicator description, 
 	$('#none').append(template(search_result));
 	// knock of last_couple of years
+	// sharing it will be a different thing.
+	// we need a query style url thing.
+	// otherwise we are screwed.
+	// query style -> js erb -> with an index showing the result.
+	// something like that.
+	// which they can search and get.
+	// query string we can try today only.
+	// we need endpoints for R-E-xyz/E-n -> this gives only one search result -> and is displayed, with all the twitter card metadata, and all the share buttons.
+	// then we need endpoints like 
+	// query string -> for search
+	// all the way down to these hierarchies
+	// exchange/entity/indicator/subindicator
 
+	draw_chart(("search_result_chart_" + search_result.div_id),search_result);
 	/****
 	if(search_result_is_positive(search_result)){
 		//////////console.log(template(search_result));
@@ -465,6 +486,7 @@ var build_setup = function(search_result,text){
 	// the problem is for the rollovers.
 
 	search_result.setup = search_result.setup + " " + complex_string;	
+	search_result.complex_string = complex_string;
 	assign_target(search_result);
 	get_primary_entity_and_indicator(search_result);
 	//////console.log(search_result);
@@ -609,8 +631,8 @@ var set_year_wise_data = function(stats,search_result){
 	//console.log("max rise fall data:");
 	//console.log(max_rise_fall_data);
 
-	//console.log("yw data is;");
-	//console.log(yw_data);
+	console.log("yw data is;");
+	console.log(yw_data);
 
 	search_result.maximum_rise_year = max_rise_fall_data[0];
 	search_result.maximum_rise_month = max_rise_fall_data[1];

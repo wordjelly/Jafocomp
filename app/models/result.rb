@@ -81,6 +81,9 @@ class Result
 			[]
 		end
 
+		## less complicated than sending some email.
+		## just update the log to remote
+		## that it started.
 	end
 
 	def self.new_match_query(query)
