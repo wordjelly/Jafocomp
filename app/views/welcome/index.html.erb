@@ -1,3 +1,15 @@
+<% content_for :nav_bar do %>
+	<nav class="blue-grey">
+	    <div class="nav-wrapper">
+	      <a href="#" class="brand-logo">Logo</a>
+	      <ul id="nav-mobile" class="right hide-on-med-and-down">
+	        <li><a href="sass.html">Sass</a></li>
+	        <li><a href="badges.html">Components</a></li>
+	        <li><a href="collapsible.html">JavaScript</a></li>
+	      </ul>
+	    </div>
+	</nav>
+<% end %>
 <div class="container">
 	<div class="row">
 		<div id="queued_query" data-queued-query></div>
@@ -6,72 +18,61 @@
 		      <div class="indeterminate"></div>
 		</div>
 	</div>
-	<div class="row" id="logo" style="margin-bottom: 0px !important;">
-		<div class="col l12 m12 s12 center">
-		<img class="responsive-img" src="assets/algorini.png" />
+	<% content_for :before_search do %>
+		<div class="row" id="logo" style="margin-bottom: 0px !important;">
+			<div class="col l12 m12 s12 center">
+			<img class="responsive-img" src="assets/algorini.png" />
+			</div>
 		</div>
-	</div>
-	<!-- so we have to hide on small -->
-	<!-- hide-on-large-only -->
-	<div class="row center chips" id="exchanges" style="margin-bottom: 1rem; margin-top:1rem; border-bottom: none;">
-		<!-- so here we add the chips -->
-		<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="forex" style="border-bottom: none; cursor: pointer;">
-			  FRX
+		<!-- so we have to hide on small -->
+		<!-- hide-on-large-only -->
+		<div class="row center chips" id="exchanges" style="margin-bottom: 1rem; margin-top:1rem; border-bottom: none;">
+			<!-- so here we add the chips -->
+			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="forex" style="border-bottom: none; cursor: pointer;">
+				  FRX
+			</div>
+			<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="dow" style="border-bottom: none; cursor: pointer;">
+				  DOW
+			</div>
+			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="dax" style="border-bottom: none; cursor: pointer;">
+				  DAX
+			</div>
+			<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="cac" style="border-bottom: none; cursor: pointer;">
+				  CAC
+			</div>
+			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="nifty" style="border-bottom: none; cursor: pointer;">
+				  NIFTY
+			</div>
+			<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="opec" style="border-bottom: none; cursor: pointer;">
+				  OIL
+			</div>
 		</div>
-		<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="dow" style="border-bottom: none; cursor: pointer;">
-			  DOW
-		</div>
-		<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="dax" style="border-bottom: none; cursor: pointer;">
-			  DAX
-		</div>
-		<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="cac" style="border-bottom: none; cursor: pointer;">
-			  CAC
-		</div>
-		<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="nifty" style="border-bottom: none; cursor: pointer;">
-			  NIFTY
-		</div>
-		<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="opec" style="border-bottom: none; cursor: pointer;">
-			  OIL
-		</div>
-	</div>
 
-	<div class="row hide-on-med-and-down" style="margin-top:1rem !important; display:none;">
-		<div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 data-related-query="forex" class="z-depth-1 index_chip shadow-demo amber center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">FRX</h4>
-	    </div>
-	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 data-related-query="DOW" class="z-depth-2 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DOW</h4>
-	    </div>
-	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 data-related-query="DAX" class="z-depth-3 index_chip shadow-demo amber center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DAX</h4>
-	    </div>
-	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 data-related-query="CAC" class="z-depth-4 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">CAC</h4>
-	    </div>
-	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 data-related-query="nifty" class="z-depth-5 index_chip shadow-demo amber  center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">NIFTY</h4>
-	    </div>
-	    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-	      <h4 data-related-query="opec" class="z-depth-5 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">OIL</h4>
-	    </div>
-	</div>
-	<!--
-	-->
-	<!--
-	<div class="row">
-		<nav class="white">
-		    <div class="nav-wrapper">
-		      <form>
-		        <div class="input-field">
-		          <input id="search" type="search" placeholder="Apple" required>
-		          <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-		          <i id="clear_search" class="material-icons">close</i>
-		        </div>
-		      </form>
+		<div class="row hide-on-med-and-down" style="margin-top:1rem !important; display:none;">
+			<div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+		      <h4 data-related-query="forex" class="z-depth-1 index_chip shadow-demo amber center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">FRX</h4>
 		    </div>
-		</nav>
-	</div>
+		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+		      <h4 data-related-query="DOW" class="z-depth-2 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DOW</h4>
+		    </div>
+		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+		      <h4 data-related-query="DAX" class="z-depth-3 index_chip shadow-demo amber center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DAX</h4>
+		    </div>
+		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+		      <h4 data-related-query="CAC" class="z-depth-4 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">CAC</h4>
+		    </div>
+		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+		      <h4 data-related-query="nifty" class="z-depth-5 index_chip shadow-demo amber  center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">NIFTY</h4>
+		    </div>
+		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
+		      <h4 data-related-query="opec" class="z-depth-5 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">OIL</h4>
+		    </div>
+		</div>
+	<% end %>
+	<!--
 	-->
+	<!--
+	NOW IN THE APPLICATION LAYOUT ITSELF.
 	<div class="row" style="margin-bottom: 0px;">
 	        <div class="input-field col s12 l12 m12">
 	          <i class="material-icons prefix">textsms</i>
@@ -79,7 +80,7 @@
 	          <label for="autocomplete-input">Search</label>
 	        </div>
 	</div>
-
+	-->
 
 
 	<div class="row default_sectors center" style="margin-top: 1rem; display:none;">
@@ -123,56 +124,18 @@
 	</div>
 	-->
 
-	<!-- HOLDER FOR SEARCH RESULTS -->
-	<div class="row">
-		<div id="top_result_contexts" data-context="[]"></div>
-		
-		<div id="last_successfull_query" data-query="">
-		<!-- for eg if buy gold had worked out -->
-		</div>
-		
-		<div class="row">
-			<div class="search_results col l9 s12 m9" style="padding:0px !important;" id="search_results">
-				
-			</div>
-			
-			<!-- this is where i added the new part -->
-			<div class="row col l12 s12 m12" id="new_search_results" style="display:none;">
-		        <div class="col s12 l12 m12">
-		          <ul class="tabs" style="display:none;">
-		            <li class="tab col s6 m6 l6 amber-text"><a class="positive" href="#positive">Positive Impact <div id="positive_count" class="chip">0</div></a></li>
-		            <li class="tab col s6 m6 l6"><a class="negative" href="#negative">Negative Impact <div id="negative_count" class="chip">0</div></a></li>
-		          </ul>
-		        </div>
-		        <div id="positive"><div style="visibility:hidden;">hello</div></div>
-		        <div id="negative"><div style="visibility:hidden;">hello</div></div>
-		        <div id="none"></div>
-		    </div>
+	
 
-		    <div class="center related_queries col l12 m12 s12" id="related_queries" style="padding-left: 1.5rem;">
-				<h5 class="blue-grey-text" style="margin-top: 0.6rem; display:none;" id="related_queries_title">
-					<div>Related</div>
-					<div class="divider" style="margin-bottom:0.2rem; margin-top:0.5rem;"></div>
-				</h5>
-				
-				<div id="related_queries_holder">
-				</div>
-
-
-				<div id="categories">
-					
-				</div>
-				
-			</div>
-			
-		</div>
-
-	</div>
-
-
+	<!-- let the objects extend so that a basic layout can be done ? -->
+	<!-- like result, indicator, subindicator, entity, exchange -->
+	<!-- so we had a partial saturation herewiths -->
+	<!-- now write a script to detect that -->
+	<!-- we can make this whole thing the basic layout -->
+	<!-- page title will be defined in the controller, so it can pick that up, also a description, we can have a set_meta before_action -->
+	<!-- in the application_controller level -->
+	<!-- and javascript will execute all the hiding etc -->
 
 	<div class="row center tip">
-		
 		
 		<div id="front_page_trend" class="card col l6 offset-l3" data-trends="<%= JSON.generate(@result['trends']) %>" style="font-size:22px; margin-top:0.5rem;">
 			<div class="card-content">
@@ -200,7 +163,7 @@
 	<div id="logs" class="row center" style="margin-top:1rem;">
 		
 	</div>
-
+	<!-- so we can put all this into the layout -->
 <!--
 	<div class="row center quote_holder" style="margin-top:1rem;">
 		<div class="dedication grey-text" style="font-size:12px;">

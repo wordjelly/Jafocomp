@@ -20,9 +20,17 @@ var draw_chart = function(id,search_result){
     var equal_data_background_color = [];
     var equal_data_border_color = [];
 
+    var data = [];
+    var data_background_color = [];
+    var data_border_color = [];
+
 
     _.each(Object.values(year_wise_data),function(k){
         if(k[0] > k[1]){
+            data.push(k[0] - k[1]);
+            data_background_color.push('rgba(0,128,128,0.8)');
+            data_border_color.push('rgba(0,128,128,1');
+
             up_data.push(k[0]);
             down_data.push(k[1]);
             equal_data.push(0);
@@ -32,6 +40,10 @@ var draw_chart = function(id,search_result){
             down_data_border_color.push('rgba(255,0,0,0.1');
         }
         else if(k[0] == k[1]){
+            data.push(k[0]);
+            data_background_color.push('rgba(128,128,128,0.2)');
+            data_border_color.push('rgba(128,128,128,1');
+
             up_data.push(0);
             down_data.push(0);
             equal_data.push(k[0]);
@@ -41,6 +53,10 @@ var draw_chart = function(id,search_result){
             down_data_border_color.push('rgba(255,0,0,0.1');
         }
         else{
+            data.push(k[1] - k[0]);
+            data_background_color.push('rgba(255,0,0,0.8)');
+            data_border_color.push('rgba(255,0,0,1');
+
             up_data.push(k[0]);
             down_data.push(k[1]);
             equal_data.push(0);
@@ -59,32 +75,42 @@ var draw_chart = function(id,search_result){
 
     var title = search_result.target +  " / " + search_result.complex_string;
     
+    /***
+    {
+        label: '# Reacted Positively',
+        data: up_data,
+        backgroundColor: up_data_background_color,
+        borderColor: up_data_border_color,
+        borderWidth: 1
+    },
+    {
+        label: '# Reacted Negatively',
+        data: down_data,
+        backgroundColor: down_data_background_color,
+        borderColor: down_data_border_color,
+        borderWidth: 1
+    },
+    {
+        label: '# Mixed Reaction',
+        data: equal_data,
+        backgroundColor: equal_data_background_color,
+        borderColor: equal_data_border_color,
+        borderWidth: 1
+    }
+    ****/
+
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [
                 {
-                    label: '# Reacted Positively',
-                    data: up_data,
-                    backgroundColor: up_data_background_color,
-                    borderColor: up_data_border_color,
-                    borderWidth: 1
-                },
-                {
-                    label: '# Reacted Negatively',
-                    data: down_data,
-                    backgroundColor: down_data_background_color,
-                    borderColor: down_data_border_color,
-                    borderWidth: 1
-                },
-                {
-                    label: '# Mixed Reaction',
-                    data: equal_data,
-                    backgroundColor: equal_data_background_color,
-                    borderColor: equal_data_border_color,
-                    borderWidth: 1
-                }
+                    label: "Result",
+                    data: data,
+                    backgroundColor: data_background_color,
+                    borderColor: data_border_color,
+                    borderWidth : 1
+                }   
             ]
         },
         options: {

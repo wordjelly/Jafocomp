@@ -21,6 +21,13 @@ class Result
 	field :trade_action_end_name, type: String
 	embeds_many :impacts, :class_name => "Impact"
 
+	## here we find by the 
+	def self.es_find(id,args={})
+		response = gateway.client.get :id => id, :index => "correlations", :type => "result"
+		hit = {}
+		
+	end
+
 	def self.reload_front_page_trend
 		puts "came to reload front page trend."
 		$front_page_trend_loaded_at ||= Time.now - 6.hours
@@ -508,6 +515,8 @@ class Result
 			## tso problem
 			input = entity_name + "#" +  "#{total_up}$$" + object_to_use["_source"]["stats"].join("$") + ",#{total_down}" + ",0,0,0,0,0,0,0,0,0,0,0" + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
 
+			
+
 			hit = {
 				_id: hit["_id"],
 				_source: {
@@ -845,8 +854,9 @@ class Result
 			puts JSON.pretty_generate(search_results)
 		end
 
+		## so we are returning an array of search results.
+		## that have to be structured.
 		results = {
-			#:search_results => search_results,
 			:search_results => search_results,
 			:query_suggestion_results => [],
 			:effective_query => nil

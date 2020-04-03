@@ -274,6 +274,24 @@ var prepare_information_title = function(information_title){
 	return humanize(information_title);
 }
 
+/// we can go with query strings ?
+/// results controller  results/:rid?entity_id=E-22
+/// this is to deep link to search_results > for twitter etc.
+/// making the svg a jpg.
+
+/// indicators controller indicators/stochastic_oscillator_k_indicator?id=1-10 -> should show the information on stochastic, and 10 search results with that indicator, that will just be a query string.
+
+/// exchanges controller exchanges/:exchange_name -> should show the details of that exchange and 10 search results.
+
+/// indicators
+/// subindicators
+/// exchanges
+/// entities
+/// exchanges/exchange_id/entities/entity_id/indicators/indicator_id/subindicators/subindicator_id
+/// we will need MVC, For all of them, to be able to render views.
+/// with breadcrumbing.
+/// query string like : ?
+/// linking to a direct result id.
 
 var humanize_tags = function(tags){
 	// so we join the tags and see if we can return somdthing sensible,
@@ -931,7 +949,7 @@ function CreateUUID() {
 }
 
 // we fold the indicators, add it into a seperate data elemet.
-
+// it renders the javascript with the content
 /****
 @return[Hash]
 ## key => search result text
