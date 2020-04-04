@@ -1,14 +1,14 @@
 class ResultsController < ApplicationController
 
-	## do we go with cloudinary and twitter first ?
-	## and then google.
-	## so first make this
-	## basically the thing is SEO right now.
-	## get it working with google visualizer.
-	## related queries
-	## and other links.
+	## overriden from application controller.
+	def set_meta_information
+		# cannot be enforced.
+	  	@title = DEFAULT_TITLE
+	  	@meta_description = DEFAULT_META_DESCRIPTION
+  	end
+	
 	def show
-		@result = Result.es_find(params[:id],entity_id)
+		@result = Result.es_find(params[:id],{})
 	end
 
 	def permitted_params

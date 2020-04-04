@@ -1,5 +1,6 @@
 //= require search.js
 //= require logs.js
+//= require result.js
 //= require search_result_chart.js
 //= require autocomplete_patch.js
 
@@ -190,8 +191,10 @@ var build_chart_dataset = function(serach_result){
 
 var render_search_result_new = function(search_result){
 	if(_.isUndefined(template)){
+		console.log("got a template");
 		var template = _.template($('#search_result_template').html());
 	}
+	// there is something called none.
 	// first modify the search result template
 	// give it space for the indicator description, 
 	$('#none').append(template(search_result));
@@ -330,6 +333,18 @@ var get_primary_entity_and_indicator = function(search_result){
 	//////console.log("search result primary entity:" + search_result.primary_entity + " indicator: " + search_result.indicator);
 }
 
+// called after build setup.
+var build_meta_description = function(search_result){
+	search_result.description = "Historicall " + search_result.target + search_result.rises_or_falls + search_result.percentage + "%" +  "of the times.";
+};
+
+var add_chart_image_url = function(search_result){
+	search_result.chart_url = "";
+};
+
+var add_twitter_cards_details = function(search_result){
+
+};
 
 var build_setup = function(search_result,text){
 
@@ -529,7 +544,8 @@ var build_setup = function(search_result,text){
 		search_result.setup = rises_parts[0] + rises_parts[1]; 
 	}
 	***/
-
+	build_meta_description(search_result);
+	add_chart_image_url(search_result);
 }
 
 // so on clicking choose report, it executes an update
@@ -696,8 +712,10 @@ var assign_statistics = function(search_result,text){
 
 	var offsets = get_offsets(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
-	////////console.log("suggestion input is:");
-	////////console.log(suggestion.input);
+	console.log("suggestion");
+	console.log(suggestion);
+	console.log("suggestion input is:");
+	console.log(suggestion.input);
 	var related_queries = suggestion.input.split("%")[1].split("*")[0];
 	var pre = suggestion.input.split("%")[0];
 	var information = pre.split("#");
@@ -948,6 +966,95 @@ function CreateUUID() {
   });
 }
 
+
+var prepare_search_result = function(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries){
+
+	text = search_result["text"];
+	search_result = search_result['_source'];
+	assign_statistics(search_result,text);
+	search_result = update_coin_counts(search_result);
+	search_result = update_bar_lengths(search_result);
+	search_result = convert_n_day_change_to_superscript(search_result);
+	search_result = replace_percentage_and_literal_numbers(search_result);
+	search_result.setup = shrink_indicators(search_result.setup);
+	search_result = strip_period(search_result);
+	search_result = update_falls_or_rises_text(search_result);	
+	search_result = add_time_to_setup(search_result);
+	// okay so what next.
+	// do we knock off the dates ?
+	// what about the dots ?
+	// let me sort out search.
+	search_result.div_id = CreateUUID();
+	search_result = get_statistical_summary(search_result);
+	// knock of years without any kind of data.
+	// 
+
+	build_time_based_indicator_summary(search_result);
+
+	search_result.summary_style = "";
+	
+	if(_.isNull(search_result.summary) || _.isEmpty(search_result.summary.trim()) || _.isUndefined(search_result.summary)){
+		search_result.summary_style = "display:none;"
+	}
+	// okay so lets hope this shit works.
+	// now what next ?
+	//search_result.summary_style = "display:none;"
+	//////console.log("search result setup becomes:");
+	//////console.log(search_result.setup);
+	//// okay so by the time we get done on this, 
+	//// its changed.
+	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = search_result.div_id;
+
+	// knock off see-more
+	// and add the arrows and superscript after the highlight.
+
+
+	var arr = search_result.setup.split(" ");
+	var concat = "";
+	var see_more_triggered = false;
+	_.each(arr,function(value,index){
+		if(value == "See-More"){
+			see_more_triggered = true;
+			////////console.log("see more is triggered");
+			concat += "<span class='see-more'>...</span>";
+		}
+		else{
+    		if(index == 2){
+    			var cls = 'blue-grey-text';
+    			var style = 'display:inline;';
+    			if(see_more_triggered === true){
+    				style = 'display:none;';
+    			}
+    			concat+= ("<span style=" + style + " class=" + cls + ">"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
+    		}
+    		else{
+    			var cls = 'tooltip';
+    			var style = 'display:inline;';
+    			if(see_more_triggered === true){
+    				style = 'display:none;';
+    			}
+    			////////console.log("style is:" + style);
+    			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
+    		}
+		}
+
+	});
+	concat += "</span>";
+	var icon = get_icon(search_result.setup);
+	search_result.setup = icon + concat;	
+	
+	categories = _.union(search_result.categories,categories);
+	related_queries = _.union(search_result.related_queries,related_queries);
+	if(search_result_is_positive(search_result)){
+		++total_positive;
+	}
+	else{
+		++total_negative;
+	}
+
+	return search_result;
+}
+
 // we fold the indicators, add it into a seperate data elemet.
 // it renders the javascript with the content
 /****
@@ -970,89 +1077,8 @@ var display_search_results = function(search_results,input){
 	var total_negative = 0;
 	 // and later use a template to get this.
 	_.each(search_results,function(search_result,index,list){
-		
-	    	text = search_result["text"];
-	    	search_result = search_result['_source'];
-	    	assign_statistics(search_result,text);
-	    	search_result = update_coin_counts(search_result);
-	    	search_result = update_bar_lengths(search_result);
-	    	search_result = convert_n_day_change_to_superscript(search_result);
-	    	search_result = replace_percentage_and_literal_numbers(search_result);
-	    	search_result.setup = shrink_indicators(search_result.setup);
-	    	search_result = strip_period(search_result);
-	    	search_result = update_falls_or_rises_text(search_result);	
-	    	search_result = add_time_to_setup(search_result);
-	    	// okay so what next.
-	    	// do we knock off the dates ?
-	    	// what about the dots ?
-	    	// let me sort out search.
-	    	search_result.div_id = CreateUUID();
-	    	search_result = get_statistical_summary(search_result);
-	    	// knock of years without any kind of data.
-	    	// 
-
-	    	build_time_based_indicator_summary(search_result);
-
-	    	search_result.summary_style = "";
 	    	
-	    	if(_.isNull(search_result.summary) || _.isEmpty(search_result.summary.trim()) || _.isUndefined(search_result.summary)){
-	    		search_result.summary_style = "display:none;"
-	    	}
-	    	// okay so lets hope this shit works.
-	    	// now what next ?
-	    	//search_result.summary_style = "display:none;"
-	    	//////console.log("search result setup becomes:");
-	    	//////console.log(search_result.setup);
-	    	//// okay so by the time we get done on this, 
-	    	//// its changed.
-	    	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = search_result.div_id;
-
-	    	// knock off see-more
-	    	// and add the arrows and superscript after the highlight.
-
-
-	    	var arr = search_result.setup.split(" ");
-	    	var concat = "";
-	    	var see_more_triggered = false;
-	    	_.each(arr,function(value,index){
-	    		if(value == "See-More"){
-	    			see_more_triggered = true;
-	    			////////console.log("see more is triggered");
-	    			concat += "<span class='see-more'>...</span>";
-	    		}
-	    		else{
-		    		if(index == 2){
-		    			var cls = 'blue-grey-text';
-		    			var style = 'display:inline;';
-		    			if(see_more_triggered === true){
-		    				style = 'display:none;';
-		    			}
-		    			concat+= ("<span style=" + style + " class=" + cls + ">"+ "<span class='tooltip' title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
-		    		}
-		    		else{
-		    			var cls = 'tooltip';
-		    			var style = 'display:inline;';
-		    			if(see_more_triggered === true){
-		    				style = 'display:none;';
-		    			}
-		    			////////console.log("style is:" + style);
-		    			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
-		    		}
-	    		}
-
-	    	});
-	    	concat += "</span>";
-			var icon = get_icon(search_result.setup);
-			search_result.setup = icon + concat;	
-	    	
-	    	categories = _.union(search_result.categories,categories);
-	    	related_queries = _.union(search_result.related_queries,related_queries);
-	    	if(search_result_is_positive(search_result)){
-	    		++total_positive;
-	    	}
-	    	else{
-	    		++total_negative;
-	    	}
+	    	search_result = prepare_search_result(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries);
 	    	render_search_result_new(search_result);
 	    	
     });

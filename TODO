@@ -192,3 +192,16 @@ ERRORS AND BUG FIXING:
 reliance nasdaq 100 - shows only 2 results, when there should be many more.
 -----------------------------------------------------------------------
 make the full text much faster, how.
+
+
+--------------------------------------------------------------------
+4/4/2020
+- share to twitter, share to facebook, pin on pintrest -> to upload the image of the graph to cloudinary, create a video for the publicity, and the banner ads.
+
+- pages to browse by entity, exchange, indicator, subindicator ==> choose these by drop downs, for a given entity, and give the related items.
+
+- solve poller saturation, memory leak issues
+
+- make the graph better and easier to understand.
+
+- solve existing bugs in the UI(run the download everyday, browse around, found bugs, solve them.)

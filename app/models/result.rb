@@ -4,6 +4,7 @@ class Result
 	include Mongoid::Document
 	SUBINDICATOR_SUGGESTIONS = ["moving averages cross","pattern","standard deviation","falls","rises","sets a high","sets a low"]
 	INDICATOR_SUGGESTIONS = ["Acceleration Decelaration","Awesome Oscillator","Relative Strength","Average Directional Movement","Moving Average Convergence Divergence","Simple Moving Average","Exponential Moving Average","Double Exponential Moving Average","Triple Exponential Moving Average","CCI Indicator","Williams R Indicator","Stochastic Oscillator K Indicator","Stochastic Osciallator D Indicator","Aroon Up","Aroon Down"]
+
 	#generate permutataions, and see what has gone wrong.
 	#include Mongoid::Elasticsearch
   	#elasticsearch!
@@ -24,8 +25,10 @@ class Result
 	## here we find by the 
 	def self.es_find(id,args={})
 		response = gateway.client.get :id => id, :index => "correlations", :type => "result"
-		hit = {}
-		
+		if response["_source"]
+			## prepare this response like a regular search result.
+			complex_derivation_to_hit(response,response["_source"]["complex_derivations"][0])
+		end
 	end
 
 	def self.reload_front_page_trend
@@ -465,6 +468,68 @@ class Result
 		  	}
 		}
 
+	end
+
+	def self.complex_derivation_to_hit(hit,complex_derivation)
+		# if it doesn't contain the time tag_text
+		# then we have to get it from the suggest.
+		query = nil
+		selected_names = []
+		entity_name = nil
+		if complex_derivation["tag_text"].blank?
+			entity_name = complex_derivation["tags"][0]
+		else
+			entity_names = complex_derivation["tag_text"].split(SEPARATOR_FOR_TAG_TEXT)[0].split(",")
+			selected_names = entity_names.select{|c| query =~ /c/i } unless query.blank?
+			entity_name = nil
+
+			if selected_names.blank?
+				entity_name = entity_names[0]	
+			else
+				entity_name = selected_names[0]
+			end
+		end
+
+		## so the stats here is the year wise data.
+		## how is it coming currently
+		## there are two things.
+		## and then the total up and down
+		## then $$start
+		total_up = 0
+		total_down = 0
+		complex_derivation["stats"][0..-7].each_slice(3) do |year_data|
+			#puts "year data is:"
+			#puts year_data.to_s
+			total_up += year_data[1]
+			total_down += year_data[2]
+		end
+
+		## so there is some issue here.
+		## tso problem
+		input = entity_name + "#" +  "#{total_up}$$" + complex_derivation["stats"].join("$") + ",#{total_down}" + ",0,0,0,0,0,0,0,0,0,0,0" + complex_derivation["industries"].join(",") + "*#{entity_name.size},0" 
+
+		
+
+		hit = {
+			_id: hit["_id"],
+			_source: {
+				preposition: hit["_source"]["preposition"],
+				epoch: hit["_source"]["epoch"],
+				tags: hit["_source"]["tags"],
+				suggest: [
+					{
+						input: plug_industries(input)
+					}
+				],
+				## debug here.
+				trend_direction: complex_derivation["trend_direction"],
+				nearest_epoch: complex_derivation["nearest_epoch"],
+				epoch_score: complex_derivation["epoch_score"],
+				gd_forward_epoch_score: complex_derivation["gd_forward_epoch_score"],
+				current_datapoint_epoch: complex_derivation["current_datapoint_epoch"],
+				p_val: complex_derivation["p_val"]
+			}
+		}
 	end
 
 	def self.nested_function_score_query(query,direction=nil)

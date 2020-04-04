@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= @title %></title>
 
-  <meta name=”description” content="<%= @meta_description %>">
+  <title id="title"><%= @title %></title>
+
+  <meta id="meta_description" name=”description” content="<%= @meta_description %>">
   <!-- so we do title and description -->
   <!-- so i need to give a sector selector -->
   <!-- jquery -->
@@ -444,7 +445,16 @@
 <body>
 
 <!-- nav bar will have to be here if at all -->
-<%= content_for :nav_bar %>
+<nav class="blue-grey">
+  <div class="nav-wrapper">
+    <a href="#" class="brand-logo">Algorini</a>
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <li><a href="sass.html">Markets</a></li>
+      <li><a href="badges.html">Stocks</a></li>
+      <li><a href="collapsible.html">Indicators</a></li>
+    </ul>
+  </div>
+</nav>
 
 <div class="container">
   <!-- search related stuff -->
