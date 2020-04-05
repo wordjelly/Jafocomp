@@ -1,1 +1,9 @@
+<% content_for :twitter_card do %>
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="<%= @twitter_username %>" />
+	<meta name="twitter:title" id="twitter_title" content="" />
+	<meta name="twitter:description" id="twitter_description" content="" />
+	<meta name="twitter:image" id="twitter_description" content="" />
+<% end %>
+<!-- lets upload this much and see -->
 <div id="_result" data-result="<%= JSON.generate(@result) %>"></div>

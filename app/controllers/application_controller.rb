@@ -9,9 +9,12 @@ class ApplicationController < ActionController::Base
 
   DEFAULT_META_DESCRIPTION = "Millions of Simple Answers like : What happens to US stocks on a Monday?"
 
+  TWITTER_USERNAME = "tradejelly"
+
   def set_meta_information
   	@title = DEFAULT_TITLE
   	@meta_description = DEFAULT_META_DESCRIPTION
+    
   end
 
   ## so now how to set the layout.
