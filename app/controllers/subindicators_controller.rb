@@ -1,4 +1,4 @@
-class IndicatorssController < ApplicationController
+class SubindicatorsController < ApplicationController
 
 	def show
 		@result = Result.es_find(params[:id],entity_id)

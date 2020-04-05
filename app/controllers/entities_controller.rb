@@ -1,1 +1,0 @@
-entities_controller.rb
