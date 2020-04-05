@@ -5,7 +5,7 @@ class ImagesController < ApplicationController
 
 	#before_action :do_before_request
 
-	respond_to :html, :json
+	#respond_to :html, :json
 
 	## so we can have certain information
 	## like 
