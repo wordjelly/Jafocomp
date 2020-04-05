@@ -1,6 +1,8 @@
 //= require search.js
 //= require logs.js
 //= require result.js
+//= require cloudinary
+//= require images.js
 //= require search_result_chart.js
 //= require autocomplete_patch.js
 

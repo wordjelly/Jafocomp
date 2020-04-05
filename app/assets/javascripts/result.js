@@ -13,7 +13,27 @@ $(document).ready(function(){
 	else{
 		console.log("no result");
 	}
+	// probably won't be needed later on.
+	// we use a recaptcha
+	// and a signed upload
+	// with signed_upload we control -> the rate of upload
+	// 
+	//load_cloudinary_button();
+	//if($.fn.cloudinary_fileupload !== undefined) {
+    //	$("input.cloudinary-fileupload[type=file]").cloudinary_fileupload();
+  	//}
 });
+
+
+var load_cloudinary_button = function(){
+	$('#upload_widget_opener').cloudinary_upload_widget(
+	  get_widget_options(),
+	  function(error, result) { 
+	     var results_array = result[0];
+	     var secure_url = results_array["secure_url"];
+	     loadImage(secure_url,90,60,"#uploaded_image");
+	});
+}
 
 var update_title_and_description = function(search_result){
 	$("#title").val(search_result.setup);

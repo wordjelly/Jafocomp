@@ -8,6 +8,9 @@ class ResultsController < ApplicationController
 	  	@twitter_username = TWITTER_USERNAME
   	end
 
+  	
+
+  	## so now for the cloudinary prt.
   	def set_twitter_cards_information
 =begin
 	## twitter cards validator : 

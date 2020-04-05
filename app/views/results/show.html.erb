@@ -1,9 +1,11 @@
 <% content_for :twitter_card do %>
-	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:site" content="<%= @twitter_username %>" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="<%= @algorinie %>" />
 	<meta name="twitter:title" id="twitter_title" content="title" />
 	<meta name="twitter:description" id="twitter_description" content="Description" />
-	<meta name="twitter:image" id="twitter_image" content="https://dummyimage.com/600x400/000/fff" />
+	<meta name="twitter:image" id="twitter_image" content="https%3A%2F%2Fquickchart.io%2Fchart%3Fc%3D%7Btype%3A%27bar%27%2Cdata%3A%7Blabels%3A%5B2012%2C2013%2C2014%2C2015%2C2016%5D%2Cdatasets%3A%5B%7Blabel%3A%27Users%27%2Cdata%3A%5B120%2C60%2C50%2C180%2C120%5D%7D%5D%7D%7D" />
 <% end %>
 <!-- lets upload this much and see -->
 <div id="_result" data-result="<%= JSON.generate(@result) %>"></div>
+<% @image = Image.new %>
+<%= render :partial => "images/form" %>

@@ -1,0 +1,8 @@
+<%= form_for @image, as: :image, method: @image.new_record? ? :post : :put, url: @image.new_record? ? "/images" : "/images/#{@image.id.to_s}" do |f| %>
+	
+	<%= render :partial => "images/image", locals: {model: 
+			@image} %>
+		
+	<%= f.submit "Submit" %>
+
+<% end %>

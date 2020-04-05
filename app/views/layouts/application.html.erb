@@ -55,11 +55,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
 
   
+  <%= csrf_meta_tags %>
+
+  <%= javascript_include_tag  "https://widget.cloudinary.com/global/all.js" %>
+
+  <%= cloudinary_js_config %>
   
+
   <!-- now the required logs have to work -->
   <!-- for eg time based subindicators -->
   <!-- time of processing of individaul entity tasks -->
