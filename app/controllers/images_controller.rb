@@ -1,9 +1,9 @@
 class ImagesController < ApplicationController
 		
 	## to require basic api authentication for any controller.
-	include Auth::Concerns::DeviseConcern
+	#include Auth::Concerns::DeviseConcern
 
-	before_action :do_before_request
+	#before_action :do_before_request
 
 	respond_to :html, :json
 
