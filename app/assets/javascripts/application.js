@@ -3,6 +3,7 @@
 //= require result.js
 //= require cloudinary
 //= require images.js
+//= require pretty_images.js
 //= require search_result_chart.js
 //= require autocomplete_patch.js
 

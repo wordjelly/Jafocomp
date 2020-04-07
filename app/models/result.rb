@@ -1029,4 +1029,156 @@ class Result
 
 	end
 
+	## we basically want to paginate by poller-session-id
+	## find the first one, where saturated was hit
+	## check the thing before it and see what is wrong
+	## then implement the new logic and see that it does not fail.
+	def self.ps
+		
+
+
+		query = {
+			bool: {
+		      	must: [
+			        {
+			          	exists: {
+			            	field: "poller_session_id"
+			          	}
+			        }
+		      	]
+		    }
+		}
+
+		aggs = {
+			poller_session_ids: {
+				composite: {
+					size: 1000,
+					sources: [
+						{
+				            poller_session_id: {
+				              terms: {
+				                field: "poller_session_id"
+				              }
+				            }
+				        }
+					]
+				},
+				aggs: {
+			        event_name: {
+			          terms: {
+			            field: "event_name"
+			          },
+			          aggs: {
+			          	information: {
+			          		terms: {
+			          			field: "information"
+			          		}
+			          	}
+			          }
+			        },
+			        log_time: {
+			          min: {
+			            field: "time"
+			          }
+			        }
+		      	}
+			}
+		}
+
+		response = Hashie::Mash.new gateway.client.search body: {size: 0, query: query, aggs: aggs}, index: "tradegenie_titan", type: "doc"
+
+		## key =-> epoch
+		## 
+		## value =-> hash
+		## {poller_session_id => {event_name => count}}
+		## 
+		poller_sessions_keyed_by_time = {}
+
+		#puts response.to_s
+
+		response.aggregations.poller_session_ids.buckets.each do |bucket|
+			poller_session_id = bucket["key"]
+			time = bucket["log_time"]["value"]
+			information = bucket["log_time"]["information"]
+			poller_sessions_keyed_by_time[time.to_s] = {
+				poller_session_id.to_s => {
+					events: bucket["event_name"]["buckets"]
+				}
+			}.to_h
+		end
+
+		
+		poller_sessions_keyed_by_time = poller_sessions_keyed_by_time.sort.to_h
+
+		results = {}
+
+		poller_sessions_keyed_by_time.keys.each do |time|
+			poller_sessions_keyed_by_time[time].keys.each do |poller_session_id|
+				events = poller_sessions_keyed_by_time[time][poller_session_id][:events]
+				#puts "events are:"
+				#puts JSON.pretty_generate(events)
+				#gets.chomp
+				entry_stats = get_entry_memory(events)
+				exit_stats = get_exit_memory(events)
+				results[time] = [entry_stats,exit_stats]
+			end
+		end
+
+		## here check for any errors.
+		puts JSON.pretty_generate(results)
+	end
+
+	def self.get_entry_memory(events)
+		memory = nil
+		pollers_after = nil
+		k = events.select{|c|
+			c["key"] =~ /activated/i
+		}
+		if k.size > 0
+			k = k[0]
+			information = k["information"]["buckets"][0]["key"]
+			information.scan(/Available\:\s\d+\.\d\sGiB\/\d+\.\d\sGiB/) do |n|
+				memory = n
+			end
+
+			information.scan(/pollers_after\"\:\"\d+\"/) do |n|
+				pollers_after = n
+			end
+		end
+		[memory,pollers_after]
+	end
+
+	def self.get_exit_memory(events)
+		memory = nil
+		pollers_after = nil
+		k = events.select{|c|
+			c["key"] =~ /exiting/i
+		}
+		if k.size > 0
+			k = k[0]
+			information = k["information"]["buckets"][0]["key"]
+			information.scan(/Available\:\s\d+\.\d\sGiB\/\d+\.\d\sGiB/) do |n|
+				memory = n
+			end
+
+			information.scan(/pollers_after_decr\"\:\"\d+\"/) do |n|
+				pollers_after = n
+			end
+		end
+		[memory,pollers_after]
+	end
+
+	def self.did_not_exit?(buckets)
+		buckets.select{|c|
+			c["key"] =~ /exited/i
+		}
+	end
+
+	def self.has_saturated_event?(buckets)
+		#puts buckets.to_s
+		buckets.select{|c|
+			c["key"] =~ /saturated/i
+		}.size > 0
+	end
+
 end
