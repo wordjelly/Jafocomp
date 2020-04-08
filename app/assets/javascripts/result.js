@@ -7,6 +7,7 @@ $(document).ready(function(){
 		var search_result = $("#_result").attr("data-result");
 		search_result = JSON.parse(search_result);
 		console.log(search_result);
+		update_twitter_cards_data(search_result);
 		display_search_results([search_result],"");
 		$(".search_result_card").first().show();
 	}
@@ -41,5 +42,34 @@ var update_title_and_description = function(search_result){
 };
 
 var update_twitter_cards_data = function(search_result){
+	/****
+	image 
+	****/
+	var ratios = [0,20,35,50,65,80,95];
+	var min_diff = null;
+	var min_diff_ratio = null;
+	if(search_result.rises_or_falls == "falls"){
+		ratios = _.map(ratios,function(el){100 - el});
+	}
+	_.each(ratios,function(el){
+		var diff = Math.abs(el - search_result.percentage);
+		if(_.isNull(min_diff)){
+			min_diff = diff;
+			min_diff_ratio = el;
+		}
+		else{
+			if(diff < min_diff){
+				min_diff = diff;
+				min_diff_ratio = el;
+			}
+		}
+	});
+	var image_url = "up_" + String(min_diff_ratio) + ".png";
+	$("#twitter_image").attr("content",image_url);
 
+	/***
+	title and description
+	***/
+	$("#twitter_title").attr("title",search_result.setup);
+	$("#twitter_description").attr("description",search_result.description);
 };
