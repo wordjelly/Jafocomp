@@ -282,14 +282,14 @@
             {{= search_result.setup }}
           </span>
           {{ if(search_result.rises_or_falls == "tends to rise"){ }}
-            <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+          <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
             <i class="material-icons">trending_up</i>
           {{ } else { }}
-            <div class="red-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+          <div class="red-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
             <i class="material-icons">trending_down</i>
           {{ } }}
-          Historically, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span><br> </span>
-        </div>
+            Historically, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span><br> </span>
+          </div>
 
 
 
@@ -342,7 +342,15 @@
               </table>
           </div>
 
-        </div>    
+        </div>
+
+        <div class="card-action">
+          <a href="{{= search_result.twitter_url }}"><i class="fab fa-twitter grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
+          <a href="{{= search_result.facebook_url }}"><i class="fab fa-facebook-square grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
+          <a href="{{= search_result.facebook_url }}"><i class="fab fa-google-plus-square grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
+          <a href="{{= search_result.facebook_url }}"><i class="fab fa-whatsapp-square grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
+        </div>
+            
       </div>
 
       <div class="indicator_performance" style="{{= search_result.summary_style }}">

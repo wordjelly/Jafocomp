@@ -6,9 +6,8 @@ $(document).ready(function(){
 	if(!_.isEmpty(result)){
 		var search_result = $("#_result").attr("data-result");
 		search_result = JSON.parse(search_result);
-		console.log(search_result);
-		update_twitter_cards_data(search_result);
 		display_search_results([search_result],"");
+		update_twitter_cards_data(search_result);
 		$(".search_result_card").first().show();
 	}
 	else{
@@ -45,6 +44,8 @@ var update_twitter_cards_data = function(search_result){
 	/****
 	image 
 	****/
+	// test this and see if it works.
+	// add the share this button to the individual cards.
 	var ratios = [0,20,35,50,65,80,95];
 	var min_diff = null;
 	var min_diff_ratio = null;
@@ -67,6 +68,11 @@ var update_twitter_cards_data = function(search_result){
 	var image_url = "up_" + String(min_diff_ratio) + ".png";
 	$("#twitter_image").attr("content",image_url);
 
+	// so we can try this out and see how it goes.
+	// with the twitter card.
+	// and test that on run throughout the night.
+	// then move to indicator, subindicator, related, 
+	// then the basic developement is done.
 	/***
 	title and description
 	***/

@@ -508,7 +508,7 @@ class Result
 		## tso problem
 		input = entity_name + "#" +  "#{total_up}$$" + complex_derivation["stats"].join("$") + ",#{total_down}" + ",0,0,0,0,0,0,0,0,0,0,0" + complex_derivation["industries"].join(",") + "*#{entity_name.size},0" 
 
-		
+		input_and_impacted_entity_id = plug_industries(input)
 
 		hit = {
 			_id: hit["_id"],
@@ -516,9 +516,10 @@ class Result
 				preposition: hit["_source"]["preposition"],
 				epoch: hit["_source"]["epoch"],
 				tags: hit["_source"]["tags"],
+				impacted_entity_id: input_and_impacted_entity_id[:impacted_entity_id],
 				suggest: [
 					{
-						input: plug_industries(input)
+						input: input_and_impacted_entity_id[:input]
 					}
 				],
 				## debug here.
@@ -580,7 +581,10 @@ class Result
 			## tso problem
 			input = entity_name + "#" +  "#{total_up}$$" + object_to_use["_source"]["stats"].join("$") + ",#{total_down}" + ",0,0,0,0,0,0,0,0,0,0,0" + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
 
-			
+			## so here it will be treated differently.
+			## we have added it to the industries.
+			## so take it from there itself.
+			input_and_impacted_entity_id = plug_industries(input)
 
 			hit = {
 				_id: hit["_id"],
@@ -588,9 +592,10 @@ class Result
 					preposition: hit["_source"]["preposition"],
 					epoch: hit["_source"]["epoch"],
 					tags: hit["_source"]["tags"],
+					impacted_entity_id: input_and_impacted_entity_id[:impacted_entity_id],
 					suggest: [
 						{
-							input: plug_industries(input)
+							input: input_and_impacted_entity_id[:input]
 						}
 					],
 					## debug here.
@@ -845,6 +850,8 @@ class Result
 
 	end
 
+
+
 	def self.plug_industries(input)
 		puts "input is: #{input}" 
 		sectors = []
@@ -883,7 +890,13 @@ class Result
 		#puts "offsets:#{offsets}"
 		stats = stats_and_industries.split(",")[0]
 		
+		# okay so basically this has been knocked out.
+		# we are going from 12 .. -1
+		# here we want to 
+		impacted_entity_id = stats_and_industries.split(",")[-1]
+
 		stats_and_industries.split(",")[12..-1].each do |industry_name|
+			#i can get it from here.
 			#unless $sectors[industry_code.to_s].blank?
 				#industry_name = $sectors[industry_code.to_s].information_name
 				#set this in the initializer.
@@ -900,7 +913,10 @@ class Result
 		#okay so here we have to manage it.
 		input = parts[0] + "#" + stats_and_industries.split(",")[0..11].join(",") + "," + sectors.join(",") + "%" + related_queries.flatten.join(",") + "*" + offsets
 		
-		input
+		{
+			input: input,
+			impacted_entity_id: impacted_entity_id
+		}
 	end
 
 	def self.directional_query(query,direction)
@@ -909,7 +925,15 @@ class Result
 
 	def self.debug_suggest_r(args)
 
-		search_results = nested_function_score_query(args[:prefix])
+		## first get it working in this.
+		## then later elsewhere.
+		## search_results = nested_function_score_query(args[:prefix])
+		## but we have the target id right ?
+		## can it not be inferred from that somehow.
+		## without changing anything in the backend ?
+
+
+		search_results = suggest_query(args)
 
 		puts "the search results are;"
 
@@ -931,6 +955,61 @@ class Result
 
 	end
 
+	def self.suggest_query(args)
+		#puts "came to suggest_r with args"
+		#puts args.to_s
+		search_results = []
+
+		args[:prefix] ||= ''
+		args[:context] ||= []
+
+		body = {
+			_source: ["suggest","tags","preposition","epoch","_id"], 
+			suggest: {
+				correlation_suggestion: {
+					text: args[:prefix],
+					completion: {
+		                field: "suggest",
+		                size: 8
+		            }
+				}
+			}
+		}
+
+		query_suggestion_results = []
+
+		search_start_time = Time.now.to_i
+		search_results = gateway.client.search index: "correlations", body: body
+		#puts search_results["suggest"].to_s
+		search_end_time = Time.now.to_i
+		#puts "elasticsearch query took-----------6+--"
+		#puts (search_end_time - search_start_time)
+
+		if search_results["suggest"]
+			search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
+			
+			search_results.map!{|c|
+				txt = c["text"]
+				txt = txt.split("#")[0].split(" ")
+				#puts "the text parts are:"
+				#puts txt.to_s
+				c["_source"]["suggest"] = c["_source"]["suggest"].select{|d|
+					results = txt.map{|k|
+						d["input"] =~ /#{k}/
+					}.compact
+					results.size == txt.size
+				}[0..0]
+				input_and_impacted_entity_id = plug_industries(c["_source"]["suggest"][0]["input"])
+				c["_source"]["suggest"][0]["input"] = input_and_impacted_entity_id[:input]
+				c["_source"]["impacted_entity_id"] = input_and_impacted_entity_id[:impacted_entity_id]
+				c
+			}
+		end
+		
+		search_results
+
+	end
+
 	## default values for prefix and context are provided in the method as '' and [] respectively.
 	def self.suggest_r(args)
 			
@@ -941,68 +1020,11 @@ class Result
 			search_results = nested_function_score_query(args[:prefix],args[:direction])
 
 		else
-			
-			#puts "came to suggest_r with args"
-			#puts args.to_s
 
-			args[:prefix] ||= ''
-			args[:context] ||= []
-
-			body = {
-				_source: ["suggest","tags","preposition","epoch","_id"], 
-				suggest: {
-					correlation_suggestion: {
-						text: args[:prefix],
-						completion: {
-			                field: "suggest",
-			                size: 8
-			            }
-					}
-				}
-			}
-
-			query_suggestion_results = []
-
-			search_start_time = Time.now.to_i
-			search_results = gateway.client.search index: "correlations", body: body
-			#puts search_results["suggest"].to_s
-			search_end_time = Time.now.to_i
-			#puts "elasticsearch query took-----------6+--"
-			#puts (search_end_time - search_start_time)
-
-			if search_results["suggest"]
-				search_results = search_results["suggest"]["correlation_suggestion"][0]["options"]
-				
-				search_results.map!{|c|
-					txt = c["text"]
-					txt = txt.split("#")[0].split(" ")
-					#puts "the text parts are:"
-					#puts txt.to_s
-					c["_source"]["suggest"] = c["_source"]["suggest"].select{|d|
-						results = txt.map{|k|
-							d["input"] =~ /#{k}/
-						}.compact
-						results.size == txt.size
-					}[0..0]
-					c["_source"]["suggest"][0]["input"] = plug_industries(c["_source"]["suggest"][0]["input"])
-					c
-				}
-
-				## write what is / explain
-				## 
-				
-			else
-				search_results = []
-			end
-
-	#			end
-
-			#end
+			search_results = suggest_query(args)
 
 			if search_results.blank?
 				puts "search results were blank."
-				## now we have a situation where we have to fall back onto the ngram query.
-				#new_match_query(args[:prefix])
 				search_results = nested_function_score_query(args[:prefix])
 			end
 

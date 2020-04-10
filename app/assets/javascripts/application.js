@@ -60,17 +60,17 @@ $(document).on('click','#clear_search',function(event){
 
 // first lets get this shit to display at least.
 $(document).on('input','#autocomplete-input',function(event){
-	////////console.log("keydown triggered" + event.keyCode);
+	//////////console.log("keydown triggered" + event.keyCode);
 	if(event.keyCode == 32){
 		var autocomplete_hash = JSON.parse($(".autocomplete").first().data('autocomplete_hash'));
 
 		//$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
-		//console.log("autocomplete hash:");
-		//console.log(autocomplete_hash);
+		////console.log("autocomplete hash:");
+		////console.log(autocomplete_hash);
 		$('.autocomplete').autocomplete('updateData',autocomplete_hash);
 	}
 	else{
-		//////console.log("the val is:" + $(this).val());
+		////////console.log("the val is:" + $(this).val());
 		search_action($(this).val());
 	}
 });	
@@ -98,8 +98,8 @@ $(document).on('focusout','#autocomplete-input',function(event){
 		if(!$(event.relatedTarget).hasClass("autocomplete-content")){
 			if(($("#new_search_results").find(".search_result_card").length) == 0){
 
-				console.log("length is:" + $("#new_search_results").find(".search_result_card").length);
-				console.log(_.isEmpty($("#new_search_results").find(".search_result_card").length));
+				//console.log("length is:" + $("#new_search_results").find(".search_result_card").length);
+				//console.log(_.isEmpty($("#new_search_results").find(".search_result_card").length));
 				$("#logo,#exchanges").slideDown('fast',function(){
 				
 				});
@@ -109,10 +109,10 @@ $(document).on('focusout','#autocomplete-input',function(event){
 });
 
 var search_action = function(input){
-	////////console.log("triggered search action");
-	////////console.log("input is: " + input);
+	//////////console.log("triggered search action");
+	//////////console.log("input is: " + input);
 	//if(event.keyCode == 32){
-		//////////console.log("got space, doing nothing.");
+		////////////console.log("got space, doing nothing.");
 	//}
 	//else{
 		if( !input ) {
@@ -143,8 +143,8 @@ var search_result_is_positive = function(search_result){
 	// sort out the space issues and other such bullshit
 	// why is it failing on space.
 	// and not searching anything else afterwards
-	//////////console.log("----------- statistics ----------------");
-	//////////console.log(search_result.impacts[0].statistics[0]);
+	////////////console.log("----------- statistics ----------------");
+	////////////console.log(search_result.impacts[0].statistics[0]);
 	//return search_result.impacts[0].statistics[0].maximum_profit >= search_result.impacts[0].statistics[0].maximum_loss*-1
 }
 
@@ -194,7 +194,7 @@ var build_chart_dataset = function(serach_result){
 
 var render_search_result_new = function(search_result){
 	if(_.isUndefined(template)){
-		console.log("got a template");
+		//console.log("got a template");
 		var template = _.template($('#search_result_template').html());
 	}
 	// there is something called none.
@@ -218,7 +218,7 @@ var render_search_result_new = function(search_result){
 	draw_chart(("search_result_chart_" + search_result.div_id),search_result);
 	/****
 	if(search_result_is_positive(search_result)){
-		//////////console.log(template(search_result));
+		////////////console.log(template(search_result));
 		$('#positive').append(template(search_result));
 	}
 	else{
@@ -323,7 +323,7 @@ var humanize_tags = function(tags){
 
 var get_primary_entity_and_indicator = function(search_result){
 	var setup = search_result.setup;
-	//////console.log("setup is:" + setup);
+	////////console.log("setup is:" + setup);
 	var pattern = new RegExp(/when([A-Za-z\s]+)\'s\s([A-Za-z_\d+]+)\s(indicator)?/gi);
 	var result = pattern.exec(setup);
 	if(!_.isNull(result)){
@@ -333,7 +333,7 @@ var get_primary_entity_and_indicator = function(search_result){
 			search_result.indicator += (" " + result[3])
 		}
 	}
-	//////console.log("search result primary entity:" + search_result.primary_entity + " indicator: " + search_result.indicator);
+	////////console.log("search result primary entity:" + search_result.primary_entity + " indicator: " + search_result.indicator);
 }
 
 // called after build setup.
@@ -370,30 +370,30 @@ var build_setup = function(search_result,text){
 	// same thing is repeated below in the final else.
 	if(non_time_subindicator.test(search_result.tags) == true){
 		
-		//////console.log("Tags are");
-		//////console.log(search_result.tags);
+		////////console.log("Tags are");
+		////////console.log(search_result.tags);
 		var prev_tag_is_colloquial = 0
 		_.map(search_result.tags,function(tag,index){
 
 			// okay so handle colloquial seperator here.
 			if(tag.startsWith("**")){
-				//////console.log("starts with double star:" + tag);
+				////////console.log("starts with double star:" + tag);
 				// this is the colloquial, ignore it.
 				if(!tag.endsWith("**")){
-					//////console.log("endswith double star");
+					////////console.log("endswith double star");
 				 prev_tag_is_colloquial = 1;
 				}
 			}
 			else if(tag.endsWith("**")){
-				//////console.log("directy ends with double star" + tag);
+				////////console.log("directy ends with double star" + tag);
 				prev_tag_is_colloquial = 0;
 			}
 			else if(tag.startsWith("**") && tag.endsWith("**")){
-				//////console.log("starts and ends with:" + tag);
+				////////console.log("starts and ends with:" + tag);
 			}
 			else{
 				if(prev_tag_is_colloquial == 0){
-					//////console.log("neither starts with and neither ends with double star ad goes forward" + tag);
+					////////console.log("neither starts with and neither ends with double star ad goes forward" + tag);
 					if(index == 0){
 						complex_string =  complex_string + tag + "'s" + " "  ;
 					}
@@ -415,8 +415,8 @@ var build_setup = function(search_result,text){
 
 		if(time_subindicator_regexp.test(search_result.information) == true){
 
-			//////console.log("information test worked.");
-			//////console.log(search_result.tags);
+			////////console.log("information test worked.");
+			////////console.log(search_result.tags);
 			// if any of the tags have 
 			// period_start_period_end
 			// then
@@ -425,19 +425,19 @@ var build_setup = function(search_result,text){
 			_.map(search_result.tags,function(tag,index){
 				
 				if(tag.startsWith("**")){
-					//////console.log("starts with double star:" + tag);
+					////////console.log("starts with double star:" + tag);
 					// this is the colloquial, ignore it.
 					if(!tag.endsWith("**")){
-						//////console.log("endswith double star");
+						////////console.log("endswith double star");
 					 prev_tag_is_colloquial = 1;
 					}
 				}
 				else if(tag.endsWith("**")){
-					//////console.log("directy ends with double star" + tag);
+					////////console.log("directy ends with double star" + tag);
 					prev_tag_is_colloquial = 0;
 				}
 				else if(tag.startsWith("**") && tag.endsWith("**")){
-					//////console.log("starts and ends with:" + tag);
+					////////console.log("starts and ends with:" + tag);
 				}
 				else{
 					if(prev_tag_is_colloquial == 0){
@@ -451,7 +451,7 @@ var build_setup = function(search_result,text){
 		else if(time_subindicator_regexp.test(search_result.tags) == true){
 
 
-			//////console.log("got a time based subindicator, by checking the tags");
+			////////console.log("got a time based subindicator, by checking the tags");
 			_.map(search_result.tags,function(tag,index){
 			
 				if(tag.startsWith("**") && tag.endsWith("**")){
@@ -471,8 +471,8 @@ var build_setup = function(search_result,text){
 		else
 		{
 			// non time subindicator.
-			//////console.log("tags are");
-			//////console.log(tags);
+			////////console.log("tags are");
+			////////console.log(tags);
 			_.map(search_result.tags,function(tag,index){
 
 				if(tag.startsWith("**")){
@@ -515,8 +515,8 @@ var build_setup = function(search_result,text){
 	}
 
 	////// so it ignores that.
-	//////////console.log("complex string becomes:");
-	//////////console.log(complex_string);
+	////////////console.log("complex string becomes:");
+	////////////console.log(complex_string);
 	// so if it comes with hyphens after the preposition and 
 	// that preposition is when, then we get rid of those hyphens.
 	// the problem is for the rollovers.
@@ -525,7 +525,7 @@ var build_setup = function(search_result,text){
 	search_result.complex_string = complex_string;
 	assign_target(search_result);
 	get_primary_entity_and_indicator(search_result);
-	//////console.log(search_result);
+	////////console.log(search_result);
 	//remove_close(search_result);
 
 	// indicator rises by 90 percent in 10 days.
@@ -540,8 +540,8 @@ var build_setup = function(search_result,text){
 
 	}	
 	var rises_parts = search_result.setup.split(/(rises|falls)/);
-	//////////console.log("rises parts are:");
-	//////////console.log(rises_parts);	
+	////////////console.log("rises parts are:");
+	////////////console.log(rises_parts);	
 	// for rises falls and crosses.
 	if(_.size(rises_parts) > 1){
 		search_result.setup = rises_parts[0] + rises_parts[1]; 
@@ -587,12 +587,12 @@ sets the impacted categories using the suggestion input.
 ## we want to take up everything after the 
 ***/
 var set_impacted_categories_from_suggestion_input = function(search_result,stats){
-	//////////console.log("stats are:");
-	//////////console.log(stats);
+	////////////console.log("stats are:");
+	////////////console.log(stats);
 	var categories = stats.slice(12,stats.length);
 	search_result.categories = categories;
-	//////////console.log("the search result categories are:");
-	//////////console.log(search_result.categories);
+	////////////console.log("the search result categories are:");
+	////////////console.log(search_result.categories);
 }
 
 var set_related_queries_from_suggestion_input = function(search_result,related_queries){
@@ -611,8 +611,8 @@ var set_origin_categories = function(search_result){
 // length : , offset, length, offset
 var get_offsets = function(input_text){
 	//resulting object
-	//////////console.log("input text is:");
-	//////////console.log(input_text);
+	////////////console.log("input text is:");
+	////////////console.log(input_text);
 	var result_object = {};
 
 
@@ -620,8 +620,8 @@ var get_offsets = function(input_text){
 	var split_on_offsets = input_text.split("*");
 	text_stats_and_related_queries = split_on_offsets[0];
 	offsets = split_on_offsets[1];
-	//////////console.log("text stats:" + text_stats_and_related_queries);
-	//////////console.log("offsets:" + offsets);
+	////////////console.log("text stats:" + text_stats_and_related_queries);
+	////////////console.log("offsets:" + offsets);
 	return offsets.split(",");
 }
 
@@ -650,13 +650,13 @@ var get_percentage = function(statistic){
 @param[Object] search_result
 ***/
 var set_year_wise_data = function(stats,search_result){
-	////console.log("stats are:");
-	////console.log(stats);
+	//////console.log("stats are:");
+	//////console.log(stats);
 	var year_wise_data = {}
 	var year_wise_data_string = stats[0].split("$$")[1];
 	var prev_key = null;
-	//console.log("year wise data string is:");
-	//console.log(year_wise_data_string);
+	////console.log("year wise data string is:");
+	////console.log(year_wise_data_string);
 	var parts = year_wise_data_string.split("$");
 
 	var max_rise_fall_data = parts.slice(Math.max(parts.length - 6, 0));
@@ -665,11 +665,11 @@ var set_year_wise_data = function(stats,search_result){
 	//var yw_data = parts.slice(Math.max(parts.length - 6, 0));
 
 
-	//console.log("max rise fall data:");
-	//console.log(max_rise_fall_data);
+	////console.log("max rise fall data:");
+	////console.log(max_rise_fall_data);
 
-	console.log("yw data is;");
-	console.log(yw_data);
+	//console.log("yw data is;");
+	//console.log(yw_data);
 
 	search_result.maximum_rise_year = max_rise_fall_data[0];
 	search_result.maximum_rise_month = max_rise_fall_data[1];
@@ -711,28 +711,28 @@ getStats()[11] = six_month_max_loss;
 ***/
 var assign_statistics = function(search_result,text){
 	
-	console.log(search_result);
+	//console.log(search_result);
 
 	var offsets = get_offsets(search_result.suggest[0].input);
 	var suggestion = search_result.suggest[0];
-	console.log("suggestion");
-	console.log(suggestion);
-	console.log("suggestion input is:");
-	console.log(suggestion.input);
+	//console.log("suggestion");
+	//console.log(suggestion);
+	//console.log("suggestion input is:");
+	//console.log(suggestion.input);
 	var related_queries = suggestion.input.split("%")[1].split("*")[0];
 	var pre = suggestion.input.split("%")[0];
 	var information = pre.split("#");
 
 	
 	search_result.information = information;
-	//////////console.log("information is:");
-	//////////console.log(information);
+	////////////console.log("information is:");
+	////////////console.log(information);
 
 	var stats = information[1];
 
 	stats = stats.split(",");
-	////console.log("stats are:");
-	////console.log(stats);
+	//////console.log("stats are:");
+	//////console.log(stats);
 	// so we are using offsets here.
 	// this picks the target
 	// basically using these offsets
@@ -756,8 +756,8 @@ var assign_statistics = function(search_result,text){
 	set_related_queries_from_suggestion_input(search_result,related_queries);
 	stats = stats.slice(0,12);
 	
-	//console.log("stats before going in:");
-	//console.log(stats);
+	////console.log("stats before going in:");
+	////console.log(stats);
 	set_year_wise_data(stats,search_result)
 
 	build_setup(search_result,text);
@@ -768,11 +768,11 @@ var assign_statistics = function(search_result,text){
 		statistics: []
 	}
 
-	//console.log("setup is:");
-	//console.log(search_result.setup);
-	//console.log("stats are:");
-	//console.log(stats);
-	//console.log("-----------------------");
+	////console.log("setup is:");
+	////console.log(search_result.setup);
+	////console.log("stats are:");
+	////console.log(stats);
+	////console.log("-----------------------");
 
 	/// add week.
 	if((Number(stats[0]) == 0) && (Number(stats[1]) == 0)){
@@ -853,25 +853,25 @@ var prepare_query_for_tooltip_search = function(origin){
 	var subindicator_name = [];
 	var query = null;
 	if(origin.data("name").toString().indexOf("_indicator") != -1){
-		//////////console.log("making query from indicator");
-		//////////console.log("new query:");
-		//////////console.log(expand_indicators_for_information_query(origin.data("name")));
+		////////////console.log("making query from indicator");
+		////////////console.log("new query:");
+		////////////console.log(expand_indicators_for_information_query(origin.data("name")));
 		query = expand_indicators_for_information_query(origin.data("name")).replace(/_period_start_\d+_(\d+_)*period_end/,"");
-		//////////console.log("query is:");
-		//////////console.log(query);
+		////////////console.log("query is:");
+		////////////console.log(query);
 	}
 	else{
 		origin.prevAll().each(function(key,el){
-			//////////console.log("doing prevall");
-			//////////console.log(el);
-			//////////console.log($(el).data("name"));
+			////////////console.log("doing prevall");
+			////////////console.log(el);
+			////////////console.log($(el).data("name"));
 			data_name = $(el).data("name");
 			if(!_.isUndefined(data_name)){
 				if(word_is_indicator(data_name.toString())){
 
 					if(_.isNull(indicator_element)){
 						indicator_element = el;
-						//////////console.log("making query from indicator element");
+						////////////console.log("making query from indicator element");
 					}
 					//break;
 				}
@@ -884,11 +884,11 @@ var prepare_query_for_tooltip_search = function(origin){
 		});
 
 
-		//////////console.log("subindicator name contains:");
-		//////////console.log(subindicator_name);
+		////////////console.log("subindicator name contains:");
+		////////////console.log(subindicator_name);
 
 		if(!_.isNull(indicator_element)){
-			//////////console.log("there is an indicator name");
+			////////////console.log("there is an indicator name");
 			query = subindicator_name.reverse().join(" ");
 			query += " " + origin.data("name"); 
 			origin.nextAll().each(function(key,el){
@@ -925,10 +925,10 @@ so the first regex keeps the part upto 'in', and the second regex then gets the 
 var assign_target = function(search_result){
 	var k = new RegExp(/to\s([a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/);
 	var k2 = new RegExp(/([a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/);
-	console.log("setup is:" + search_result.setup);
+	//console.log("setup is:" + search_result.setup);
 	var target = k.exec(search_result.setup);
-	console.log("target is:");
-	console.log(target);
+	//console.log("target is:");
+	//console.log(target);
 	if(_.size(target) >= 1){
 		var target_2 = k2.exec(target[1]);
 		if(_.size(target_2) >= 1){
@@ -950,7 +950,7 @@ var clear_html = function(){
 
 
 $(document).on('click','.see-more',function(event){
-	////////console.log("clicked see more");
+	//////////console.log("clicked see more");
 	$(".tooltip").show();
 })
 // now let me solve the colloquial issue.
@@ -970,7 +970,25 @@ function CreateUUID() {
 }
 
 
+/***
+// now we need the id.
+// from where do i get that.
+@called_from : prepare_search_result.
+***/
+var set_social_sharing_urls = function(search_result){
+	
+	search_result.tweet_url = "https://www.algorini.com/results/" + search_result.id;
+	
+
+
+	var watsapp_text = search_result.setup + "?" + "             " + search_result.description + "                    Get millions of simple stock related statistics at https://www.algorini.com";
+	search_result.watsapp_url = "https://api.whatsapp.com/send" + encodeURIComponent("?text=" + watsapp_text);
+
+}
+
+
 var prepare_search_result = function(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries){
+
 
 	text = search_result["text"];
 	search_result = search_result['_source'];
@@ -1002,8 +1020,8 @@ var prepare_search_result = function(search_result,autocomplete_suggestions_hash
 	// okay so lets hope this shit works.
 	// now what next ?
 	//search_result.summary_style = "display:none;"
-	//////console.log("search result setup becomes:");
-	//////console.log(search_result.setup);
+	////////console.log("search result setup becomes:");
+	////////console.log(search_result.setup);
 	//// okay so by the time we get done on this, 
 	//// its changed.
 	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = search_result.div_id;
@@ -1018,7 +1036,7 @@ var prepare_search_result = function(search_result,autocomplete_suggestions_hash
 	_.each(arr,function(value,index){
 		if(value == "See-More"){
 			see_more_triggered = true;
-			////////console.log("see more is triggered");
+			//////////console.log("see more is triggered");
 			concat += "<span class='see-more'>...</span>";
 		}
 		else{
@@ -1036,7 +1054,7 @@ var prepare_search_result = function(search_result,autocomplete_suggestions_hash
     			if(see_more_triggered === true){
     				style = 'display:none;';
     			}
-    			////////console.log("style is:" + style);
+    			//////////console.log("style is:" + style);
     			concat+= ("<span style=" + style + " class=" + cls + " title='" + value + "' data-name='" + value +"'> " + replace_pattern_with_icons(value) + "</span>");
     		}
 		}
@@ -1074,13 +1092,15 @@ var display_search_results = function(search_results,input){
 	$('.tabs').tabs();
 	$('#search_results').html("");
 	$('#categories').html("");
+	// we need to pipe the exact entity category name also babo.
 	var categories = [];
 	var related_queries = [];
 	var total_positive = 0;
 	var total_negative = 0;
 	 // and later use a template to get this.
+	
 	_.each(search_results,function(search_result,index,list){
-	    	
+			console.log(search_result);
 	    	search_result = prepare_search_result(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries);
 	    	render_search_result_new(search_result);
 	    	
@@ -1109,12 +1129,12 @@ var display_search_results = function(search_results,input){
 
 	            $.get('/search',{information: prepare_query_for_tooltip_search($origin)}).done(function(data) {
 
-	            	//////////console.log("data is:");
-	            	//////////console.log(data);
+	            	////////////console.log("data is:");
+	            	////////////console.log(data);
 	            	if(!_.isEmpty(data["results"])){
 
 	            		result = data["results"][0]["_source"];
-	            		////////console.log("result is:" + result);
+	            		//////////console.log("result is:" + result);
 
 		            	title_string = "<h5 class='white-text'>"+ prepare_information_title(result["information_name"]) +"</h5><br>";
 
@@ -1123,13 +1143,13 @@ var display_search_results = function(search_results,input){
 		            	link_string = '';
 
 		            	if(!_.isEmpty(result["information_link"])){
-		            		//////////console.log("there is an information link");
+		            		////////////console.log("there is an information link");
 		            		link_string = "<a href=\"" + result["information_link"] + "\">Read More</a>";
 		            	}
 		            	
 		            	var content = title_string + content_string + link_string
 
-		            	//////////console.log("content" + content);
+		            	////////////console.log("content" + content);
 
 		                instance.content(content);
 		               
@@ -1141,10 +1161,10 @@ var display_search_results = function(search_results,input){
 	        }
 	    }
 	});
-	////////console.log("categories are:");
-	////////console.log(categories);
-	////////console.log("related queries are:");
-	////////console.log(related_queries);
+	//////////console.log("categories are:");
+	//////////console.log(categories);
+	//////////console.log("related queries are:");
+	//////////console.log(related_queries);
 	var k = _.union(categories,related_queries);	
 	render_categories(k);
 	return autocomplete_suggestions_hash;
@@ -1152,8 +1172,8 @@ var display_search_results = function(search_results,input){
 
 var query_pending = function(input){
 	var already_running_query = $("#already_running_query").attr("data-already-running-query");
-	//////////console.log("already running query is:");
-	//////////console.log(already_running_query);
+	////////////console.log("already running query is:");
+	////////////console.log(already_running_query);
 	if(!_.isEmpty(already_running_query)){
 		$("#queued_query").attr("data-queued-query",input);
 		return true;
@@ -1166,13 +1186,13 @@ var query_pending = function(input){
 
 
 var search_new = function(input){
-	//////console.log("came to search new with input: " + input);
+	////////console.log("came to search new with input: " + input);
 	if(query_pending(input) == true){
-		//////console.log("cant process input:" + input);
-		//////console.log("a query is pending");	
+		////////console.log("cant process input:" + input);
+		////////console.log("a query is pending");	
 	} 
 	else{
-		//////////console.log("no pending query");
+		////////////console.log("no pending query");
 		var ajaxTime = new Date().getTime();
 		$.ajax({
 		  	url: "/search",
@@ -1185,16 +1205,16 @@ var search_new = function(input){
 		      $("#already_running_query").attr("data-already-running-query",input);
 		    }, 
 		  	success: function(response,status,jqxhr){
-		  		//////console.log(jqxhr);
+		  		////////console.log(jqxhr);
 		  		var totalTime = new Date().getTime()-ajaxTime;
 
-		  		//////////console.log("server side took:" + totalTime);
+		  		////////////console.log("server side took:" + totalTime);
 
 		    	$('#search_results').html("");
 		    	
 		    	var search_results = response['results']['search_results'];
 		    	if(_.isEmpty(search_results)){
-		    		////////console.log("search results are empty");
+		    		//////////console.log("search results are empty");
 		    		$("#related_queries_title").hide();
 		    	}
 		    	else{
@@ -1206,22 +1226,22 @@ var search_new = function(input){
 
 		    		//$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
 		    		$('.autocomplete').autocomplete('updateData',autocomplete_hash);
-		    		//////console.log("updated the autocomplete");
+		    		////////console.log("updated the autocomplete");
 
 		    	}
 			},
 			complete: function(){
 				$("#progress_bar").css("visibility","hidden");
 				$("#already_running_query").attr("data-already-running-query","");
-				//////////console.log("unsetting already running query");
-				//////////console.log($("#queued_query").attr("data-queued-query"));
+				////////////console.log("unsetting already running query");
+				////////////console.log($("#queued_query").attr("data-queued-query"));
 				if(!_.isEmpty($("#queued_query").attr("data-queued-query"))){
-					//////////console.log("firing search request again for queued query.");
-					//////console.log("qud query is:");
-					//////console.log($("#queued_query").attr("data-queued-query"));
+					////////////console.log("firing search request again for queued query.");
+					////////console.log("qud query is:");
+					////////console.log($("#queued_query").attr("data-queued-query"));
 					var queued_query = $("#queued_query").attr("data-queued-query");
 					$("#queued_query").attr("data-queued-query","");
-					//////console.log("going to search new");
+					////////console.log("going to search new");
 					search_new(queued_query);
 				}
 			}
@@ -1230,10 +1250,10 @@ var search_new = function(input){
 }
 
 $(document).on('click','li',function(event){
-	//////////console.log("clicked on a list element");
-	//////////console.log($(this).parent());
+	////////////console.log("clicked on a list element");
+	////////////console.log($(this).parent());
 	if($(this).parent().hasClass('autocomplete-content')){
-		//////////console.log("closing the dropdown");
+		////////////console.log("closing the dropdown");
 		$(".autocomplete").autocomplete("close");
 	}
 });
@@ -1242,17 +1262,17 @@ $(document).on('click','li',function(event){
 var update_last_successfull_query = function(query,result_text){
 	if(!((_.isUndefined(query)) || (_.isNull(query)))){
 		var successfull_query = "";
-		//////////console.log("query is:" + query);
-		//////////console.log("Result text:" + result_text);
+		////////////console.log("query is:" + query);
+		////////////console.log("Result text:" + result_text);
 		_.each(query.split(" "),function(word){
 			var regex = new RegExp(word + "\\b");
-			//////////console.log("Regex is:" + regex);
+			////////////console.log("Regex is:" + regex);
 			if(regex.test(result_text) === true){
-				//////////console.log("matches.");
+				////////////console.log("matches.");
 				successfull_query += word + " ";
 			}
 		});
-		//////////console.log("successfull_query is:" + successfull_query);
+		////////////console.log("successfull_query is:" + successfull_query);
 		if(!(_.isEmpty(successfull_query))){
 			$("#last_successfull_query").attr("data-query",successfull_query);
 		}
@@ -1261,13 +1281,13 @@ var update_last_successfull_query = function(query,result_text){
 
 var search = function(input){
 
-	//////////console.log("--------- called search with input:" + input);
+	////////////console.log("--------- called search with input:" + input);
 
 	var contexts_with_length = prepare_contexts(input);
 
 	
-	//////////console.log("contexts with length are:");
-	//////////console.log(contexts_with_length);
+	////////////console.log("contexts with length are:");
+	////////////console.log(contexts_with_length);
 
 	if(_.size(contexts_with_length) == 1){
 
@@ -1290,7 +1310,7 @@ var search = function(input){
 	    	
 	    _.each(response['results'],function(search_result,index,list){
 	    	search_result = search_result['_source'];
-	    	//////////console.log(search_result);
+	    	////////////console.log(search_result);
 	    	search_result = update_bar_lengths(search_result);
 	    	search_result = add_time_to_setup(search_result);
 	    	search_result = add_impact_and_trade_action_to_setup(search_result);
@@ -1298,7 +1318,7 @@ var search = function(input){
 	    	search_result = strip_period_details_from_setup(search_result);
 	    	search_result = update_falls_or_rises_text(search_result);
 	    	search_result = set_stop_losses(search_result);
-	    	////////console.log(search_result);
+	    	//////////console.log(search_result);
 	    	if(index == 0){
 	    		// check todo for this.
 	    		$("#top_result_contexts").attr("data-context",JSON.stringify(search_result["suggest"]["contexts"]["chain"]));
@@ -1348,9 +1368,9 @@ var update_coin_counts = function(search_result){
 	if(!_.isEmpty(search_result.impacts[0].statistics)){
 		//var multiple = max_units/(_.size(search_result.impacts[0].statistics));
 		var multiple = 9;
-		//////////console.log("multiple is:" + multiple);
-		//////////console.log("size of the statistics of the first impact is:");
-		//////////console.log(_.size(search_result.impacts[0].statistics));
+		////////////console.log("multiple is:" + multiple);
+		////////////console.log("size of the statistics of the first impact is:");
+		////////////console.log(_.size(search_result.impacts[0].statistics));
 		
 		var gold = [];
 		var total_time_units = [];
@@ -1363,8 +1383,8 @@ var update_coin_counts = function(search_result){
 		});
 		gold = _.flatten(gold);
 		search_result.impacts[0].statistics[0]["gold_coins"] = gold;
-		//////////console.log("the gold coins become:");
-		//////////console.log(gold);
+		////////////console.log("the gold coins become:");
+		////////////console.log(gold);
 		search_result.impacts[0].statistics[0]["other_coins"] = _.range(max_units - gold.length);
 	}
 	return search_result;
@@ -1486,7 +1506,7 @@ var convert_n_day_change_to_superscript = function(search_result){
 }
 
 var strip_period = function(search_result){
-	//////console.log(search_result.setup);
+	////////console.log(search_result.setup);
 	var pattern = /(_period_start_\d+(_\d+)?_period_end)/g
 	
 	var match = pattern.exec(search_result.setup);
@@ -1499,7 +1519,7 @@ var strip_period = function(search_result){
 }
 
 var strip_period_details_from_setup = function(search_result){
-	////////console.log("came to split period details");
+	//////////console.log("came to split period details");
 	var pattern = /(<.+?>[^<>]*?)(_period_start_\d+(_\d+)?_period_end)([^<>]*?<.+?>)/g
 	
 	var match = pattern.exec(search_result.setup);
@@ -1672,14 +1692,14 @@ var process_setup_component = function(component,search_result,component_data_na
 - keeps only the first word in the entity, removes everything after and including the first underscore.
 **/
 var trim_entity_name = function(search_result,entity_name){
-	//////////console.log("came to trim with entity name:" + entity_name);
+	////////////console.log("came to trim with entity name:" + entity_name);
 	if(entity_name.indexOf("_") != -1){
 
 		var idx = entity_name.indexOf("_");
 		var part_after_underscore = entity_name.slice(idx,entity_name.length);
 		var part_before_underscore = entity_name.slice(0,idx);
 		search_result.setup = search_result.setup.replace(part_after_underscore,'');
-		//////////console.log("part before underscore:");
+		////////////console.log("part before underscore:");
 
 		search_result = process_setup_component(part_before_underscore,search_result,entity_name);
 	}
@@ -1691,13 +1711,13 @@ var trim_entity_name = function(search_result,entity_name){
 // for eg
 // is it either true/false for the indicator/subindicator.
 var is_binary = function(year_wise_data){
-	//////console.log("checking binary with year wise data");
-	//////console.log(year_wise_data);
+	////////console.log("checking binary with year wise data");
+	////////console.log(year_wise_data);
 	var result = true;
 	for(year in year_wise_data){
-		//////console.log("sum-===--==============>");
-		//////console.log(Number(year_wise_data[year][0]) + Number(year_wise_data[year][1]));
-		//////console.log("sum-===--==============>");
+		////////console.log("sum-===--==============>");
+		////////console.log(Number(year_wise_data[year][0]) + Number(year_wise_data[year][1]));
+		////////console.log("sum-===--==============>");
 		if((Number(year_wise_data[year][0]) + Number(year_wise_data[year][1])) > 2){
 			result = false
 		}	
@@ -1706,8 +1726,8 @@ var is_binary = function(year_wise_data){
 }
 
 var is_time_based_subindicator = function(search_result){
-	//////console.log("************************");
-	//////console.log("came to check time based subindicator with setup:" + search_result.setup);
+	////////console.log("************************");
+	////////console.log("came to check time based subindicator with setup:" + search_result.setup);
 	
 	var time_based_pattern = new RegExp(/first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/g);
 	
@@ -1716,29 +1736,29 @@ var is_time_based_subindicator = function(search_result){
 	var b = _.isNull(time_based_pattern.exec(search_result.information[0]));
 	
 	if((a == true) && (b == true)){
-		//////console.log("returning false");
+		////////console.log("returning false");
 		return false;
 	}
 	else{
-		//////console.log("a is: " + a);
-		//////console.log("b is:" + b);
-		//////console.log("informatino:");
-		//////console.log(search_result.information);
-		//////console.log("returning true");
+		////////console.log("a is: " + a);
+		////////console.log("b is:" + b);
+		////////console.log("informatino:");
+		////////console.log(search_result.information);
+		////////console.log("returning true");
 		return true;
 	}
 }
 
 var get_predicate = function(search_result){
-	//console.log("setup is:" + search_result.setup);
+	////console.log("setup is:" + search_result.setup);
 	var pattern = new RegExp(/\s(in|on)\s(.*)$/);
 	var result = pattern.exec(search_result.setup);
-	//console.log("result is:" + result);
+	////console.log("result is:" + result);
 	var predicate = null;
 	if(!_.isNull(result)){
 		predicate = result[2].replace(/(\(.*\))/,'');
 	}
-	//console.log("####################################");
+	////console.log("####################################");
 
 	return predicate;
 }
@@ -1781,15 +1801,15 @@ var get_trend = function(year_wise_data){
 		var k = year_wise_data[year];
 
 		if((k[0] + k[1]) == 0){
-			//console.log("year:" + year + " has no rise or fall data");
+			////console.log("year:" + year + " has no rise or fall data");
 		}
 		else
 		{
 			var percentage_rise = (Number(k[0])/(Number(k[0]) + Number(k[1])))*100;
 			var percentage_fall = (Number(k[1])/(Number(k[0]) + Number(k[1])))*100;
-			//////console.log("year" + year + " fall :" + percentage_fall + " rise :" + percentage_rise);
-			//////console.log("percentage rise is:" + percentage_rise);
-			//////console.log("percentage fall is:" + percentage_fall);
+			////////console.log("year" + year + " fall :" + percentage_fall + " rise :" + percentage_rise);
+			////////console.log("percentage rise is:" + percentage_rise);
+			////////console.log("percentage fall is:" + percentage_fall);
 			if(percentage_rise >= strong_threshold){
 				strongly_positive_years.push(year);
 			}
@@ -1816,13 +1836,13 @@ var get_trend = function(year_wise_data){
 	var keys = _.sortBy(Object.keys(_sorted),function(k){return _sorted[k][0]});
 
 	_sorted = _.sortKeysBy(_sorted, function (value, key) {
-	    ////console.log("value 0 is:" + value[0]);
+	    //////console.log("value 0 is:" + value[0]);
 	    return Number(value[0]);
 	});
 
 	// penultimate three.
-	////console.log("keys is:");
-	////console.log(keys);
+	//////console.log("keys is:");
+	//////console.log(keys);
 
 	var best_year = _.last(keys);
 	
@@ -1832,20 +1852,20 @@ var get_trend = function(year_wise_data){
 	var last_couple_negative = 0;
 	var last_couple_total = 0;
 	
-	//console.log("sorted data is:");
-	//console.log(_sorted);
+	////console.log("sorted data is:");
+	////console.log(_sorted);
 
 	_.map((Object.keys(year_wise_data).reverse()),function(val,key){
 		if(key > 0 && key < total_years_to_consider_as_last_couple){
 			last_couple_total++;
-			//console.log("year is:" + val + " data is:" + _sorted[val]);
+			////console.log("year is:" + val + " data is:" + _sorted[val]);
 			if(!_.isUndefined(_sorted[val])){
 				if(_sorted[val][0] > _sorted[val][1]){
-					////console.log("took as positive");
+					//////console.log("took as positive");
 					last_couple_positive+=1;
 				}
 				else if(_sorted[val][1] > _sorted[val][0]){
-					////console.log("took as negative");
+					//////console.log("took as negative");
 					last_couple_negative+=1;
 				}
 				else{
@@ -1858,8 +1878,8 @@ var get_trend = function(year_wise_data){
 	var last_couple_of_years_trend = null;
 	var last_couple_of_years_color = "grey-text text-darken-2";
 
-	//////console.log("last couple positive:" + last_couple_positive);
-	//////console.log("last couple negative:" + last_couple_negative);
+	////////console.log("last couple positive:" + last_couple_positive);
+	////////console.log("last couple negative:" + last_couple_negative);
 	if(last_couple_positive >= 2){
 		last_couple_of_years_color = "green-text";
 		last_couple_of_years_trend = "mostly positive";
@@ -1940,20 +1960,20 @@ var add_best_worst_year = function(summary,trend_obj){
 
 var build_time_based_indicator_summary = function(search_result){
 	var summary = "";
-	////console.log("------------------------------>");
-	////console.log(search_result.setup);
+	//////console.log("------------------------------>");
+	//////console.log(search_result.setup);
 	var trend = get_trend(search_result.year_wise_data);
 	
-	//console.log(trend);
-	//console.log("------------------------------>");
+	////console.log(trend);
+	////console.log("------------------------------>");
 	
 	// i think this is being interpreted as time based.
 	if(is_time_based_subindicator(search_result) == true){
-		//////console.log("is time based" + search_result.setup);
+		////////console.log("is time based" + search_result.setup);
 		if(is_binary(search_result.year_wise_data)){
-			//////console.log("is binary");
+			////////console.log("is binary");
 			if(!_.isNull(get_predicate(search_result))){
-				//////console.log("predicate is not null");
+				////////console.log("predicate is not null");
 				// Nifty 
 				// first fix the trend.
 				summary = "";
@@ -1969,7 +1989,7 @@ var build_time_based_indicator_summary = function(search_result){
 			}
 		}
 		else{
-			//console.log("predicate is:" + get_predicate(search_result));
+			////console.log("predicate is:" + get_predicate(search_result));
 			if(_.size(trend["strongly_positive_years"]) > 0){
 
 				summary = get_predicate(search_result) + " was ";
@@ -2071,8 +2091,8 @@ var get_statistical_summary = function(search_result){
 		});	
 	}
 
-	//////console.log("sorted is:");
-	//////console.log(_sorted);
+	////////console.log("sorted is:");
+	////////console.log(_sorted);
 
 
 	var current_year_data = {current_year: _sorted[current_year]};
@@ -2093,8 +2113,8 @@ var get_statistical_summary = function(search_result){
 	}
 
 	search_result.summary = summary;
-	//////console.log("summary is:");
-	//////console.log(summary);
+	////////console.log("summary is:");
+	////////console.log(summary);
 	return search_result ;
 
 }
@@ -2175,7 +2195,7 @@ $(document).on("click",'.index_chip',function(event){
 
 
 $(document).on('click','.chip',function(event){
-	//////////console.log("clicked chip with category:" + $(this).attr("data-category"));
+	////////////console.log("clicked chip with category:" + $(this).attr("data-category"));
 	// if its parent is the row chip.
 	if($(this).hasClass("show_more_chips")){
 		// so its show more.
@@ -2349,8 +2369,8 @@ $(document).ready(function(){
         
       },
       onAutocomplete: function(val,div_id) {
-      	//console.log("val is:" + val);
-      	//console.log("div id is:" + div_id);
+      	////console.log("val is:" + val);
+      	////console.log("div id is:" + div_id);
         //var data = JSON.parse($(".autocomplete").first().data("autocomplete_hash"));
       	//var div_id = data[val];
       	// we sort this out.
@@ -2365,17 +2385,17 @@ $(document).ready(function(){
       		var indicator = the_div.attr("data-indicator");
 
       		if(!_.isBlank(primary_entity)){
-      			//////console.log("primary entity not undefined and is:" + primary_entity);
+      			////////console.log("primary entity not undefined and is:" + primary_entity);
       			update_information_cards(primary_entity,div_id,"primary_entity");
       		}
       		
       		if(!_.isBlank(impacted_entity)){
-      			//////console.log("impacted entity not undefined and is:" + impacted_entity);
+      			////////console.log("impacted entity not undefined and is:" + impacted_entity);
       			update_information_cards(impacted_entity,div_id,"impacted_entity");
       		}
       		
       		if(!_.isBlank(indicator)){
-      			//////console.log("indicator not undefined and is:" + indicator);
+      			////////console.log("indicator not undefined and is:" + indicator);
       			update_information_cards(indicator,div_id,"indicator");
       		}
 

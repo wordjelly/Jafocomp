@@ -1,7 +1,7 @@
 $(document).ready(function(){
-	_.each([0,20,35,50,65,80,95,100],function(up,key,list){
-		_draw(up,100-up,0,key);
-	});
+	//_.each([0,20,35,50,65,80,95,100],function(up,key,list){
+	//	_draw(up,100-up,0,key);
+	//});
 });
 
 //General idea from Maarten Lambrecht's block: http://bl.ocks.org/maartenzam/f35baff17a0316ad4ff6
