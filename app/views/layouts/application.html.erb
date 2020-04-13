@@ -6,7 +6,8 @@
 
   <meta id="meta_description" name=”description” content="<%= @meta_description %>">
 
-  <%= content_for :twitter_card %>
+  <%= content_for :social_meta_tags %>
+
   <!-- so we do title and description -->
   <!-- so i need to give a sector selector -->
   <!-- jquery -->
@@ -347,8 +348,7 @@
         <div class="card-action">
           <a href="{{= search_result.twitter_url }}"><i class="fab fa-twitter grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
           <a href="{{= search_result.facebook_url }}"><i class="fab fa-facebook-square grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
-          <a href="{{= search_result.facebook_url }}"><i class="fab fa-google-plus-square grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
-          <a href="{{= search_result.facebook_url }}"><i class="fab fa-whatsapp-square grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
+          <a href="{{= search_result.watsapp_url }}"><i class="fab fa-whatsapp-square grey-text" aria-hidden="true" style="font-size: 24px;"></i></a>
         </div>
             
       </div>
@@ -540,9 +540,6 @@
 
   </div>
 
-  <div id="hexagon"></div>
-  <canvas id="canvas" height="500" width="500"></canvas>
-  <img id="image"/>
   <%= yield %>
 
 </div>

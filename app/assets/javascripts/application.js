@@ -969,6 +969,20 @@ function CreateUUID() {
   });
 }
 
+// get twitter working, 
+// and then facebook.
+// first download those images.?
+var compose_twitter_url = function(search_result){
+	var base = "https://twitter.com/intent/tweet?url=";
+	var hashtags = [search_result.target];
+	var text = search_result.setup;
+	var url = search_result.url;
+	// okay so this can be done.
+	return base + encodeURIComponent(url);
+	//return base + encodeURIComponent("?text=" + text + "&url=" + url + "&hastags=" + hashtags.join(",")); 
+}
+
+// now generate those ones'
 
 /***
 // now we need the id.
@@ -977,11 +991,28 @@ function CreateUUID() {
 ***/
 var set_social_sharing_urls = function(search_result){
 	
-	search_result.tweet_url = "https://www.algorini.com/results/" + search_result.id;
-	
+	search_result.social_text = search_result.setup + "? " + search_result.description;
+
+	//search_result.url = "https://www.algorini.com/results/" + search_result.id + "?entity_id=" + search_result.impacted_entity_id;
+
+	search_result.url = "https://www.google.com";
+
+	/***
+	TWITTER
+	****/	
+	search_result.twitter_url = compose_twitter_url(search_result);
 
 
-	var watsapp_text = search_result.setup + "?" + "             " + search_result.description + "                    Get millions of simple stock related statistics at https://www.algorini.com";
+	/***
+	FACEBOOK
+	***/
+	search_result.facebook_url = "";
+
+
+	/****
+	WATSAPP
+	****/
+	var watsapp_text = search_result.social_text + " See Chart at :" + search_result.url;
 	search_result.watsapp_url = "https://api.whatsapp.com/send" + encodeURIComponent("?text=" + watsapp_text);
 
 }
@@ -992,6 +1023,7 @@ var prepare_search_result = function(search_result,autocomplete_suggestions_hash
 
 	text = search_result["text"];
 	search_result = search_result['_source'];
+	search_result.id = search_result['_id'];
 	assign_statistics(search_result,text);
 	search_result = update_coin_counts(search_result);
 	search_result = update_bar_lengths(search_result);
@@ -1072,7 +1104,7 @@ var prepare_search_result = function(search_result,autocomplete_suggestions_hash
 	else{
 		++total_negative;
 	}
-
+	set_social_sharing_urls(search_result);
 	return search_result;
 }
 

@@ -1,7 +1,11 @@
 $(document).ready(function(){
-	//_.each([0,20,35,50,65,80,95,100],function(up,key,list){
-	//	_draw(up,100-up,0,key);
-	//});
+	// if we are on the visualizations controller.
+	var pathname = window.location.pathname;
+	if(pathname.indexOf("visualizations") !== -1){
+		_.each([0,20,35,50,65,80,95,100],function(up,key,list){
+			_draw(up,100-up,0,key);
+		});
+	}
 });
 
 //General idea from Maarten Lambrecht's block: http://bl.ocks.org/maartenzam/f35baff17a0316ad4ff6

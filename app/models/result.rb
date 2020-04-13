@@ -581,6 +581,8 @@ class Result
 			## tso problem
 			input = entity_name + "#" +  "#{total_up}$$" + object_to_use["_source"]["stats"].join("$") + ",#{total_down}" + ",0,0,0,0,0,0,0,0,0,0,0" + object_to_use["_source"]["industries"].join(",") + "*#{entity_name.size},0" 
 
+			## time to see if this works
+			## and debug the rest of the shit.
 			## so here it will be treated differently.
 			## we have added it to the industries.
 			## so take it from there itself.
@@ -927,13 +929,11 @@ class Result
 
 		## first get it working in this.
 		## then later elsewhere.
-		## search_results = nested_function_score_query(args[:prefix])
+		search_results = nested_function_score_query(args[:prefix])
 		## but we have the target id right ?
 		## can it not be inferred from that somehow.
 		## without changing anything in the backend ?
-
-
-		search_results = suggest_query(args)
+		#search_results = suggest_query(args)
 
 		puts "the search results are;"
 
@@ -1056,9 +1056,6 @@ class Result
 	## check the thing before it and see what is wrong
 	## then implement the new logic and see that it does not fail.
 	def self.ps
-		
-
-
 		query = {
 			bool: {
 		      	must: [
@@ -1107,8 +1104,17 @@ class Result
 			}
 		}
 
+
+		## start -> all the things till it ends, should be in its bucket.
+		## need a downloader started -> event.
+		## and a downloader ended event also ->
+		## how many jobs are on, when the 
+
+
 		response = Hashie::Mash.new gateway.client.search body: {size: 0, query: query, aggs: aggs}, index: "tradegenie_titan", type: "doc"
 
+		## we need like, jobs already on. at this time.
+		## and why the decrement has fucked up so badly.
 		## key =-> epoch
 		## 
 		## value =-> hash
@@ -1137,17 +1143,60 @@ class Result
 		poller_sessions_keyed_by_time.keys.each do |time|
 			poller_sessions_keyed_by_time[time].keys.each do |poller_session_id|
 				events = poller_sessions_keyed_by_time[time][poller_session_id][:events]
-				#puts "events are:"
-				#puts JSON.pretty_generate(events)
-				#gets.chomp
-				entry_stats = get_entry_memory(events)
-				exit_stats = get_exit_memory(events)
-				results[time] = [entry_stats,exit_stats]
+				#entry_stats = get_entry_memory(events)
+				#exit_stats = get_exit_memory(events)
+				#why going into -36 suddenly.
+				#number of pending jobs ?
+				#cycled ?
+				# 
+				results[time] = [get_entry_memory(events),get_memory_sufficient(events),get_job_status(events),get_exit_memory(events)]
 			end
 		end
 
-		## here check for any errors.
-		puts JSON.pretty_generate(results)
+		results.values.each_slice(10) do |slice|
+			puts JSON.pretty_generate(slice)
+			gets.chomp
+		end
+	end
+
+	def self.get_memory_sufficient(events)
+		k = events.select{|c|
+			c["key"] =~ /memory_sufficient/i
+		}
+		if k.size > 0
+			["sufficient"]
+		else
+			k = events.select{|c|
+				c["key"] =~ /insufficient/i
+			}
+			if k.size > 0
+				["insufficient"]
+			else
+				nil
+			end
+		end
+	end
+
+	def self.get_job_status(events)
+		k = events.select{|c|
+			c["key"] =~ /evicted|pending_job|allowed/i
+		}
+		if k.size > 0
+			k["information"]["buckets"][0]["key"]
+		else
+			nil
+		end
+	end
+
+	def self.get_job_allowed_to_continue(events)
+		k = events.select{|c|
+			c["key"] =~ /allowed/i
+		}
+		if k.size > 0
+			["continue"]
+		else
+			nil
+		end
 	end
 
 	def self.get_entry_memory(events)
@@ -1173,12 +1222,14 @@ class Result
 	def self.get_exit_memory(events)
 		memory = nil
 		pollers_after = nil
+		information = nil
 		k = events.select{|c|
 			c["key"] =~ /exiting/i
 		}
 		if k.size > 0
 			k = k[0]
 			information = k["information"]["buckets"][0]["key"]
+=begin
 			information.scan(/Available\:\s\d+\.\d\sGiB\/\d+\.\d\sGiB/) do |n|
 				memory = n
 			end
@@ -1186,8 +1237,12 @@ class Result
 			information.scan(/pollers_after_decr\"\:\"\d+\"/) do |n|
 				pollers_after = n
 			end
+			if pollers_after.blank?
+				pollers_after = information
+			end
+=end
 		end
-		[memory,pollers_after]
+		[memory,information]
 	end
 
 	def self.did_not_exit?(buckets)

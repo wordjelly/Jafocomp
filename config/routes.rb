@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'exchange/:exchange' => 'welcome#exchange'
 
   resources :results
+  resources :visualizations
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

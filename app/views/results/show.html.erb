@@ -1,14 +1,20 @@
-<% content_for :twitter_card do %>
+<% content_for :social_meta_tags do %>
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="<%= @algorinie %>" />
-	<meta name="twitter:title" id="twitter_title" content="title" />
-	<meta name="twitter:description" id="twitter_description" content="Description" />
-	<meta name="twitter:image" id="twitter_image" content="" />
+	<meta name="twitter:title" class="social_title" id="twitter_title" content="" />
+	<meta name="twitter:description" class="social_description" id="twitter_description" content="" />
+	<meta name="twitter:image" class="social_image" content="" />
+	<meta property="og:url"  class="social_url"  content="" />
+	<meta property="og:type"  content="article" />
+	<meta property="og:title" class="social_title" id="facebook_title" content="" />
+	<meta property="og:description" class="social_description" content="" id="facebook_description" />
+	<meta property="og:image"   class="social_image" id="facebook_image" content="" />
 <% end %>
 <!-- lets upload this much and see -->
 <div id="_result" data-result="<%= JSON.generate(@result) %>"></div>
 <% @image = Image.new %>
 <%= render :partial => "images/form" %>
+
 <!-- we will have a bunch of pre-rendered images , saying up or down -->
 <!-- the chart or d3 we can show on the main page -->
 <!-- the other major problem, i need to start on that -->

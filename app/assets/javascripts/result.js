@@ -66,16 +66,23 @@ var update_twitter_cards_data = function(search_result){
 		}
 	});
 	var image_url = "up_" + String(min_diff_ratio) + ".png";
-	$("#twitter_image").attr("content",image_url);
 
-	// so we can try this out and see how it goes.
-	// with the twitter card.
-	// and test that on run throughout the night.
-	// then move to indicator, subindicator, related, 
-	// then the basic developement is done.
-	/***
-	title and description
-	***/
-	$("#twitter_title").attr("title",search_result.setup);
-	$("#twitter_description").attr("description",search_result.description);
+	// same for facebook and twitter here.
+	// but for facebook we need the social url also, 
+	// that comes from the search result.
+	$(".social_image").each(function(el){
+		el.attr("content",image_url);
+	});
+	// he's gonna tweet ?
+	$(".social_title").each(function(el){
+		el.attr("content",search_result.setup);
+	});
+
+	$(".social_description").each(function(el){
+		el.attr("content",search_result.description);
+	});
+
+	$(".social_url").each(function(el){
+		el.attr("content",search_result.url);
+	});
 };
