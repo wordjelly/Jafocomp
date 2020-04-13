@@ -973,12 +973,12 @@ function CreateUUID() {
 // and then facebook.
 // first download those images.?
 var compose_twitter_url = function(search_result){
-	var base = "https://twitter.com/intent/tweet?url=";
+	var base = "https://twitter.com/intent/tweet";
 	var hashtags = [search_result.target];
-	var text = search_result.setup;
+	var text = $("<div>").html(search_result.setup).text();
 	var url = search_result.url;
 	// okay so this can be done.
-	return base + encodeURIComponent(url);
+	return base + "?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text) + "&hashtags=" + encodeURIComponent(hashtags.join(","));
 	//return base + encodeURIComponent("?text=" + text + "&url=" + url + "&hastags=" + hashtags.join(",")); 
 }
 
@@ -993,9 +993,9 @@ var set_social_sharing_urls = function(search_result){
 	
 	search_result.social_text = search_result.setup + "? " + search_result.description;
 
-	//search_result.url = "https://www.algorini.com/results/" + search_result.id + "?entity_id=" + search_result.impacted_entity_id;
+	search_result.url = "https://www.algorini.com/results/" + search_result.id + "?entity_id=" + search_result.impacted_entity_id;
 
-	search_result.url = "https://www.google.com";
+	//search_result.url = "https://www.google.com";
 
 	/***
 	TWITTER
@@ -1020,10 +1020,14 @@ var set_social_sharing_urls = function(search_result){
 
 var prepare_search_result = function(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries){
 
+	//console.log(search_result['_id']);
+
+	//console.log("------------------------");
 
 	text = search_result["text"];
+	id = search_result["_id"];
 	search_result = search_result['_source'];
-	search_result.id = search_result['_id'];
+	search_result.id = id;
 	assign_statistics(search_result,text);
 	search_result = update_coin_counts(search_result);
 	search_result = update_bar_lengths(search_result);
@@ -1131,11 +1135,11 @@ var display_search_results = function(search_results,input){
 	var total_negative = 0;
 	 // and later use a template to get this.
 	
-	_.each(search_results,function(search_result,index,list){
+	search_results = _.map(search_results,function(search_result,index,list){
 			console.log(search_result);
 	    	search_result = prepare_search_result(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries);
 	    	render_search_result_new(search_result);
-	    	
+	    	return search_result;
     });
 
     update_positive_and_negative_tab_titles(total_positive,total_negative);
@@ -1199,7 +1203,10 @@ var display_search_results = function(search_results,input){
 	//////////console.log(related_queries);
 	var k = _.union(categories,related_queries);	
 	render_categories(k);
-	return autocomplete_suggestions_hash;
+	var results = {};
+	results["autocomplete_suggestions_hash"] = autocomplete_suggestions_hash;
+	results["search_results"] = search_results;
+	return results;
 }
 
 var query_pending = function(input){
@@ -1250,7 +1257,7 @@ var search_new = function(input){
 		    		$("#related_queries_title").hide();
 		    	}
 		    	else{
-		    		var autocomplete_hash = display_search_results(search_results,input);
+		    		var autocomplete_hash = display_search_results(search_results,input)["autocomplete_suggestions_hash"];
 		    			
 		    		$(".autocomplete").first().data('autocomplete_hash',JSON.stringify(_.object(_.map(autocomplete_hash,function(value,key){return [key.replace(/<\/?[^>]+(>|$)/g, "").trim(),value];}))));
 

@@ -6,7 +6,8 @@ $(document).ready(function(){
 	if(!_.isEmpty(result)){
 		var search_result = $("#_result").attr("data-result");
 		search_result = JSON.parse(search_result);
-		display_search_results([search_result],"");
+		var results = display_search_results([search_result],"");
+		search_result = results["search_results"][0];
 		update_twitter_cards_data(search_result);
 		$(".search_result_card").first().show();
 	}
@@ -70,19 +71,29 @@ var update_twitter_cards_data = function(search_result){
 	// same for facebook and twitter here.
 	// but for facebook we need the social url also, 
 	// that comes from the search result.
-	$(".social_image").each(function(el){
-		el.attr("content",image_url);
+	console.log("doing social image ------------------>");
+	$(".social_image").each(function(index){
+		$(this).attr("content",image_url);
 	});
+
 	// he's gonna tweet ?
-	$(".social_title").each(function(el){
-		el.attr("content",search_result.setup);
+	console.log("doing social title-------------------->");
+	$(".social_title").each(function(index){
+		console.log("doing social title;");
+		console.log($(this));
+		console.log(search_result.setup);
+		$(this).attr("content",$("<div>").html(search_result.setup).text());
 	});
 
-	$(".social_description").each(function(el){
-		el.attr("content",search_result.description);
+	console.log("doing social description --------------->");
+	$(".social_description").each(function(index){
+		$(this).attr("content",$("<div>").html(search_result.description).text());
 	});
 
-	$(".social_url").each(function(el){
-		el.attr("content",search_result.url);
+	// twitter
+
+	console.log("doing social url --------------->");
+	$(".social_url").each(function(index){
+		$(this).attr("content",search_result.url);
 	});
 };
