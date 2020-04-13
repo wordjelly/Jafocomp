@@ -610,18 +610,10 @@ var set_origin_categories = function(search_result){
 // secondary entity is at index 2,3
 // length : , offset, length, offset
 var get_offsets = function(input_text){
-	//resulting object
-	////////////console.log("input text is:");
-	////////////console.log(input_text);
 	var result_object = {};
-
-
-
 	var split_on_offsets = input_text.split("*");
 	text_stats_and_related_queries = split_on_offsets[0];
 	offsets = split_on_offsets[1];
-	////////////console.log("text stats:" + text_stats_and_related_queries);
-	////////////console.log("offsets:" + offsets);
 	return offsets.split(",");
 }
 

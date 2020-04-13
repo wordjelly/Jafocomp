@@ -1002,7 +1002,7 @@ class Result
 				input_and_impacted_entity_id = plug_industries(c["_source"]["suggest"][0]["input"])
 				c["_source"]["suggest"][0]["input"] = input_and_impacted_entity_id[:input]
 				c["_source"]["impacted_entity_id"] = input_and_impacted_entity_id[:impacted_entity_id]
-				c
+				build_setup(c)
 			}
 		end
 		
@@ -1256,6 +1256,40 @@ class Result
 		buckets.select{|c|
 			c["key"] =~ /saturated/i
 		}.size > 0
+	end
+
+	###########################################################
+	##
+	##
+	## SERVER SIDE RESULT GENERATION.
+	##
+	##
+	###########################################################
+	## @param[Hash] hit
+	## @return[Hash] hit, with a setup key.
+	## adds the title, description, image url keys, server side.
+	def self.build_setup(hit)
+		search_result = hit['_source']
+		offsets = get_offsets(search_result["suggest"][0]["input"]);
+		suggestion = search_result["suggest"][0];
+		related_queries = suggestion["input"].split("%")[1].split("*")[0];
+		pre = suggestion["input"].split("%")[0];
+		information = pre.split("#");
+		search_result["information"] = information;
+		stats = information[1];
+		stats = stats.split(",");
+		search_result["setup"] = "What happens to " + information[0][offsets[0],offsets[1]];
+		search_result["setup"] = search_result["setup"].replace(/\-/," ");
+		search_result["triggered_at"] = search_result["epoch"];
+		
+		hit
+	end
+
+	def self.get_offsets(input_text)
+		split_on_offsets = input_text.split("*");
+		text_stats_and_related_queries = split_on_offsets[0];
+		offsets = split_on_offsets[1];
+		offsets.split(",");
 	end
 
 end

@@ -14,6 +14,7 @@ $(document).ready(function(){
 	else{
 		console.log("no result");
 	}
+	// so it has to be done server side.
 	// probably won't be needed later on.
 	// we use a recaptcha
 	// and a signed upload
