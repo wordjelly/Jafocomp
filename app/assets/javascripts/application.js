@@ -919,10 +919,12 @@ var assign_target = function(search_result){
 	var k2 = new RegExp(/([a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/);
 	//console.log("setup is:" + search_result.setup);
 	var target = k.exec(search_result.setup);
-	//console.log("target is:");
-	//console.log(target);
+	console.log("target is:");
+	console.log(target);
 	if(_.size(target) >= 1){
 		var target_2 = k2.exec(target[1]);
+		console.log("target 2 is:");
+		console.log(target_2);
 		if(_.size(target_2) >= 1){
 			search_result.target = target_2[1];
 		}

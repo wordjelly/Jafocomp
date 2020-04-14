@@ -32,15 +32,15 @@ class Result
 	end
 
 	def self.reload_front_page_trend
-		puts "came to reload front page trend."
+		#puts "came to reload front page trend."
 		$front_page_trend_loaded_at ||= Time.now - 6.hours
 		if Time.now.to_i > $front_page_trend_loaded_at.to_i
-			puts "current time is greater #{(Time.now.to_i - $front_page_trend_loaded_at.to_i)}"
+			#puts "current time is greater #{(Time.now.to_i - $front_page_trend_loaded_at.to_i)}"
 			if ((Time.now.to_i - $front_page_trend_loaded_at.to_i) > 3600*4)
-				puts "setting front page trend."
+				#puts "setting front page trend."
 				$front_page_trend = front_page_trend
-				puts "front page trend is;"
-				puts $front_page_trend
+				#puts "front page trend is;"
+				#puts $front_page_trend
 				$front_page_trend_loaded_at = Time.now
 			end
 		end
@@ -84,7 +84,7 @@ class Result
 
 		results = gateway.client.search index: "correlations", body: body
 		
-		puts JSON.pretty_generate(results["hits"]["hits"])
+		#puts JSON.pretty_generate(results["hits"]["hits"])
 		if results["hits"]
 			results["hits"]["hits"]
 		else
@@ -101,7 +101,7 @@ class Result
 		## should[1][:nested][:query][:bool][:should]
 		## sort out stubbing for close
 
-		puts "RUNNING NEW MATCH QUERY."
+		#puts "RUNNING NEW MATCH QUERY."
 		
 		query = query.downcase
 
@@ -218,8 +218,8 @@ class Result
 			should.pop
 		end
 
-		puts "should clauses are:"
-		puts JSON.pretty_generate(should)
+		#puts "should clauses are:"
+		#puts JSON.pretty_generate(should)
 
 
 		body = 
@@ -264,7 +264,7 @@ class Result
 
 		search_results = search_results["hits"]["hits"].map{|hit|
 			#puts JSON.generate(hit)
-			puts JSON.generate(hit["inner_hits"]["complex_derivations"]["hits"]["hits"])
+			#puts JSON.generate(hit["inner_hits"]["complex_derivations"]["hits"]["hits"])
 			object_to_use = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]
 
 			# if it doesn't contain the time tag_text
@@ -537,7 +537,7 @@ class Result
 
 		body = match_phrase_query_builder(query,direction)
 
-		puts JSON.pretty_generate(body)
+		#puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
 
@@ -789,8 +789,8 @@ class Result
 		#puts "search results size:"
 		#puts search_results["hits"]["hits"].size
 		search_results = search_results["hits"]["hits"].map{|hit|
-			puts "this is the hit------------->"
-			puts JSON.generate(hit)
+			#puts "this is the hit------------->"
+			#puts JSON.generate(hit)
 			## so it depends which hit matched.
 			## either tags or industries.
 			## both have to be checke.
@@ -828,8 +828,8 @@ class Result
 
 			## could become problematic.
 
-			puts "input becomes --------------------------- >"
-			puts input.to_s
+			#puts "input becomes --------------------------- >"
+			#puts input.to_s
 			## here add the industries.
 			## and we are in business
 			## and then add the chips to the top of the page.
@@ -855,7 +855,7 @@ class Result
 
 
 	def self.plug_industries(input)
-		puts "input is: #{input}" 
+		#puts "input is: #{input}" 
 		sectors = []
 		parts = input.split("#")
 		stats = parts[1].split(",")
@@ -929,18 +929,18 @@ class Result
 
 		## first get it working in this.
 		## then later elsewhere.
-		search_results = nested_function_score_query(args[:prefix])
+		#search_results = nested_function_score_query(args[:prefix])
 		## but we have the target id right ?
 		## can it not be inferred from that somehow.
 		## without changing anything in the backend ?
-		#search_results = suggest_query(args)
+		search_results = suggest_query(args)
 
-		puts "the search results are;"
+		#puts "the search results are;"
 
 		if search_results.blank?
-			puts JSON.pretty_generate(search_results)
+			#puts JSON.pretty_generate(search_results)
 		else
-			puts JSON.pretty_generate(search_results)
+			#puts JSON.pretty_generate(search_results)
 		end
 
 		## so we are returning an array of search results.
@@ -1003,6 +1003,7 @@ class Result
 				c["_source"]["suggest"][0]["input"] = input_and_impacted_entity_id[:input]
 				c["_source"]["impacted_entity_id"] = input_and_impacted_entity_id[:impacted_entity_id]
 				build_setup(c)
+				c
 			}
 		end
 		
@@ -1271,25 +1272,248 @@ class Result
 	def self.build_setup(hit)
 		search_result = hit['_source']
 		offsets = get_offsets(search_result["suggest"][0]["input"]);
+		puts "ofsets are: #{offsets}"
 		suggestion = search_result["suggest"][0];
+		puts "suggestion is :#{suggestion}"
 		related_queries = suggestion["input"].split("%")[1].split("*")[0];
 		pre = suggestion["input"].split("%")[0];
+		puts "pre is :#{pre}"
 		information = pre.split("#");
+		puts "information is: #{information}"
 		search_result["information"] = information;
 		stats = information[1];
 		stats = stats.split(",");
-		search_result["setup"] = "What happens to " + information[0][offsets[0],offsets[1]];
-		search_result["setup"] = search_result["setup"].replace(/\-/," ");
+		puts "stats are :#{stats}"
+		## but then you need the target and everything
+		## to be loaded on the server side itself.
+		## is this necessary ?
+		## 10 yr trends for ?
+		## 10 yr trends
+		## How does Asian Paints react on Mondays?
+		puts "information 0 is:" 
+		puts information[0]
+		str = information[0]
+		puts "str is #{str}"
+
+		string = str[offsets[0]..offsets[1]]
+		puts "string becomes: #{string}"
+		search_result["setup"] = "What happens to " + string;
+		search_result["setup"] = search_result["setup"].gsub(/\-/," ");
 		search_result["triggered_at"] = search_result["epoch"];
-		
+		puts JSON.pretty_generate(search_result)
+
+		stats = stats[0..12]
+
+		############ => NEXT PART.
+
+		build_setup_actual(search_result,"");
+
+		search_result["impacts"] = [];	
+
+		impact = {
+			statistics: []
+		}
+
+		##console.log("setup is:");
+		##console.log(search_result.setup);
+		##console.log("stats are:");
+		##console.log(stats);
+		##console.log("-----------------------");
+
+		## add week.
+		if(stats[0].to_i == 0) && (stats[1].to_i == 0)){
+
+		}
+		else{
+			impact[:statistics].push({
+				time_frame: 1,
+				time_frame_unit: "days",
+				time_frame_name: "1 day",
+				total_up: stats[0].to_i,
+				total_down: stats[1].to_i,
+				maximum_profit: stats[2].to_i,
+				maximum_loss: stats[3].to_i
+			})
+			search_result["rises_or_falls"] = get_rises_or_falls(impact[:statistics][0]);
+			search_result.percentage = get_percentage(impact[:statistics][0]);
+		}
+
+
 		hit
 	end
+
+	def get_rises_or_falls(statistic)
+		if statistic[:total_up] >= statistic[:total_down]
+			return "tends to rise";
+		
+		else
+			return "tends to fall";
+		end
+	end
+
+
+	def get_percentage(statistic)
+		if(statistic[:total_up] >= statistic[:total_down]
+			return Math.round((statistic[:total_up]/(statistic[:total_up] + statistic[:total_down]))*100);
+		
+		else
+			rreturn Math.round((statistic[:total_down]/(statistic[:total_up] + statistic[:total_down]))*100);
+		end
+	end
+
+
+	def self.mod_prev_tag_and_complex_string(search_results,prev_tag_is_colloquial,complex_string,type)
+		search_result["tags"].each_with_index{|tag,index|
+			if tag.start_with?("**")
+				prev_tag_is_colloquial = 1 if !tag.end_with?("**")
+			elsif tag.end_with?("**")
+				prev_tag_is_colloquial = 0
+			elsif tag.start_with?("**") && tag.end_with?("**")
+				## nothing.
+			else
+				if type == 0
+					if index == 0
+						complex_string =  complex_string + tag + "'s" + " "
+					else
+						complex_string = complex_string + tag + " ";
+					end
+				elsif type == 1
+					if prev_tag_is_colloquial == 0 
+						complex_string = complex_string + tag + " "
+					end
+				elsif type == 2
+					if prev_tag_is_colloquial == 0
+						if index == 0 
+							## full name.
+							complex_string =  complex_string + tag + "'s" + " ";
+						elsif index == 1 
+							## symbol
+						else 
+							complex_string = complex_string + tag + " ";
+						end
+					end
+				end
+			end
+		}
+
+		{
+			prev_tag_is_colloquial: prev_tag_is_colloquial,
+			complex_string: complex_string
+		}
+
+	end
+
+	## => next part begins.
+	def self.build_setup_actual(search_result,text)
+
+		complex_string = search_result["preposition"] + " ";
+		
+	
+		## this has to be done better.
+		## if the part inside the ** contains the text
+		## then we keep it and knock off the other part.
+		## this is not going to be easy.
+		## same thing is repeated below in the final else.
+		if(search_result["tags"].select{|c| c =~ /period_start_\d/i}.size > 0)
+			
+			prev_tag_is_colloquial = 0
+			## this is being called twice, can be ported to a functional part of the code.
+			results = mod_prev_tag_and_complex_string(search_results,prev_tag_is_colloquial,complex_string,0)			
+			prev_tag_is_colloquial = results[:prev_tag_is_colloquial]
+			complex_string = results[:complex_string]
+		else
+
+			if search_result.information =~ /first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/
+
+				prev_tag_is_colloquial = 0
+	 			
+	 			results = mod_prev_tag_and_complex_string(search_results,prev_tag_is_colloquial,complex_string,1)			
+				
+				prev_tag_is_colloquial = results[:prev_tag_is_colloquial]
+				
+				complex_string = results[:complex_string]
+
+			elsif(search_result["tags"].select{|c| c =~ /period_start_\d/i}.size > 0)
+
+
+				##console.log("got a time based subindicator, by checking the tags");
+				search_results.tags.each_with_index{|tag,index|
+					if tag.start_with?("**") && tag.end_with?("**")
+
+					else
+						complex_string = complex_string + tag + " ";
+					end
+				}
+				
+				
+			else
+				prev_tag_is_colloquial = 0
+	 			
+	 			results = mod_prev_tag_and_complex_string(search_results,prev_tag_is_colloquial,complex_string,2)			
+				
+				prev_tag_is_colloquial = results[:prev_tag_is_colloquial]
+				
+				complex_string = results[:complex_string] 		
+			end
+
+		end
+
+		
+		search_result.setup = search_result["setup"] + " " + complex_string;	
+		search_result["complex_string"] = complex_string;
+		assign_target(search_result);
+		get_primary_entity_and_indicator(search_result);
+		##build_meta_description(search_result);
+		##add_chart_image_url(search_result);
+	end
+
+
+	def self.get_primary_entity_and_indicator(search_result)
+
+		
+		search_result["setup"].scan(/when(?<primary_entity>[A-Za-z\s]+)\'s\s(?<indicator>[A-Za-z_\d+]+)\s(?<indicator_suffix>indicator)?/i) do 
+
+			jj = Regexp.last_match
+
+			search_result["primary_entity"] = jj[:primary_entity]
+			search_result["indicator"] = jj[:indicator]
+			unless jj[:indicator_suffix].blank?
+				search_result["indicator"] += (" indicator") 
+			end
+
+
+		end
+	
+	end
+
+
+	def self.assign_target(search_result)
+		
+		search_result["setup"].scan(/to\s(?<target_one>[a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/) do 
+
+			jj = Regexp.last_match
+
+			search_result["target"] = jj[:target_one]
+
+			search_result["target"].scan(/(?<target_two>[a-zA-Z0-9\s\-\_]+)\b(in|when|on)\b/) do 
+
+				ll = Regexp.last_match
+
+				search_result["target"] = ll[:target_two]
+
+			end
+
+		end
+	end
+
 
 	def self.get_offsets(input_text)
 		split_on_offsets = input_text.split("*");
 		text_stats_and_related_queries = split_on_offsets[0];
 		offsets = split_on_offsets[1];
-		offsets.split(",");
+		offsets = offsets.split(",").map{|c| c.to_i}.sort
+		offsets[1] = offsets[1] + 1
+		offsets
 	end
 
 end
