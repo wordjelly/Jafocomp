@@ -1,14 +1,14 @@
 <% content_for :social_meta_tags do %>
 	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:site" content="<%= @algorinie %>" />
-	<meta name="twitter:title" class="social_title" id="twitter_title" content="Asian-Paints : 10-yr trends" />
-	<meta name="twitter:description" class="social_description" id="twitter_description" content="How Asian Paints reacts on Tuesdays's over the last 10 years" />
-	<meta name="twitter:image" class="social_image" content="https://www.algorini.com/assets/up_100.png" />
-	<meta property="og:url"  class="social_url"  content="" />
+	<meta name="twitter:title" class="social_title" id="twitter_title" content="<%= @social_title %>" />
+	<meta name="twitter:description" class="social_description" id="twitter_description" content="<%= @social_description %>" />
+	<meta name="twitter:image" class="social_image" content="<%= @social_image_url %>" />
+	<meta property="og:url"  class="social_url"  content="<%= @social_url %>" />
 	<meta property="og:type"  content="article" />
-	<meta property="og:title" class="social_title" id="facebook_title" content="" />
-	<meta property="og:description" class="social_description" content="" id="facebook_description" />
-	<meta property="og:image"   class="social_image" id="facebook_image" content="" />
+	<meta property="og:title" class="social_title" id="facebook_title" content="<%= @social_title %>" />
+	<meta property="og:description" class="social_description" content="<%= @social_description %>" id="facebook_description" />
+	<meta property="og:image"   class="social_image" id="facebook_image" content="<%= @social_image_url %>" />
 <% end %>
 <!-- lets upload this much and see -->
 <div id="_result" data-result="<%= JSON.generate(@result) %>"></div>

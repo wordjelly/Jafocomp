@@ -2,28 +2,18 @@ class ResultsController < ApplicationController
 
 	## overriden from application controller.
 	def set_meta_information
-		# cannot be enforced.
 	  	@title = DEFAULT_TITLE
 	  	@meta_description = DEFAULT_META_DESCRIPTION
 	  	@twitter_username = TWITTER_USERNAME
+	    @social_title = @result["social_title"]
+	    @social_description = @result["social_description"]
+	    @social_url = @result["social_url"]
+	    @social_image_url = @result["social_image_url"]
   	end
 
-  	
-
-  	## so now for the cloudinary prt.
-  	def set_twitter_cards_information
-=begin
-	## twitter cards validator : 
-	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:site" content="@flickr" />
-	<meta name="twitter:title" content="Small Island Developing States Photo Submission" />
-	<meta name="twitter:description" content="View the album on Flickr." />
-	<meta name="twitter:image" content="https://farm6.staticflickr.com/5510/14338202952_93595258ff_z.jpg" />
-=end
-  	end
 	
 	def show
-		@result = Result.es_find(params[:id],{})
+		@result = Result.es_find(params[:id],{entity_id: params[:entity_id]})
 	end
 
 	def permitted_params
