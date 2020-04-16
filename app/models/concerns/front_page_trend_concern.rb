@@ -1,4 +1,4 @@
-module FrontPageTrendConcern
+module Concerns::FrontPageTrendConcern
 
 	extend ActiveSupport::Concern
 

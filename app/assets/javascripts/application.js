@@ -368,6 +368,8 @@ var build_setup = function(search_result,text){
 	// then we keep it and knock off the other part.
 	// this is not going to be easy.
 	// same thing is repeated below in the final else.
+	console.log("search result is:");
+	console.log(search_result);
 	if(non_time_subindicator.test(search_result.tags) == true){
 		
 		////////console.log("Tags are");
@@ -413,8 +415,9 @@ var build_setup = function(search_result,text){
 	}
 	else{
 
+		//puts "Came to the else"
 		if(time_subindicator_regexp.test(search_result.information) == true){
-
+			//puts "information hit "
 			////////console.log("information test worked.");
 			////////console.log(search_result.tags);
 			// if any of the tags have 
@@ -746,10 +749,12 @@ var assign_statistics = function(search_result,text){
 	// this sets the 
 	set_impacted_categories_from_suggestion_input(search_result,stats);
 	set_related_queries_from_suggestion_input(search_result,related_queries);
+	console.log("stats before slice");
+	console.log(stats);
 	stats = stats.slice(0,12);
 	
-	////console.log("stats before going in:");
-	////console.log(stats);
+	console.log("stats before going in:");
+	console.log(stats);
 	set_year_wise_data(stats,search_result)
 
 	build_setup(search_result,text);
@@ -760,10 +765,10 @@ var assign_statistics = function(search_result,text){
 		statistics: []
 	}
 
-	////console.log("setup is:");
+	///console.log("setup is:");
 	////console.log(search_result.setup);
-	////console.log("stats are:");
-	////console.log(stats);
+	console.log("stats are:");
+	console.log(stats);
 	////console.log("-----------------------");
 
 	/// add week.

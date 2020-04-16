@@ -4,9 +4,10 @@
 
   <title id="title"><%= @title %></title>
 
+  <%= content_for :social_meta_tags %>
+
   <meta id="meta_description" name=”description” content="<%= @meta_description %>">
 
- 
 
   <!-- so we do title and description -->
   <!-- so i need to give a sector selector -->
@@ -542,8 +543,6 @@
   </div>
 
   <%= yield %>
-
-  <%= content_for :social_meta_tags %>
 
 </div>
 

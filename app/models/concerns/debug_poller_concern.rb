@@ -1,4 +1,4 @@
-module DebugPollerConcern
+module Concerns::DebugPollerConcern
 
 	extend ActiveSupport::Concern
 

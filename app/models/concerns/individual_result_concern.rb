@@ -1,4 +1,4 @@
-module IndividualResultConcern
+module Concerns::IndividualResultConcern
 
 	extend ActiveSupport::Concern
 
@@ -8,8 +8,52 @@ module IndividualResultConcern
 
   	module ClassMethods
 
-  		def set_social_parameters(hit)
+  		SEPARATOR_FOR_TAG_TEXT = "^^"
 
+  		def get_image_url(hit)
+  			#puts "incoming hit in image url"
+  			#puts hit.to_s
+  			ratios = [0,20,35,50,65,80,95];
+			min_diff = nil;
+			min_diff_ratio = nil;
+			if (hit["_source"]["rises_or_falls"] =~ /falls/)
+				ratios.map!{|c|
+					100 - c
+				}
+			end
+			ratios.each_with_index{|el,key|
+
+				diff = (el - hit["_source"]["percentage"]).abs
+				if(min_diff.blank?)
+					min_diff = diff
+					min_diff_ratio = el
+				else
+					if diff < min_diff
+						min_diff = diff
+						min_diff_ratio = el
+					end
+				end
+			}
+			
+			image_url = "up_" + min_diff_ratio.to_s + ".png";
+  		end
+
+
+  		def set_social_parameters(hit)
+  			## social_image_url
+  			hit["_source"]["social_image_url"] = get_image_url(hit)
+
+  			## social_description
+  			hit["_source"]["social_description"] = hit["_source"]["setup"]
+  			#we need start year to end year'
+  			#Asian Paints tends to rise 65% 
+  			## social_title
+  			## Asian Paints tends to rise 100% of the time on Monday
+  			## Asian Paints tends to rise 56% of the times when Nifty's RSI Indicator falls.
+  			hit["_source"]["social_title"] = hit["_source"]["target"] + ":10 Yr Trends"
+
+  			## social_url
+  			hit["_source"]["social_url"] = "https://www.algorini.com/results/" + hit["_id"] + "?entity_id=" + hit["_source"]["impacted_entity_id"];
   		end
 
 		def complex_derivation_to_hit(hit,complex_derivation)
@@ -61,7 +105,7 @@ module IndividualResultConcern
 					impacted_entity_id: input_and_impacted_entity_id[:impacted_entity_id],
 					suggest: [
 						{
-							input: input_and_impacted_entity_id[:input]
+							"input" => input_and_impacted_entity_id[:input]
 						}
 					],
 					## debug here.
@@ -73,6 +117,7 @@ module IndividualResultConcern
 					p_val: complex_derivation["p_val"]
 				}
 			}
+			
 		end
 
   		## here we find by the 
@@ -82,7 +127,7 @@ module IndividualResultConcern
 			complex_derivation_index = 0
 			unless args[:entity_id].blank?
 				complex_derivations.each_with_index{|val,key|
-					
+
 				}
 			end
 			if response["_source"]
@@ -102,12 +147,17 @@ module IndividualResultConcern
 		## @return[Hash] hit, with a setup key.
 		## adds the title, description, image url keys, server side.
 		def build_setup(hit)
+			hit = hit.stringify_keys
+			#puts "hit stringified is"
+			#puts JSON.pretty_generate(hit)
 			search_result = hit['_source']
+			#puts "search result is:"
+			#puts search_result.to_s
 			offsets = get_offsets(search_result["suggest"][0]["input"]);
 			#puts "ofsets are: #{offsets}"
 			suggestion = search_result["suggest"][0];
 			#
-			puts "suggestion is :#{suggestion}"
+			#puts "suggestion is :#{suggestion}"
 			related_queries = suggestion["input"].split("%")[1].split("*")[0];
 			pre = suggestion["input"].split("%")[0];
 			#puts "pre is :#{pre}"
@@ -153,7 +203,10 @@ module IndividualResultConcern
 			##console.log(stats);
 			##console.log("-----------------------");
 
+			
+			stats[0] = stats[0].split("$$")[0];
 			## add week.
+			puts "stats are :#{stats}"
 			if((stats[0].to_i == 0) && (stats[1].to_i == 0))
 
 			
@@ -175,17 +228,18 @@ module IndividualResultConcern
 			## for facebook and twitter with a chart image
 			## and navigation ?
 
-			puts "the search result becomes finally ------>"
-			puts JSON.pretty_generate(search_result)
+			#puts "the search result becomes finally ------>"
+			#puts JSON.pretty_generate(search_result)
 
-			puts "the hit is: "
-			puts JSON.pretty_generate(hit)
+			#puts "the hit is: "
+			#puts JSON.pretty_generate(hit)
 
-			## here only we have to set the meta_tags
-			## for the result
-			## or those can be set via the controller ?
-			## 
+			# i want to design the charts and sort this out.
+			# that is end game for this part.
+			# then navigation.
 
+			set_social_parameters(hit)
+			
 			hit
 		end
 
@@ -200,12 +254,20 @@ module IndividualResultConcern
 
 
 		def get_percentage(statistic)
+			
+			k = nil
+			
+			total = statistic[:total_up] + statistic[:total_down]
+			
+
 			if(statistic[:total_up] >= statistic[:total_down])
-				return ((statistic[:total_up]/(statistic[:total_up] + statistic[:total_down]))*100).round
+				k =  (statistic[:total_up].to_f/total.to_f)*100.to_f.to_i
 			
 			else
-				return ((statistic[:total_down]/(statistic[:total_up] + statistic[:total_down]))*100).round
+				k = (statistic[:total_down].to_f/total.to_f)*100.to_f.to_i 
 			end
+			
+			k.round
 		end
 
 
@@ -256,6 +318,8 @@ module IndividualResultConcern
 
 			complex_string = search_result["preposition"] + " ";
 			
+			#puts "search result tags are:"
+			#puts search_result["tags"]
 		
 			## this has to be done better.
 			## if the part inside the ** contains the text
@@ -263,7 +327,8 @@ module IndividualResultConcern
 			## this is not going to be easy.
 			## same thing is repeated below in the final else.
 			if(search_result["tags"].select{|c| c =~ /period_start_\d/i}.size > 0)
-				
+					
+				#puts "goes into the first if condition"
 				prev_tag_is_colloquial = 0
 				## this is being called twice, can be ported to a functional part of the code.
 				results = mod_prev_tag_and_complex_string(search_result,prev_tag_is_colloquial,complex_string,0)			
@@ -271,8 +336,13 @@ module IndividualResultConcern
 				complex_string = results[:complex_string]
 			else
 
-				if search_result["information"] =~ /first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/
+				#puts "goes into else"
+				#puts "search result information is:" 
+				#puts search_result["information"]
 
+				if search_result["information"].select{|c| c =~ /first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/ }.size > 0 
+
+					#puts "gets time based subindicator"
 					prev_tag_is_colloquial = 0
 		 			
 		 			results = mod_prev_tag_and_complex_string(search_result,prev_tag_is_colloquial,complex_string,1)			
@@ -281,7 +351,9 @@ module IndividualResultConcern
 					
 					complex_string = results[:complex_string]
 
-				elsif(search_result["tags"].select{|c| c =~ /period_start_\d/i}.size > 0)
+					#puts "sets complex string to: #{complex_string}"
+
+				elsif(search_result["tags"].select{|c| c =~ /first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/ }.size > 0)
 
 
 					##console.log("got a time based subindicator, by checking the tags");
@@ -295,6 +367,7 @@ module IndividualResultConcern
 					
 					
 				else
+					#puts "came to the last else."
 					prev_tag_is_colloquial = 0
 		 			
 		 			results = mod_prev_tag_and_complex_string(search_result,prev_tag_is_colloquial,complex_string,2)			
@@ -353,7 +426,7 @@ module IndividualResultConcern
 				end
 
 			end
-			puts "the target it: #{search_result['target']}"
+			#puts "the target it: #{search_result['target']}"
 
 		end
 

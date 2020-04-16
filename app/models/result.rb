@@ -8,7 +8,7 @@ class Result
 	#generate permutataions, and see what has gone wrong.
 	#include Mongoid::Elasticsearch
   	#elasticsearch!
-  	SEPARATOR_FOR_TAG_TEXT = "^^"
+  	
 	include Elasticsearch::Persistence::Model
 
 	include Concerns::DebugPollerConcern
@@ -857,7 +857,6 @@ class Result
 				input_and_impacted_entity_id = plug_industries(c["_source"]["suggest"][0]["input"])
 				c["_source"]["suggest"][0]["input"] = input_and_impacted_entity_id[:input]
 				c["_source"]["impacted_entity_id"] = input_and_impacted_entity_id[:impacted_entity_id]
-				build_setup(c)
 				c
 			}
 		end

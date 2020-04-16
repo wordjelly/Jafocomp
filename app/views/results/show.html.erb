@@ -8,7 +8,7 @@
 	<meta property="og:type"  content="article" />
 	<meta property="og:title" class="social_title" id="facebook_title" content="<%= @social_title %>" />
 	<meta property="og:description" class="social_description" content="<%= @social_description %>" id="facebook_description" />
-	<meta property="og:image"   class="social_image" id="facebook_image" content="<%= @social_image_url %>" />
+	<meta property="og:image"   class="social_image" id="facebook_image" content="<%= image_path(@social_image_url) %>" />
 <% end %>
 <!-- lets upload this much and see -->
 <div id="_result" data-result="<%= JSON.generate(@result) %>"></div>
