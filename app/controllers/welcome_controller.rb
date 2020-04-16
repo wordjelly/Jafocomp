@@ -2,8 +2,12 @@ class WelcomeController < ApplicationController
 
 	def index
 		Result.reload_front_page_trend
-		@result = $front_page_trend["_source"]
-		@result["trends"] = @result["trends"][0..10]
+		unless $front_page_trend.blank?
+			@result = $front_page_trend["_source"]
+			@result["trends"] = @result["trends"][0..10]
+		else
+			@result = {"trends" => []}
+		end
 	end	
 
 	## so we have a tooltip request.

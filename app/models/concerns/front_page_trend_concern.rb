@@ -27,7 +27,11 @@ module Concerns::FrontPageTrendConcern
 		## we can store.
 		## but it will become an ajax call whichever way you go for it.
 		def front_page_trend
-			gateway.client.get index: "correlations", id: "R-front_page_trend"
+			begin
+				gateway.client.get index: "correlations", id: "R-front_page_trend"
+			rescue
+				nil
+			end
 		end
 
   	end
