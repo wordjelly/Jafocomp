@@ -3,7 +3,8 @@ $(document).ready(function(){
 	var pathname = window.location.pathname;
 	if(pathname.indexOf("visualizations") !== -1){
 		_.each([0,20,35,50,65,80,95,100],function(up,key,list){
-			_draw(up,100-up,0,key);
+			//_draw(up,100-up,0,key);
+			draw_polar_chart(up,100-up,0,key);
 		});
 	}
 });
@@ -61,6 +62,8 @@ function move(d,SQRT3,hexRadius) {
 		.each("end", move);
 	***/
 }//function move
+
+
 
 
 /// up out of 100
@@ -275,4 +278,71 @@ function exportCanvasAsPNG(id, fileName) {
     document.body.appendChild(dlLink);
     dlLink.click();
     document.body.removeChild(dlLink);
+}
+
+var randomScalingFactor = function() {
+	return Math.round(Math.random() * 100);
+};
+
+// we can sort this out.
+var draw_polar_chart = function(green,red,flat,index){
+
+	var svg_container_id = "hexagon" + String(index);
+	var canvas_id = "canvas" + String(index);
+	// add a svg 
+	$("<div id='" + svg_container_id + "'></div>").appendTo('body');
+	// and a canvas element.
+	$("<canvas id='"+ canvas_id +"' height='500' width='500' />").appendTo('body');
+
+	var chartColors = window.chartColors;
+	var color = Chart.helpers.color;
+	var config = {
+		data: {
+			datasets: [{
+				data: [
+					red,
+					green
+				],
+				backgroundColor: [
+					color(chartColors.red).alpha(0.5).rgbString(),
+					color(chartColors.green).alpha(0.5).rgbString()
+				],
+				label: 'My dataset' // for legend
+			}],
+			labels: [
+				'Falls',
+				'Rises'
+			]
+		},
+		options: {
+			responsive: true,
+			legend: {
+				position: 'right',
+				display: false
+			},
+			title: {
+				display: false,
+				text: 'Chart.js Polar Area Chart'
+			},
+			scale: {
+				ticks: {
+					beginAtZero: true
+				},
+				reverse: false
+			},
+			animation: {
+				animateRotate: false,
+				animateScale: true
+			}
+		}
+	};
+
+	var ctx = document.getElementById(canvas_id);
+	window.myPolarArea = Chart.PolarArea(ctx, config);
+	var colorNames = Object.keys(window.chartColors);
+			
+	setTimeout(exportCanvasAsPNG,10000,canvas_id,("up_" + String(green)));
+	//exportCanvasAsPNG(canvas_id, ("up_" + String(green)));
+
+
 }

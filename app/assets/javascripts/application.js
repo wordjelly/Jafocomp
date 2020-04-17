@@ -1,4 +1,5 @@
 //= require search.js
+//= require utils.js
 //= require logs.js
 //= require result.js
 //= require cloudinary

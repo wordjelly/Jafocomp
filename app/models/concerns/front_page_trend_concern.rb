@@ -26,6 +26,9 @@ module Concerns::FrontPageTrendConcern
 		## so any number of trends.
 		## we can store.
 		## but it will become an ajax call whichever way you go for it.
+		## next step is to permute the charts
+		## and finish that off once and for all
+		## how about a pie chart ?
 		def front_page_trend
 			begin
 				gateway.client.get index: "correlations", id: "R-front_page_trend"
