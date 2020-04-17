@@ -9,7 +9,7 @@
 //= require autocomplete_patch.js
 
 /****
-DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject. I'm a doctor, and God Bless America.
+DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject.
 *****/
 
 // so we need to just show the max possible profit and loss for 
@@ -982,6 +982,7 @@ var compose_twitter_url = function(search_result){
 	//return base + encodeURIComponent("?text=" + text + "&url=" + url + "&hastags=" + hashtags.join(",")); 
 }
 
+// we should use that as the catch text.
 // now generate those ones'
 
 /***
@@ -1013,7 +1014,8 @@ var set_social_sharing_urls = function(search_result){
 	WATSAPP
 	****/
 	var watsapp_text = search_result.social_text + " See Chart at :" + search_result.url;
-	search_result.watsapp_url = "https://api.whatsapp.com/send" + encodeURIComponent("?text=" + watsapp_text);
+	watsapp_text = $("<div>").html(watsapp_text).text();
+	search_result.watsapp_url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(watsapp_text);
 
 }
 

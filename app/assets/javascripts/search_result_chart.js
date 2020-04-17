@@ -114,6 +114,7 @@ var draw_chart = function(id,search_result){
             ]
         },
         options: {
+            maintainAspectRatio: false,
             title: {
                 display: true,
                 text: title

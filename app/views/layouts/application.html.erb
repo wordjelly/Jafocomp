@@ -364,7 +364,9 @@
             <div class="grey-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
               {{= search_result.summary }}
             </div>
-            <canvas id="search_result_chart_{{= search_result.div_id }}" width="400" height="150"></canvas>
+            <div class="chart-container" style="position: relative; margin:auto; height: 50vh;">
+              <canvas id="search_result_chart_{{= search_result.div_id }}"></canvas>
+            </div>
           </div>
         </div>
       </div>

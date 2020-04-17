@@ -127,7 +127,7 @@ module Concerns::IndividualResultConcern
 			complex_derivation_index = 0
 			unless args[:entity_id].blank?
 				complex_derivations.each_with_index{|val,key|
-
+					
 				}
 			end
 			if response["_source"]
