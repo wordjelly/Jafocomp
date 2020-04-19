@@ -36,12 +36,22 @@ module Concerns::IndividualResultConcern
 			}
 			
 			image_url = "up_" + min_diff_ratio.to_s + ".png";
+  			facebook_image_url = "up_" + min_diff_ratio.to_s + "_200_200.png"
+  			{
+  				:social_image_url => image_url,
+  				:facebook_image_url => facebook_image_url
+   			}
+   			
   		end
 
 
   		def set_social_parameters(hit)
   			## social_image_url
-  			hit["_source"]["social_image_url"] = get_image_url(hit)
+  			image_urls = get_image_url(hit)
+
+  			hit["_source"]["social_image_url"] = image_urls[:social_image_url]
+
+  			hit["_source"]["facebook_image_url"] = image_urls[:facebook_image_url]
 
   			## social_description
   			hit["_source"]["social_description"] = hit["_source"]["setup"]

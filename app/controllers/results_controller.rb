@@ -16,6 +16,7 @@ class ResultsController < ApplicationController
 
 	    @social_image_url = @result["_source"]["social_image_url"]
   		puts "social image url is: #{@social_image_url}"
+  		@facebook_image_url = @result["_source"]["facebook_image_url"]
   	end
 
 	def show

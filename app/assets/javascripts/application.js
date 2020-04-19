@@ -2397,6 +2397,27 @@ _.mixin({
 });
 
 
+// so suppose i want an indicators index page
+// i want an entities page
+// we can just have cards, one after the other.
+// showing the relevant information.
+// under the exchanges
+// how to show related queries
+// give me a place to go positive and negative indicators.
+// so some queries per exchange 
+// we can have.to give people the hang of it.
+// nice big heading.
+// with some cards side by side
+// what happens to nasdaq when nifty falls.
+// can we have some top ones for reliance ?
+// out of the latest 
+// we are already calculating latest trends
+// can we curate entity specific hash.
+// should be simple enough.
+// to generate positive and negative top trending result ids.
+// so we have an exchanges endpoint.
+// we will just query by index type.
+
 $(document).on('click','.facebook_share',function(event){
 	
 	event.preventDefault();
@@ -2405,8 +2426,10 @@ $(document).on('click','.facebook_share',function(event){
 	
 	FB.ui({
 	  method: 'share',
-	  href: url,
-	}, function(response){});
+	  link: url,
+	}, function(response){
+		alert("Facebook Share Error");
+	});
 
 });
 
