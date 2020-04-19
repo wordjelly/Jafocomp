@@ -1007,7 +1007,7 @@ var set_social_sharing_urls = function(search_result){
 	/***
 	FACEBOOK
 	***/
-	search_result.facebook_url = "";
+	search_result.facebook_url = search_result.url;
 
 
 	/****
@@ -2397,8 +2397,35 @@ _.mixin({
 });
 
 
+$(document).on('click','.facebook_share',function(event){
+	
+	event.preventDefault();
+	
+	var url = $(this).attr("href");
+	
+	FB.ui({
+	  method: 'share',
+	  href: url,
+	}, function(response){});
+
+});
+
 
 $(document).ready(function(){
+
+	$.ajaxSetup({ cache: true });
+	  $.getScript('https://connect.facebook.net/en_US/sdk.js', function(){
+	    FB.init({
+	      appId: '584959032110656',
+	      version: 'v2.7'
+	    });     
+	    $('#loginbutton,#feedbutton').removeAttr('disabled');
+	    FB.getLoginStatus(updateStatusCallback);
+	});
+
+	// now lets see if this works.
+
+
 	var quote = _.sample(Object.keys(quotes), 1);
 	var quote_author = quotes[quote];
 	$("#quote").text(quote);
