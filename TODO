@@ -205,3 +205,18 @@ make the full text much faster, how.
 - make the graph better and easier to understand.
 
 - solve existing bugs in the UI(run the download everyday, browse around, found bugs, solve them.)
+
+--------------------------------------------------------------------
+
+store in information -> 
+top five hits as an array.(just store one complex.)
+
+store in information ->
+all combination query hits -> 
+store their ids in the information hits -> so that it can be loaded via ajax as suggestions.
+
+## for the exchange -> just load the list of information.
+
+## for indicators also.
+## the query will be where, impacted entity id is the one you are looking for.
+
