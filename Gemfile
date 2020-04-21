@@ -25,6 +25,7 @@ gem 'mongoid'
 gem 'wj-mongoid-elasticsearch'
 gem 'elasticsearch-persistence','5.0.2'
 gem 'hashie'
+gem 'delayed_job_mongoid'
 gem 'cloudinary'
 
 #gem "activejob", ">= 4.2.11"

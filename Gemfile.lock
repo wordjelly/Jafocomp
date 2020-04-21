@@ -43,8 +43,8 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
-    aws-eventstream (1.0.3)
-    aws-sigv4 (1.1.1)
+    aws-eventstream (1.1.0)
+    aws-sigv4 (1.1.2)
       aws-eventstream (~> 1.0, >= 1.0.2)
     aws_cf_signer (0.1.3)
     axiom-types (0.1.1)
@@ -54,7 +54,7 @@ GEM
     bindex (0.8.1)
     bson (4.8.2)
     builder (3.2.4)
-    byebug (11.1.1)
+    byebug (11.1.2)
     cloudinary (1.13.2)
       aws_cf_signer
       rest-client
@@ -69,6 +69,12 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.6)
     crass (1.0.6)
+    delayed_job (4.1.8)
+      activesupport (>= 3.0, < 6.1)
+    delayed_job_mongoid (2.3.1)
+      delayed_job (>= 3.0, < 5)
+      mongoid (>= 3.0, < 8)
+      mongoid-compatibility (>= 0.4.0)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     domain_name (0.5.20190701)
@@ -138,6 +144,9 @@ GEM
     mongoid (7.1.0)
       activemodel (>= 5.1, < 6.1)
       mongo (>= 2.7.0, < 3.0.0)
+    mongoid-compatibility (0.5.1)
+      activesupport
+      mongoid (>= 2.0)
     multi_json (1.14.1)
     multipart-post (2.1.1)
     netrc (0.11.0)
@@ -187,7 +196,7 @@ GEM
     ruby-progressbar (1.10.1)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
-    sassc (2.2.1)
+    sassc (2.3.0)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
       railties (>= 4.0.0)
@@ -246,6 +255,7 @@ DEPENDENCIES
   byebug
   cloudinary
   coffee-rails
+  delayed_job_mongoid
   elasticsearch-persistence (= 5.0.2)
   hashie
   jbuilder

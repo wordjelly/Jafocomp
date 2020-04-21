@@ -1290,6 +1290,8 @@ var search_new = function(input){
 	}
 }
 
+
+
 $(document).on('click','li',function(event){
 	////////////console.log("clicked on a list element");
 	////////////console.log($(this).parent());
