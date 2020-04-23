@@ -4,6 +4,7 @@ class Entity
 
 	include Elasticsearch::Persistence::Model
 
+	INFORMATION_TYPE_ENTITY = "entity"
 	SINGLE = 0
 	COMBINATION = 1
 
@@ -61,8 +62,37 @@ class Entity
 	## check the get information query.
 	## and pull it out of that.
 	## we need id, index, entity_name, description.
+	## thsi 
 	def get_all_other_entity_names
+		query = {
+			bool: {
+				must: [
+					{
+						term: {
+							information_type: INFORMATION_TYPE_ENTITY
+						}
+					}
+				]
+			}
+		}
+		response = Hashie::Mash.new Entity.gateway.client.search {
+			:body => {
+				"size" => 200,
+				"query" => query
+			},
+			:index => "correlations",
+			:type => "result"
+		}
+
+		response.hits.hits.each do |hit|
+			## hit has the information name.
+			## and entity id.
+			## so given entity -> where we are impacted.
+			## we have to do a nested query only
+			## but with the feature for an impacted_entity_id.
+		end
 
 	end
+
 
 end

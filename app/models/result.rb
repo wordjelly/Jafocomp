@@ -281,20 +281,27 @@ class Result
 
 	end
 =end
-	def self.must_query_builder(direction)
+	def self.must_query_builder(direction,impacted_entity_id)
+		queries = []
 		if direction.blank?
+			queries << 
 			{
 				terms: {
 					"complex_derivations.trend_direction".to_sym => ["rise","fall"]
 				}
 			}
 		else
-			{
+			queries << {
 				term: {
 					"complex_derivations.trend_direction".to_sym => direction
-				}
-			}
+				} 
+			}		
 		end
+
+		unless impacted_entity_id.blank?
+			
+		end
+		
 	end
 
 	def self.should_query_builder(query_string)
@@ -339,7 +346,7 @@ class Result
 		end
 	end
 
-	def self.match_phrase_query_builder(query,direction)
+	def self.match_phrase_query_builder(query,direction,impacted_entity_id)
 		qs = query.split(" ")
 		body = {
 			_source: ["tags","preposition","epoch","_id"],
@@ -353,9 +360,7 @@ class Result
 									should: [
 										should_query_builder(qs)
 									],
-									must: [
-										must_query_builder(direction)
-									]
+									must: must_query_builder(direction)
 								}
 							},
 							functions: [
@@ -436,9 +441,9 @@ class Result
 	end
 =end
 
-	def self.nested_function_score_query(query,direction=nil)
+	def self.nested_function_score_query(query,direction=nil,impacted_entity_id=nil)
 
-		body = match_phrase_query_builder(query,direction)
+		body = match_phrase_query_builder(query,direction,impacted_entity_id)
 
 		#puts JSON.pretty_generate(body)
 
@@ -902,7 +907,7 @@ class Result
 
 		unless args[:direction].blank?
 
-			search_results = nested_function_score_query(args[:prefix],args[:direction])
+			search_results = nested_function_score_query(args[:prefix],args[:direction],args[:impacted_entity_id])
 
 		else
 
@@ -910,7 +915,7 @@ class Result
 
 			if search_results.blank?
 				puts "search results were blank."
-				search_results = nested_function_score_query(args[:prefix])
+				search_results = nested_function_score_query(args[:prefix],args[:direction],args[:impacted_entity_id])
 			end
 
 		end
