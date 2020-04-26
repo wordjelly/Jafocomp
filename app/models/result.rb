@@ -8,12 +8,19 @@ class Result
 	#generate permutataions, and see what has gone wrong.
 	#include Mongoid::Elasticsearch
   	#elasticsearch!
+  	# i want combinations with other stocks
+  	# the query page
+  	# with pagination
+  	# and indicator combinations
+  	# and basic build up.
   	
 	include Elasticsearch::Persistence::Model
 
 	include Concerns::DebugPollerConcern
 	include Concerns::IndividualResultConcern
 	include Concerns::FrontPageTrendConcern
+
+	SEPARATOR_FOR_TAG_TEXT = "^^"
 
 	field :setup, type: String
 	field :setup_exit, type: String
@@ -299,55 +306,71 @@ class Result
 		end
 
 		unless impacted_entity_id.blank?
-			
+			queries << {
+				term: {
+					"complex_derivations.impacted_entity_id".to_sym => impacted_entity_id
+				}
+			}
 		end
-		
+		queries
 	end
 
 	def self.should_query_builder(query_string)
-		#puts "query string is :#{query_string}"
-		unless $sectors_name_to_counter[query_string].blank?
-			#puts "Sectors not blank."
+		if query_string.blank?
 			{
-					match_phrase: {
-						"complex_derivations.industries".to_sym =>  {
-							query: query_string,
-							slop: 10
-						}
-					}
+				match_all: {
+
+				}
 			}
 		else
-			#puts "sectors blank."
-			qs = query_string
-			#puts "qs becomes: #{qs}"
-			if qs.size == 1
-				#puts "Size is 1, qs 0 is #{qs[0]}"
+			#if the query_string is blank, then we go for a simple match_all query, on the complex_derivation.tag_text.
+			#puts "query string is :#{query_string}"
+			unless $sectors_name_to_counter[query_string].blank?
+				#puts "Sectors not blank."
 				{
-					match_phrase: {
-						"complex_derivations.tag_text".to_sym =>  {
-							query: qs[0],
-							slop: 10
+						match_phrase: {
+							"complex_derivations.industries".to_sym =>  {
+								query: query_string,
+								slop: 10
+							}
 						}
-					}
 				}
 			else
-				#puts "size is more than one."
-				qs[0..-2].map.each_with_index{|val,key|
+				#puts "sectors blank."
+				qs = query_string
+				#puts "qs becomes: #{qs}"
+				if qs.size == 1
+					#puts "Size is 1, qs 0 is #{qs[0]}"
 					{
 						match_phrase: {
 							"complex_derivations.tag_text".to_sym =>  {
-								query: val + " " + qs[key + 1],
+								query: qs[0],
 								slop: 10
 							}
 						}
 					}
-				}
+				else
+					#puts "size is more than one."
+					qs[0..-2].map.each_with_index{|val,key|
+						{
+							match_phrase: {
+								"complex_derivations.tag_text".to_sym =>  {
+									query: val + " " + qs[key + 1],
+									slop: 10
+								}
+							}
+						}
+					}
+				end
 			end
 		end
 	end
 
 	def self.match_phrase_query_builder(query,direction,impacted_entity_id)
-		qs = query.split(" ")
+		qs = ""
+		unless query.blank?
+			qs = query.split(" ")
+		end
 		body = {
 			_source: ["tags","preposition","epoch","_id"],
 			query: {
@@ -360,7 +383,7 @@ class Result
 									should: [
 										should_query_builder(qs)
 									],
-									must: must_query_builder(direction)
+									must: must_query_builder(direction,impacted_entity_id)
 								}
 							},
 							functions: [
@@ -445,9 +468,13 @@ class Result
 
 		body = match_phrase_query_builder(query,direction,impacted_entity_id)
 
-		#puts JSON.pretty_generate(body)
+		puts "search body"
+		puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
+
+		puts "search results"
+		puts search_results.size.to_s
 
 		search_results = search_results["hits"]["hits"].map{|hit|
 			#puts JSON.generate(hit)

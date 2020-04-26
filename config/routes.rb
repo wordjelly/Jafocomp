@@ -13,6 +13,15 @@ Rails.application.routes.draw do
 
   resources :results
   resources :visualizations
+  resources :stocks
+  resources :exchanges
+
+  ## its better than nothing.
+  ## lets see how it goes with this much first.
+  get 'stocks/:id/with_stock/:stock_id' => "stocks#show"
+  get 'stocks/:id/with_indicator/:indicator_id' => "stocks#show"
+  get 'stocks/:id/with_stock/:stock_id/with_indicator/:indicator_id' => "stocks#show"
+  get 'stocks/:id/with_exchange/:exchange_id' => "stocks#show"
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
