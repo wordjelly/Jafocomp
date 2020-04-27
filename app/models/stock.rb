@@ -20,6 +20,7 @@ require 'elasticsearch/persistence/model'
 class Stock
 
 	include Elasticsearch::Persistence::Model
+	include Concerns::EsBulkIndexConcern
 	include Concerns::Stock::IndividualConcern
 	include Concerns::Stock::CombinationConcern
 	include Concerns::BackgroundJobConcern
@@ -54,7 +55,7 @@ class Stock
 	attr_accessor :indicator_id
 	attr_accessor :exchange_id
 	attr_accessor :skip
-	
+
 
 
 	#############################################################

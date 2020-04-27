@@ -463,20 +463,12 @@ class Result
 
 	end
 =end
-
-	def self.nested_function_score_query(query,direction=nil,impacted_entity_id=nil)
-
-		body = match_phrase_query_builder(query,direction,impacted_entity_id)
-
-		puts "search body"
-		puts JSON.pretty_generate(body)
-
-		search_results = gateway.client.search index: "correlations", body: body
-
-		puts "search results"
-		puts search_results.size.to_s
-
-		search_results = search_results["hits"]["hits"].map{|hit|
+		
+	## @param[Hash] search_results
+	## @called_from : REsult#nested_function_score_query
+	## @Called_from : Stock/combination_concern/#update_combinations
+	def self.parse_nested_search_results(search_results)
+		search_results["hits"]["hits"].map{|hit|
 			#puts JSON.generate(hit)
 			
 			object_to_use = hit["inner_hits"]["complex_derivations"]["hits"]["hits"][0]
@@ -546,6 +538,21 @@ class Result
 			}
 
 		}
+	end
+
+	def self.nested_function_score_query(query,direction=nil,impacted_entity_id=nil)
+
+		body = match_phrase_query_builder(query,direction,impacted_entity_id)
+
+		puts "search body"
+		puts JSON.pretty_generate(body)
+
+		search_results = gateway.client.search index: "correlations", body: body
+
+		puts "search results"
+		puts search_results.size.to_s
+
+		parse_nested_search_results(search_results)
 
 	end
 
