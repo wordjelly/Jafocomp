@@ -158,11 +158,13 @@ module Concerns::IndividualResultConcern
 		## adds the title, description, image url keys, server side.
 		def build_setup(hit)
 			hit = hit.stringify_keys
-			#puts "hit stringified is"
-			#puts JSON.pretty_generate(hit)
+			puts "hit stringified is"
+			puts JSON.pretty_generate(hit)
 			search_result = hit['_source']
 			#puts "search result is:"
 			#puts search_result.to_s
+			puts "suggest is:"
+			puts search_result["suggest"].to_s
 			offsets = get_offsets(search_result["suggest"][0]["input"]);
 			#puts "ofsets are: #{offsets}"
 			suggestion = search_result["suggest"][0];
@@ -232,17 +234,19 @@ module Concerns::IndividualResultConcern
 				})
 				search_result["rises_or_falls"] = get_rises_or_falls(impact[:statistics][0]);
 				search_result["percentage"] = get_percentage(impact[:statistics][0]);
+				assign_answer(search_result);
+
 			end
 
 			## today finish sharing
 			## for facebook and twitter with a chart image
 			## and navigation ?
 
-			#puts "the search result becomes finally ------>"
-			#puts JSON.pretty_generate(search_result)
+			puts "the search result becomes finally ------>"
+			puts JSON.pretty_generate(search_result)
 
-			#puts "the hit is: "
-			#puts JSON.pretty_generate(hit)
+			puts "the hit is: "
+			puts JSON.pretty_generate(hit)
 
 			# i want to design the charts and sort this out.
 			# that is end game for this part.
@@ -394,8 +398,16 @@ module Concerns::IndividualResultConcern
 			search_result["complex_string"] = complex_string;
 			assign_target(search_result);
 			get_primary_entity_and_indicator(search_result);
+			
 			##build_meta_description(search_result);
 			##add_chart_image_url(search_result);
+		end
+
+		## will set search_result["answer"] to 
+		def assign_answer(search_result)
+			puts "search result is:"
+			puts search_result.to_s
+			search_result["answer"] = "Historically " + search_result["target"] + " tends to " + search_result["rises_or_falls"].to_s + " " + search_result["percentage"].to_s + "%" + " of the times."
 		end
 
 

@@ -74,9 +74,9 @@ module Concerns::EsBulkIndexConcern
 			self.search_results = multi_response["responses"]
 		end
 		if total_items_bulked.size > 0
-			#puts "completed bulk of #{bulk_size} items."
-			#puts "total bulked : #{total_items_bulked}"
-			#puts "#{Time.now.to_i}"
+			puts "completed bulk of #{bulk_size} items."
+			puts "total bulked : #{total_items_bulked}"
+			puts "#{Time.now.to_i}"
 		end
 		reset_bulk_items
 	end

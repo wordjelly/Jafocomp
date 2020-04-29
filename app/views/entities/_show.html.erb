@@ -1,7 +1,0 @@
-<ul class="collection with-header entity">
-    <li class="collection-header"><h4 class="blue-grey-text text-lighten-1" style="font-weight:600"><i class="material-icons">dns</i><%= entity.display_name %></h4><span class="green-text"><%= entity.description %></span></li>
-    <% entity.top_results.each do |result| %>
-    <div class="entity_queries" data-entity-id="<%= @entity.id.to_s %>">
-    	<li style="padding-left: 20px !important" class="collection-item"><%= link_to result.setup, result_path(result.id.to_s) %></li>
-	</div>
-</ul>

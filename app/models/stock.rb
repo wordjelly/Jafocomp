@@ -25,11 +25,9 @@ class Stock
 	include Concerns::Stock::CombinationConcern
 	include Concerns::BackgroundJobConcern
 
-
 	INFORMATION_TYPE_ENTITY = "entity"
 	SINGLE = 0
 	COMBINATION = 1
-
 
 	attribute :stock_name, String, mapping: {type: 'keyword'}
 
@@ -39,13 +37,36 @@ class Stock
 
 	attribute :stock_top_results, Array[Hash], mapping: {type: 'nested'}
 
+	attribute :stock_exchange, String, mapping: {type: 'keyword'}
+
 	attribute :stock_result_type, Integer, default: SINGLE, mapping: {type: 'integer'}
 
 	attribute :stock_impacted, String, mapping: {type: 'keyword'}
 
+	attribute :stock_impacted_id, String, mapping: {type: 'keyword'}
+
+	attribute :stock_impacted_description, String, mapping: {type: 'keyword'}
+
+	attribute :stock_impacted_link, String, mapping: {type: 'keyword'}
+
 	attribute :stock_primary, String, mapping: {type: 'keyword'}
+
+	attribute :stock_primary_id, String, mapping: {type: 'keyword'}
+
+	attribute :stock_primary_description, String, mapping: {type: 'keyword'}
+
+	attribute :stock_primary_link, String, mapping: {type: 'keyword'}
+	## and what about for the indicators?
 	## the exchanges, are the exchanges of the two entities in the complex.
-	attribute :stock_exchanges, Array
+	attribute :stock_primary_exchange, String, mapping: {type: 'keyword'}
+
+	attribute :stock_impacted_exchange, String, mapping: {type: 'keyword'}
+
+	## like i want to look at an indicator.
+	## then we want its combinations
+	attribute :indicator_primary_id, String, mapping: {type: 'keyword'}
+
+	attribute :indicator_primary_name, String, mapping: {type: 'keyword'}
 
 	index_name "frontend"
 	document_type "doc"
@@ -89,6 +110,7 @@ class Stock
 			self.stock_name = info._source.information_name
 			self.stock_description = info._source.information_description
 			self.stock_link = info._source.information_link
+			self.stock_exchange = info._source.information_exchange
 		end
 	end	
 
@@ -141,7 +163,10 @@ class Stock
 		e = nil
 		return Stock.new(args) if args[:id].blank?
 		begin
-			e = Stock.gateway.client.get :id => args[:id], :index => index_name, :type => document_type
+			hit = Stock.gateway.client.get :id => args[:id], :index => index_name, :type => document_type
+			#puts e.to_s
+			e = Stock.new(hit["_source"])
+			e.id = hit["_id"]
 			e.attributes.merge!(args)
 		rescue Elasticsearch::Transport::Transport::Errors::NotFound
 			puts "rescuing."

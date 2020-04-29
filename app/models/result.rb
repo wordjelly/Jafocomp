@@ -467,7 +467,7 @@ class Result
 	## @param[Hash] search_results
 	## @called_from : REsult#nested_function_score_query
 	## @Called_from : Stock/combination_concern/#update_combinations
-	def self.parse_nested_search_results(search_results)
+	def self.parse_nested_search_results(search_results,query)
 		search_results["hits"]["hits"].map{|hit|
 			#puts JSON.generate(hit)
 			
@@ -552,7 +552,7 @@ class Result
 		puts "search results"
 		puts search_results.size.to_s
 
-		parse_nested_search_results(search_results)
+		parse_nested_search_results(search_results,query)
 
 	end
 
