@@ -4,6 +4,13 @@ module Concerns::Stock::CombinationConcern
 
 	included do 
 
+		## this hash is built to make it simpler to update the top 5 results in the stock when the combination results are being updated
+		## when an entity is updated, we have to update what happens to others due to it.
+		## not the other way around.
+		## where it is impacted
+		## and hence it is a cross update.
+		attr_accessor :combination_entity_to_index_hash
+
 		## @param[Hash] args
 		## :stock_impacted[OPTIONAL] : the name of the stock
 		## :stock_primary[OPTIONAL] : the name of the stock.
@@ -45,6 +52,79 @@ module Concerns::Stock::CombinationConcern
 			}
 
 		end
+		
+		def update_through_combination(combination)
+			script = {
+				:lang => "painless",
+				:params => {
+					exchange: combination.stock_primary_exchange,
+					entity_id: combination.stock_primary_id,
+					entity_name: combination.stock_primary_name,
+					top_hits: combination.stock_top_results,
+					combination_id: combination.id.to_s
+				},
+				:source => '''
+					if(ctx._source.combinations.length == 0){
+						
+						Map entity = new HashMap();
+						entity.put("primary_entity_name",params.entity_name);
+						entity.put("primary_entity_id",params.entity_id);
+						entity.put("primary_entity_exchange",params.exchange);
+						entity.put("top_n_hit_ids",params.top_hits);
+							
+
+						ArrayList entities = new ArrayList();
+						entities.add(entity);
+
+						Map m = new HashMap();
+						m.put("exchange_name",params.exchange);
+						m.put("entities",entities);
+
+						ctx._source.combinations.add(m);
+					}
+					else{
+						def has_exchange = 0;
+						for(combination in ctx._source.combinations){
+							if(combination.exchange_name == params.exchange){
+								for(entity in combination.entities){
+
+								}
+								has_exchange = 1;
+							}
+						}
+						if(has_exchange == 0){
+							Map entity = new HashMap();
+							entity.put("primary_entity_name",params.entity_name);
+							entity.put("primary_entity_id",params.entity_id);
+							entity.put("primary_entity_exchange",params.exchange);
+							entity.put("top_n_hit_ids",params.top_hits);
+								
+
+							ArrayList entities = new ArrayList();
+							entities.add(entity);
+
+							Map m = new HashMap();
+							m.put("exchange_name",params.exchange);
+							m.put("entities",entities);
+
+							ctx._source.combinations.add(m);
+						}
+					}
+				'''
+			}
+
+			update_request = {
+				update: {
+					_index: Stock.index_name, _type: Stock.document_type, _id: combination.stock_impacted_id, data: {
+							script: script,
+							upsert: {},
+							scripted_upsert: true
+						}
+				}
+			}
+
+			Stock.add_bulk_item(update_request)
+		end
 
 		def update_combinations
 			names_by_index = get_all_other_stocks
@@ -55,7 +135,11 @@ module Concerns::Stock::CombinationConcern
 					## each search_request should have an index and a body.
 					search_requests = slice.map{|c|
 						
-						q = Result.match_phrase_query_builder(c.stock_name,nil,self.id.to_s)
+						## so what happens to me, 
+						## so we need that id.
+						## this goes the other way around.
+						## we land up 
+						q = Result.match_phrase_query_builder(self.stock_name,nil,c.id.to_s)
 
 						q.deep_symbolize_keys!
 						{
@@ -74,16 +158,18 @@ module Concerns::Stock::CombinationConcern
 
 					multi_response["responses"].each_with_index {|search_results,key|
 
-						primary_stock = slice[key]
+						primary_stock = self
 						hits = Result.parse_nested_search_results(search_results,primary_stock.stock_name)
 						s = Stock.new
 
 						s.stock_top_results = hits
-						s.stock_impacted_id = self.id.to_s
-						s.stock_impacted = self.stock_name
-						s.stock_impacted_description = self.stock_description
-						s.stock_impacted_link = self.stock_link
-						s.stock_impacted_exchange = self.stock_exchange
+						## these have to be updated to self.
+
+						s.stock_impacted_id = slice[key].id.to_s
+						s.stock_impacted = slice[key].stock_name
+						s.stock_impacted_description = slice[key].stock_description
+						s.stock_impacted_link = slice[key].stock_link
+						s.stock_impacted_exchange = slice[key].stock_exchange
 
 						s.stock_primary = primary_stock.stock_name
 						s.stock_primary_id = primary_stock.id.to_s
@@ -93,9 +179,9 @@ module Concerns::Stock::CombinationConcern
 						s.generate_combination_name
 						s.generate_combination_description
 						s.stock_result_type = Stock::COMBINATION
-						#puts "adding bulk item"
-						#puts s.attributes.to_s
-						#exit(1)
+						
+						self.update_through_combination(s)
+
 						Stock.add_bulk_item(s)
 					}
 
@@ -108,7 +194,6 @@ module Concerns::Stock::CombinationConcern
 			
 		end
 
-		
 		def generate_combination_description
 			"Interactions between #{self.stock_primary} and #{self.stock_impacted}"
 		end

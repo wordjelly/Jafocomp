@@ -68,6 +68,41 @@ class Stock
 
 	attribute :indicator_primary_name, String, mapping: {type: 'keyword'}
 
+	## these have to be cross updated.
+	## do we load the entirety of it ?
+	## or just some shits.
+	## can we load or what to do ?
+	## and how to present them
+	## it will have to work with lazy load.
+	attribute :combinations, Array[Hash], mapping: {
+		type: 'nested',
+		properties: {
+			exchange_name: {
+				type: 'keyword'
+			},
+			entities: {
+				type: 'nested',
+				properties: {
+					primary_entity_name: {
+						type: 'keyword'
+					},
+					primary_entity_id: {
+						type: 'keyword'
+					},
+					primary_entity_exchange: {
+						type: 'keyword'
+					},
+					top_n_hit_ids: {
+						type: 'keyword'
+					},
+					combination_id: {
+						type: 'keyword'
+					}
+				}
+			}
+		} 
+	}
+
 	index_name "frontend"
 	document_type "doc"
 
