@@ -9,8 +9,8 @@ module Concerns::Stock::IndividualConcern
 			## this is with the top_results
 			## now we have the next step.
 			## make it visible with the charts.
-			puts "these are the stock top results"
-			puts self.stock_top_results.to_s
+			#puts "these are the stock top results"
+			#puts self.stock_top_results.to_s
 		end
 
 	end

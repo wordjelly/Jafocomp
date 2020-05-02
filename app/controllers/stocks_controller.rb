@@ -1,5 +1,6 @@
 class StocksController < ApplicationController
 
+
 	before_action :find, :only => [:show,:update]
 
 	## so lets see if this shit works or not.
@@ -29,9 +30,7 @@ class StocksController < ApplicationController
 	end
 
 	def find
-		stock_params = permitted_params.fetch("stock",{}).merge(:id => params[:id])
-		puts stock_params.to_s
-		@stock = Stock.find_or_initialize(permitted_params)
+		@stock = Stock.find_or_initialize(permitted_params.fetch("stock",{}).merge(:id => params[:id]))
 	end
 	
 	## will expect an id.
@@ -41,7 +40,9 @@ class StocksController < ApplicationController
 
 	def permitted_params
 		puts "params are: #{params}"
-		params.permit(Stock.permitted_params)
+		k = params.permit(Stock.permitted_params).to_h
+		puts k.to_s
+		k
 	end
 
 end

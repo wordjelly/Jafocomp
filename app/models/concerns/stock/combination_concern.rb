@@ -54,13 +54,17 @@ module Concerns::Stock::CombinationConcern
 		end
 		
 		def update_through_combination(combination)
+			
+			Rails.logger.debug "came to update through combinations."
+			Rails.logger.debug combination.stock_top_results
+
 			script = {
 				:lang => "painless",
 				:params => {
 					exchange: combination.stock_primary_exchange,
 					entity_id: combination.stock_primary_id,
-					entity_name: combination.stock_primary_name,
-					top_hits: combination.stock_top_results,
+					entity_name: combination.stock_primary,
+					top_hits: combination.stock_top_results.map{|c| c[:_id].to_s },
 					combination_id: combination.id.to_s
 				},
 				:source => '''
@@ -86,9 +90,9 @@ module Concerns::Stock::CombinationConcern
 						def has_exchange = 0;
 						for(combination in ctx._source.combinations){
 							if(combination.exchange_name == params.exchange){
-								for(entity in combination.entities){
+								//for(entity in combination.entities){
 
-								}
+								//}
 								has_exchange = 1;
 							}
 						}
@@ -123,12 +127,21 @@ module Concerns::Stock::CombinationConcern
 				}
 			}
 
+			Rails.logger.debug "update request for combination update becomes:"
+			Rails.logger.debug JSON.pretty_generate(update_request)
+
 			Stock.add_bulk_item(update_request)
 		end
 
 		def update_combinations
+			Rails.logger.debug("updating combinations.")
+
 			names_by_index = get_all_other_stocks
 			# now a bulk search query ?
+			Rails.logger.debug "names by index"
+			#Rails.logger.debug (JSON.pretty_generate(names_by_index))
+			Rails.logger.debug JSON.pretty_generate(names_by_index)
+			#exit(1)
 			names_by_index.keys.each do |index|
 				names = names_by_index[index]
 				names.each_slice(50) do |slice|
@@ -152,7 +165,7 @@ module Concerns::Stock::CombinationConcern
 						}
 					}
 
-					puts JSON.pretty_generate(search_requests)
+					#puts JSON.pretty_generate(search_requests)
 
 					multi_response = Stock.gateway.client.msearch body: search_requests
 
@@ -180,6 +193,7 @@ module Concerns::Stock::CombinationConcern
 						s.generate_combination_description
 						s.stock_result_type = Stock::COMBINATION
 						
+						s.id = slice[key].id.to_s + "_" + primary_stock.id.to_s
 						self.update_through_combination(s)
 
 						Stock.add_bulk_item(s)
@@ -188,10 +202,6 @@ module Concerns::Stock::CombinationConcern
 				end 
 				Stock.flush_bulk
 			end
-		end
-
-		def update_combination_top_hits
-			
 		end
 
 		def generate_combination_description
@@ -204,6 +214,7 @@ module Concerns::Stock::CombinationConcern
 		
 		def get_all_other_stocks
 			
+			Rails.logger.debug ("getting all other stocks.")
 			other_stocks_by_index = {}
 
 			query = {
@@ -223,6 +234,7 @@ module Concerns::Stock::CombinationConcern
 
 			response.hits.hits.each do |hit|
 				index_name = hit._source.information_exchange_name
+				index_name = "Test"
 				other_stocks_by_index[index_name] ||= []
 				s = Stock.new
 				s.stock_name = hit._source.information_name

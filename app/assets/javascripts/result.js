@@ -8,7 +8,6 @@ $(document).ready(function(){
 		search_result = JSON.parse(search_result);
 		var results = display_search_results([search_result],"");
 		search_result = results["search_results"][0];
-		//update_twitter_cards_data(search_result);
 		$(".search_result_card").first().show();
 	}
 	else{

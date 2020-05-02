@@ -15,6 +15,7 @@ require 'elasticsearch/persistence/model'
 ## how to compare against stocks of only a particular exchange, will have to be able to filter like that somehow.
 
 
+
 ## so we need these nested urls.
 ## so we can have and_stock.
 class Stock
@@ -37,7 +38,9 @@ class Stock
 
 	attribute :stock_top_results, Array[Hash], mapping: {type: 'nested'}
 
-	attribute :stock_exchange, String, mapping: {type: 'keyword'}
+	attribute :stock_exchange, String, mapping: {type: 'keyword'}, default: "doggy"
+
+	## stock show.
 
 	attribute :stock_result_type, Integer, default: SINGLE, mapping: {type: 'integer'}
 
@@ -122,7 +125,8 @@ class Stock
 	##
 	#############################################################
 	after_save do |document|
-		puts "document trigger update is :#{document.trigger_update}"
+		puts "--------- CAME TO AFTER SAVE --------------- "
+		#puts "document trigger update is :#{document.trigger_update}"
 		ScheduleJob.perform_later([self.id.to_s,"Stock","update"]) unless document.trigger_update.blank?
 	end
 	
@@ -135,6 +139,7 @@ class Stock
 	#############################################################
 	def update
 		update_top_results
+		puts "going to update combinations ----------------->"
 		update_combinations
 		self.trigger_update = false
 		self.save
@@ -147,6 +152,7 @@ class Stock
 			self.stock_link = info._source.information_link
 			self.stock_exchange = info._source.information_exchange
 		end
+		puts "finished set name description"
 	end	
 
 	def get_information
@@ -204,13 +210,16 @@ class Stock
 			e.id = hit["_id"]
 			e.attributes.merge!(args)
 		rescue Elasticsearch::Transport::Transport::Errors::NotFound
-			puts "rescuing."
+			#puts "rescuing."
+			puts "args setting :#{args}"
 			e = Stock.new(args)
-			puts "args are :#{args}"
+			#puts "args are :#{args}"
 			e.set_name_description_link
+			puts "---------- came past that ---------------- "
 		end
+		puts "trigger udpate is--------------: #{e.trigger_update}"
 		puts e.trigger_update.to_s
-		e
+ 		e
 	end
 
 	def self.permitted_params
