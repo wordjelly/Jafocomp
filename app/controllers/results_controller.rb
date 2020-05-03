@@ -19,8 +19,17 @@ class ResultsController < ApplicationController
 		set_meta_information
 	end
 
+	def index
+		k = permitted_params
+		puts k.to_s
+		puts k.fetch(:multiple)
+
+		@results = Result.es_find_multi(k.fetch(:multiple,[]))
+
+	end
+
 	def permitted_params
-		params.permit(:entity_id)
+		params.permit(:entity_id, :multiple => [:id, :entity_id]).to_h
 	end
 
 end

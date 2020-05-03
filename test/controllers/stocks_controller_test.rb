@@ -7,7 +7,8 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 		## load the elasticsearch dump file, as a base for the test.
 		## 
 	end
-
+	## we can download that
+	## first draw the fucking chart.
 =begin
 	test " -- creates entity in the after_save callback, with the top five hits, and combination hits. -- " do 
 

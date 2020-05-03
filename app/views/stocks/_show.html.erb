@@ -35,3 +35,25 @@
 		<% end %>
 	</div>
 <% end %>
+	
+
+<!-- order transfer -->
+
+<% @stock.combinations.each do |combination| %>
+	<%= puts combination %>
+	<div class="section">
+		<h3 class="teal-text exchange"><%= combination["exchange_name"] %> & <%= @stock.stock_name %> <i class="material-icons">add_circle_outline</i></h3>
+
+		<div class="divider teal-text"></div>
+
+		<% combination["entities"].each do |entity| %>
+			<div id="<%= entity['primary_entity_id'] %>">
+				<h4 class="teal-text entity" data-entity="<%= JSON.generate(entity) %>">
+					<%= entity["primary_entity_name"] %>
+					<i class="material-icons">add_circle_outline</i>
+				</h4>
+			</div>
+		<% end %>
+	</div>	
+
+<% end %>

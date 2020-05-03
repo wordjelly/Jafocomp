@@ -130,6 +130,54 @@ module Concerns::IndividualResultConcern
 			
 		end
 
+		## @param[Array: {id, entity_id}]
+		def es_find_multi(multiple)
+			## so its pretty simple actually.
+			body = {
+				query: {
+					bool: {
+						should: [
+						]
+					}
+				}
+			}
+
+			multiple.each_with_index{|value,key|
+				puts value.to_s
+				body[:query][:bool][:should] << {
+					bool: {
+						must: [
+							{
+								ids: {
+									values: [value[:id]]
+								}
+							},
+							{
+								nested: {
+									path: "complex_derivation",
+									query: {
+										term: {
+											"complex_derivations.impacted_entity_id".to_sym => value[:entity_id]
+										}
+									}
+								}
+							}
+						]
+					}
+				}
+			}
+
+			response = Hashie::Mash.new gateway.client.search :index => "correlations", :type => "result", :body => body
+			
+			results = []
+			response.hits.hits.each do |hit|
+				complex_derivations = hit._source.complex_derivations
+				results << build_setup(complex_derivation_to_hit(complex_derivations[0]))
+			end
+
+			results
+		end
+
   		## here we find by the 
 		def es_find(id,args={})
 			response = gateway.client.get :id => id, :index => "correlations", :type => "result"

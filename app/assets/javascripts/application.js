@@ -7,7 +7,10 @@
 //= require pretty_images.js
 //= require search_result_chart.js
 //= require autocomplete_patch.js
+//= require stock.js
 
+
+// now for infinite scroll, with tabs.
 /****
 DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject.
 *****/
