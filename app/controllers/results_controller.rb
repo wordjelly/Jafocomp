@@ -1,5 +1,6 @@
 class ResultsController < ApplicationController
 
+
 	## overriden from application controller.
 	def set_meta_information
 	  	@title = DEFAULT_TITLE
@@ -23,12 +24,24 @@ class ResultsController < ApplicationController
 		k = permitted_params
 		puts k.to_s
 		puts k.fetch(:multiple)
-
 		@results = Result.es_find_multi(k.fetch(:multiple,[]))
+	end
 
+	def multiple_results
+		k = permitted_params
+		puts k.to_s
+		puts k.fetch(:multiple).to_s
+		@results = Result.es_find_multi(k.fetch(:multiple,[]))
+		respond_to do |format|
+			format.json do 
+				#puts "came to render json"
+				render :json => {results: @results, status: 200}
+			end
+		end
 	end
 
 	def permitted_params
+		puts params.to_s
 		params.permit(:entity_id, :multiple => [:id, :entity_id]).to_h
 	end
 

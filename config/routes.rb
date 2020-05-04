@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   get 'search' => 'welcome#search'
 
+  post 'results/multiple_results' => 'results#multiple_results'
+
   get 'download_sessions' => 'welcome#download_sessions'
 
   get 'exchange/:exchange' => 'welcome#exchange'

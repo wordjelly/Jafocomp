@@ -70,6 +70,20 @@
   <%= cloudinary_js_config %>
   
 
+  <script type="text/template" id="result_card_template">
+    <div id="{{= search_result['_id'] }}" class="result col s12 m6 l6" data-result='{{= JSON.stringify(search_result) }}' >
+      <div class="card">
+          <div class="card-image">
+            <canvas id="search_result_chart_{{= search_result['_id'] }}" />
+            <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
+          </div>
+          <div class="card-content">
+            <span class="card-title">{{= search_result['_source']['setup'] }}</span>
+            <p>{{= search_result['_source']['answer'] }}</p>
+          </div>
+      </div>
+    </div>
+  </script>
   <!-- now the required logs have to work -->
   <!-- for eg time based subindicators -->
   <!-- time of processing of individaul entity tasks -->

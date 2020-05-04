@@ -154,7 +154,7 @@ module Concerns::IndividualResultConcern
 							},
 							{
 								nested: {
-									path: "complex_derivation",
+									path: "complex_derivations",
 									query: {
 										term: {
 											"complex_derivations.impacted_entity_id".to_sym => value[:entity_id]
@@ -172,7 +172,7 @@ module Concerns::IndividualResultConcern
 			results = []
 			response.hits.hits.each do |hit|
 				complex_derivations = hit._source.complex_derivations
-				results << build_setup(complex_derivation_to_hit(complex_derivations[0]))
+				results << build_setup(complex_derivation_to_hit(hit,complex_derivations[0]))
 			end
 
 			results

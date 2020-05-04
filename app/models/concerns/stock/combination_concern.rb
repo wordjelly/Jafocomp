@@ -165,6 +165,8 @@ module Concerns::Stock::CombinationConcern
 						}
 					}
 
+					#like what happens to nasdaq when 
+					#x indicator falls.
 					#puts JSON.pretty_generate(search_requests)
 
 					multi_response = Stock.gateway.client.msearch body: search_requests

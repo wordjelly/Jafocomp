@@ -40,6 +40,9 @@ class Stock
 
 	attribute :stock_exchange, String, mapping: {type: 'keyword'}, default: "doggy"
 
+	## indicator, entity.
+	attribute :stock_information_type, String, mapping: {type: 'keyword'}
+
 	## stock show.
 
 	attribute :stock_result_type, Integer, default: SINGLE, mapping: {type: 'integer'}
@@ -151,6 +154,10 @@ class Stock
 			self.stock_description = info._source.information_description
 			self.stock_link = info._source.information_link
 			self.stock_exchange = info._source.information_exchange
+			self.stock_information_type = info._source.information_type
+			## information type
+			## so that that becomes a little simpler
+
 		end
 		puts "finished set name description"
 	end	
@@ -159,11 +166,13 @@ class Stock
 		query = {
 			bool: {
 				must: [
+=begin
 					{
 						term: {
 							information_type: INFORMATION_TYPE_ENTITY
 						}
 					},
+=end
 					{
 						term: {
 							information_id: self.id.to_s
