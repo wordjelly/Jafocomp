@@ -252,9 +252,5 @@ module Concerns::Stock::CombinationConcern
 
 		end
 
-		def get_all_indicator_names
-
-		end
-
 	end
 end

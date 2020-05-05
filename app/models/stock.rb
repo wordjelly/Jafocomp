@@ -166,13 +166,11 @@ class Stock
 		query = {
 			bool: {
 				must: [
-=begin
 					{
 						term: {
 							information_type: INFORMATION_TYPE_ENTITY
 						}
 					},
-=end
 					{
 						term: {
 							information_id: self.id.to_s

@@ -6,30 +6,33 @@
 		      <img src="/assets/stocks/default.png">
 		    </div>
 		    <div class="card-content">
-		      <span class="card-title"><%= @stock.stock_name %></span>
-		      <p><%= @stock.stock_description %></p>
+		      <span class="blue-grey-text card-title" style="font-weight: 500;"><%= @stock.stock_name %></span>
+		      <p class="grey-text" style="font-weight: 400"><%= @stock.stock_description %><sup><a href="<%= @stock.stock_link %>"><i class="material-icons" style="font-size: 12px;">link</i></sup></a></p>
 		    </div>
 		    <div class="card-action">
-		      <a href="<%= @stock.stock_link %>">Read More At Wikipedia</a>
 		      <%= link_to "More Correlations", stock_path(@stock.id.to_s) %>
 		    </div>
 		  </div>
 		</div>
 		<div class="col s12 m6 l6">
 		  	<ul class="collection with-header">
-		  		<li class="collection-header"><h4>Correlations</h4></li>
-		  		<% @stock.stock_top_results[0..4].each do |result| %>
+		  		<li class="collection-header"><h4><i class="material-icons" style="margin-right:1rem;">storage</i>The Odds</h4></li>
+		  		<% @stock.stock_top_results[0..2].each do |result| %>
 		  			<!-- here we can give that facility -->
-		  			<% icon = (result["_source"]["rises_or_falls"] == "rises" ? "trending_up" : "trending_down") %>
+		  			<%= puts result["_source"] %>
+
+		  			<% icon = (result["_source"]["rises_or_falls"] =~ /rise/ ? "trending_up" : "trending_down") %>
 
 		  			<% icon_color = (icon == "trending_up" ? "green" : "red") %>
 
-				    <li class="collection-item avatar">
+				    <li class="collection-item avatar" style="padding-top: 20px !important; padding-bottom: 10px !important;">
 				      <i class="material-icons circle <%= icon_color %>"><%= icon %></i>
-				      <span class="title blue-grey-text" style="font-weight: 500"><%= result["_source"]["setup"] %></span>
-				      <p><%= result["_source"]["answer"] %>
+				      <span class="title" style="font-weight: 500; font-size: 19px;"><span class="grey-text">What happens to </span><span class="blue-grey-text"><%= result["_source"]["setup"].gsub(/What happens to/,'') %>?</span></span>
+				      <p class="<%= icon_color %>-text" style="margin-top: 1rem; font-size: 16px;"><%= result["_source"]["answer"] %>
 				      </p>
-				      
+				      <p style="margin-top:0.75rem;">
+				      	<i style="vertical-align: bottom" class="material-icons grey-text text-lighten-1">bubble_chart</i><span class="grey-text text-lighten-1">Stats</span>
+				      </p>
 			    <% end %>
 			    </li>
 			</ul>

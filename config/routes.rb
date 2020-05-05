@@ -13,10 +13,13 @@ Rails.application.routes.draw do
 
   get 'exchange/:exchange' => 'welcome#exchange'
 
+  put 'indicators/update_many' => 'indicators#update_many'
+
   resources :results
   resources :visualizations
   resources :stocks
   resources :exchanges
+  resources :indicators
 
   ## its better than nothing.
   ## lets see how it goes with this much first.

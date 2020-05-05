@@ -9,7 +9,7 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 	end
 	## we can download that
 	## first draw the fucking chart.
-=begin
+
 	test " -- creates entity in the after_save callback, with the top five hits, and combination hits. -- " do 
 
 		
@@ -27,7 +27,7 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 		assert_equal true, !e.stock_top_results.blank?
 		
 	end
-=end
+
 
 	test " -- populates stock with combination nested items -- " do 
 
@@ -46,5 +46,6 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 
 	end
 
+	
 
 end
