@@ -4,14 +4,22 @@ class Indicator < Stock
 
 	INDICATORS_JSONFILE = "indicators.json"
 	INFORMATION_TYPE_INDICATOR = "indicator"
-	MAX_INDICATORS = 20
+	MAX_INDICATORS = 1
 
-	def self.update_all
+	def schedule_background_update
+		puts "------------------------- inside indicator -------- "
+		ScheduleJob.perform_later([self.id.to_s,"Indicator","update_it"]) unless self.trigger_update.blank?
+		#exit(1)
+	end
+
+	def self.update_many
 		get_all_indicator_informations.each do |hit|
-			indicator = find_or_initialize(hit["_id"])
+			indicator = find_or_initialize({id: hit["_id"], trigger_update: true, :class_name => "Indicator"})
 			indicator.save
 		end
 	end
+
+
 
 	def self.get_all
 		query = {
@@ -23,7 +31,7 @@ class Indicator < Stock
 				}
 			}
 		}
-		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => MAX_INDICATORS, :query => query}, :index => Indicator.index_name, :type => Indicator.document_type
+		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => MAX_INDICATORS, :query => query}, :index => "correlations", :type => "result"
 		
 		puts "Response is:"
 		puts response.to_s
@@ -45,12 +53,12 @@ class Indicator < Stock
 				]
 			}
 		}	
-		puts query.to_s
+		#puts query.to_s
 
 		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => MAX_INDICATORS, :query => query}, :index => "correlations", :type => "result"
 		
-		puts "Response is:"
-		puts response.to_s
+		#puts "Response is:"
+		#puts response.to_s
 
 
 		response.hits.hits
@@ -60,7 +68,47 @@ class Indicator < Stock
 	## should i change the name, the whole thing will go for a six.
 	## so we want to see what happens.
 	def update_top_results
+		puts "---------------- came to update top results."
+		puts self.attributes.to_s
 		self.stock_top_results = Result.nested_function_score_query(self.stock_name,nil,nil)[0..4].map{|c| Result.build_setup(c) }
+		puts "the stock top results are:"
+		puts self.stock_top_results.to_s
+		exit(1)
+	end
+
+
+	def get_information
+		query = {
+			bool: {
+				must: [
+					{
+						term: {
+							information_type: INFORMATION_TYPE_INDICATOR
+						}
+					},
+					{
+						term: {
+							information_name: self.id.to_s
+						}
+					}
+				]
+			}
+		}	
+		#puts query.to_s
+
+		response = Hashie::Mash.new Stock.gateway.client.search :body => {:size => 1, :query => query}, :index => "correlations", :type => "result"
+		
+		puts "Response is:"
+		puts response.to_s
+
+		info = nil
+
+		if response.hits.hits.size > 0
+			info = response.hits.hits.first
+		end
+
+		info
+
 	end
 
 	def update_combinations

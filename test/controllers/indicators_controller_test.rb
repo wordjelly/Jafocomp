@@ -4,6 +4,7 @@ class IndicatorsControllerTest < ActionDispatch::IntegrationTest
 
 	setup do 
 		Stock.create_index! force: true
+		#Indicator.create_index! force: true
 		## load the elasticsearch dump file, as a base for the test.
 		## 
 	end

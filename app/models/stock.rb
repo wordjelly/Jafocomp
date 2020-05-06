@@ -129,8 +129,11 @@ class Stock
 	#############################################################
 	after_save do |document|
 		puts "--------- CAME TO AFTER SAVE --------------- "
-		#puts "document trigger update is :#{document.trigger_update}"
-		ScheduleJob.perform_later([self.id.to_s,"Stock","update"]) unless document.trigger_update.blank?
+		schedule_background_update
+	end
+
+	def schedule_background_update
+		ScheduleJob.perform_later([self.id.to_s,self.class.name.to_s,"update_it"]) unless self.trigger_update.blank?
 	end
 	
 	#############################################################
@@ -140,12 +143,13 @@ class Stock
 	##
 	##
 	#############################################################
-	def update
+	def update_it
+		puts "came to update in background job."
 		update_top_results
-		puts "going to update combinations ----------------->"
-		update_combinations
-		self.trigger_update = false
-		self.save
+		#puts "going to update combinations ----------------->"
+		#update_combinations
+		#self.trigger_update = false
+		#self.save
 	end
 
 	def set_name_description_link
@@ -179,7 +183,7 @@ class Stock
 				]
 			}
 		}	
-		puts query.to_s
+		#puts query.to_s
 
 		response = Hashie::Mash.new Stock.gateway.client.search :body => {:size => 1, :query => query}, :index => "correlations", :type => "result"
 		
@@ -209,17 +213,21 @@ class Stock
 	## @return[Stock] e : either the stock if it exists, otherwise a new instance of an stock, with the provided id. 
 	def self.find_or_initialize(args={})
 		e = nil
-		return Stock.new(args) if args[:id].blank?
+		cls = args.delete(:class_name).constantize || "Stock".constantize
+		return cls.new(args) if args[:id].blank?
 		begin
-			hit = Stock.gateway.client.get :id => args[:id], :index => index_name, :type => document_type
-			#puts e.to_s
-			e = Stock.new(hit["_source"])
+			puts index_name
+			puts document_type
+			hit = cls.gateway.client.get :id => args[:id], :index => Stock.index_name, :type => Stock.document_type
+			puts hit.to_s
+			e = cls.new(hit["_source"])
 			e.id = hit["_id"]
+			puts "args--> #{args}"
 			e.attributes.merge!(args)
 		rescue Elasticsearch::Transport::Transport::Errors::NotFound
 			#puts "rescuing."
 			puts "args setting :#{args}"
-			e = Stock.new(args)
+			e = cls.new(args)
 			#puts "args are :#{args}"
 			e.set_name_description_link
 			puts "---------- came past that ---------------- "
