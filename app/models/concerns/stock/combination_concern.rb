@@ -14,14 +14,14 @@ module Concerns::Stock::CombinationConcern
 		## @param[Hash] args
 		## :stock_impacted[OPTIONAL] : the name of the stock
 		## :stock_primary[OPTIONAL] : the name of the stock.
-		## @return[Array[Stock]] : array of stock objects (combination stock objects.)
+		## @return[Array[self.class]] : array of stock objects (combination stock objects.)
 		def self.get_all_combination_entities(args={})
 			query = {
 				bool: {
 					must: [
 						{
 							term: {
-								stock_result_type: Stock::COMBINATION
+								stock_result_type: 1
 							}
 						}
 					]
@@ -40,14 +40,14 @@ module Concerns::Stock::CombinationConcern
 				}
 			} unless args[:stock_impacted].blank?
 			
-			search_request = Stock.search({
+			search_request = search({
 				query: query,
 				size: 180
 			})
 
 			search_request.response.hits.hits.map{|c|
 
-				e = Stock.new(c["_source"])
+				e = new(c["_source"])
 				e.id = c["_id"]
 			}
 
@@ -55,8 +55,8 @@ module Concerns::Stock::CombinationConcern
 		
 		def update_through_combination(combination)
 			
-			Rails.logger.debug "came to update through combinations."
-			Rails.logger.debug combination.stock_top_results
+			#Rails.logger.debug "came to update through combinations."
+			#Rails.logger.debug combination.stock_top_results
 
 			script = {
 				:lang => "painless",
@@ -119,7 +119,7 @@ module Concerns::Stock::CombinationConcern
 
 			update_request = {
 				update: {
-					_index: Stock.index_name, _type: Stock.document_type, _id: combination.stock_impacted_id, data: {
+					_index: self.class.index_name, _type: self.class.document_type, _id: combination.stock_impacted_id, data: {
 							script: script,
 							upsert: {},
 							scripted_upsert: true
@@ -130,7 +130,7 @@ module Concerns::Stock::CombinationConcern
 			Rails.logger.debug "update request for combination update becomes:"
 			Rails.logger.debug JSON.pretty_generate(update_request)
 
-			Stock.add_bulk_item(update_request)
+			self.class.add_bulk_item(update_request)
 		end
 
 		def update_combinations
@@ -169,13 +169,13 @@ module Concerns::Stock::CombinationConcern
 					#x indicator falls.
 					#puts JSON.pretty_generate(search_requests)
 
-					multi_response = Stock.gateway.client.msearch body: search_requests
+					multi_response = self.class.gateway.client.msearch body: search_requests
 
 					multi_response["responses"].each_with_index {|search_results,key|
 
 						primary_stock = self
 						hits = Result.parse_nested_search_results(search_results,primary_stock.stock_name)
-						s = Stock.new
+						s = self.class.new
 
 						s.stock_top_results = hits
 						## these have to be updated to self.
@@ -191,18 +191,19 @@ module Concerns::Stock::CombinationConcern
 						s.stock_primary_description = primary_stock.stock_description
 						s.stock_primary_link = primary_stock.stock_link
 						s.stock_primary_exchange = primary_stock.stock_exchange
+						s.stock_information_type = primary_stock.stock_information_type
 						s.generate_combination_name
 						s.generate_combination_description
-						s.stock_result_type = Stock::COMBINATION
+						s.stock_result_type = self.class::COMBINATION
 						
 						s.id = slice[key].id.to_s + "_" + primary_stock.id.to_s
 						self.update_through_combination(s)
 
-						Stock.add_bulk_item(s)
+						self.class.add_bulk_item(s)
 					}
 
 				end 
-				Stock.flush_bulk
+				self.class.flush_bulk
 			end
 		end
 
@@ -231,14 +232,14 @@ module Concerns::Stock::CombinationConcern
 				}
 			}
 
-			response = Hashie::Mash.new Stock.gateway.client.search :body => {:size => 200, :query => query}, :index => "correlations", :type => "result"
+			response = Hashie::Mash.new self.class.gateway.client.search :body => {:size => 200, :query => query}, :index => "correlations", :type => "result"
 			
 
 			response.hits.hits.each do |hit|
 				index_name = hit._source.information_exchange_name
 				index_name = "Test"
 				other_stocks_by_index[index_name] ||= []
-				s = Stock.new
+				s = self.class.new
 				s.stock_name = hit._source.information_name
 				s.stock_description = hit._source.information_description
 				s.stock_link = hit._source.information_link

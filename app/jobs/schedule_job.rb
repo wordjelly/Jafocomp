@@ -31,7 +31,10 @@ class ScheduleJob < ActiveJob::Base
   ## 2 => object_method_to_be_called_in_the_background_job/or some custom string argument.
   ## the object calls the schedule method on itself.
   def perform(args)
-    Elasticsearch::Persistence.client.indices.refresh index: "pathofast-*"
+    Elasticsearch::Persistence.client.indices.refresh index: "frontend*"
+    ## here you are saying Indicator.find
+    ## and it is not being able to find the job.
+    ## because it is using that document type.
     obj = args[1].constantize.find(args[0])
     obj.run_callbacks(:find)
     obj.do_background_job(args[2]) if obj.respond_to? "do_background_job"

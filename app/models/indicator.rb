@@ -1,16 +1,21 @@
 require 'elasticsearch/persistence/model'
 
-class Indicator < Stock
+class Indicator 
+
+	## we include them as concerns.
+	include Elasticsearch::Persistence::Model
+	include Concerns::EsBulkIndexConcern
+	include Concerns::Stock::IndividualConcern
+	include Concerns::Stock::CombinationConcern
+	include Concerns::BackgroundJobConcern
+	include Concerns::Stock::EntityConcern
+
 
 	INDICATORS_JSONFILE = "indicators.json"
 	INFORMATION_TYPE_INDICATOR = "indicator"
 	MAX_INDICATORS = 1
 
-	def schedule_background_update
-		puts "------------------------- inside indicator -------- "
-		ScheduleJob.perform_later([self.id.to_s,"Indicator","update_it"]) unless self.trigger_update.blank?
-		#exit(1)
-	end
+	
 
 	def self.update_many
 		get_all_indicator_informations.each do |hit|
@@ -20,7 +25,7 @@ class Indicator < Stock
 	end
 
 
-
+	## burkha chodsa
 	def self.get_all
 		query = {
 			bool: {
@@ -31,7 +36,7 @@ class Indicator < Stock
 				}
 			}
 		}
-		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => MAX_INDICATORS, :query => query}, :index => "correlations", :type => "result"
+		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => MAX_INDICATORS, :query => query}, :index => index_name , :type => document_type
 		
 		puts "Response is:"
 		puts response.to_s
@@ -57,23 +62,20 @@ class Indicator < Stock
 
 		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => MAX_INDICATORS, :query => query}, :index => "correlations", :type => "result"
 		
-		#puts "Response is:"
-		#puts response.to_s
-
-
 		response.hits.hits
 	end
 
-	## now stock_name.
-	## should i change the name, the whole thing will go for a six.
-	## so we want to see what happens.
+	##########################################################3
+	##
+	##
+	## METHODS OVERRIDEN FROM ENTITY_CONCERN
+	##
+	##
+	###########################################################
 	def update_top_results
-		puts "---------------- came to update top results."
-		puts self.attributes.to_s
 		self.stock_top_results = Result.nested_function_score_query(self.stock_name,nil,nil)[0..4].map{|c| Result.build_setup(c) }
 		puts "the stock top results are:"
 		puts self.stock_top_results.to_s
-		exit(1)
 	end
 
 
@@ -93,10 +95,11 @@ class Indicator < Stock
 					}
 				]
 			}
-		}	
+		}
+
 		#puts query.to_s
 
-		response = Hashie::Mash.new Stock.gateway.client.search :body => {:size => 1, :query => query}, :index => "correlations", :type => "result"
+		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => 1, :query => query}, :index => "correlations", :type => "result"
 		
 		puts "Response is:"
 		puts response.to_s
@@ -111,79 +114,33 @@ class Indicator < Stock
 
 	end
 
-	def update_combinations
-		Rails.logger.debug("updating combinations.")
-
-		## so here we want what exactly ?
-		## okay this is correct.
-		names_by_index = get_all_other_stocks
-		# now a bulk search query ?
-		Rails.logger.debug "names by index"
-		#Rails.logger.debug (JSON.pretty_generate(names_by_index))
-		Rails.logger.debug JSON.pretty_generate(names_by_index)
-		#exit(1)
-		names_by_index.keys.each do |index|
-			names = names_by_index[index]
-			names.each_slice(50) do |slice|
-				## each search_request should have an index and a body.
-				search_requests = slice.map{|c|
-					
-					## so what happens to me, 
-					## so we need that id.
-					## this goes the other way around.
-					## we land up 
-					q = Result.match_phrase_query_builder(self.stock_name,nil,c.id.to_s)
-
-					q.deep_symbolize_keys!
-					{
-						index: "correlations",
-						type: "result",
-						_source: q[:_source],
-						search: {
-							query: q[:query]
-						}
-					}
-				}
-
-				#like what happens to nasdaq when 
-				#x indicator falls.
-				#puts JSON.pretty_generate(search_requests)
-
-				multi_response = Stock.gateway.client.msearch body: search_requests
-
-				multi_response["responses"].each_with_index {|search_results,key|
-
-					primary_stock = self
-					hits = Result.parse_nested_search_results(search_results,primary_stock.stock_name)
-					s = Stock.new
-
-					s.stock_top_results = hits
-					## these have to be updated to self.
-
-					s.stock_impacted_id = slice[key].id.to_s
-					s.stock_impacted = slice[key].stock_name
-					s.stock_impacted_description = slice[key].stock_description
-					s.stock_impacted_link = slice[key].stock_link
-					s.stock_impacted_exchange = slice[key].stock_exchange
-
-					s.stock_primary = primary_stock.stock_name
-					s.stock_primary_id = primary_stock.id.to_s
-					s.stock_primary_description = primary_stock.stock_description
-					s.stock_primary_link = primary_stock.stock_link
-					s.stock_primary_exchange = primary_stock.stock_exchange
-					s.generate_combination_name
-					s.generate_combination_description
-					s.stock_result_type = Stock::COMBINATION
-					
-					s.id = slice[key].id.to_s + "_" + primary_stock.id.to_s
-					self.update_through_combination(s)
-
-					Stock.add_bulk_item(s)
-				}
-
-			end 
-			Stock.flush_bulk
+	## @params[String] id : the id of the stock
+	## @return[Stock] e : either the stock if it exists, otherwise a new instance of an stock, with the provided id. 
+	def self.find_or_initialize(args={})
+		e = nil
+		cls = "Indicator"
+		cls = cls.constantize
+		return cls.new(args) if args[:id].blank?
+		begin
+			puts index_name
+			puts document_type
+			hit = cls.gateway.client.get :id => args[:id], :index => index_name, :type => document_type
+			puts hit.to_s
+			e = cls.new(hit["_source"])
+			e.id = hit["_id"]
+			puts "args--> #{args}"
+			e.attributes.merge!(args)
+		rescue Elasticsearch::Transport::Transport::Errors::NotFound
+			#puts "rescuing."
+			puts "args setting :#{args}"
+			e = cls.new(args)
+			#puts "args are :#{args}"
+			e.set_name_description_link
+			puts "---------- came past that ---------------- "
 		end
+		puts "trigger udpate is--------------: #{e.trigger_update}"
+		puts e.trigger_update.to_s
+ 		e
 	end
 
 end
