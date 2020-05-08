@@ -118,19 +118,43 @@ class Indicator
 	## @return[Stock] e : either the stock if it exists, otherwise a new instance of an stock, with the provided id. 
 	def self.find_or_initialize(args={})
 		e = nil
-		cls = "Indicator"
+		cls = args.delete(:class_name) || "Indicator"
 		cls = cls.constantize
-		return cls.new(args) if args[:id].blank?
+		return cls.new(args) if ((args[:id].blank?))
 		begin
 			puts index_name
 			puts document_type
-			hit = cls.gateway.client.get :id => args[:id], :index => index_name, :type => document_type
-			puts hit.to_s
+
+			query = {
+				bool: {
+					must: [
+						{
+							ids: {
+								values: [args[:id]]
+							}
+						},
+						{
+							term: {
+								stock_name: args[:id]
+							}
+						}
+					]
+				}
+			}
+
+
+			search_response =  cls.gateway.client.search :body => {query: query}, index: index_name, :type => document_type
+
+			puts search_response.to_s
+			hit = search_response["hits"]["hits"].first
+
+			#hit = cls.gateway.client.get :id => args[:id], :index => Stock.index_name, :type => Stock.document_type
+			raise Elasticsearch::Transport::Transport::Error if hit.blank?
 			e = cls.new(hit["_source"])
 			e.id = hit["_id"]
 			puts "args--> #{args}"
 			e.attributes.merge!(args)
-		rescue Elasticsearch::Transport::Transport::Errors::NotFound
+		rescue Elasticsearch::Transport::Transport::Error
 			#puts "rescuing."
 			puts "args setting :#{args}"
 			e = cls.new(args)

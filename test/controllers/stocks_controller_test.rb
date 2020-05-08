@@ -50,6 +50,22 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 
 	end
 
+
+	test " -- can find stock with stock name -- " do 
+		
+		stock_two = Stock.find_or_initialize({id: "E-2", trigger_update: true})
+		stock_two.save
+		Elasticsearch::Persistence.client.indices.refresh index: "frontend"  
+		stock_two = Stock.find("E-2")
+		assert_equal true, stock_two.errors.blank?
+		assert_equal true, !stock_two.stock_top_results.blank?
+		assert_equal true, stock_two.combinations.blank?
+
+		get stock_path("Nifty It Index"), headers: { "CONTENT_TYPE" => "application/json" , "ACCEPT" => "application/json"}
+
+		assert_equal "200", response.code.to_s, "gets a response on json, by calling the stock directly by its name."
+
+	end
 	
 
 end

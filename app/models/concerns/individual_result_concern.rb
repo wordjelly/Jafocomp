@@ -510,5 +510,83 @@ module Concerns::IndividualResultConcern
 			offsets
 		end
 
+		##############################################
+		##
+		##
+		## JAVASCRIPT FUNCTIONS, STILL TO BE PORTED.
+		##
+		##
+		#############################################
+		def convert_n_day_change_to_superscript(search_result)
+			days = nil
+			search_result["setup"].scan(/(?<days>\d+)\sday\schange/) do |n|
+				jj = ::Regexp.last_match
+				days = jj[:days]
+			end
+			search_result["setup"].gsub(/\d+\sday\schange/,'')
+			search_result["day_change"] = days.to_s
+		end
+
+		def replace_percentage_and_literal_numbers(search_result)
+
+			search_result["setup"].gsub!(/\w+/){ |match|
+
+				if NUMERIC_LITERALS[match].blank?
+					match
+				else
+					NUMERIC_LITERALS[match]
+				end
+			}
+
+		end
+
+		def shrink_indicators(search_result)
+			setup = search_result["setup"]
+			setup = setup.replace("stochastic_oscillator_k_indicator","SOK Indicator");
+			setup = setup.replace("stochastic_oscillator_d_indicator","SOD Indicator");
+			setup = setup.replace("average_directional_movement_indicator","ADM Indicator");
+			setup = setup.replace("double_ema_indicator","DEMA Indicator");
+			setup = setup.replace("awesome_oscillator_indicator","AO Indicator");
+			setup = setup.replace("triple_ema_indicator","TEMA Indicator");
+			setup = setup.replace("single_ema_indicator","SEMA Indicator");
+			setup = setup.replace("moving_average_convergence_divergence","MACD Indicator");
+			setup = setup.replace("acceleration_deceleration_indicator","AD Indicator");
+			setup = setup.replace("relative_strength_indicator","RSI Indicator");
+			setup = setup.replace("williams_r_indicator","WR Indicator");
+			setup = setup.replace("aroon_up","Aroon Up Indicator");
+			setup = setup.replace("aroon_down","Aroon Down Indicator");
+			setup = setup.replace("cci_indicator","CCI Indicator");
+			search_result["setup"] = setup;
+			return search_result;
+
+		end
+
+		def strip_period(search_result)
+			var pattern = /(_period_start_\d+(_\d+)?_period_end)/g
+		end
+
+
 	end
+
+	NUMERIC_LITERALS = {
+		"one" => "1",
+		"two" => "2",
+		"three" => "3",
+		"four" => "4",
+		"five" => "5",
+		"sixty" => "60",
+		"six" => "6",
+		"ten" => "10",
+		"twenty" => "20",
+		"thirty" => "30",
+		"forty" => "40",
+		"fifty" => "50",
+		"seventy" => "70",
+		"eighty" => "80",
+		"ninety" => "90",
+		"hundred" => "100",
+		"half" => "<sup>1</sup>&frasl;<sup>2</sup>",
+		"percent" => "%"
+	}
+
 end

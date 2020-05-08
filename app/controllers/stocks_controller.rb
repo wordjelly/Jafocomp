@@ -10,6 +10,9 @@ class StocksController < ApplicationController
 			format.html do 
 				render :show
 			end
+			format.json do 
+				render :json => @stock.as_json
+			end
 		end
 	end
 

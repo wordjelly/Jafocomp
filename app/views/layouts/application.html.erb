@@ -480,20 +480,18 @@
       margin: 20px auto;  
     }
   </style>  
-
-
-
 </head>
 <body>
+
 
 <!-- nav bar will have to be here if at all -->
 <nav class="blue-grey">
   <div class="nav-wrapper">
     <a href="#" class="brand-logo">Algorini</a>
     <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <li><a href="sass.html">Markets</a></li>
+      <li><%= link_to "Exchanges", stocks_path %></li>
       <li><%= link_to "Stocks", stocks_path %></li>
-      <li><a href="collapsible.html">Indicators</a></li>
+      <li><%= link_to "Indicators", indicators_path %>Indicators</li>
     </ul>
   </div>
 </nav>

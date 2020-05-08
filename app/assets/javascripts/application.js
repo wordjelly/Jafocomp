@@ -1541,6 +1541,9 @@ var add_time_to_setup = function(search_result){
 	return search_result;
 }
 
+// all this has to be ported to result
+// for proper display otherwise it will get fucked
+// can we get them by date.
 var convert_n_day_change_to_superscript = function(search_result){
 	var pattern = /(\d+)\sday\schange/
 	var match = pattern.exec(search_result.setup);
@@ -1550,6 +1553,8 @@ var convert_n_day_change_to_superscript = function(search_result){
 	}
 	return search_result;
 }
+
+// so first we start porting this, then we sort out the individual pages.
 
 var strip_period = function(search_result){
 	////////console.log(search_result.setup);
@@ -1593,9 +1598,11 @@ var restore_percentage_and_literal_names_for_information_query = function(query)
 	return query;
 }
 
+// im gonna finish these functions and test it first
+// then next step is 
+
 var replace_percentage_and_literal_numbers = function(search_result){
 	_.each(_.keys(numeric_literals),function(literal){
-		// only followed by a word bondary.
 		k = new RegExp("\\b" + literal,"gm");
 		search_result.setup = search_result.setup.replace(k,numeric_literals[literal]);
 	});
