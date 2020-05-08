@@ -562,7 +562,7 @@ module Concerns::IndividualResultConcern
 		end
 
 		def strip_period(search_result)
-			var pattern = /(_period_start_\d+(_\d+)?_period_end)/g
+			#var pattern = /(_period_start_\d+(_\d+)?_period_end)/g
 		end
 
 
