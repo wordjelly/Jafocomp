@@ -49,7 +49,7 @@ class Stock
 
 			query = {
 				bool: {
-					must: [
+					should: [
 						{
 							ids: {
 								values: [args[:id]]
@@ -63,6 +63,8 @@ class Stock
 					]
 				}
 			}
+
+
 
 
 			search_response =  cls.gateway.client.search :body => {query: query}, index: index_name, :type => document_type

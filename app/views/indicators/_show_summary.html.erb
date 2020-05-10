@@ -10,7 +10,7 @@
 		      <p class="grey-text" style="font-weight: 400"><%= @indicator.stock_description %><sup><a href="<%= @indicator.stock_link %>"><i class="material-icons" style="font-size: 12px;">link</i></sup></a></p>
 		    </div>
 		    <div class="card-action">
-		      <%= link_to "More Correlations", stock_path(@indicator.id.to_s) %>
+		      <%= link_to "More Correlations", indicator_path(@indicator.id.to_s) %>
 		    </div>
 		  </div>
 		</div>

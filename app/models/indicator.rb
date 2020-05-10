@@ -10,11 +10,42 @@ class Indicator
 	include Concerns::BackgroundJobConcern
 	include Concerns::Stock::EntityConcern
 
+	## so that way we can do that also
+	## stocks is ok ->
+	## but when you show single stock ->
+	## the top card is ok
+	## below that start the first full search result
+	## and then individual search results.
+	## with pagination
+	## first fix the mobile mess
+	## then the continuous looping on stock pages
+	## we have the stock top results
+	## we have its combinations.
+	## so we can have two cards ?
+	## improve the top cards
+	## and the way the combinations are shown.
+	## 
+
 
 	INDICATORS_JSONFILE = "indicators.json"
 	INFORMATION_TYPE_INDICATOR = "indicator"
 	MAX_INDICATORS = 1
-
+	INDICATOR_NAMES_AND_ABBREVIATIONS = {
+		"stochastic_oscillator_d_indicator" => "SOD Indicator",
+		"stochastic_oscillator_k_indicator" => "SOK Indicator",
+		"average_directional_movement_indicator" => "ADM Indicator",
+		"double_ema_indicator" => "DEMA Indicator",
+		"awesome_oscillator_indicator" => "AO Indicator",
+		"triple_ema_indicator" => "TEMA Indicator",
+		"single_ema_indicator" => "SEMA Indicator",
+		"moving_average_convergence_divergence" => "MACD Indicator",
+		"acceleration_deceleration_indicator" => "AD Indicator",
+		"relative_strength_indicator" => "RSI Indicator",
+		"williams_r_indicator" => "WR Indicator",
+		"aroon_up" => "Aroon Up Indicator",
+		"aroon_down" => "Aroon Down Indicator",
+		"cci_indicator" => "CCI Indicator"
+	}
 	
 
 	def self.update_many

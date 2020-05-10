@@ -283,6 +283,16 @@ module Concerns::IndividualResultConcern
 				search_result["rises_or_falls"] = get_rises_or_falls(impact[:statistics][0]);
 				search_result["percentage"] = get_percentage(impact[:statistics][0]);
 				assign_answer(search_result);
+				convert_n_day_change_to_superscript(search_result);
+				replace_percentage_and_literal_numbers(search_result);
+				shrink_indicators(search_result);
+				strip_period(search_result);
+				add_time_to_setup(search_result);
+				## so this should ideally show better shit for indicator.
+				## rerun test and see, next step -> backgrounds have to be better.
+				## link to the actual paths
+				## link to the combination pages
+				## how to show multiple search results, is there any good way ?
 
 			end
 
@@ -513,7 +523,7 @@ module Concerns::IndividualResultConcern
 		##############################################
 		##
 		##
-		## JAVASCRIPT FUNCTIONS, STILL TO BE PORTED.
+		## PORTED
 		##
 		##
 		#############################################
@@ -523,9 +533,26 @@ module Concerns::IndividualResultConcern
 				jj = ::Regexp.last_match
 				days = jj[:days]
 			end
-			search_result["setup"].gsub(/\d+\sday\schange/,'')
+
+			search_result["setup"].gsub!(/\d+\sday\schange/,'')
+			
 			search_result["day_change"] = days.to_s
+			
 		end
+
+		## and the clock symbol for the date.s
+		## okay improve those cards first
+		## then the rest of it.
+		## basically improve the combinations page
+		## go to a combinations page ->
+		## show it ->
+		## and allow me to paginate it.
+		## similar to indicator and entity.
+		## show the date in a better way with a clock icon.
+		## change the card to show the graph below, and the text above.
+		## that would look better.
+		## as a summary style.
+		## and make the card look like our current card.
 
 		def replace_percentage_and_literal_numbers(search_result)
 
@@ -541,28 +568,16 @@ module Concerns::IndividualResultConcern
 		end
 
 		def shrink_indicators(search_result)
-			setup = search_result["setup"]
-			setup = setup.replace("stochastic_oscillator_k_indicator","SOK Indicator");
-			setup = setup.replace("stochastic_oscillator_d_indicator","SOD Indicator");
-			setup = setup.replace("average_directional_movement_indicator","ADM Indicator");
-			setup = setup.replace("double_ema_indicator","DEMA Indicator");
-			setup = setup.replace("awesome_oscillator_indicator","AO Indicator");
-			setup = setup.replace("triple_ema_indicator","TEMA Indicator");
-			setup = setup.replace("single_ema_indicator","SEMA Indicator");
-			setup = setup.replace("moving_average_convergence_divergence","MACD Indicator");
-			setup = setup.replace("acceleration_deceleration_indicator","AD Indicator");
-			setup = setup.replace("relative_strength_indicator","RSI Indicator");
-			setup = setup.replace("williams_r_indicator","WR Indicator");
-			setup = setup.replace("aroon_up","Aroon Up Indicator");
-			setup = setup.replace("aroon_down","Aroon Down Indicator");
-			setup = setup.replace("cci_indicator","CCI Indicator");
-			search_result["setup"] = setup;
-			return search_result;
-
+			search_result["setup"].gsub!(/#{Regexp.escape(Indicator::INDICATOR_NAMES_AND_ABBREVIATIONS.keys.join("|"))}/) { |match|  Indicator::INDICATOR_NAMES_AND_ABBREVIATIONS[match] }
 		end
 
 		def strip_period(search_result)
-			#var pattern = /(_period_start_\d+(_\d+)?_period_end)/g
+			search_result["setup"].gsub!(/(_period_start_\d+(_\d+)?_period_end)/) { |match|  ""}
+		end
+
+		def add_time_to_setup(search_result)
+			time = Time.strptime(search_result["triggered_at"].to_s,"%s")
+			search_result["setup"] = search_result["setup"]  + " (" + time.strftime('%-d %b %Y') +  ")";
 		end
 
 
