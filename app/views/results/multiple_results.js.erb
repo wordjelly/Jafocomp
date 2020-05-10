@@ -1,0 +1,5 @@
+hide_exchange_entity_combinations("<%= @exchange_name %>");
+<% @results.each do |result| %>
+	$("#search_collection").append("<%= escape_javascript(render :partial => '/stocks/show') %>");
+<% end %>
+

@@ -39,6 +39,7 @@ class Stock
 	## @params[String] id : the id of the stock
 	## @return[Stock] e : either the stock if it exists, otherwise a new instance of an stock, with the provided id. 
 	def self.find_or_initialize(args={})
+		puts "Came to find or initialize with args: #{args}"
 		e = nil
 		cls = args.delete(:class_name) || "Stock"
 		cls = cls.constantize
@@ -65,11 +66,12 @@ class Stock
 			}
 
 
-
+			## no idea why the fuck this is not working.
 
 			search_response =  cls.gateway.client.search :body => {query: query}, index: index_name, :type => document_type
 
 			puts search_response.to_s
+			
 			hit = search_response["hits"]["hits"].first
 
 			#hit = cls.gateway.client.get :id => args[:id], :index => Stock.index_name, :type => Stock.document_type

@@ -29,10 +29,12 @@ class ResultsController < ApplicationController
 
 	def multiple_results
 		k = permitted_params
-		puts k.to_s
-		puts k.fetch(:multiple).to_s
 		@results = Result.es_find_multi(k.fetch(:multiple,[]))
+		@exchange_name = k.fetch(:exchange_name)
 		respond_to do |format|
+			format.js do 
+				render "multiple_results"
+			end
 			format.json do 
 				#puts "came to render json"
 				render :json => {results: @results, status: 200}
@@ -42,7 +44,7 @@ class ResultsController < ApplicationController
 
 	def permitted_params
 		puts params.to_s
-		params.permit(:entity_id, :multiple => [:id, :entity_id]).to_h
+		params.permit(:entity_id, :exchange_name,  :multiple => [:id, :entity_id]).to_h
 	end
 
 end

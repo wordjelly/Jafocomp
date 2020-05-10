@@ -35,7 +35,7 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 		stock_two = Stock.find_or_initialize({id: "E-2", trigger_update: true})
 		stock_two.save
 		Elasticsearch::Persistence.client.indices.refresh index: "frontend"  
-		stock_two = Stock.find("E-2")
+		stock_two = Stock.find_or_initialize({:id => "E-2"})
 		assert_equal true, stock_two.errors.blank?
 		assert_equal true, !stock_two.stock_top_results.blank?
 		assert_equal true, stock_two.combinations.blank?
@@ -45,7 +45,7 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 		Elasticsearch::Persistence.client.indices.refresh index: "frontend"  
 
 		## assert that the combination was added.
-		e = Stock.find("E-2")
+		e = Stock.find_or_initialize({:id => "E-2"})
 		assert_equal 1, e.combinations.size
 
 	end
