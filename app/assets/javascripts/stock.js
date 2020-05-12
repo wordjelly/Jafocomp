@@ -43,6 +43,7 @@ $(document).on('click','.entity',function(event){
 		console.log(multiple);
 
 		var exchange_name = $(this).attr("id");
+		console.log("Exchange name:" + exchange_name);
 		// response is populated by js erb.
 		$.ajax({
 			  	url: "/results/multiple_results",
@@ -84,11 +85,20 @@ var load_entity_combinations = function(_this,entity_id){
 
 	var top_n_hit_ids = entity.top_n_hit_ids;
 	
+	
 	var multiple = _.map(top_n_hit_ids,function(hit_id){
-		return {id: hit_id, entity_id: entity.primary_entity_id}
+		return {id: hit_id, entity_id: entity.impacted_entity_id}
 	});
 
 	console.log(multiple);
+
+	var exchange_name = _this.attr("id");
+
+	var primary_entity_id = entity_id;
+	
+	console.log("Exchange name:" + exchange_name);
+
+	// from where to get the primary entity id.
 
 	$.ajax({
 		  	url: "/results/multiple_results",
@@ -96,7 +106,7 @@ var load_entity_combinations = function(_this,entity_id){
 		  	beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
 		  	dataType: "script",
 		  	contentType: 'application/json',
-		  	data: JSON.stringify({"multiple" : multiple}),
+		  	data: JSON.stringify({"multiple" : multiple, "exchange_name" : exchange_name, "entity_id" : primary_entity_id}),
 		  	success: function(response,status,jqxhr){
 		  		/***
 		  		_.each(_.chunk(response.results,2),function(pair,index,list){
@@ -121,7 +131,7 @@ var entity_loaded = function(entity_id){
 
 var show_entity_combinations = function(_this,entity_id){
 	if(entity_loaded(entity_id) != true){
-		load_entity_combinations(event,entity_id);
+		load_entity_combinations(_this,entity_id);
 	}
 
 }

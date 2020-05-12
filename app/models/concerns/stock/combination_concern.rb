@@ -65,7 +65,8 @@ module Concerns::Stock::CombinationConcern
 					entity_id: combination.stock_primary_id,
 					entity_name: combination.stock_primary,
 					top_hits: combination.stock_top_results.map{|c| c[:_id].to_s },
-					combination_id: combination.id.to_s
+					combination_id: combination.id.to_s,
+					impacted_entity_id: combination.stock_impacted_id
 				},
 				:source => '''
 					if(ctx._source.combinations.length == 0){
@@ -75,6 +76,7 @@ module Concerns::Stock::CombinationConcern
 						entity.put("primary_entity_id",params.entity_id);
 						entity.put("primary_entity_exchange",params.exchange);
 						entity.put("top_n_hit_ids",params.top_hits);
+						entity.put("impacted_entity_id",params.impacted_entity_id);
 							
 
 						ArrayList entities = new ArrayList();
@@ -102,6 +104,7 @@ module Concerns::Stock::CombinationConcern
 							entity.put("primary_entity_id",params.entity_id);
 							entity.put("primary_entity_exchange",params.exchange);
 							entity.put("top_n_hit_ids",params.top_hits);
+							entity.put("impacted_entity_id",params.impacted_entity_id);
 								
 
 							ArrayList entities = new ArrayList();
@@ -129,6 +132,8 @@ module Concerns::Stock::CombinationConcern
 
 			Rails.logger.debug "update request for combination update becomes:"
 			Rails.logger.debug JSON.pretty_generate(update_request)
+
+			## so its what happens to me when.
 
 			self.class.add_bulk_item(update_request)
 		end

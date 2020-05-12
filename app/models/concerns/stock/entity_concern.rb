@@ -17,7 +17,7 @@ module Concerns::Stock::EntityConcern
 
 		attribute :stock_top_results, Array[Hash], mapping: {type: 'nested'}
 
-		attribute :stock_exchange, String, mapping: {type: 'keyword'}, default: "doggy"
+		attribute :stock_exchange, String, mapping: {type: 'keyword'}
 
 		## indicator, entity.
 		attribute :stock_information_type, String, mapping: {type: 'keyword'}
@@ -81,6 +81,9 @@ module Concerns::Stock::EntityConcern
 							type: 'keyword'
 						},
 						combination_id: {
+							type: 'keyword'
+						},
+						impacted_entity_id: {
 							type: 'keyword'
 						}
 					}

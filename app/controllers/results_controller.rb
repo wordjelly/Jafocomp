@@ -31,6 +31,7 @@ class ResultsController < ApplicationController
 		k = permitted_params
 		@results = Result.es_find_multi(k.fetch(:multiple,[]))
 		@exchange_name = k.fetch(:exchange_name)
+		@primary_entity_id = k.fetch(:entity_id)
 		respond_to do |format|
 			format.js do 
 				render "multiple_results"

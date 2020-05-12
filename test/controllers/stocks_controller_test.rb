@@ -38,6 +38,7 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 		stock_two = Stock.find_or_initialize({:id => "E-2"})
 		assert_equal true, stock_two.errors.blank?
 		assert_equal true, !stock_two.stock_top_results.blank?
+		assert_equal true, !stock_two.stock_exchange.blank?
 		assert_equal true, stock_two.combinations.blank?
 
 		## now create another stock, and it should populate the first stock with its combination.
