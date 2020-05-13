@@ -29,7 +29,7 @@
 <% @stock.stock_top_results.each_slice(1) do |results| %>
 	<div class="row">
 		<% results.each do |result| %>
-		    <%= render :partial => "summary_card", locals: {result: result } %>
+		    <%= render :partial => "/stocks/summary_card", locals: {result: result } %>
 		<% end %>
 	</div>
 <% end %>
@@ -38,34 +38,19 @@
 <!-- order transfer -->
 
 <% @stock.combinations.each do |combination| %>
-	<%= puts combination %>
 
-	<div class="row exchange" id="<%= combination['exchange_name'] %>" style="margin-bottom: 10px !important;">
+	<div class="row exchange" id="<%= combination['exchange_name'] %>" style="margin-bottom: 0px !important;">
 		<div class="col l12 s12 m12">
-			<ul class="collection with-header">
-				<li class="collection-header"><h4><i class="material-icons" style="margin-right:1rem;">storage</i>Correlations with <%= combination["exchange_name"] %>Stocks</h4></li>
-			</ul>
-		</div>
-	</div>
-
-	<div class="row" id="<%= combination['exchange_name'] %>_entities">
-		<div class="col l12 s12 m12">
-			<ul class="collection with-header">
-				<li class="collection-header" style="padding-top: 10px !important;">
-					<% combination["entities"].each do |entity| %>
-						<div data-entity="<%= JSON.generate(entity) %>" style="margin-bottom: 0px !important; background-color: white; border: 1px solid; border-color: #90a4ae; cursor: pointer;" id="<%= entity['primary_entity_id'] %>" class="chip blue-grey-text entity">
-							<%= entity["primary_entity_name"] %>	
-						</div>
-					<% end %>
+			<ul class="collection with-header center" style="margin-bottom: 0px !important;">
+				<li class="collection-header"><h4>Correlations with <%= combination["exchange_name"] %> Stocks</h4>
 				</li>
 			</ul>
 		</div>
 	</div>
 
-	<div class="row" id="<%= combination['exchange_name'] %>_entity_combinations">
-		<% combination["entities"].each do |entity| %>
-			<div class="entity_combination" id="entity_combination_<%= entity['primary_entity_id'] %>"></div>
-		<% end %>
+	<div id="NIFTY_entities" style="display:none;">
+		HELLO
 	</div>
+	
 
 <% end %>

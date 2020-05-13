@@ -12,6 +12,8 @@ $(document).ready(function(event){
 });
 
 
+////hide_exchange_entity_combinations("<%= @exchange_name %>");
+
 var update_charts = function(){
 	$(".result").each(function(index){
 		console.log("iterating result");
@@ -25,6 +27,7 @@ var update_charts = function(){
 }
 
 
+/**
 $(document).on('click','.entity',function(event){
 	$(this).find(".entity_combinations").slideToggle();
 	if($(this).find(".combination_row").length > 0){
@@ -67,13 +70,17 @@ $(document).on('click','.entity',function(event){
 		});
 	}
 });
+**/
 
-
+/***
 var hide_exchange_entity_combinations = function(exchange_name){
+	console.log("came to hide enitty enxchange combinations");
+
 	$(exchange_name + "_entity_combinations").find(".entity_combinations").each(function(index){
 		$(this).hide();
 	});		
 }
+***/
 
 /******
 FOR SHOWING THE COMBINATIONS
@@ -81,7 +88,12 @@ FOR SHOWING THE COMBINATIONS
 
 var load_entity_combinations = function(_this,entity_id){
 
+	console.log("came to load entity combinations");
+
+
 	var entity = get_entity_data(entity_id);
+
+	console.log("Entity is:" + entity);
 
 	var top_n_hit_ids = entity.top_n_hit_ids;
 	
@@ -125,11 +137,13 @@ var load_entity_combinations = function(_this,entity_id){
 }
 
 var entity_loaded = function(entity_id){
-
+	return false;
 }
 
 
 var show_entity_combinations = function(_this,entity_id){
+	console.log("came to show entity combinations:");
+
 	if(entity_loaded(entity_id) != true){
 		load_entity_combinations(_this,entity_id);
 	}
@@ -137,17 +151,23 @@ var show_entity_combinations = function(_this,entity_id){
 }
 
 var show_exchange_entities = function(_this){
-	$("#" + _this.attr("id") + "_entities").slideToggle();
+	console.log("came to show exchange entities");
+	console.log("slide toggling id: " + "#" + _this.attr("id") + "_entities");
+	$("#" + _this.attr("id") + "_entities").toggle();
 }
 
 /***
 @return[Array] of entity ids
 ***/
 var get_exchange_entities = function(_this){
+	console.log("came to get exchange entities");
 	var entity_ids = [];
 	$.each($("#" + _this.attr("id") + "_entities").find(".entity"),function(index){
 		entity_ids.push($(this).attr("id"));
 	});
+	console.log("entity ids are:");
+	console.log(entity_ids);
+	console.log("---------------");
 	return entity_ids;
 }
 
@@ -163,12 +183,13 @@ var get_entity_data = function(entity_id){
 }
 
 var toggle_exchange = function(_this){
-	show_exchange_entities(_this);
-	show_entity_combinations(_this,get_exchange_entities(_this)[0]);
+	show_exchange_entities(_this.attr("id"));
+	//show_entity_combinations(_this,get_exchange_entities(_this)[0]);
 }
 
 $(document).on('click','.exchange',function(event){
-
-	toggle_exchange($(this));
-
+	console.log("clicked exchange");
+	//toggle_exchange($(this));
+	$("#" + "NIFTY" + "_entities").show();
+	return false;
 });

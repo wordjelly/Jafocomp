@@ -139,7 +139,7 @@ module Concerns::Stock::EntityConcern
 				self.stock_name = info._source.information_name
 				self.stock_description = info._source.information_description
 				self.stock_link = info._source.information_link
-				self.stock_exchange = info._source.information_exchange
+				self.stock_exchange = info._source.information_exchange_name
 				self.stock_information_type = info._source.information_type
 			end
 			puts "finished set name description"

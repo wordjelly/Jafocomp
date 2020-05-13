@@ -49,6 +49,7 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 		e = Stock.find_or_initialize({:id => "E-2"})
 		assert_equal 1, e.combinations.size
 
+
 	end
 
 =begin

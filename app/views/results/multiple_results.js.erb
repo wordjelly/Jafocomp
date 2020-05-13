@@ -1,6 +1,6 @@
-hide_exchange_entity_combinations("<%= @exchange_name %>");
-<% @results.each do |result| %>
-	<% @stock = Stock.new(result["_source"]) %>
-	$("#entity_combination_<%= @primary_entity_id %>").append("<%= escape_javascript(render :partial => '/stocks/show') %>");
+<% @results[0..2].each do |result| %>
+		console.log("doing results : ");
+		console.log("<%= result %>");
+		$("#entity_combination_<%= @primary_entity_id %>").append("<%= escape_javascript(render :partial => '/stocks/summary_card.html.erb', locals: {result: result}) %>");
+		console.log("finished");
 <% end %>
-update_charts();
