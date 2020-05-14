@@ -130,8 +130,15 @@ module Concerns::Stock::EntityConcern
 			update_top_results
 			#puts "going to update combinations ----------------->"
 			update_combinations
+
+			##
+			update_components
 			self.trigger_update = false
 			self.save
+		end
+
+		def update_components
+			
 		end
 
 		def set_name_description_link

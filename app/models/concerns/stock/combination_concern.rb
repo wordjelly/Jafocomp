@@ -77,6 +77,7 @@ module Concerns::Stock::CombinationConcern
 						entity.put("primary_entity_exchange",params.exchange);
 						entity.put("top_n_hit_ids",params.top_hits);
 						entity.put("impacted_entity_id",params.impacted_entity_id);
+						entity.put("combination_id",params.combination_id);
 							
 
 						ArrayList entities = new ArrayList();
@@ -105,6 +106,7 @@ module Concerns::Stock::CombinationConcern
 							entity.put("primary_entity_exchange",params.exchange);
 							entity.put("top_n_hit_ids",params.top_hits);
 							entity.put("impacted_entity_id",params.impacted_entity_id);
+							entity.put("combination_id",params.combination_id);
 								
 
 							ArrayList entities = new ArrayList();

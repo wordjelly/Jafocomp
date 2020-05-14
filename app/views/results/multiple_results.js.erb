@@ -1,6 +1,6 @@
 <% @results[0..2].each do |result| %>
 		console.log("doing results : ");
 		console.log("<%= result %>");
-		$("#entity_combination_<%= @primary_entity_id %>").append("<%= escape_javascript(render :partial => '/stocks/summary_card.html.erb', locals: {result: result}) %>");
+		$("#entity_combination_<%= @primary_entity_id %>").prepend("<%= escape_javascript(render :partial => '/stocks/summary_card.html.erb', locals: {result: result}) %>");
 		console.log("finished");
 <% end %>
