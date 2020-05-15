@@ -159,7 +159,13 @@ module Concerns::Stock::CombinationConcern
 						## so we need that id.
 						## this goes the other way around.
 						## we land up 
-						q = Result.match_phrase_query_builder(self.stock_name,nil,c.id.to_s)
+						
+
+						q = Result.match_phrase_query_builder({
+							:query => self.stock_name,
+							:direction => nil,
+							:impacted_entity_id => c.id.to_s
+						})
 
 						q.deep_symbolize_keys!
 						{

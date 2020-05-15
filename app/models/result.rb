@@ -366,12 +366,22 @@ class Result
 		end
 	end
 
-	def self.match_phrase_query_builder(query,direction,impacted_entity_id)
+	
+	def self.match_phrase_query_builder(args={})
+		
+		query = args[:query]
+		direction = args[:direction]
+		impacted_entity_id = args[:impacted_entity_id]
+		from = args[:from] || 0
+		size = args[:size] || 10
+
 		qs = ""
 		unless query.blank?
 			qs = query.split(" ")
 		end
 		body = {
+			size: size,
+			from: from,
 			_source: ["tags","preposition","epoch","_id"],
 			query: {
 				nested: {
@@ -542,7 +552,13 @@ class Result
 
 	def self.nested_function_score_query(query,direction=nil,impacted_entity_id=nil)
 
-		body = match_phrase_query_builder(query,direction,impacted_entity_id)
+		args = {
+			:query => query,
+			:direction => direction,
+			:impacted_entity_id => impacted_entity_id
+		}
+
+		body = match_phrase_query_builder(args)
 
 		puts "search body"
 		puts JSON.pretty_generate(body)

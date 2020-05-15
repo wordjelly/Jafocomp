@@ -96,7 +96,10 @@ class Stock
 	def self.permitted_params
 		[
 			:id,
-			{:stock => [:trigger_update, :stock_id, :indicator_id, :exchange_id]}
+			:stock_id,
+			:indicator_id,
+			:from,
+			{:stock => [:trigger_update, :exchange_id]}
 		]
 	end
 

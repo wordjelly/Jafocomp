@@ -2,6 +2,7 @@ class StocksController < ApplicationController
 
 
 	before_action :find, :only => [:show,:update]
+	before_action :query, :only => [:show]
 
 	## so lets see if this shit works or not.
 	## so lets test if it shows the first stock.
@@ -32,13 +33,24 @@ class StocksController < ApplicationController
 		end
 	end
 
-	def find
-		@stock = Stock.find_or_initialize(permitted_params.fetch("stock",{}).merge(:id => params[:id]))
-	end
-	
 	## will expect an id.
 	def update
 		@stock.save
+	end
+
+	###############################################################
+	##
+	##
+	## BEFORE ACTIONS
+	##
+	##
+	###############################################################
+	def find
+		@stock = Stock.find_or_initialize(permitted_params.fetch("stock",{}).merge(:id => params[:id]))
+	end
+
+	def query
+		@stock.query(params.except(:stock))
 	end
 
 	def permitted_params

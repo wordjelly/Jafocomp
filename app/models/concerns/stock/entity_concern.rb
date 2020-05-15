@@ -8,6 +8,9 @@ module Concerns::Stock::EntityConcern
 		INFORMATION_TYPE_ENTITY = "entity"
 		SINGLE = 0
 		COMBINATION = 1
+		YES = 1
+
+		attribute :stock_is_exchange, Integer, mapping: {type: 'keyword'}
 
 		attribute :stock_name, String, mapping: {type: 'keyword'}
 
@@ -52,6 +55,9 @@ module Concerns::Stock::EntityConcern
 		attribute :indicator_primary_id, String, mapping: {type: 'keyword'}
 
 		attribute :indicator_primary_name, String, mapping: {type: 'keyword'}
+
+
+		attribute :component_stock_names, Array, mapping: {type: 'keyword'}
 
 		## these have to be cross updated.
 		## do we load the entirety of it ?
@@ -126,19 +132,64 @@ module Concerns::Stock::EntityConcern
 		##
 		#############################################################
 		def update_it
+			#
 			#puts "came to update in background job."
 			update_top_results
+			#
 			#puts "going to update combinations ----------------->"
 			update_combinations
-
-			##
+			#is it an exchange
+			#for this the information has to be mapped liek that
 			update_components
+
 			self.trigger_update = false
 			self.save
 		end
 
+		## so this is done
+		## next will be the combination.
 		def update_components
+			if is_index?
+				get_components.map{|hit|
+					self.components << hit._source.information_name unless self.components.include? hit._source.information_name
+				}
+			end
+		end
+
+		def get_components
+			query = {
+				bool: {
+					must: [
+						{
+							term: {
+								information_type: information_type
+							}
+						},
+						{
+							term: {
+								information_is_exchange: NO
+							}
+						},
+						{
+							term: {
+								information_exchange_name: self.stock_exchange
+							}
+						}
+					]
+				}
+			}	
+			#puts query.to_s
+
+			response = Hashie::Mash.new self.class.gateway.client.search :body => {:size => 1, :query => query}, :index => "correlations", :type => "result"
 			
+			puts "Response is:"
+			puts response.to_s
+
+			response.hits.hits
+		end
+
+		def is_index?
+			self.stock_is_exchange == YES
 		end
 
 		def set_name_description_link
@@ -148,6 +199,9 @@ module Concerns::Stock::EntityConcern
 				self.stock_link = info._source.information_link
 				self.stock_exchange = info._source.information_exchange_name
 				self.stock_information_type = info._source.information_type
+				unless info._source.information_is_exchange.blank?
+					self.stock_is_exchange = YES
+				end
 			end
 			puts "finished set name description"
 		end	
