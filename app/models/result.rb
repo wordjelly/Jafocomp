@@ -560,13 +560,13 @@ class Result
 
 		body = match_phrase_query_builder(args)
 
-		puts "search body"
-		puts JSON.pretty_generate(body)
+		#puts "search body"
+		#puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
 
-		puts "search results"
-		puts search_results.size.to_s
+		#puts "search results"
+		#puts search_results.size.to_s
 
 		parse_nested_search_results(search_results,query)
 

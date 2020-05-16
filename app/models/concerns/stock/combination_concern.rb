@@ -132,8 +132,8 @@ module Concerns::Stock::CombinationConcern
 				}
 			}
 
-			Rails.logger.debug "update request for combination update becomes:"
-			Rails.logger.debug JSON.pretty_generate(update_request)
+			#Rails.logger.debug "update request for combination update becomes:"
+			#Rails.logger.debug JSON.pretty_generate(update_request)
 
 			## so its what happens to me when.
 
@@ -141,13 +141,13 @@ module Concerns::Stock::CombinationConcern
 		end
 
 		def update_combinations
-			Rails.logger.debug("updating combinations.")
+			#Rails.logger.debug("updating combinations.")
 
 			names_by_index = get_all_other_stocks
 			# now a bulk search query ?
-			Rails.logger.debug "names by index"
+			#Rails.logger.debug "names by index"
 			#Rails.logger.debug (JSON.pretty_generate(names_by_index))
-			Rails.logger.debug JSON.pretty_generate(names_by_index)
+			#Rails.logger.debug JSON.pretty_generate(names_by_index)
 			#exit(1)
 			names_by_index.keys.each do |index|
 				names = names_by_index[index]
@@ -230,7 +230,7 @@ module Concerns::Stock::CombinationConcern
 		
 		def get_all_other_stocks
 			
-			Rails.logger.debug ("getting all other stocks.")
+			#Rails.logger.debug ("getting all other stocks.")
 			other_stocks_by_index = {}
 
 			query = {

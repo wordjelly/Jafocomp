@@ -54,9 +54,9 @@ class StocksController < ApplicationController
 	end
 
 	def permitted_params
-		puts "params are: #{params}"
+		#puts "params are: #{params}"
 		k = params.permit(Stock.permitted_params).to_h
-		puts k.to_s
+		#puts k.to_s
 		k
 	end
 

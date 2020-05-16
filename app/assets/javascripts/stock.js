@@ -1,5 +1,6 @@
 $(document).ready(function(event){
 	console.log("hit doc ready");
+	$('.tabs').tabs();
 	$(".result").each(function(index){
 		console.log("iterating result");
 		console.log("iterating");

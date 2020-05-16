@@ -1,30 +1,33 @@
 <div class="section">
 	<div class="row">
 		<div class="col s12 m6 l6">
-		  <div class="card">
-		    <div class="card-image">
-		      <img src="/assets/stocks/default.png">
-		    </div>
-		    <div class="card-content">
-		      <span class="blue-grey-text card-title" style="font-weight: 500;"><%= @stock.stock_name %></span>
-		      <p class="grey-text" style="font-weight: 400"><%= @stock.stock_description %><sup><a href="<%= @stock.stock_link %>"><i class="material-icons" style="font-size: 12px;">link</i></sup></a></p>
-		    </div>
-		    <div class="card-tabs">
-		      <ul class="tabs tabs-fixed-width">
-		        <li class="tab"><a href="#test4">Sectors</a></li>
-		        <li class="tab"><a class="active" href="#test5">Components</a></li>
-		        <li class="tab"><a href="#test6">Statistics</a></li>
-		      </ul>
-		    </div>
-		    <div class="card-content grey lighten-4">
-		      <div id="test4">Sectors</div>
-		      <div id="test5">Components</div>
-		      <div id="test6">Statistics</div>
-		    </div>
-		    <div class="card-action">
-		      <%= link_to "More Correlations", stock_path(@stock.id.to_s) %>
-		    </div>
-		  </div>
+		  	<div class="card">
+			    <div class="card-image">
+			      <img src="/assets/stocks/default.png">
+			    </div>
+			    <div class="card-content">
+			      <span class="blue-grey-text card-title" style="font-weight: 500;"><%= @stock.stock_name %></span>
+			      <p class="grey-text" style="font-weight: 400"><%= @stock.stock_description %><sup><a href="<%= @stock.stock_link %>"><i class="material-icons" style="font-size: 12px;">link</i></sup></a></p>
+			    </div>
+			    <div class="card-tabs">
+			      <ul class="tabs tabs-fixed-width">
+			       
+			        <li class="tab"><a class="active" href="#<%= @stock.id.to_s %>_test5">Components</a></li>
+			        <li class="tab"><a href="#<%= @stock.id.to_s %>_test6">Statistics</a></li>
+			      </ul>
+			    </div>
+			    <div class="card-content grey lighten-4">
+			      
+			      <div id="<%= @stock.id.to_s %>_test5">
+			      	<ol>
+				      	<%= @stock.components.each do |component| %>
+				      		<li><%= link_to component, stocks_path(component) %></li>	
+				      	<% end %>
+			      	</ol>
+			      </div>
+			      <div id="<%= @stock.id.to_s %>_test6">Statistics</div>
+			    </div>
+		  	</div>
 		</div>
 		<div class="col s12 m6 l6">
 		  	<ul class="collection with-header">

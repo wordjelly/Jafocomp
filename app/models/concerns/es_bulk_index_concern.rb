@@ -26,13 +26,13 @@ module Concerns::EsBulkIndexConcern
 	end
 
 	def self.do_bulk
-		#puts "called do bulk"
-		#puts "bulk items are:"
-		#puts bulk_items.to_s
+		##puts "called do bulk"
+		##puts "bulk items are:"
+		##puts bulk_items.to_s
 		add_total
-	  	#puts "building bulk items"
+	  	##puts "building bulk items"
 	  	if bulk_items.blank?
-	  		#puts "nothing to bulk"
+	  		##puts "nothing to bulk"
 	  		return
 	  	end
 
@@ -58,32 +58,32 @@ module Concerns::EsBulkIndexConcern
 	  		c
 	  	}
 
-	  	#puts "making bulk call"
-	  	#puts JSON.pretty_generate(bulk_request)
+	  	##puts "making bulk call"
+	  	##puts JSON.pretty_generate(bulk_request)
 	  	resp = gateway.client.bulk body: bulk_request unless bulk_items.blank?
 	  	#we need to return the response of the bulk call.
 	  	#problem is that this is not reliable.
 	  	#
-	  	#puts "search requests are=====================>:"
-	  	#puts search_requests.to_s
+	  	##puts "search requests are=====================>:"
+	  	##puts search_requests.to_s
 		unless search_requests.blank?
 
 			multi_response = gateway.client.msearch body: search_requests 
-			#puts "the search results are:"
-			#puts multi_response.to_s
+			##puts "the search results are:"
+			##puts multi_response.to_s
 			self.search_results = multi_response["responses"]
 		end
 		if total_items_bulked.size > 0
-			puts "completed bulk of #{bulk_size} items."
-			puts "total bulked : #{total_items_bulked}"
-			puts "#{Time.now.to_i}"
+			#puts "completed bulk of #{bulk_size} items."
+			#puts "total bulked : #{total_items_bulked}"
+			#puts "#{Time.now.to_i}"
 		end
 		reset_bulk_items
 	end
 
 	def self.add_bulk_item(item)
-		#puts "adding bulk item at: #{Time.now.to_i}"
-		#puts item.to_s
+		##puts "adding bulk item at: #{Time.now.to_i}"
+		##puts item.to_s
 	  	if total_items = self.bulk_items.size
 	  		bulk_items << item if total_items < self.bulk_size
 	  		do_bulk if total_items >= self.bulk_size

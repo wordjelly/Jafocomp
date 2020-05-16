@@ -57,7 +57,7 @@ module Concerns::Stock::EntityConcern
 		attribute :indicator_primary_name, String, mapping: {type: 'keyword'}
 
 
-		attribute :component_stock_names, Array, mapping: {type: 'keyword'}
+		attribute :components, Array, mapping: {type: 'keyword'}
 
 		## these have to be cross updated.
 		## do we load the entirety of it ?
@@ -116,7 +116,7 @@ module Concerns::Stock::EntityConcern
 		##
 		#############################################################
 		after_save do |document|
-			puts "--------- CAME TO AFTER SAVE --------------- "
+			#puts "--------- CAME TO AFTER SAVE --------------- "
 			schedule_background_update
 		end
 
@@ -149,25 +149,26 @@ module Concerns::Stock::EntityConcern
 		## so this is done
 		## next will be the combination.
 		def update_components
+			puts "came to update components."
 			if is_index?
+				puts "is index is true."
 				get_components.map{|hit|
 					self.components << hit._source.information_name unless self.components.include? hit._source.information_name
 				}
+			else
+				puts "it is not an index #{self.stock_name}"
 			end
 		end
 
+		## this here is the problem.
 		def get_components
+			puts "came to get components"
 			query = {
 				bool: {
 					must: [
 						{
 							term: {
-								information_type: information_type
-							}
-						},
-						{
-							term: {
-								information_is_exchange: NO
+								information_type: Stock::INFORMATION_TYPE
 							}
 						},
 						{
@@ -175,12 +176,20 @@ module Concerns::Stock::EntityConcern
 								information_exchange_name: self.stock_exchange
 							}
 						}
+					],
+					must_not: [
+						{
+							exists: {
+								field: "information_is_exchange"
+							}
+						}
 					]
 				}
 			}	
-			#puts query.to_s
+			
+			puts query.to_s
 
-			response = Hashie::Mash.new self.class.gateway.client.search :body => {:size => 1, :query => query}, :index => "correlations", :type => "result"
+			response = Hashie::Mash.new self.class.gateway.client.search :body => {:size => 100, :query => query}, :index => "correlations", :type => "result"
 			
 			puts "Response is:"
 			puts response.to_s
@@ -203,7 +212,7 @@ module Concerns::Stock::EntityConcern
 					self.stock_is_exchange = YES
 				end
 			end
-			puts "finished set name description"
+			#puts "finished set name description"
 		end	
 
 		def get_information(information_type="entity")
@@ -223,18 +232,16 @@ module Concerns::Stock::EntityConcern
 					]
 				}
 			}	
-			#puts query.to_s
 
 			response = Hashie::Mash.new self.class.gateway.client.search :body => {:size => 1, :query => query}, :index => "correlations", :type => "result"
 			
-			puts "Response is:"
-			puts response.to_s
-
 			info = nil
 
 			if response.hits.hits.size > 0
 				info = response.hits.hits.first
 			end
+
+			puts JSON.pretty_generate(info.to_h)
 
 			info
 

@@ -29,6 +29,14 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 	end
 =end
 
+	test " -- create all stocks -- " do 
+		10.times do |t|
+			stock = Stock.find_or_initialize({id: "E-#{t}", trigger_update: true})
+			stock.save
+		end
+	end
+
+=begin
 	test " -- populates stock with combination nested items -- " do 
 
 		## first create a stock 
@@ -51,7 +59,7 @@ class StocksControllerTest < ActionDispatch::IntegrationTest
 
 
 	end
-
+=end
 =begin
 	test " -- can find stock with stock name -- " do 
 		

@@ -9,15 +9,15 @@ module Concerns::FrontPageTrendConcern
   	module ClassMethods  
 
   		def reload_front_page_trend
-			#puts "came to reload front page trend."
+			##puts "came to reload front page trend."
 			$front_page_trend_loaded_at ||= Time.now - 6.hours
 			if Time.now.to_i > $front_page_trend_loaded_at.to_i
-				#puts "current time is greater #{(Time.now.to_i - $front_page_trend_loaded_at.to_i)}"
+				##puts "current time is greater #{(Time.now.to_i - $front_page_trend_loaded_at.to_i)}"
 				if ((Time.now.to_i - $front_page_trend_loaded_at.to_i) > 3600*4)
-					#puts "setting front page trend."
+					##puts "setting front page trend."
 					$front_page_trend = front_page_trend
-					#puts "front page trend is;"
-					#puts $front_page_trend
+					##puts "front page trend is;"
+					##puts $front_page_trend
 					$front_page_trend_loaded_at = Time.now
 				end
 			end
