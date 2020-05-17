@@ -140,18 +140,47 @@ module Concerns::Stock::CombinationConcern
 			self.class.add_bulk_item(update_request)
 		end
 
+
+		def combination_from_hits(args)
+			primary_stock = args[:primary_stock]
+			search_results = args[:search_results]
+			impacted_stock = args[:impacted_stock]
+			hits = Result.parse_nested_search_results(search_results,primary_stock.stock_name)
+			s = self.class.new
+			s.stock_top_results = hits
+			s.stock_impacted_id = impacted_stock.id.to_s
+			s.stock_impacted = impacted_stock.stock_name
+			s.stock_impacted_description = impacted_stock.stock_description
+			s.stock_impacted_link = impacted_stock.stock_link
+			s.stock_impacted_exchange = impacted_stock.stock_exchange
+			s.stock_primary = primary_stock.stock_name
+			s.stock_primary_id = primary_stock.id.to_s
+			s.stock_primary_description = primary_stock.stock_description
+			s.stock_primary_link = primary_stock.stock_link
+			s.stock_primary_exchange = primary_stock.stock_exchange
+			s.stock_information_type = primary_stock.stock_information_type
+			s.generate_combination_name
+			s.generate_combination_description
+			s.stock_result_type = self.class::COMBINATION
+			s.id = impacted_stock.id.to_s + "_" + primary_stock.id.to_s			
+			s
+		end
+
+
 		def update_combinations
 			#Rails.logger.debug("updating combinations.")
 
-			names_by_index = get_all_other_stocks
+			stocks_by_index = get_all_other_stocks
 			# now a bulk search query ?
-			#Rails.logger.debug "names by index"
-			#Rails.logger.debug (JSON.pretty_generate(names_by_index))
-			#Rails.logger.debug JSON.pretty_generate(names_by_index)
+			#Rails.logger.debug "stocks by index"
+			#Rails.logger.debug (JSON.pretty_generate(stocks_by_index))
+			#Rails.logger.debug JSON.pretty_generate(stocks_by_index)
 			#exit(1)
-			names_by_index.keys.each do |index|
-				names = names_by_index[index]
-				names.each_slice(50) do |slice|
+			#this is an impacted id.
+
+			stocks_by_index.keys.each do |index|
+				stocks = stocks_by_index[index]
+				stocks.each_slice(50) do |slice|
 					## each search_request should have an index and a body.
 					search_requests = slice.map{|c|
 						
@@ -178,14 +207,18 @@ module Concerns::Stock::CombinationConcern
 						}
 					}
 
-					#like what happens to nasdaq when 
-					#x indicator falls.
-					#puts JSON.pretty_generate(search_requests)
 
 					multi_response = self.class.gateway.client.msearch body: search_requests
 
 					multi_response["responses"].each_with_index {|search_results,key|
 
+						s = combination_from_hits({
+							primary_stock: self,
+							impacted_stock: slice[key],
+							search_results: search_results
+						})
+
+=begin
 						primary_stock = self
 						hits = Result.parse_nested_search_results(search_results,primary_stock.stock_name)
 						s = self.class.new
@@ -210,14 +243,19 @@ module Concerns::Stock::CombinationConcern
 						s.stock_result_type = self.class::COMBINATION
 						
 						s.id = slice[key].id.to_s + "_" + primary_stock.id.to_s
+=end
 						self.update_through_combination(s)
 
 						self.class.add_bulk_item(s)
 					}
 
 				end 
+				
 				self.class.flush_bulk
 			end
+
+			## so basically we are at combination display, similarly we also have 
+
 		end
 
 		def generate_combination_description

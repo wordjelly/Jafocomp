@@ -20,8 +20,8 @@
 			      
 			      <div id="<%= @stock.id.to_s %>_test5">
 			      	<ol>
-				      	<%= @stock.components.each do |component| %>
-				      		<li><%= link_to component, stocks_path(component) %></li>	
+				      	<% @stock.components.each do |component| %>
+				      		<li><%= link_to component, stock_path(component) %></li>	
 				      	<% end %>
 			      	</ol>
 			      </div>

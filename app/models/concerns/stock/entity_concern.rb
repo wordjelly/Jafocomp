@@ -153,7 +153,7 @@ module Concerns::Stock::EntityConcern
 			if is_index?
 				puts "is index is true."
 				get_components.map{|hit|
-					self.components << hit._source.information_name unless self.components.include? hit._source.information_name
+					self.components << hit._source.information_name.strip unless self.components.include? hit._source.information_name.strip
 				}
 			else
 				puts "it is not an index #{self.stock_name}"
@@ -203,11 +203,11 @@ module Concerns::Stock::EntityConcern
 
 		def set_name_description_link
 			if info = get_information
-				self.stock_name = info._source.information_name
+				self.stock_name = info._source.information_name.strip
 				self.stock_description = info._source.information_description
-				self.stock_link = info._source.information_link
-				self.stock_exchange = info._source.information_exchange_name
-				self.stock_information_type = info._source.information_type
+				self.stock_link = info._source.information_link.strip
+				self.stock_exchange = info._source.information_exchange_name.strip
+				self.stock_information_type = info._source.information_type.strip
 				unless info._source.information_is_exchange.blank?
 					self.stock_is_exchange = YES
 				end

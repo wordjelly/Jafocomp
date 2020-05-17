@@ -69,7 +69,8 @@ class Stock
 				}
 			}
 
-
+			puts "query is:"
+			puts query.to_s
 			## no idea why the fuck this is not working.
 
 			search_response =  cls.gateway.client.search :body => {query: query}, index: index_name, :type => document_type
@@ -78,9 +79,14 @@ class Stock
 			
 			hit = search_response["hits"]["hits"].first
 
+			puts "hit is:"
+			puts hit.to_s
+
 			#hit = cls.gateway.client.get :id => args[:id], :index => Stock.index_name, :type => Stock.document_type
 			raise Elasticsearch::Transport::Transport::Error if hit.blank?
+
 			e = cls.new(hit["_source"])
+			
 			e.id = hit["_id"]
 			#puts "args--> #{args}"
 			e.attributes.merge!(args)

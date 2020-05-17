@@ -6,15 +6,27 @@ module Concerns::Stock::CombinationQueryConcern
 
 		def query(args={})
 
+			## what is the primary and what is the impacted.
+			## impacted is our stock
+
+			## primary is the stock_id.
+			## lets call it primary stock id instead.
+
 			return if args.blank?
-			return if ((args[:stock_id].blank?) && (args[:indicator_id].blank?))
+			return if ((args[:primary_stock_id].blank?) && (args[:indicator_id].blank?))
 				
 			query_string = ""
 
-			unless args[:stock_id].blank?
-				if stock = Stock.find_or_initialize({:id => args[:stock_id]})
+			unless args[:primary_stock_id].blank?
 
-					query_string += stock.stock_name
+				puts "stock id is: #{args[:primary_stock_id]}"
+				
+				if primary_stock = Stock.find_or_initialize({:id => args[:primary_stock_id]})		
+
+					puts "stock is:"
+					puts primary_stock.to_s
+
+					query_string += primary_stock.stock_name
 				
 				end 
 			end
@@ -34,9 +46,22 @@ module Concerns::Stock::CombinationQueryConcern
 				:from => from
 			})
 
-			## you take the results if there are any.
-			## you add them as stock_top_results
-			## and we use that .
+			puts q.to_s
+
+			search_results = self.class.gateway.client.search body: q, index: "correlations", type: "result"
+
+			## find the combination
+			## if the from is different
+			## then we have to 
+			s = combination_from_hits({
+				primary_stock: primary_stock,
+				impacted_stock: self,
+				search_results: search_results
+			})
+
+			## now from this combination set the shit, on self.
+
+				
 
 		end
 

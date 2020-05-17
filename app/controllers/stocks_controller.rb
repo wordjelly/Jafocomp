@@ -7,6 +7,8 @@ class StocksController < ApplicationController
 	## so lets see if this shit works or not.
 	## so lets test if it shows the first stock.
 	def show
+		puts "------------------ STOCK IN SHOW IS ---------------- "
+		puts @stock.to_s
 		respond_to do |format|
 			format.html do 
 				render :show
@@ -46,7 +48,10 @@ class StocksController < ApplicationController
 	##
 	###############################################################
 	def find
+		puts "------------ came to find stock -------------- "
 		@stock = Stock.find_or_initialize(permitted_params.fetch("stock",{}).merge(:id => params[:id]))
+		puts "stock becomes:"
+		puts @stock.to_s
 	end
 
 	def query
