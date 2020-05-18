@@ -37,31 +37,22 @@ module Concerns::Stock::CombinationQueryConcern
 				end
 			end
 
-			from = args[:from] || 0
+			self.from = args[:from] || 0
 
-			q = Result.match_phrase_query_builder({
+			## do a nested function score query.
+			self.set_top_results({
 				:query => query_string,
 				:direction => nil,
 				:impacted_entity_id => nil,
-				:from => from
+				:from => self.from
 			})
 
-			puts q.to_s
+			self.stock_primary = primary_stock.stock_name
+			self.stock_primary_id = primary_stock.id.to_s
+			self.stock_impacted = self.stock_name	
+			self.stock_impacted_id = self.id.to_s		
+			self.stock_result_type = Concerns::Stock::EntityConcern::COMBINATION
 
-			search_results = self.class.gateway.client.search body: q, index: "correlations", type: "result"
-
-			## find the combination
-			## if the from is different
-			## then we have to 
-			s = combination_from_hits({
-				primary_stock: primary_stock,
-				impacted_stock: self,
-				search_results: search_results
-			})
-
-			## now from this combination set the shit, on self.
-
-				
 
 		end
 

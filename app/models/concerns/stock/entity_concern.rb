@@ -104,7 +104,7 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :stock_id
 		attr_accessor :indicator_id
 		attr_accessor :exchange_id
-		attr_accessor :skip
+		attr_accessor :from
 
 
 
@@ -134,7 +134,7 @@ module Concerns::Stock::EntityConcern
 		def update_it
 			#
 			#puts "came to update in background job."
-			update_top_results
+			set_top_results({:query => "", :direction => nil, :impacted_entity_id => self.id.to_s})
 			#
 			#puts "going to update combinations ----------------->"
 			update_combinations
@@ -148,15 +148,18 @@ module Concerns::Stock::EntityConcern
 
 		## so this is done
 		## next will be the combination.
+		## best would be to have a combination object.
+		## have a combinations controller.
+		## 
 		def update_components
-			puts "came to update components."
+			#puts "came to update components."
 			if is_index?
-				puts "is index is true."
+				#puts "is index is true."
 				get_components.map{|hit|
 					self.components << hit._source.information_name.strip unless self.components.include? hit._source.information_name.strip
 				}
 			else
-				puts "it is not an index #{self.stock_name}"
+				#puts "it is not an index #{self.stock_name}"
 			end
 		end
 

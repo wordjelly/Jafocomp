@@ -550,13 +550,8 @@ class Result
 		}
 	end
 
-	def self.nested_function_score_query(query,direction=nil,impacted_entity_id=nil)
+	def self.nested_function_score_query(args={})
 
-		args = {
-			:query => query,
-			:direction => direction,
-			:impacted_entity_id => impacted_entity_id
-		}
 
 		body = match_phrase_query_builder(args)
 
@@ -568,7 +563,7 @@ class Result
 		#puts "search results"
 		#puts search_results.size.to_s
 
-		parse_nested_search_results(search_results,query)
+		parse_nested_search_results(search_results,args[:query])
 
 	end
 
@@ -957,7 +952,8 @@ class Result
 
 		unless args[:direction].blank?
 
-			search_results = nested_function_score_query(args[:prefix],args[:direction],args[:impacted_entity_id])
+			#search_results = nested_function_score_query(args[:prefix],args[:direction],args[:impacted_entity_id])
+			search_results = nested_function_score_query(args.merge({:query => args[:prefix]}))
 
 		else
 
@@ -965,7 +961,8 @@ class Result
 
 			if search_results.blank?
 				puts "search results were blank."
-				search_results = nested_function_score_query(args[:prefix],args[:direction],args[:impacted_entity_id])
+				#search_results = nested_function_score_query(args[:prefix],args[:direction],args[:impacted_entity_id])
+				search_results = nested_function_score_query(args.merge({:query => args[:prefix]}))
 			end
 
 		end

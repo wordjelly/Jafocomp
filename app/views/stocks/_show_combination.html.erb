@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="col s12 m12 l12">
+	  <div class="card">
+	    <div class="card-image">
+	      <img class="entity_background" style="height: 200px">
+	    </div>
+	    <div class="card-content">
+	      <span class="card-title blue-grey-text" style="font-weight: 500">Correlations for <%= @stock.stock_primary %> & <%= @stock.stock_impacted %></span>
+	      <!-- what about last updated ? -->
+	      <p>10 year historical correlations, describe the relationship between <%= @stock.stock_primary %> & <%= @stock.stock_impacted %>.</p>
+	      <p>Last Updated: <%= @stock.updated_at %></p>
+	    </div>
+	    <!-- this is not a combination, just finish indicator. -->
+	    <div class="card-action">
+	      <%= link_to @stock.stock_primary, stock_path(@stock.stock_primary_id) %>
+	      <%= link_to @stock.stock_impacted, stock_path(@stock.stock_impacted_id) %>
+	    </div>
+	  </div>
+	</div>
+</div>
+
+<!-- would be better to -->
+
+<div class="row" style="margin-bottom: 10px !important;">
+	<div class="col l12 s12 m12">
+		<ul class="collection with-header">
+			<li class="collection-header"><h4><i class="material-icons" style="margin-right:1rem;">storage</i>Latest Correlations</h4></li>
+		</ul>
+	</div>
+</div>
+
+<% @stock.stock_top_results.each_slice(1) do |results| %>
+	<div class="row">
+		<% results.each do |result| %>
+			<%= puts result %>
+		    <%= render :partial => "/stocks/summary_card", locals: {result: result } %>
+		<% end %>
+	</div>
+<% end %>
+
+<%= link_to "More", combination_stock_path(:id => @stock.stock_impacted, :primary_stock_id => @stock.stock_primary, :from => (@stock.from.to_i + @stock.stock_top_results.size).to_s), {:class => "waves-effect waves-light btn"} %>
+
+	
