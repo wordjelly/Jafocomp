@@ -13,16 +13,18 @@ class IndicatorsControllerTest < ActionDispatch::IntegrationTest
 
 		assert_equal true, Indicator.get_all.size > 0
 
-		Elasticsearch::Persistence.client.indices.refresh index: "frontend*"   
+		Elasticsearch::Persistence.client.indices.refresh index: "frontend*"	
+		## you need proper flow logging
 
 		Indicator.get_all.each do |hit|
-			puts hit.to_s
+			#puts hit.to_s
 			assert_equal true, hit["_source"]["stock_top_results"].size > 0
 		end
 
 	end
 
 
+=begin
 	test " -- creates indicator combinations with each stock -- " do 
 
 		stock_two = Stock.find_or_initialize({id: "E-2", :trigger_update => true})
@@ -44,7 +46,7 @@ class IndicatorsControllerTest < ActionDispatch::IntegrationTest
 		assert_equal 1, e.combinations.size
 
 	end
-
+=end
 	
 
 end

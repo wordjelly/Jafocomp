@@ -10,26 +10,10 @@ class Indicator
 	include Concerns::BackgroundJobConcern
 	include Concerns::Stock::EntityConcern
 
-	## so that way we can do that also
-	## stocks is ok ->
-	## but when you show single stock ->
-	## the top card is ok
-	## below that start the first full search result
-	## and then individual search results.
-	## with pagination
-	## first fix the mobile mess
-	## then the continuous looping on stock pages
-	## we have the stock top results
-	## we have its combinations.
-	## so we can have two cards ?
-	## improve the top cards
-	## and the way the combinations are shown.
-	## 
-
 
 	INDICATORS_JSONFILE = "indicators.json"
 	INFORMATION_TYPE_INDICATOR = "indicator"
-	MAX_INDICATORS = 1
+	MAX_INDICATORS = 18
 	INDICATOR_NAMES_AND_ABBREVIATIONS = {
 		"stochastic_oscillator_d_indicator" => "SOD Indicator",
 		"stochastic_oscillator_k_indicator" => "SOK Indicator",
@@ -69,8 +53,8 @@ class Indicator
 		}
 		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => MAX_INDICATORS, :query => query}, :index => index_name , :type => document_type
 		
-		puts "Response is:"
-		puts response.to_s
+		#puts "Response is:"
+		#puts response.to_s
 
 
 		response.hits.hits
@@ -103,10 +87,8 @@ class Indicator
 	##
 	##
 	###########################################################
-	def update_top_results
-		self.stock_top_results = Result.nested_function_score_query(self.stock_name,nil,nil)[0..4].map{|c| Result.build_setup(c) }
-		puts "the stock top results are:"
-		puts self.stock_top_results.to_s
+	def args_for_top_results_query
+		{:query => self.stock_name, :direction => nil, :impacted_entity_id => nil}
 	end
 
 
@@ -132,8 +114,8 @@ class Indicator
 
 		response = Hashie::Mash.new Indicator.gateway.client.search :body => {:size => 1, :query => query}, :index => "correlations", :type => "result"
 		
-		puts "Response is:"
-		puts response.to_s
+		#puts "Response is:"
+		#puts response.to_s
 
 		info = nil
 

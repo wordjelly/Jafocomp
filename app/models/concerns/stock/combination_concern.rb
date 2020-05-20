@@ -53,11 +53,8 @@ module Concerns::Stock::CombinationConcern
 
 		end
 		
-		def update_through_combination(combination)
+		def add_combination_to_self(combination)
 			
-			#Rails.logger.debug "came to update through combinations."
-			#Rails.logger.debug combination.stock_top_results
-
 			script = {
 				:lang => "painless",
 				:params => {
@@ -132,10 +129,6 @@ module Concerns::Stock::CombinationConcern
 				}
 			}
 
-			#Rails.logger.debug "update request for combination update becomes:"
-			#Rails.logger.debug JSON.pretty_generate(update_request)
-
-			## so its what happens to me when.
 
 			self.class.add_bulk_item(update_request)
 		end
@@ -168,28 +161,20 @@ module Concerns::Stock::CombinationConcern
 
 
 		def update_combinations
-			#Rails.logger.debug("updating combinations.")
-
 			stocks_by_index = get_all_other_stocks
-			# now a bulk search query ?
-			#Rails.logger.debug "stocks by index"
-			#Rails.logger.debug (JSON.pretty_generate(stocks_by_index))
-			#Rails.logger.debug JSON.pretty_generate(stocks_by_index)
-			#exit(1)
-			#this is an impacted id.
+			
+			index_results_for_log = {}
 
 			stocks_by_index.keys.each do |index|
-				stocks = stocks_by_index[index]
-				stocks.each_slice(50) do |slice|
-					## each search_request should have an index and a body.
-					search_requests = slice.map{|c|
-						
-						## so what happens to me, 
-						## so we need that id.
-						## this goes the other way around.
-						## we land up 
-						
+				
+				index_results_for_log[index] ||= {}
 
+				stocks = stocks_by_index[index]
+				
+				stocks.each_slice(50) do |slice|
+					
+					search_requests = slice.map{|c|
+									
 						q = Result.match_phrase_query_builder({
 							:query => self.stock_name,
 							:direction => nil,
@@ -207,8 +192,8 @@ module Concerns::Stock::CombinationConcern
 						}
 					}
 
-
 					multi_response = self.class.gateway.client.msearch body: search_requests
+
 
 					multi_response["responses"].each_with_index {|search_results,key|
 
@@ -218,43 +203,22 @@ module Concerns::Stock::CombinationConcern
 							search_results: search_results
 						})
 
-=begin
-						primary_stock = self
-						hits = Result.parse_nested_search_results(search_results,primary_stock.stock_name)
-						s = self.class.new
+						index_results_for_log[index][slice[key].stock_name] = search_results.size.to_s
 
-						s.stock_top_results = hits
-						## these have to be updated to self.
-
-						s.stock_impacted_id = slice[key].id.to_s
-						s.stock_impacted = slice[key].stock_name
-						s.stock_impacted_description = slice[key].stock_description
-						s.stock_impacted_link = slice[key].stock_link
-						s.stock_impacted_exchange = slice[key].stock_exchange
-
-						s.stock_primary = primary_stock.stock_name
-						s.stock_primary_id = primary_stock.id.to_s
-						s.stock_primary_description = primary_stock.stock_description
-						s.stock_primary_link = primary_stock.stock_link
-						s.stock_primary_exchange = primary_stock.stock_exchange
-						s.stock_information_type = primary_stock.stock_information_type
-						s.generate_combination_name
-						s.generate_combination_description
-						s.stock_result_type = self.class::COMBINATION
-						
-						s.id = slice[key].id.to_s + "_" + primary_stock.id.to_s
-=end
-						self.update_through_combination(s)
+						self.add_combination_to_self(s)
 
 						self.class.add_bulk_item(s)
+
 					}
 
 				end 
 				
 				self.class.flush_bulk
+
 			end
 
-			## so basically we are at combination display, similarly we also have 
+			Rails.logger.debug("updated combinations for #{self.stock_name} as follows:")
+			Rails.logger.debug(JSON.pretty_generate(index_results_for_log))
 
 		end
 
@@ -288,7 +252,7 @@ module Concerns::Stock::CombinationConcern
 
 			response.hits.hits.each do |hit|
 				index_name = hit._source.information_exchange_name
-				index_name = "Test"
+				#index_name = "Test"
 				other_stocks_by_index[index_name] ||= []
 				s = self.class.new
 				s.stock_name = hit._source.information_name

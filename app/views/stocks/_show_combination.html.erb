@@ -38,6 +38,18 @@
 	</div>
 <% end %>
 
-<%= link_to "More", combination_stock_path(:id => @stock.stock_impacted, :primary_stock_id => @stock.stock_primary, :from => (@stock.from.to_i + @stock.stock_top_results.size).to_s), {:class => "waves-effect waves-light btn"} %>
+<div class="row">
 
-	
+	<% if @stock.from.to_i > 0 %>
+		<div class="col l6 m6 s6 right-align">
+			<%= link_to "Prev", combination_stock_path(:id => @stock.stock_impacted, :primary_stock_id => @stock.stock_primary, :from => (@stock.from.to_i + @stock.stock_top_results.size).to_s), {:class => "waves-effect waves-light btn"} %>
+		</div>
+		<div class="col l6 m6 s6 left-align">
+			<%= link_to "Next", combination_stock_path(:id => @stock.stock_impacted, :primary_stock_id => @stock.stock_primary, :from => (@stock.from.to_i + @stock.stock_top_results.size).to_s), {:class => "waves-effect waves-light btn"} %>
+		</div>
+	<% else %>
+		<div class="col l6 m6 s6 offset-l3 offset-m3 offset-s3 center">
+			<%= link_to "Next", combination_stock_path(:id => @stock.stock_impacted, :primary_stock_id => @stock.stock_primary, :from => (@stock.from.to_i + @stock.stock_top_results.size).to_s), {:class => "waves-effect waves-light btn"} %>
+		</div>
+	<% end %>
+</div>

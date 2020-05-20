@@ -3,9 +3,10 @@ class IndicatorsController < ApplicationController
 	before_action :find, :only => [:show,:update]
 
 	def show
+		@stock = @indicator
 		respond_to do |format|
 			format.html do 
-				render :show
+				render "/stocks/show.html.erb"
 			end
 		end
 	end
@@ -35,6 +36,12 @@ class IndicatorsController < ApplicationController
 			s = Indicator.new(hit["_source"])
 			s.id = hit["_id"]
 			@indicators << s
+		end
+		@stocks = @indicators
+		respond_to do |format|
+			format.html do 
+				render "/stocks/index.html.erb"
+			end
 		end
 	end
 

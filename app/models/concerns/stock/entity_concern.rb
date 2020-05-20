@@ -123,6 +123,10 @@ module Concerns::Stock::EntityConcern
 		def schedule_background_update
 			ScheduleJob.perform_later([self.id.to_s,self.class.name.to_s,"update_it"]) unless self.trigger_update.blank?
 		end
+
+		def args_for_top_results_query
+			{:query => "", :direction => nil, :impacted_entity_id => self.id.to_s}
+		end
 		
 		#############################################################
 		##
@@ -132,16 +136,9 @@ module Concerns::Stock::EntityConcern
 		##
 		#############################################################
 		def update_it
-			#
-			#puts "came to update in background job."
-			set_top_results({:query => "", :direction => nil, :impacted_entity_id => self.id.to_s})
-			#
-			#puts "going to update combinations ----------------->"
+			set_top_results(args_for_top_results_query)
 			update_combinations
-			#is it an exchange
-			#for this the information has to be mapped liek that
 			update_components
-
 			self.trigger_update = false
 			self.save
 		end
@@ -165,7 +162,7 @@ module Concerns::Stock::EntityConcern
 
 		## this here is the problem.
 		def get_components
-			puts "came to get components"
+			#puts "came to get components"
 			query = {
 				bool: {
 					must: [
@@ -190,12 +187,12 @@ module Concerns::Stock::EntityConcern
 				}
 			}	
 			
-			puts query.to_s
+			#puts query.to_s
 
 			response = Hashie::Mash.new self.class.gateway.client.search :body => {:size => 100, :query => query}, :index => "correlations", :type => "result"
 			
-			puts "Response is:"
-			puts response.to_s
+			#puts "Response is:"
+			#puts response.to_s
 
 			response.hits.hits
 		end
@@ -208,7 +205,7 @@ module Concerns::Stock::EntityConcern
 			if info = get_information
 				self.stock_name = info._source.information_name.strip
 				self.stock_description = info._source.information_description
-				self.stock_link = info._source.information_link.strip
+				self.stock_link = info._source.information_link.strip unless info._source.information_link.blank?
 				self.stock_exchange = info._source.information_exchange_name.strip
 				self.stock_information_type = info._source.information_type.strip
 				unless info._source.information_is_exchange.blank?
@@ -244,7 +241,7 @@ module Concerns::Stock::EntityConcern
 				info = response.hits.hits.first
 			end
 
-			puts JSON.pretty_generate(info.to_h)
+			#puts JSON.pretty_generate(info.to_h)
 
 			info
 
