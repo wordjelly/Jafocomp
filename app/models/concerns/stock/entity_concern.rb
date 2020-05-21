@@ -8,9 +8,12 @@ module Concerns::Stock::EntityConcern
 		INFORMATION_TYPE_ENTITY = "entity"
 		SINGLE = 0
 		COMBINATION = 1
+		NO = -1
 		YES = 1
 
-		attribute :stock_is_exchange, Integer, mapping: {type: 'keyword'}
+		attribute :stock_is_exchange, Integer, mapping: {type: 'integer'}, default: NO
+
+		attribute :stock_is_indicator, Integer, mapping: {type: 'integer'}, default: NO
 
 		attribute :stock_name, String, mapping: {type: 'keyword'}
 
@@ -105,6 +108,8 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :indicator_id
 		attr_accessor :exchange_id
 		attr_accessor :from
+		## used in stocks_controller -> to show only the exchanges in the index action.
+		attr_accessor :only_exchanges
 
 
 
@@ -140,6 +145,7 @@ module Concerns::Stock::EntityConcern
 			update_combinations
 			update_components
 			self.trigger_update = false
+			self.stock_is_indicator = YES if self.class.name == "Indicator"
 			self.save
 		end
 

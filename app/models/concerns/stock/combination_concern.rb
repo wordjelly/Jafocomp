@@ -262,6 +262,7 @@ module Concerns::Stock::CombinationConcern
 				other_stocks_by_index[index_name] << s
 			end
 
+			#mobile ui, is important.
 			#puts JSON.pretty_generate(other_stocks_by_index)
 			#exit(1)
 			other_stocks_by_index

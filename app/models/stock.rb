@@ -103,12 +103,15 @@ class Stock
  		e
 	end
 
+	## so only show exchanges?
 	def self.permitted_params
 		[
 			:id,
 			:stock_id,
 			:indicator_id,
 			:from,
+			:stock_is_exchange,
+			:stock_exchange,
 			{:stock => [:trigger_update, :exchange_id]}
 		]
 	end

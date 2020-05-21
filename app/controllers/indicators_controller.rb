@@ -13,36 +13,50 @@ class IndicatorsController < ApplicationController
 
 
 	def index
-		search_request = Indicator.search({
+		search_request = Stock.search({
 			query: {
 				bool: {
 					must: [
 						{
 							term: {
-								stock_result_type: Indicator::SINGLE
+								stock_result_type: Stock::SINGLE
 							}
 						},
 						{
 							term: {
-								stock_information_type: "indicator"
+								stock_is_exchange: Concerns::Stock::EntityConcern::NO
+							}
+						},
+						{
+							term: {
+								stock_is_indicator: Concerns::Stock::EntityConcern::YES
 							}
 						}
 					]
 				}
 			}
 		})
-		@indicators = []
+
+		@stocks = []
+
+		## so these are exchanges -> and can be easily rendered.
+
 		search_request.response.hits.hits.each do |hit|
-			s = Indicator.new(hit["_source"])
+			s = Stock.new(hit["_source"])
 			s.id = hit["_id"]
-			@indicators << s
+			@stocks << s
 		end
-		@stocks = @indicators
+
+		# now group the stocks.
+
+		# should render stock sindex
 		respond_to do |format|
 			format.html do 
 				render "/stocks/index.html.erb"
 			end
 		end
+
+
 	end
 
 	def find

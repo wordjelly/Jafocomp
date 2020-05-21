@@ -1,3 +1,4 @@
+//= require jquery_ujs 
 //= require search.js
 //= require utils.js
 //= require logs.js
@@ -8,6 +9,7 @@
 //= require search_result_chart.js
 //= require autocomplete_patch.js
 //= require stock.js
+
 
 
 // now for infinite scroll, with tabs.

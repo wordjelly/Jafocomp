@@ -2,7 +2,27 @@
 	<h2></h2>
 	<h4 class="grey-text">Algorini covers 180 different stocks, from 5 exchanges, including forex pairs. Find correlations between stock pairs, updated daily.</h4>
 </div>
-<% @stocks.each do |stock| %>
-	<% @stock = stock %>
-	<%= render :partial => "/stocks/show_summary" %>
+
+
+<ul class="tabs tabs-fixed-width tab-demo z-depth-1">
+	<% @stocks_by_exchange.keys.each do |exchange_name| %>
+		<li class="tab"><a href="#<%= exchange_name.parameterize %>"><%= exchange_name %></a></li>
+	<% end %>
+</ul>
+
+<% @stocks_by_exchange.keys.each do |exchange_name| %>
+	<div id="<%= exchange_name.parameterize %>" class="col l12 m12 s12">
+		<% @stocks = @stocks_by_exchange[exchange_name][:stocks] %>
+		<% @from = @stocks_by_exchange[exchange_name][:next_from] %>
+
+		<div id ="<%= exchange_name.parameterize %>_stocks">
+			<% @stocks.each do |stock| %>
+				<% @stock = stock %>
+				<%= render :partial => "/stocks/show_summary" %>
+			<% end %>
+		</div>
+
+		<%= link_to "More", stocks_path(:from => @from, :stock_exchange => exchange_name),  remote: true %>
+		
+	</div>
 <% end %>
