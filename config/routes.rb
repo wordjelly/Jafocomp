@@ -23,7 +23,7 @@ Rails.application.routes.draw do
 
   ## its better than nothing.
   ## lets see how it goes with this much first.
-  get 'stocks/:id/with_stock/:primary_stock_id' => "stocks#show", as: "combination_stock"
+  get 'stocks/:id/with_stock/:primary_stock_id' => "stocks#show", as: "combination_entity"
   get 'stocks/:id/with_indicator/:indicator_id' => "stocks#show"
   get 'stocks/:id/with_stock/:primary_stock_id/with_indicator/:indicator_id' => "stocks#show" 
   get 'stocks/:id/with_exchange/:exchange_id' => "stocks#show"

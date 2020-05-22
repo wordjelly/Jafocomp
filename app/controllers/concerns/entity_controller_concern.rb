@@ -15,7 +15,7 @@ module Concerns::EntityControllerConcern
 			#puts @entity.to_s
 			respond_to do |format|
 				format.html do 
-					render :show
+					render "/entities/show"
 				end
 				format.json do 
 					render :json => @entity.as_json
@@ -35,7 +35,7 @@ module Concerns::EntityControllerConcern
 			
 			@entity = get_resource_class.new(permitted_params.fetch("entity",{}))
 			
-			@stocks_by_exchange = @entity.do_index
+			@entities_by_exchange = @entity.do_index
 
 			respond_to do |format|
 				format.html do 

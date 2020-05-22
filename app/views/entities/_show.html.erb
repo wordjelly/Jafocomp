@@ -5,12 +5,12 @@
 	      <img class="entity_background" style="height: 200px">
 	    </div>
 	    <div class="card-content">
-	      <span class="card-title blue-grey-text" style="font-weight: 500"><%= @stock.stock_name %></span>
-	      <p>Explore thousands of financial indicators and correlations for <%= @stock.stock_name %></p>
-	      <p><%= @stock.stock_description %></p>
+	      <span class="card-title blue-grey-text" style="font-weight: 500"><%= @entity.stock_name %></span>
+	      <p>Explore thousands of financial indicators and correlations for <%= @entity.stock_name %></p>
+	      <p><%= @entity.stock_description %></p>
 	    </div>
 	    <div class="card-action">
-	      <a href="<%= @stock.stock_link %>">Read More At Wikipedia</a>
+	      <a href="<%= @entity.stock_link %>">Read More At Wikipedia</a>
 	    </div>
 	  </div>
 	</div>
@@ -26,7 +26,7 @@
 	</div>
 </div>
 
-<% @stock.stock_top_results.each_slice(1) do |results| %>
+<% @entity.stock_top_results.each_slice(1) do |results| %>
 	<div class="row">
 		<% results.each do |result| %>
 		    <%= render :partial => "/stocks/summary_card", locals: {result: result } %>
@@ -37,7 +37,7 @@
 
 <!-- order transfer -->
 <div id="combinations" style="padding-bottom:2rem;">
-	<% @stock.combinations.each do |combination| %>
+	<% @entity.combinations.each do |combination| %>
 
 		<div class="row stock_exchange" id="<%= combination['exchange_name'] %>" style="margin-bottom: 0px !important; margin-top: 1.5rem;">
 			<div class="col l12 s12 m12">
@@ -66,7 +66,7 @@
 			<% combination["entities"].each do |entity| %>
 				<div style="display:none;" class="entity_combination" id="entity_combination_<%= entity['primary_entity_id'] %>">
 					<div style="margin-bottom: 0px !important; margin-top: 0.5rem; background-color: white; border: 1px solid; border-color: #90a4ae; cursor: pointer;" class="col s10 m10 l10 offset-l1 offset-m1 offset-s1 center chip blue-grey-text">
-						<a href="<%= @stock.stock_name %>/with_stock/<%= entity['primary_entity_name'] %>">More Correlations for <%= entity['primary_entity_name'] %> VS <%= @stock.stock_name %></a>
+						<a href="<%= @entity.stock_name %>/with_stock/<%= entity['primary_entity_name'] %>">More Correlations for <%= entity['primary_entity_name'] %> VS <%= @entity.stock_name %></a>
 					</div>
 				</div>
 			<% end %>

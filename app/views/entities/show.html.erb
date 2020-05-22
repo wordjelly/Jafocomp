@@ -1,5 +1,5 @@
-<% if @stock.stock_result_type == Concerns::Stock::EntityConcern::SINGLE %>
-	<%= render :partial => "show" %>
-<% elsif @stock.stock_result_type == Concerns::Stock::EntityConcern::COMBINATION %>
-	<%= render :partial => "show_combination" %>
+<% if @entity.stock_result_type == Concerns::Stock::EntityConcern::SINGLE %>
+	<%= render :partial => "/entities/show" %>
+<% elsif @entity.stock_result_type == Concerns::Stock::EntityConcern::COMBINATION %>
+	<%= render :partial => "/entities/show_combination" %>
 <% end %>

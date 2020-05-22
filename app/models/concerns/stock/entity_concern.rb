@@ -280,7 +280,7 @@ module Concerns::Stock::EntityConcern
 
 			stock_filters << {
 				term: {
-					stock_exchange_name: self.stock_exchange
+					stock_exchange: self.stock_exchange
 				}
 			} unless self.stock_exchange.blank?
 
@@ -291,8 +291,8 @@ module Concerns::Stock::EntityConcern
 			} if (self.stock_is_exchange == YES)
 
 
-			##puts "stock filters query is:"
-			##puts JSON.pretty_generate(stock_filters)
+			puts "stock filters query is:"
+			puts JSON.pretty_generate(stock_filters)
 
 			search_request = self.class.search({
 				size: 0,
@@ -323,11 +323,13 @@ module Concerns::Stock::EntityConcern
 			## and we have to deal with 
 			stocks_by_exchange = {}
 			
-					
+			puts JSON.pretty_generate(search_request.response.to_h)
+
+
 			search_request.response.aggregations.exchange_agg.buckets.each do |exchange_agg_bucket|
 
 				exchange_name = exchange_agg_bucket["key"]
-				stocks_by_exchange[exchange_name] ||= {:stocks => [], :next_from => (exchange_agg_bucket.stocks_agg.hits.hits.size + (self.from || 0) ) }
+				stocks_by_exchange[exchange_name] ||= {:stocks => [], :next_from => (exchange_agg_bucket.stocks_agg.hits.hits.size + (self.from.to_i || 0) ) }
 				exchange_agg_bucket.stocks_agg.hits.hits.each do |hit|
 					stock = self.class.new(hit["_source"])
 					stock.id = hit["_id"]
