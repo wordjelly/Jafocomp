@@ -3,6 +3,7 @@ module Concerns::Stock::EntityConcern
 	extend ActiveSupport::Concern
 
 
+	
 	included do 
 
 		INFORMATION_TYPE_ENTITY = "entity"
@@ -10,6 +11,10 @@ module Concerns::Stock::EntityConcern
 		COMBINATION = 1
 		NO = -1
 		YES = 1
+
+		index_name "frontend"
+		document_type "doc"
+
 
 		attribute :stock_is_exchange, Integer, mapping: {type: 'integer'}, default: NO
 
@@ -100,8 +105,6 @@ module Concerns::Stock::EntityConcern
 			} 
 		}
 
-		index_name "frontend"
-		document_type "doc"
 
 		attr_accessor :trigger_update
 		attr_accessor :stock_id
@@ -121,7 +124,7 @@ module Concerns::Stock::EntityConcern
 		##
 		#############################################################
 		after_save do |document|
-			#puts "--------- CAME TO AFTER SAVE --------------- "
+			##puts "--------- CAME TO AFTER SAVE --------------- "
 			schedule_background_update
 		end
 
@@ -155,20 +158,20 @@ module Concerns::Stock::EntityConcern
 		## have a combinations controller.
 		## 
 		def update_components
-			#puts "came to update components."
+			##puts "came to update components."
 			if is_index?
-				#puts "is index is true."
+				##puts "is index is true."
 				get_components.map{|hit|
 					self.components << hit._source.information_name.strip unless self.components.include? hit._source.information_name.strip
 				}
 			else
-				#puts "it is not an index #{self.stock_name}"
+				##puts "it is not an index #{self.stock_name}"
 			end
 		end
 
 		## this here is the problem.
 		def get_components
-			#puts "came to get components"
+			##puts "came to get components"
 			query = {
 				bool: {
 					must: [
@@ -193,12 +196,12 @@ module Concerns::Stock::EntityConcern
 				}
 			}	
 			
-			#puts query.to_s
+			##puts query.to_s
 
 			response = Hashie::Mash.new self.class.gateway.client.search :body => {:size => 100, :query => query}, :index => "correlations", :type => "result"
 			
-			#puts "Response is:"
-			#puts response.to_s
+			##puts "Response is:"
+			##puts response.to_s
 
 			response.hits.hits
 		end
@@ -218,7 +221,7 @@ module Concerns::Stock::EntityConcern
 					self.stock_is_exchange = YES
 				end
 			end
-			#puts "finished set name description"
+			##puts "finished set name description"
 		end	
 
 		def get_information(information_type="entity")
@@ -247,12 +250,116 @@ module Concerns::Stock::EntityConcern
 				info = response.hits.hits.first
 			end
 
-			#puts JSON.pretty_generate(info.to_h)
+			##puts JSON.pretty_generate(info.to_h)
 
 			info
 
 		end
 
+		## @return[Hash] stocks_by_exchange
+		## key -> exchange_name
+		## value -> hash(:stocks => [Array of Stock Objects], :next_from => Integer)
+		## @called_from : stocks_controller#index, and indicators_controller#index.
+		def do_index
+
+			#puts self.attributes.to_s
+			## so if want to load more we can do that.
+			stock_filters = 
+			[
+				{
+					term: {
+						stock_result_type: SINGLE
+					}
+				},
+				{
+					term: {
+						stock_is_indicator: self.stock_is_indicator
+					}
+				}
+			]
+
+			stock_filters << {
+				term: {
+					stock_exchange_name: self.stock_exchange
+				}
+			} unless self.stock_exchange.blank?
+
+			stock_filters << {
+				term: {
+					stock_is_exchange: self.stock_is_exchange
+				}
+			} if (self.stock_is_exchange == YES)
+
+
+			##puts "stock filters query is:"
+			##puts JSON.pretty_generate(stock_filters)
+
+			search_request = self.class.search({
+				size: 0,
+				query: {
+					bool: {
+						must: stock_filters
+					}
+				},
+				aggs: {
+					exchange_agg: {
+						terms: {
+							field: "stock_exchange",
+							size: 10
+						},
+						aggs: {
+							stocks_agg: {
+								top_hits: {
+									size: 1,
+									from: (self.from || 0)
+								}
+							}
+						}
+					}
+				}
+			})
+
+			## so its not going to like this
+			## and we have to deal with 
+			stocks_by_exchange = {}
+			
+					
+			search_request.response.aggregations.exchange_agg.buckets.each do |exchange_agg_bucket|
+
+				exchange_name = exchange_agg_bucket["key"]
+				stocks_by_exchange[exchange_name] ||= {:stocks => [], :next_from => (exchange_agg_bucket.stocks_agg.hits.hits.size + (self.from || 0) ) }
+				exchange_agg_bucket.stocks_agg.hits.hits.each do |hit|
+					stock = self.class.new(hit["_source"])
+					stock.id = hit["_id"]
+					stocks_by_exchange[exchange_name][:stocks] << stock
+				end
+			end
+
+			
+			stocks_by_exchange
+			
+		end
+
+
+		def self.permitted_params
+			[
+				:id,
+				:stock_id,
+				:indicator_id,
+				{
+					:entity => 
+					[
+						:trigger_update,
+						:from,
+						:stock_is_exchange,
+						:stock_exchange,
+						:stock_is_indicator
+					]
+				}
+			]
+		end
+
+		
 	end
 
 end

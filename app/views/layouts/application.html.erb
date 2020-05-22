@@ -489,9 +489,9 @@
   <div class="nav-wrapper">
     <a href="/" class="brand-logo">Algorini</a>
     <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <li><%= link_to "Exchanges", stocks_path %></li>
+      <li><%= link_to "Exchanges", stocks_path(:entity => {:stock_is_exchange => 1}) %></li>
       <li><%= link_to "Stocks", stocks_path %></li>
-      <li><%= link_to "Indicators", indicators_path %>Indicators</li>
+      <li><%= link_to "Indicators", indicators_path(:entity => {:stock_is_indicator => 1}) %>Indicators</li>
     </ul>
   </div>
 </nav>

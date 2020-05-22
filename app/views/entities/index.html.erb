@@ -17,11 +17,11 @@
 		<div id ="<%= exchange_name.parameterize %>_stocks">
 			<% @stocks.each do |stock| %>
 				<% @stock = stock %>
-				<%= render :partial => "/stocks/show_summary" %>
+				<%= render :partial => "/entities/show_summary" %>
 			<% end %>
 		</div>
 		<div class="center">
-			<%= link_to "More", stocks_path(:stock => {:from => @from, :stock_exchange => exchange_name}), class: "waves-effect waves-light btn-large",  remote: true %>
+			<%= link_to "More", stocks_path(:entity => {:from => @from, :stock_exchange => exchange_name}), class: "waves-effect waves-light btn-large",  remote: true %>
 		</div>
 	</div>
 <% end %>

@@ -37,8 +37,7 @@
 		  		<li class="collection-header"><h4><i class="material-icons" style="margin-right:1rem;">storage</i>The Odds</h4></li>
 		  		<% @stock.stock_top_results[0..2].each do |result| %>
 		  			<!-- here we can give that facility -->
-		  			<%= puts result["_source"] %>
-
+		  			
 		  			<% icon = (result["_source"]["rises_or_falls"] =~ /rise/ ? "trending_up" : "trending_down") %>
 
 		  			<% icon_color = (icon == "trending_up" ? "green" : "red") %>

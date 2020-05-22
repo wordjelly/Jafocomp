@@ -30,7 +30,7 @@ class Stock
 	include Concerns::BackgroundJobConcern
 	include Concerns::Stock::EntityConcern
 
-
+	
 	############################################################
 	##
 	##
@@ -69,8 +69,8 @@ class Stock
 				}
 			}
 
-			puts "query is:"
-			puts query.to_s
+			#puts "query is:"
+			#puts query.to_s
 			## no idea why the fuck this is not working.
 
 			search_response =  cls.gateway.client.search :body => {query: query}, index: index_name, :type => document_type
@@ -79,8 +79,8 @@ class Stock
 			
 			hit = search_response["hits"]["hits"].first
 
-			puts "hit is:"
-			puts hit.to_s
+			#puts "hit is:"
+			#puts hit.to_s
 
 			#hit = cls.gateway.client.get :id => args[:id], :index => Stock.index_name, :type => Stock.document_type
 			raise Elasticsearch::Transport::Transport::Error if hit.blank?
@@ -104,17 +104,7 @@ class Stock
 	end
 
 	## so only show exchanges?
-	def self.permitted_params
-		[
-			:id,
-			:stock_id,
-			:indicator_id,
-			:from,
-			:stock_is_exchange,
-			:stock_exchange,
-			{:stock => [:trigger_update, :exchange_id]}
-		]
-	end
+	
 
 
 end

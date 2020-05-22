@@ -9,7 +9,7 @@ class Indicator
 	include Concerns::Stock::CombinationConcern
 	include Concerns::BackgroundJobConcern
 	include Concerns::Stock::EntityConcern
-
+	
 
 	INDICATORS_JSONFILE = "indicators.json"
 	INFORMATION_TYPE_INDICATOR = "indicator"
@@ -35,7 +35,12 @@ class Indicator
 	def self.update_many
 		get_all_indicator_informations.each do |hit|
 			indicator = find_or_initialize({id: hit["_id"], trigger_update: true, :class_name => "Indicator"})
-			indicator.save
+			puts "indicator attributes are:"
+			puts indicator.attributes.to_s
+			result = indicator.save
+			puts "Save result #{result}"
+			puts "------------ save errors are ---------->"
+			puts indicator.errors.full_messages.to_s
 		end
 	end
 

@@ -1,6 +1,12 @@
 class IndicatorsController < ApplicationController
 
+	include Concerns::EntityControllerConcern
+
+=begin
 	before_action :find, :only => [:show,:update]
+
+	## its going to be the same thing,s
+	## gotta knock if this instance variable.
 
 	def show
 		@stock = @indicator
@@ -68,15 +74,13 @@ class IndicatorsController < ApplicationController
 		@indicator.save
 	end
 
-	def update_many
-		Indicator.update_many
-	end
-
 	def permitted_params
 		puts "params are: #{params}"
 		k = params.permit(Indicator.permitted_params).to_h
 		puts k.to_s
 		k
 	end
+
+=end
 
 end

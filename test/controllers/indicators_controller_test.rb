@@ -4,7 +4,6 @@ class IndicatorsControllerTest < ActionDispatch::IntegrationTest
 
 	setup do 
 		Indicator.create_index! force: true
-		Stock.create_index! force: true 
 	end
 
 	test " -- creates indicator, and adds its information, and top search results -- " do 

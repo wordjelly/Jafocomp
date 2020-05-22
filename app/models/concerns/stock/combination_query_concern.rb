@@ -19,12 +19,12 @@ module Concerns::Stock::CombinationQueryConcern
 
 			unless args[:primary_stock_id].blank?
 
-				puts "stock id is: #{args[:primary_stock_id]}"
+				#puts "stock id is: #{args[:primary_stock_id]}"
 				
 				if primary_stock = Stock.find_or_initialize({:id => args[:primary_stock_id]})		
 
-					puts "stock is:"
-					puts primary_stock.to_s
+					#puts "stock is:"
+					#puts primary_stock.to_s
 
 					query_string += primary_stock.stock_name
 				

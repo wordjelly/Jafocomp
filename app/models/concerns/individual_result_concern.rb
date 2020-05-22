@@ -11,8 +11,8 @@ module Concerns::IndividualResultConcern
   		SEPARATOR_FOR_TAG_TEXT = "^^"
 
   		def get_image_url(hit)
-  			####puts "incoming hit in image url"
-  			####puts hit.to_s
+  			#####puts "incoming hit in image url"
+  			#####puts hit.to_s
   			ratios = [0,20,35,50,65,80,95];
 			min_diff = nil;
 			min_diff_ratio = nil;
@@ -94,8 +94,8 @@ module Concerns::IndividualResultConcern
 			total_up = 0
 			total_down = 0
 			complex_derivation["stats"][0..-7].each_slice(3) do |year_data|
-				####puts "year data is:"
-				####puts year_data.to_s
+				#####puts "year data is:"
+				#####puts year_data.to_s
 				total_up += year_data[1]
 				total_down += year_data[2]
 			end
@@ -143,7 +143,7 @@ module Concerns::IndividualResultConcern
 			}
 
 			multiple.each_with_index{|value,key|
-				#puts value.to_s
+				##puts value.to_s
 				body[:query][:bool][:should] << {
 					bool: {
 						must: [
@@ -206,44 +206,44 @@ module Concerns::IndividualResultConcern
 		## adds the title, description, image url keys, server side.
 		def build_setup(hit)
 			hit = hit.stringify_keys
-			###puts "hit stringified is"
-			###puts JSON.pretty_generate(hit)
+			####puts "hit stringified is"
+			####puts JSON.pretty_generate(hit)
 			search_result = hit['_source']
-			####puts "search result is:"
-			####puts search_result.to_s
-			###puts "suggest is:"
-			###puts search_result["suggest"].to_s
+			#####puts "search result is:"
+			#####puts search_result.to_s
+			####puts "suggest is:"
+			####puts search_result["suggest"].to_s
 			offsets = get_offsets(search_result["suggest"][0]["input"]);
-			####puts "ofsets are: #{offsets}"
+			#####puts "ofsets are: #{offsets}"
 			suggestion = search_result["suggest"][0];
 			#
-			####puts "suggestion is :#{suggestion}"
+			#####puts "suggestion is :#{suggestion}"
 			related_queries = suggestion["input"].split("%")[1].split("*")[0];
 			pre = suggestion["input"].split("%")[0];
-			####puts "pre is :#{pre}"
+			#####puts "pre is :#{pre}"
 			information = pre.split("#");
-			####puts "information is: #{information}"
+			#####puts "information is: #{information}"
 			search_result["information"] = information;
 			stats = information[1];
 			stats = stats.split(",");
-			####puts "stats are :#{stats}"
+			#####puts "stats are :#{stats}"
 			## but then you need the target and everything
 			## to be loaded on the server side itself.
 			## is this necessary ?
 			## 10 yr trends for ?
 			## 10 yr trends
 			## How does Asian Paints react on Mondays?
-			####puts "information 0 is:" 
-			####puts information[0]
+			#####puts "information 0 is:" 
+			#####puts information[0]
 			str = information[0]
-			####puts "str is #{str}"
+			#####puts "str is #{str}"
 
 			string = str[offsets[0]..offsets[1]]
-			####puts "string becomes: #{string}"
+			#####puts "string becomes: #{string}"
 			search_result["setup"] = "What happens to " + string;
 			search_result["setup"] = search_result["setup"].gsub(/\-/," ");
 			search_result["triggered_at"] = search_result["epoch"];
-			####puts JSON.pretty_generate(search_result)
+			#####puts JSON.pretty_generate(search_result)
 
 			stats = stats[0..12]
 
@@ -266,7 +266,7 @@ module Concerns::IndividualResultConcern
 			
 			stats[0] = stats[0].split("$$")[0];
 			## add week.
-			###puts "stats are :#{stats}"
+			####puts "stats are :#{stats}"
 			if((stats[0].to_i == 0) && (stats[1].to_i == 0))
 
 			
@@ -300,11 +300,11 @@ module Concerns::IndividualResultConcern
 			## for facebook and twitter with a chart image
 			## and navigation ?
 
-			####puts "the search result becomes finally ------>"
-			####puts JSON.pretty_generate(search_result)
+			#####puts "the search result becomes finally ------>"
+			#####puts JSON.pretty_generate(search_result)
 
-			####puts "the hit is: "
-			####puts JSON.pretty_generate(hit)
+			#####puts "the hit is: "
+			#####puts JSON.pretty_generate(hit)
 
 			# i want to design the charts and sort this out.
 			# that is end game for this part.
@@ -390,8 +390,8 @@ module Concerns::IndividualResultConcern
 
 			complex_string = search_result["preposition"] + " ";
 			
-			####puts "search result tags are:"
-			####puts search_result["tags"]
+			#####puts "search result tags are:"
+			#####puts search_result["tags"]
 		
 			## this has to be done better.
 			## if the part inside the ** contains the text
@@ -400,7 +400,7 @@ module Concerns::IndividualResultConcern
 			## same thing is repeated below in the final else.
 			if(search_result["tags"].select{|c| c =~ /period_start_\d/i}.size > 0)
 					
-				####puts "goes into the first if condition"
+				#####puts "goes into the first if condition"
 				prev_tag_is_colloquial = 0
 				## this is being called twice, can be ported to a functional part of the code.
 				results = mod_prev_tag_and_complex_string(search_result,prev_tag_is_colloquial,complex_string,0)			
@@ -408,13 +408,13 @@ module Concerns::IndividualResultConcern
 				complex_string = results[:complex_string]
 			else
 
-				####puts "goes into else"
-				####puts "search result information is:" 
-				####puts search_result["information"]
+				#####puts "goes into else"
+				#####puts "search result information is:" 
+				#####puts search_result["information"]
 
 				if search_result["information"].select{|c| c =~ /first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/ }.size > 0 
 
-					####puts "gets time based subindicator"
+					#####puts "gets time based subindicator"
 					prev_tag_is_colloquial = 0
 		 			
 		 			results = mod_prev_tag_and_complex_string(search_result,prev_tag_is_colloquial,complex_string,1)			
@@ -423,7 +423,7 @@ module Concerns::IndividualResultConcern
 					
 					complex_string = results[:complex_string]
 
-					####puts "sets complex string to: #{complex_string}"
+					#####puts "sets complex string to: #{complex_string}"
 
 				elsif(search_result["tags"].select{|c| c =~ /first|second|third|fourth|fifth|sixth|seventh|last|year|month|week|quarter|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|20[1-9][1-9]|[0-9](th|st|rd)\b/ }.size > 0)
 
@@ -439,7 +439,7 @@ module Concerns::IndividualResultConcern
 					
 					
 				else
-					####puts "came to the last else."
+					#####puts "came to the last else."
 					prev_tag_is_colloquial = 0
 		 			
 		 			results = mod_prev_tag_and_complex_string(search_result,prev_tag_is_colloquial,complex_string,2)			
@@ -463,8 +463,8 @@ module Concerns::IndividualResultConcern
 
 		## will set search_result["answer"] to 
 		def assign_answer(search_result)
-			###puts "search result is:"
-			###puts search_result.to_s
+			####puts "search result is:"
+			####puts search_result.to_s
 			search_result["answer"] = "Historically " + search_result["target"] + " tends to " + search_result["rises_or_falls"].to_s + " " + search_result["percentage"].to_s + "%" + " of the times."
 		end
 
@@ -506,7 +506,7 @@ module Concerns::IndividualResultConcern
 				end
 
 			end
-			####puts "the target it: #{search_result['target']}"
+			#####puts "the target it: #{search_result['target']}"
 
 		end
 
