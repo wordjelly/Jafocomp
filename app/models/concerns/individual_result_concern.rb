@@ -616,7 +616,7 @@ module Concerns::IndividualResultConcern
 				end  
 			}
 
-			replaced = replaced.gsub(/_(up|down))/) {|match|if match == "up"
+			replaced = replaced.gsub(/_(up|down)/) {|match|if match == "up"
 					"<i class='material-icons'>arrow_upward</i>"
 				elsif match == "down"
 					"<i class='material-icons'>arrow_downward</i>"
