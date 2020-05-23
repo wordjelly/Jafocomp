@@ -22,12 +22,7 @@ class Stock
 
 	INFORMATION_TYPE = "entity"
 
-	include Elasticsearch::Persistence::Model
-	include Concerns::EsBulkIndexConcern
-	include Concerns::Stock::IndividualConcern
-	include Concerns::Stock::CombinationConcern
-	include Concerns::Stock::CombinationQueryConcern 
-	include Concerns::BackgroundJobConcern
+	
 	include Concerns::Stock::EntityConcern
 
 	

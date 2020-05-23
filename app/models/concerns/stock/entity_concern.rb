@@ -2,9 +2,16 @@ module Concerns::Stock::EntityConcern
 
 	extend ActiveSupport::Concern
 
-
-	
 	included do 
+
+		include Elasticsearch::Persistence::Model
+		include Concerns::EsBulkIndexConcern
+		include Concerns::Stock::IndividualConcern
+		include Concerns::Stock::CombinationConcern
+		include Concerns::Stock::CombinationQueryConcern 
+		include Concerns::BackgroundJobConcern
+		include ActiveModel::Validations
+		include ActiveModel::Callbacks
 
 		INFORMATION_TYPE_ENTITY = "entity"
 		SINGLE = 0
@@ -19,6 +26,8 @@ module Concerns::Stock::EntityConcern
 		attribute :stock_is_exchange, Integer, mapping: {type: 'integer'}, default: NO
 
 		attribute :stock_is_indicator, Integer, mapping: {type: 'integer'}, default: NO
+
+		attribute :abbreviation, String, mapping: {type: 'keyword'}
 
 		attribute :stock_name, String, mapping: {type: 'keyword'}
 
@@ -67,6 +76,9 @@ module Concerns::Stock::EntityConcern
 
 		attribute :components, Array, mapping: {type: 'keyword'}
 
+		## why indicator combinations were not generated ?
+		## for that we needed the stocks
+		## 
 		## these have to be cross updated.
 		## do we load the entirety of it ?
 		## or just some shits.
@@ -114,6 +126,14 @@ module Concerns::Stock::EntityConcern
 		## used in stocks_controller -> to show only the exchanges in the index action.
 		attr_accessor :only_exchanges
 
+		before_save do |document|
+			document.set_abbreviation
+		end
+
+		## currently overriden only in Indicator class
+		def set_abbreviation
+
+		end
 
 
 		#############################################################

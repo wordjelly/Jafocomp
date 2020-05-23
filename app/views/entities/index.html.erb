@@ -20,8 +20,8 @@
 				<%= render :partial => "/entities/show_summary" %>
 			<% end %>
 		</div>
-		<div class="center">
-			<%= link_to "More", stocks_path(:entity => {:from => @from, :stock_exchange => exchange_name, :stock_is_indicator => @entities.first.stock_is_indicator }), class: "waves-effect waves-light btn-large", id: "more_entities"  remote: true %>
+		<div id="more_button_holder" class="center">
+			<%= render :partial => "/entities/more_button", locals: { exchange_name: exchange_name } %>
 		</div>
 	</div>
 <% end %>

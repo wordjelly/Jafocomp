@@ -1,8 +1,10 @@
 <% @entities_by_exchange.keys.each do |exchange_name| %>
+	<% @entities = @entities_by_exchange[exchange_name][:stocks] %>
 	var div_id = "#<%= exchange_name.parameterize %>_stocks";
-	<% @entities_by_exchange[exchange_name][:stocks].each do |entity| %>
+	<% @entities.each do |entity| %>
 		<% @entity = entity %>
 		<% @from = @entities_by_exchange[exchange_name][:next_from] %>
 		$(div_id).append("<%= escape_javascript(render :partial => '/entities/show_summary.html.erb') %>");
+		$("#more_button_holder").html("<%= escape_javascript(render :partial => '/entities/more_button.html.erb', locals: {exchange_name: exchange_name }) %>");
 	<% end %>
 <% end %>

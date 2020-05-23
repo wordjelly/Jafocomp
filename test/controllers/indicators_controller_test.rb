@@ -18,6 +18,21 @@ class IndicatorsControllerTest < ActionDispatch::IntegrationTest
 		Indicator.get_all.each do |hit|
 			#puts hit.to_s
 			assert_equal true, hit["_source"]["stock_top_results"].size > 0
+			indicator_name = hit["_source"]["stock_name"]
+
+			## what do we do about patterns.
+			## and when there is an indicator -> 
+			## we want it to be with an apostrophe's 
+			## in meta's
+			## 
+
+			if indicator_name =~ /_/
+				hit["_source"]["stock_top_results"].each do |result|
+						
+					assert_equal true, (result._source.setup =~ /#{indicator_name}/).blank?, "the indicator name should not be in the setup"
+
+				end
+			end
 		end
 
 	end

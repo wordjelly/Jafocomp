@@ -28,9 +28,10 @@ class Indicator
 		"williams_r_indicator" => "WR Indicator",
 		"aroon_up" => "Aroon Up Indicator",
 		"aroon_down" => "Aroon Down Indicator",
-		"cci_indicator" => "CCI Indicator"
+		"cci_indicator" => "CC Indicator"
 	}
 	
+
 
 	def self.update_many
 		get_all_indicator_informations.each do |hit|
@@ -44,8 +45,14 @@ class Indicator
 		end
 	end
 
+	## overridden from entity_concern, called before_validation.
+	## so we give it the abbreviation, and get that replaced in the result in the same way
+	## here we just use the same regex.
+	def set_abbreviation
+		self.abbreviation = Result.shorten_indicator(self.stock_name)
+	end
 
-	## burkha chodsa
+
 	def self.get_all
 		query = {
 			bool: {

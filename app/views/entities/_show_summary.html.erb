@@ -6,7 +6,7 @@
 			      <img src="/assets/stocks/default.png">
 			    </div>
 			    <div class="card-content">
-			      <span class="blue-grey-text card-title" style="font-weight: 500;"><%= link_to @entity.stock_name, stock_path(@entity.stock_name) %></span>
+			      <span class="blue-grey-text card-title" style="font-weight: 500;"><%= link_to @entity.stock_name.titleize, stock_path(@entity.stock_name) %></span>
 			      <p class="grey-text" style="font-weight: 400"><%= @entity.stock_description %><sup><a href="<%= @entity.stock_link %>"><i class="material-icons" style="font-size: 12px;">link</i></sup></a></p>
 			    </div>
 			    

@@ -287,6 +287,7 @@ module Concerns::IndividualResultConcern
 				replace_percentage_and_literal_numbers(search_result);
 				shrink_indicators(search_result);
 				strip_period(search_result);
+				replace_pattern_with_icons(search_result);
 				add_time_to_setup(search_result);
 				## so this should ideally show better shit for indicator.
 				## rerun test and see, next step -> backgrounds have to be better.
@@ -567,8 +568,12 @@ module Concerns::IndividualResultConcern
 
 		end
 
+		def shorten_indicator(text)
+			text.gsub(/#{Indicator::INDICATOR_NAMES_AND_ABBREVIATIONS.keys.join("|")}/) { |match|  Indicator::INDICATOR_NAMES_AND_ABBREVIATIONS[match] }
+		end
+
 		def shrink_indicators(search_result)
-			search_result["setup"].gsub!(/#{Regexp.escape(Indicator::INDICATOR_NAMES_AND_ABBREVIATIONS.keys.join("|"))}/) { |match|  Indicator::INDICATOR_NAMES_AND_ABBREVIATIONS[match] }
+			search_result["setup"] = shorten_indicator(search_result["setup"])
 		end
 
 		def strip_period(search_result)
@@ -579,6 +584,59 @@ module Concerns::IndividualResultConcern
 			time = Time.strptime(search_result["triggered_at"].to_s,"%s")
 			search_result["setup"] = search_result["setup"]  + " (" + time.strftime('%-d %b %Y') +  ")";
 		end
+
+		######################################################
+		##
+		##
+		## REPLACE PATTERNS.
+		##
+		##
+		######################################################
+
+=begin
+		var replacer = function(match,ud,offset,string){
+			if(ud == "up"){
+				return "<i class='material-icons'>arrow_upward</i>";
+			}
+			else{
+				return "<i class='material-icons'>arrow_downward</i>";
+			}
+		}
+=end
+
+		def replace_up_down(text)
+
+			replaced = text
+
+			## replace the 
+			replaced = replaced.gsub(/(up|down)(?=(_up|_down))/) {|match|if match == "up"
+					"<i class='material-icons'>arrow_upward</i>"
+				elsif match == "down"
+					"<i class='material-icons'>arrow_downward</i>"
+				end  
+			}
+
+			replaced = replaced.gsub(/_(up|down))/) {|match|if match == "up"
+					"<i class='material-icons'>arrow_upward</i>"
+				elsif match == "down"
+					"<i class='material-icons'>arrow_downward</i>"
+				end  
+			}
+
+			replaced = replaced.gsub(/_/) { |match| "" }
+
+			replaced
+
+		end
+
+		def replace_pattern_with_icons(search_result)
+
+			search_result["setup"] = replace_up_down(search_result["setup"])
+
+		end
+		
+			
+		 
 
 
 	end
