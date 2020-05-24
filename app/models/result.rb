@@ -374,7 +374,7 @@ class Result
 		impacted_entity_id = args[:impacted_entity_id]
 		from = args[:from] || 0
 		size = args[:size] || 10
-
+		
 		qs = ""
 		unless query.blank?
 			qs = query.split(" ")
@@ -400,7 +400,7 @@ class Result
 								{
 									field_value_factor: {
 										field: "complex_derivations.profitability",
-										modifier: "sqrt"
+										modifier: "ln1p"
 									}
 								}
 							],
@@ -555,8 +555,8 @@ class Result
 
 		body = match_phrase_query_builder(args)
 
-		#puts "search body"
-		#puts JSON.pretty_generate(body)
+		puts "search body"
+		puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
 

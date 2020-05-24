@@ -14,7 +14,9 @@ class ResultsController < ApplicationController
   	end
 
 	def show
-		@result = Result.es_find(params[:id],{entity_id: params[:entity_id]})
+		k = permitted_params
+		puts "permitted_params are"
+		@result = Result.es_find(params[:id],{eid: params[:eid]})
 		puts "result becomes:"
 		puts JSON.pretty_generate(@result)
 		set_meta_information
@@ -45,7 +47,7 @@ class ResultsController < ApplicationController
 
 	def permitted_params
 		puts params.to_s
-		params.permit(:entity_id, :exchange_name,  :multiple => [:id, :entity_id]).to_h
+		params.permit(:eid, :entity_id, :exchange_name,  :multiple => [:id, :entity_id]).to_h
 	end
 
 end

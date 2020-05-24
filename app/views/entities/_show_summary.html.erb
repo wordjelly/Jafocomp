@@ -48,7 +48,7 @@
 				      <p class="<%= icon_color %>-text" style="margin-top: 1rem; font-size: 16px;"><%= result["_source"]["answer"] %>
 				      </p>
 				      <p style="margin-top:0.75rem;">
-				      	<i style="vertical-align: bottom" class="material-icons grey-text text-lighten-1">bubble_chart</i><span class="grey-text text-lighten-1">Stats</span>
+				      	<i style="vertical-align: bottom" class="material-icons grey-text text-lighten-1">bubble_chart</i><%= link_to "Stats", result_path(id: result["_id"], eid: result["_source"]["impacted_entity_id"]), class: "grey-text text-lighten-1" %>
 				      </p>
 				    </li>
 			    <% end %>

@@ -999,7 +999,7 @@ var set_social_sharing_urls = function(search_result){
 	
 	search_result.social_text = search_result.setup + "? " + search_result.description;
 
-	search_result.url = "https://www.algorini.com/results/" + search_result.id + "?entity_id=" + search_result.impacted_entity_id;
+	search_result.url = "https://www.algorini.com/results/" + search_result.id + "?eid=" + search_result.impacted_entity_id;
 
 	//search_result.url = "https://www.google.com";
 

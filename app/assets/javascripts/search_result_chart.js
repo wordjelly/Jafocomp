@@ -44,8 +44,8 @@ var draw_chart = function(id,search_result){
             data_background_color.push('rgba(128,128,128,0.2)');
             data_border_color.push('rgba(128,128,128,1');
 
-            up_data.push(0);
-            down_data.push(0);
+            up_data.push(k[0]);
+            down_data.push(k[1]);
             equal_data.push(k[0]);
             up_data_background_color.push('rgba(0,128,128,0.8)');
             up_data_border_color.push('rgba(0,128,128,1');
@@ -60,10 +60,10 @@ var draw_chart = function(id,search_result){
             up_data.push(k[0]);
             down_data.push(k[1]);
             equal_data.push(0);
-            up_data_background_color.push('rgba(0,128,128,0.1)');
-            up_data_border_color.push('rgba(0,128,128,0.1');
-            down_data_background_color.push('rgba(255,0,0,0.8)');
-            down_data_border_color.push('rgba(255,0,0,1');
+            up_data_background_color.push('rgba(0,128,128,0.8)');
+            up_data_border_color.push('rgba(0,128,128,1');
+            down_data_background_color.push('rgba(255,0,0,0.1)');
+            down_data_border_color.push('rgba(255,0,0,0.1');
         }
         
         
@@ -105,12 +105,28 @@ var draw_chart = function(id,search_result){
             labels: labels,
             datasets: [
                 {
+                    label: "Reacted Positively",
+                    data: up_data,
+                    backgroundColor: up_data_background_color,
+                    borderColor: up_data_border_color,
+                    borderWidth : 1
+                },
+                {
+                    label: "Reacted Negatively",
+                    data: down_data,
+                    backgroundColor: down_data_background_color,
+                    borderColor: down_data_border_color,
+                    borderWidth : 1
+                }
+/***
+                {
                     label: "Result",
                     data: data,
                     backgroundColor: data_background_color,
                     borderColor: data_border_color,
                     borderWidth : 1
-                }   
+                }
+***/   
             ]
         },
         options: {
@@ -120,10 +136,18 @@ var draw_chart = function(id,search_result){
                 text: title
             },
             scales: {
+                /***
                 yAxes: [{
                     ticks: {
                         beginAtZero: true
                     }
+                }]
+                ***/
+                xAxes: [{
+                    stacked: true
+                }],
+                yAxes: [{
+                    stacked: true
                 }]
             }
         }

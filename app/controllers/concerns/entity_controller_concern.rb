@@ -7,10 +7,7 @@ module Concerns::EntityControllerConcern
 		before_action :find, :only => [:show,:update]
 		before_action :query, :only => [:show]
 
-		## lets see if it works first for stock.
-		## because we need
-		## so lets see if this shit works or not.
-		## so lets test if it shows the first stock.
+		## submit to google search map also.
 		def show
 			#puts @entity.to_s
 			respond_to do |format|

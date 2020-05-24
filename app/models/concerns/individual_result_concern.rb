@@ -63,7 +63,7 @@ module Concerns::IndividualResultConcern
   			hit["_source"]["social_title"] = hit["_source"]["target"] + ":10 Yr Trends"
 
   			## social_url
-  			hit["_source"]["social_url"] = "https://www.algorini.com/results/" + hit["_id"] + "?entity_id=" + hit["_source"]["impacted_entity_id"];
+  			hit["_source"]["social_url"] = "https://www.algorini.com/results/" + hit["_id"] + "?eid=" + hit["_source"]["impacted_entity_id"];
   		end
 
 		def complex_derivation_to_hit(hit,complex_derivation)
@@ -180,12 +180,15 @@ module Concerns::IndividualResultConcern
 
   		## here we find by the 
 		def es_find(id,args={})
+			puts "args coming to es_find are #{args}"
 			response = gateway.client.get :id => id, :index => "correlations", :type => "result"
 			complex_derivations = response["_source"]["complex_derivations"]
 			complex_derivation_index = 0
-			unless args[:entity_id].blank?
+			unless args[:eid].blank?
 				complex_derivations.each_with_index{|val,key|
-					
+					if val["impacted_entity_id"] == args[:eid]
+						complex_derivation_index = key
+					end
 				}
 			end
 			if response["_source"]
@@ -606,9 +609,10 @@ module Concerns::IndividualResultConcern
 
 		def replace_up_down(text)
 
+			## we send in a search query and see that's the only way.
+			
 			replaced = text
 
-			## replace the 
 			replaced = replaced.gsub(/(up|down)(?=(_up|_down))/) {|match|if match == "up"
 					"<i class='material-icons'>arrow_upward</i>"
 				elsif match == "down"
@@ -616,14 +620,14 @@ module Concerns::IndividualResultConcern
 				end  
 			}
 
-			replaced = replaced.gsub(/_(up|down)/) {|match|if match == "up"
+			replaced = replaced.gsub(/_(up|down)\b/) {|match|if match == "up"
 					"<i class='material-icons'>arrow_upward</i>"
 				elsif match == "down"
 					"<i class='material-icons'>arrow_downward</i>"
 				end  
 			}
 
-			replaced = replaced.gsub(/_/) { |match| "" }
+			#replaced = replaced.gsub(/_/) { |match| "" }
 
 			replaced
 
