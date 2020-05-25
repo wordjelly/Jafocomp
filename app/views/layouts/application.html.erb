@@ -485,7 +485,8 @@
 
 
 <!-- nav bar will have to be here if at all -->
-<nav class="blue-grey">
+<!-- on click search, it will hide the navbar depending on the current media query, it will move the  -->
+<nav class="blue-grey" id="navbar">
   <div class="nav-wrapper">
     <a href="/" class="brand-logo">Algorini</a>
     <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -496,26 +497,33 @@
   </div>
 </nav>
 
-<div class="container">
-  <!-- search related stuff -->
-  <div class="row">
+<!-- this entire block has been moved from the container, where it was the first thing. -->
+<div class="row" style="margin-bottom: 0px !important; height: 0px;">
     <div id="queued_query" data-queued-query></div>
     <div id="already_running_query" data-already-running-query></div>
     <div class="progress" id="progress_bar" style="visibility: hidden;">
           <div class="indeterminate"></div>
     </div>
-  </div>
+</div>
 
-  <!-- used in the home page, it is the logo and tabs and stuff -->
-  <%= content_for :before_search %>
+<%= content_for :before_search %>
 
-  <div class="row" style="margin-bottom: 0px;">
-    <div class="input-field col s12 l12 m12">
-      <i class="material-icons prefix">textsms</i>
-      <input type="text" id="autocomplete-input" class="autocomplete">
-      <label for="autocomplete-input">Search</label>
-    </div>
+<div class="row" style="margin-bottom: 0px;">
+  <div class="input-field col s12 l12 m12">
+    <i class="material-icons prefix hide-on-med-and-down">textsms</i>
+    <input type="text" id="autocomplete-input" class="autocomplete">
+    <label for="autocomplete-input">Search</label>
   </div>
+</div>
+
+<!---- container block -->
+
+
+<div class="container">
+  <!-- search related stuff -->
+  
+
+  
 
   
 

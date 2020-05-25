@@ -23,3 +23,8 @@
   background-size: 1.5em 11em, 1.5em 11em, 2.3em 8em, 2.3em 8em, 3.5em 11em, 3.5em 11em, 100% 100%;
   background-repeat: repeat;
 }
+
+.input-mobile {
+	width: 100% !important;
+	margin-left: 0 !important;
+}

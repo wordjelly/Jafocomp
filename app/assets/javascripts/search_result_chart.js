@@ -31,6 +31,7 @@ var draw_chart = function(id,search_result){
             data_background_color.push('rgba(0,128,128,0.8)');
             data_border_color.push('rgba(0,128,128,1');
 
+            
             up_data.push(k[0]);
             down_data.push(k[1]);
             equal_data.push(0);

@@ -220,3 +220,12 @@ store their ids in the information hits -> so that it can be loaded via ajax as 
 ## for indicators also.
 ## the query will be where, impacted entity id is the one you are looking for.
 
+
+----------------------------------------------------------------------
+
+MOBILE UI
+TEST IF INDICATORS AND ENTITIES ARE PROPERLY CREATED
+SHOW INDICATOR ABBREVIATIONS
+so in the cards we give +/- for that entity -> MAKE THE POSITIVE AND NEGATIVE DISPLAY ON COMBINATIONS
+and below we give, combinations
+we search for combinations where it is the primary entity -> and show them, together with one random hit from inside the combination.
