@@ -497,7 +497,15 @@
   </div>
 </nav>
 
-<!-- this entire block has been moved from the container, where it was the first thing. -->
+
+
+<!---- container block -->
+
+
+<div class="container base">
+  <!-- search related stuff -->
+  
+  <!-- this entire block has been moved from the container, where it was the first thing. -->
 <div class="row" style="margin-bottom: 0px !important; height: 0px;">
     <div id="queued_query" data-queued-query></div>
     <div id="already_running_query" data-already-running-query></div>
@@ -508,20 +516,14 @@
 
 <%= content_for :before_search %>
 
+
 <div class="row" style="margin-bottom: 0px;">
   <div class="input-field col s12 l12 m12">
-    <i class="material-icons prefix hide-on-med-and-down">textsms</i>
-    <input type="text" id="autocomplete-input" class="autocomplete">
+    <i class="material-icons prefix">textsms</i>
+    <input type="text" id="autocomplete-input"  class="autocomplete">
     <label for="autocomplete-input">Search</label>
   </div>
 </div>
-
-<!---- container block -->
-
-
-<div class="container">
-  <!-- search related stuff -->
-  
 
   
 

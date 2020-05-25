@@ -24,7 +24,17 @@
   background-repeat: repeat;
 }
 
-.input-mobile {
+.container-mobile {
 	width: 100% !important;
 	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+
+.input-mobile {
+	width: 100% !important;
+	margin-left: 0px !important;
+}
+
+.input-prefix-mobile {
+	display: none;
 }

@@ -38,7 +38,7 @@ var template;
 
 var slide_down_logo = function(event){
 	$("#logo").slideDown('fast',function(){
-		$('#autocomplete-input').removeClass("input-mobile");
+		//$('#autocomplete-input').removeClass("input-mobile");
 		$('#new_search_results').hide();
 		$('.show_more_query_chips').remove();
 		$('.query_chips').remove();
@@ -48,7 +48,12 @@ var slide_down_logo = function(event){
 		$("#related_queries_title").hide();
 		$("#exchanges").show();
 		$(".tip").show();
-		show_navbar();
+		if(is_mobile() == true){
+			$("#autocomplete-input").parents(".container").first().removeClass("container-mobile");
+			$("#autocomplete-input").removeClass("input-mobile");
+			$("#autocomplete-input").prev().removeClass("input-prefix-mobile");
+			show_navbar();
+		}
 	});
 }
 
@@ -90,6 +95,11 @@ $(document).on('keydown','#search',function(event){
 	search_action($(this).val());
 });
 
+var is_mobile = function(){
+	var small_screen = window.matchMedia('(max-width: 600px)').matches;
+	return small_screen;
+}
+
 var hide_navbar = function(){
 	console.log("came to hide navbar");
 	var small_screen = window.matchMedia('(max-width: 600px)').matches;
@@ -111,9 +121,12 @@ $(document).on('focus','#autocomplete-input',function(event){
 	$(".default_sectors").first().hide();
 	$(".tip").hide();
 	// add that class.
-	$(this).addClass("input-mobile");
-	hide_navbar();
-
+	if(is_mobile() == true){
+		$(this).parents(".container").first().addClass("container-mobile");
+		$(this).addClass("input-mobile");
+		$(this).prev().addClass("input-prefix-mobile");
+		hide_navbar();
+	}
 });
 
 $(document).on('focusout','#autocomplete-input',function(event){
