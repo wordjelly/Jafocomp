@@ -24,7 +24,7 @@
 	    <% end %>
 	    <!-- this linkage is different -->
 	    <li class="collection-item center">
-		    <%= link_to "More Positive Indicators", direction_entity_path(:id => @entity.stock_name.to_s, :indicator_direction => "rise") %>
+		    <%= link_to "More Positive Indicators", direction_entity_path(:id => @entity.stock_name.to_s, :trend_direction => "rise") %>
 		</li>
 	</ul>
 <% end %>

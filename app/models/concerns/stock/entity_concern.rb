@@ -127,6 +127,8 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :indicator_id
 		attr_accessor :exchange_id
 		attr_accessor :from
+		attr_accessor :trend_direction
+		
 		attribute :div_id, String,  mapping: {type: 'keyword'}
 		## used in stocks_controller -> to show only the exchanges in the index action.
 		attr_accessor :only_exchanges

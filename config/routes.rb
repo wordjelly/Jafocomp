@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   ## lets see how it goes with this much first.
   get 'stocks/:id/with_stock/:primary_stock_id' => "stocks#show", as: "combination_entity"
   get 'stocks/:id/with_indicator/:indicator_id' => "stocks#show"
-  get 'stocks/:id/:indicator_direction' => "stocks#show", as: "direction_entity"
+  get 'stocks/:id/:trend_direction' => "stocks#show", as: "direction_entity"
   get 'stocks/:id/with_stock/:primary_stock_id/with_indicator/:indicator_id' => "stocks#show" 
   get 'stocks/:id/with_exchange/:exchange_id' => "stocks#show"
 

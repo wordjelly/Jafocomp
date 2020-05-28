@@ -1,5 +1,9 @@
-<% if @entity.stock_result_type == Concerns::Stock::EntityConcern::SINGLE %>
-	<%= render :partial => "/entities/show" %>
-<% elsif @entity.stock_result_type == Concerns::Stock::EntityConcern::COMBINATION %>
-	<%= render :partial => "/entities/show_combination" %>
+<% if @entity.trend_direction.blank? %>
+	<% if @entity.stock_result_type == Concerns::Stock::EntityConcern::SINGLE %>
+		<%= render :partial => "/entities/show" %>
+	<% elsif @entity.stock_result_type == Concerns::Stock::EntityConcern::COMBINATION %>
+		<%= render :partial => "/entities/show_combination" %>
+	<% end %>
+<% else %>
+	<%= render :partial => "/entities/show_trend_direction" %>
 <% end %>
