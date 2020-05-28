@@ -9,9 +9,16 @@ module Concerns::EntityControllerConcern
 
 		## submit to google search map also.
 		def show
+			puts params.to_s
 			#puts @entity.to_s
+			#puts JSON.pretty_generate(@entity.deep_attributes(false,false))
+			puts "-------- entity div id ----------"
+			puts @entity.div_id
 			respond_to do |format|
 				format.html do 
+					render "/entities/show"
+				end
+				format.js do 
 					render "/entities/show"
 				end
 				format.json do 
@@ -19,6 +26,7 @@ module Concerns::EntityControllerConcern
 				end
 			end
 		end
+
 
 		def update_many
 			get_resource_class.update_many

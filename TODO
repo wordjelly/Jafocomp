@@ -226,6 +226,15 @@ store their ids in the information hits -> so that it can be loaded via ajax as 
 MOBILE UI
 TEST IF INDICATORS AND ENTITIES ARE PROPERLY CREATED
 SHOW INDICATOR ABBREVIATIONS
+--- SO WE DO THIS FIRST.
 so in the cards we give +/- for that entity -> MAKE THE POSITIVE AND NEGATIVE DISPLAY ON COMBINATIONS
+
+WHY COMBINATION AND ALL SEARCH RESULTS ARE SUCH GARBAGE
+
+
+
+// give a clear button
+// no query to be fired on backspace ?
+// move that search shit
 and below we give, combinations
 we search for combinations where it is the primary entity -> and show them, together with one random hit from inside the combination.

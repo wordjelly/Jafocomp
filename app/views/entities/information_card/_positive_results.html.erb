@@ -1,0 +1,30 @@
+<% if @entity.positive_results.size > 0 %>
+	<ul class="collection with-header">
+		
+		<% random_results = [] %>
+		<% 1.times do |n| %>
+			<% random_key = Random.rand((@entity.positive_results.size - 1)) %>
+			<% random_results.push(@entity.positive_results[random_key]) %>
+		<% end %>
+		<% random_results.each do |result| %>
+				<!-- here we can give that facility -->			
+			<% icon = (result["_source"]["rises_or_falls"] =~ /rise/ ? "trending_up" : "trending_down") %>
+
+			<% icon_color = (icon == "trending_up" ? "green" : "red") %>
+
+		    <li class="collection-item avatar" style="padding-top: 20px !important; padding-bottom: 10px !important;">
+		      <i class="material-icons circle <%= icon_color %>"><%= icon %></i>
+		      <span class="title" style="font-weight: 500; font-size: 19px;"><span class="grey-text">What happens to </span><span class="blue-grey-text"><%= result["_source"]["setup"].gsub(/What happens to/,'') %>?</span></span>
+		      <p class="<%= icon_color %>-text" style="margin-top: 1rem; font-size: 16px;"><%= result["_source"]["answer"] %>
+		      </p>
+		      <p style="margin-top:0.75rem;">
+		      	<i style="vertical-align: bottom" class="material-icons grey-text text-lighten-1">bubble_chart</i><%= link_to "Stats", result_path(id: result["_id"], eid: result["_source"]["impacted_entity_id"]), class: "grey-text text-lighten-1" %>
+		      </p>
+		    </li>
+	    <% end %>
+	    <!-- this linkage is different -->
+	    <li class="collection-item center">
+		    <%= link_to "More Positive Indicators", direction_entity_path(:id => @entity.stock_name.to_s, :indicator_direction => "rise") %>
+		</li>
+	</ul>
+<% end %>

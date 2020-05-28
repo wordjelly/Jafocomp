@@ -10,6 +10,99 @@ module Concerns::EsBulkIndexConcern
   	self.bulk_items = []
   	self.total_items_bulked = 0
 
+  	def deep_attributes(filter_permitted_params=false,include_blank_attributes=true)
+			
+		attributes = {}
+			
+
+		## why only the permitted params.
+		## top level attributes
+		permitted_params_list = []
+		
+		## if the second element is a hash, with the name of the class.
+		### then take that
+		## otherwise, take the top level itself.
+		## today i want to finish
+		## it does not blank the null elements
+		## why not bypass this, as it can wipe a lot of other stuff as well
+		## we can use scripted upsert ?
+		## 
+
+		if self.class.permitted_params[1].is_a? Hash
+			
+			if self.class.name.to_s =~ /#{self.class.permitted_params[1].keys[0]}/i
+				permitted_params_list = self.class.permitted_params[1].values
+
+			end
+		else
+			permitted_params_list = self.class.permitted_params
+		end
+
+		permitted_params_list.flatten!
+
+		permitted_params_list.map!{|c|
+			if c.is_a? Hash
+			#	puts "got hash."
+				c = c.keys[0]
+			#	puts "c becomes: #{c}"
+			else
+				#puts "no hash."
+			end 
+			c
+		}
+
+		#puts "permitted params list is:"
+		
+		#puts permitted_params_list.to_s
+		
+		#exit(1)
+
+		
+		self.class.attribute_set.each do |virtus_attribute|
+			#puts "doing attribute: #{virtus_attribute.name}"
+			if filter_permitted_params == true
+				next unless permitted_params_list.include? virtus_attribute.name.to_s.to_sym 
+			end
+			if virtus_attribute.primitive.to_s == "Array"
+				#puts "is an array"
+				attributes[virtus_attribute.name.to_s] = []
+				if virtus_attribute.respond_to? "member_type"
+					class_name = virtus_attribute.member_type.primitive.to_s
+					
+					self.send(virtus_attribute.name).each do |obj|
+						
+						unless class_name == "BasicObject"
+
+							if obj.class.name == "Hash"
+								attributes[virtus_attribute.name.to_s] << obj
+							elsif obj.class.name == "Array"
+								attributes[virtus_attribute.name.to_s] << obj
+							else
+								attributes[virtus_attribute.name.to_s] << obj.deep_attributes(filter_permitted_params,include_blank_attributes)
+							end
+
+						else
+							## so its a hash.
+							attributes[virtus_attribute.name.to_s] << obj.to_s
+
+						end
+					end
+					
+				end
+			else
+				attributes[virtus_attribute.name.to_s] = self.send(virtus_attribute.name)
+				
+			end
+		end
+		attributes["id"] = self.id.to_s
+		if include_blank_attributes.blank?
+			attributes.delete_if{|key,value|
+				value.blank?
+			}
+		end 
+		attributes
+	end
+
 	##override in implementing model.
 	def self.bulk_size
 	  5000

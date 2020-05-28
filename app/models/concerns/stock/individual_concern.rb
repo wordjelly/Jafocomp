@@ -13,6 +13,23 @@ module Concerns::Stock::IndividualConcern
 
 		end
 
+		def set_positive_results(args={})
+			
+			self.positive_results = Result.nested_function_score_query(args)[0..4].map{|c| Result.build_setup(c) }
+			
+			Rails.logger.debug("setting positive results of entity #{self.stock_name}, with args #{args}, total results :#{self.stock_top_results.size}")			
+
+		end
+
+
+		def set_negative_results(args={})
+
+			self.negative_results = Result.nested_function_score_query(args)[0..4].map{|c| Result.build_setup(c) }
+			
+			Rails.logger.debug("setting negative results of entity #{self.stock_name}, with args #{args}, total results :#{self.stock_top_results.size}")
+
+		end
+
 
 	end
 

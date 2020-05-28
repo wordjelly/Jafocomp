@@ -83,8 +83,16 @@ class Stock
 			e = cls.new(hit["_source"])
 			
 			e.id = hit["_id"]
+			args.keys.each do |k|
+				e.send("#{k}=",args[k])
+			end
+			#puts "e div id before: #{e.div_id}"
 			#puts "args--> #{args}"
-			e.attributes.merge!(args)
+			#ds = args.deep_symbolize_keys
+			#puts "ds is #{ds}"
+			#e.attributes.merge!(ds)
+			#puts "attributes div id after merging:"
+			#puts e.div_id
 		rescue Elasticsearch::Transport::Transport::Error
 			##puts "rescuing."
 			#puts "args setting :#{args}"

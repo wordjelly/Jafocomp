@@ -37,6 +37,10 @@ module Concerns::Stock::EntityConcern
 
 		attribute :stock_top_results, Array[Hash], mapping: {type: 'nested'}
 
+		attribute :positive_results, Array[Hash], mapping: {type: 'nested'}
+
+		attribute :negative_results, Array[Hash], mapping: {type: 'nested'}
+
 		attribute :stock_exchange, String, mapping: {type: 'keyword'}
 
 		## indicator, entity.
@@ -123,6 +127,7 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :indicator_id
 		attr_accessor :exchange_id
 		attr_accessor :from
+		attribute :div_id, String,  mapping: {type: 'keyword'}
 		## used in stocks_controller -> to show only the exchanges in the index action.
 		attr_accessor :only_exchanges
 
@@ -155,6 +160,14 @@ module Concerns::Stock::EntityConcern
 		def args_for_top_results_query
 			{:query => "", :direction => nil, :impacted_entity_id => self.id.to_s}
 		end
+
+		def args_for_positive_results_query
+			{:query => "", :direction => "rise", :impacted_entity_id => self.id.to_s}
+		end
+
+		def args_for_negative_results_query
+			{:query => "", :direction => "fall", :impacted_entity_id => self.id.to_s}
+		end
 		
 		#############################################################
 		##
@@ -165,6 +178,10 @@ module Concerns::Stock::EntityConcern
 		#############################################################
 		def update_it
 			set_top_results(args_for_top_results_query)
+			set_positive_results(args_for_positive_results_query)
+			set_negative_results(args_for_negative_results_query)
+			## that's it basically
+			## now we mod those cards for the information query.
 			update_combinations
 			update_components
 			self.trigger_update = false
@@ -375,7 +392,9 @@ module Concerns::Stock::EntityConcern
 						:from,
 						:stock_is_exchange,
 						:stock_exchange,
-						:stock_is_indicator
+						:stock_is_indicator,
+						:trend_direction,
+						:div_id
 					]
 				}
 			]

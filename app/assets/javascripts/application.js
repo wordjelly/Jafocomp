@@ -36,6 +36,8 @@ _.templateSettings.variable = 'search_result';
 
 var template;
 
+
+
 var slide_down_logo = function(event){
 	$("#logo").slideDown('fast',function(){
 		//$('#autocomplete-input').removeClass("input-mobile");
@@ -48,6 +50,8 @@ var slide_down_logo = function(event){
 		$("#related_queries_title").hide();
 		$("#exchanges").show();
 		$(".tip").show();
+		$("#input-clear").removeClass("input-clear");
+		$("#input-clear").hide();
 		if(is_mobile() == true){
 			$("#autocomplete-input").parents(".container").first().removeClass("container-mobile");
 			$("#autocomplete-input").removeClass("input-mobile");
@@ -64,11 +68,12 @@ $(document).on('click','.dedication',function(event){
 /***
 clear the search bar if the clear icon is clicked.
 ***/
-$(document).on('click','#clear_search',function(event){
-	$("#search").val("");
+$(document).on('click','#input-clear',function(event){
+	$("#autocomplete-input").val("");
 	slide_down_logo();
 });
 
+// write a listener for the screen size.
 
 // first lets get this shit to display at least.
 $(document).on('input','#autocomplete-input',function(event){
@@ -120,7 +125,9 @@ $(document).on('focus','#autocomplete-input',function(event){
 	});
 	$(".default_sectors").first().hide();
 	$(".tip").hide();
-	// add that class.
+	
+	$("#input-clear").addClass("input-clear");
+	$("#input-clear").show();
 	if(is_mobile() == true){
 		$(this).parents(".container").first().addClass("container-mobile");
 		$(this).addClass("input-mobile");
@@ -2374,12 +2381,33 @@ function capitalizeFirstLetter(string) {
 }
 
 
+var update_information_cards_new = function(text,div_id,type){
+	console.log("came to update information cards new");
+	// it should display the cards in the right place by a js erb.
+	if(type == "primary_entity"){
+		$.get('/stocks/' + expand_indicators_for_information_query(text).trim() + ".js",{entity : {div_id : div_id}});
+	}
+	else if(type == "impacted_entity"){
+		$.get('/stocks/' + expand_indicators_for_information_query(text).trim() + ".js",{entity : {div_id : div_id}});	
+	}
+	else if(type == "indicator"){
+		$.get('/indicators/' + expand_indicators_for_information_query(text).trim() + ".js",{entity : {div_id : div_id}});
+	}
+}
+
+$(document).on('click','.tab',function(event){
+	$(this).parent().parent().next().show();
+})
+
+
 /***
 text -> whatever
 div_id -> the div_id of the main card
 type -> indicator/primary_entity/impacted_entity
 ***/
 var update_information_cards = function(text,div_id,type){
+	update_information_cards_new(text,div_id,type);
+	/****
 	$.get(
 		'/search',
 		{information: expand_indicators_for_information_query(text)}).done(function(data) {
@@ -2402,17 +2430,22 @@ var update_information_cards = function(text,div_id,type){
             		obj.entity = 1
             		obj.icon = "dns";
             		obj.stock_quote_link = obj.title.replace(/\s/,'+');
+            		obj.entity_link = "/stocks/" + obj.title;
             	}
             	else if(type == "impacted_entity"){
             		obj.entity = 1
             		obj.icon = "dns";
             		obj.stock_quote_link = obj.title.replace(/\s/,'+');
+            		obj.entity_link = "/stocks/" + obj.title;
             	}
 
             	else if(type == "indicator"){
             		obj.indicator = 1;
             		obj.icon = "timeline";
+            		obj.entity_link = "/indicators/" + obj.title;
             	}
+
+
 
             	if(_.isUndefined(template)){
 					var template = _.template($('#information_card_template').html());
@@ -2422,6 +2455,8 @@ var update_information_cards = function(text,div_id,type){
         	}
 
 	});
+
+	****/
 }
 
 _.mixin({

@@ -38,3 +38,13 @@
 .input-prefix-mobile {
 	display: none;
 }
+
+.input-clear {
+	position: absolute;
+    top: 0;
+    right: 1rem;
+    cursor: pointer;
+    font-size: 2rem;
+    -webkit-transition: .3s color;
+    transition: .3s color;
+}

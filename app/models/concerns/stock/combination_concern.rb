@@ -159,7 +159,6 @@ module Concerns::Stock::CombinationConcern
 			s
 		end
 
-
 		def update_combinations
 			stocks_by_index = get_all_other_stocks
 			

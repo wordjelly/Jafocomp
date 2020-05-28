@@ -6,11 +6,8 @@ module Concerns::Stock::CombinationQueryConcern
 
 		def query(args={})
 
-			## what is the primary and what is the impacted.
-			## impacted is our stock
-
-			## primary is the stock_id.
-			## lets call it primary stock id instead.
+			## so we have something called directin.
+			## should be permitted on stock.
 
 			return if args.blank?
 			return if ((args[:primary_stock_id].blank?) && (args[:indicator_id].blank?))
@@ -42,10 +39,14 @@ module Concerns::Stock::CombinationQueryConcern
 			## do a nested function score query.
 			self.set_top_results({
 				:query => query_string,
-				:direction => nil,
-				:impacted_entity_id => nil,
+				:direction => args[:direction],
+				:impacted_entity_id => self.id.to_s,
 				:from => self.from
 			})
+
+
+			## why am i not including that ?
+
 
 			self.stock_primary = primary_stock.stock_name
 			self.stock_primary_id = primary_stock.id.to_s
