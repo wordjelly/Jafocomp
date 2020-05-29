@@ -1,4 +1,5 @@
 var div_id = "#<%= @entity.div_id %>";
 console.log("div id is:" + div_id);
 $(div_id).find(".information").first().append("<%= escape_javascript(render :partial => '/entities/information_card.html.erb') %>");
+$(div_id).find(".information").first().append("<%= escape_javascript(render :partial => '/entities/related_Queries_card.html.erb') %>");
 $(".tabs").tabs();

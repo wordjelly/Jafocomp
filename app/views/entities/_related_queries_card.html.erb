@@ -1,0 +1,23 @@
+<!-- this should include queries related to the sectors, other exchanges, etc for whatever is involved -->
+<!-- and can be updated and populated -->
+<!-- just for the impacted entity -->
+<!-- we go for random combinations -->
+<div class="row">
+	<div class="col l12 s12 m12">
+		<!-- populate this via js erb -->
+		<!-- i want with indicators, and also with other entities -->
+		<!-- so other entities we will get -->
+		<ul class="collection with-header">
+			<li class="collection-item">Related Results</li>
+			<% @entity.combinations.each do |combination| %>
+				<!-- so this is a combination -->
+				<% entity = combination["entities"].sample(0) %>
+				<li class="collection-item">
+					<%= link_to (combination_entity_path(:id => @entity.stock_impacted, :primary_stock_id => @entity.stock_primary)) do %>
+						How do <%= entity["primary_entity_name"] %>'s indicators affect <%= @entity.stock_name %>
+					<% end %>
+				</li>
+			<% end %>
+		</ul>
+	</div>
+</div>
