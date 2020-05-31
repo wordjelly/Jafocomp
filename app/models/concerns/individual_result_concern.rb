@@ -476,7 +476,7 @@ module Concerns::IndividualResultConcern
 		def get_primary_entity_and_indicator(search_result)
 
 			
-			search_result["setup"].scan(/when(?<primary_entity>[A-Za-z\s]+)\'s\s(?<indicator>[A-Za-z_\d+]+)\s(?<indicator_suffix>indicator)?/i) do 
+			search_result["setup"].scan(/when(?<primary_entity>[A-Za-z\s0-9\_\-]+)\'s\s(?<indicator>[A-Za-z_\d+]+)\s(?<indicator_suffix>indicator)?/i) do 
 
 				jj = ::Regexp.last_match
 

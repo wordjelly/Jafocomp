@@ -2,19 +2,22 @@
 <!-- and can be updated and populated -->
 <!-- just for the impacted entity -->
 <!-- we go for random combinations -->
+<!-- make the tabs look better -->
+<!-- what else is massively pending -->
 <div class="row">
 	<div class="col l12 s12 m12">
 		<!-- populate this via js erb -->
 		<!-- i want with indicators, and also with other entities -->
 		<!-- so other entities we will get -->
 		<ul class="collection with-header">
-			<li class="collection-item">Related Results</li>
+			<li class="collection-item blue-grey-text" style="font-weight: 500; font-size: 24px; padding-top: 20px; padding-bottom: 20px;">Related Results</li>
 			<% @entity.combinations.each do |combination| %>
 				<!-- so this is a combination -->
-				<% entity = combination["entities"].sample(0) %>
+				<% entity = combination["entities"].sample %>
+				
 				<li class="collection-item">
-					<%= link_to (combination_entity_path(:id => @entity.stock_impacted, :primary_stock_id => @entity.stock_primary)) do %>
-						How do <%= entity["primary_entity_name"] %>'s indicators affect <%= @entity.stock_name %>
+					<%= link_to (combination_entity_path(:id => entity["impacted_entity_id"], :primary_stock_id => entity["primary_entity_id"])) do %>
+						How do <b><%= entity["primary_entity_name"] %>'s</b> indicators affect <b><%= @entity.stock_name %></b>?
 					<% end %>
 				</li>
 			<% end %>

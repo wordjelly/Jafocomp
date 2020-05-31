@@ -1,6 +1,6 @@
 <% if @entity.positive_results.size > 0 %>
 	<ul class="collection with-header">
-		
+		<li class="collection-header green-text"><h4><i class="material-icons" style="margin-right:1rem;">storage</i>Positive Indicators</h4></li>
 		<% random_results = [] %>
 		<% 1.times do |n| %>
 			<% random_key = Random.rand((@entity.positive_results.size - 1)) %>

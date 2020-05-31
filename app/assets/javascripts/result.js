@@ -8,7 +8,9 @@ $(document).ready(function(){
 		search_result = JSON.parse(search_result);
 		var results = display_search_results([search_result],"");
 		search_result = results["search_results"][0];
+
 		$(".search_result_card").first().show();
+		load_entity_information({search_result_card : $(".search_result_card").first()});
 	}
 	else{
 		console.log("no result");
@@ -88,3 +90,8 @@ var update_twitter_cards_data = function(search_result){
 		$(this).attr("content",search_result.url);
 	});
 };
+
+
+$(document).on('click','.tabs',function(event){
+	$(this).find(".indicator").css("background-color","yellow");
+});

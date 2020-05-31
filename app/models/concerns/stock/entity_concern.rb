@@ -263,6 +263,14 @@ module Concerns::Stock::EntityConcern
 			##puts "finished set name description"
 		end	
 
+		def get_icon
+			if self.stock_is_indicator == YES
+				"timeline"
+			else
+				"storage"
+			end
+		end
+
 		def get_information(information_type="entity")
 			query = {
 				bool: {

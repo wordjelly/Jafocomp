@@ -1,8 +1,8 @@
 <% if @entity.negative_results.size > 0 %>
 	<ul class="collection with-header">
-		<li class="collection-header"><h4><i class="material-icons" style="margin-right:1rem;">storage</i>The Odds</h4></li>
+		<li class="collection-header red-text"><h4><i class="material-icons" style="margin-right:1rem;">storage</i>Negative Indicators</h4></li>
 		<% random_results = [] %>
-		<% 2.times do |n| %>
+		<% 1.times do |n| %>
 			<% random_key = Random.rand((@entity.negative_results.size - 1)) %>
 			<% random_results.push(@entity.negative_results[random_key]) %>
 		<% end %>
@@ -25,7 +25,7 @@
 	    <!-- this linkage is different -->
 	    <li class="collection-item center">
 		    <li class="collection-item center">
-		    <%= link_to "More Positive Indicators", direction_entity_path(:id => @entity.stock_name.to_s, :trend_direction => "fall") %>
+		    <%= link_to "More Negative Indicators", direction_entity_path(:id => @entity.stock_name.to_s, :trend_direction => "fall") %>
 		</li>
 		</li>
 	</ul>

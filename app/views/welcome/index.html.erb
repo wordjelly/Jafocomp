@@ -16,44 +16,44 @@
 		<!-- hide-on-large-only -->
 		<div class="row center chips" id="exchanges" style="margin-bottom: 1rem; margin-top:1rem; border-bottom: none;">
 			<!-- so here we add the chips -->
-			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="forex" style="border-bottom: none; cursor: pointer;">
+			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="forex" data-category="forex" style="border-bottom: none; cursor: pointer;">
 				  FRX
 			</div>
-			<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="dow" style="border-bottom: none; cursor: pointer;">
+			<div class="index_chip chip default_sector amber white-text lighten-2" data-category="Dow Jones" data-related-query="dow" style="border-bottom: none; cursor: pointer;">
 				  DOW
 			</div>
-			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="dax" style="border-bottom: none; cursor: pointer;">
+			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-category="Dax 30" data-related-query="dax" style="border-bottom: none; cursor: pointer;">
 				  DAX
 			</div>
-			<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="cac" style="border-bottom: none; cursor: pointer;">
+			<div class="index_chip chip default_sector amber white-text lighten-2" data-category="CAC 40" data-related-query="cac" style="border-bottom: none; cursor: pointer;">
 				  CAC
 			</div>
-			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="nifty" style="border-bottom: none; cursor: pointer;">
+			<div class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="nifty" data-category="Nifty 50" style="border-bottom: none; cursor: pointer;">
 				  NIFTY
 			</div>
-			<div class="index_chip chip default_sector amber white-text lighten-2" data-related-query="opec" style="border-bottom: none; cursor: pointer;">
+			<div class="index_chip chip default_sector amber white-text lighten-2" data-category="oil" data-related-query="opec" style="border-bottom: none; cursor: pointer;">
 				  OIL
 			</div>
 		</div>
 
 		<div class="row hide-on-med-and-down" style="margin-top:1rem !important; display:none;">
 			<div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-		      <h4 data-related-query="forex" class="z-depth-1 index_chip shadow-demo amber center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">FRX</h4>
+		      <h4 data-category="forex" data-related-query="forex" class="z-depth-1 index_chip shadow-demo amber center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">FRX</h4>
 		    </div>
 		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-		      <h4 data-related-query="DOW" class="z-depth-2 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DOW</h4>
+		      <h4 data-related-query="DOW" data-category="Dow Jones" class="z-depth-2 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DOW</h4>
 		    </div>
 		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-		      <h4 data-related-query="DAX" class="z-depth-3 index_chip shadow-demo amber center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DAX</h4>
+		      <h4 data-related-query="DAX" data-category="Dax 30" class="z-depth-3 index_chip shadow-demo amber center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">DAX</h4>
 		    </div>
 		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-		      <h4 data-related-query="CAC" class="z-depth-4 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">CAC</h4>
+		      <h4 data-related-query="CAC" data-category="CAC 40" class="z-depth-4 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem;  margin-top:0px; cursor:pointer;">CAC</h4>
 		    </div>
 		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-		      <h4 data-related-query="nifty" class="z-depth-5 index_chip shadow-demo amber  center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">NIFTY</h4>
+		      <h4 data-related-query="nifty" data-category="Nifty 50" class="z-depth-5 index_chip shadow-demo amber  center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">NIFTY</h4>
 		    </div>
 		    <div class="col s2 m2 l2" style="padding-left:0px !important; padding-right: 0px !important;">
-		      <h4 data-related-query="opec" class="z-depth-5 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">OIL</h4>
+		      <h4 data-related-query="opec" data-category="oil" class="z-depth-5 index_chip shadow-demo blue-grey center white-text" style="padding: 2rem; margin-top:0px; cursor:pointer;">OIL</h4>
 		    </div>
 		</div>
 	<% end %>
@@ -123,7 +123,7 @@
 	<!-- in the application_controller level -->
 	<!-- and javascript will execute all the hiding etc -->
 
-	<div class="row center tip">
+	<div class="row center tip" style="display:none;">
 		
 		<div id="front_page_trend" class="card col l6 offset-l3" data-trends="<%= JSON.generate(@result['trends']) %>" style="font-size:22px; margin-top:0.5rem;">
 			<div class="card-content">
@@ -136,7 +136,7 @@
 	</div>
 
 
-	<div class="row center quote_holder" style="margin-top:1rem; display:none;">
+	<div class="row center quote_holder" style="margin-top:1rem;">
 		<div class="grey-text quote" style="font-size:14px; margin-top:1rem;">
 			<span id="quote"></span><br><span class="blue-grey-text" id="quote_author"></span>
 		</div>

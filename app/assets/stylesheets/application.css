@@ -48,3 +48,8 @@
     -webkit-transition: .3s color;
     transition: .3s color;
 }
+
+
+.information_card .tabs .indicator {
+    background-color: white;
+}

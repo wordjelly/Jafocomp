@@ -1,8 +1,11 @@
-<div class="row" style="margin-left: 0px !important; margin-right: 0px !important;">
+<div class="row information_card" style="margin-left: 0px !important; margin-right: 0px !important;">
   <div class="card col l6 m6 s12">
     <div class="card-content">
-      <span class="card-title blue-grey-text" style="font-weight: 500"><%= @entity.stock_name %></span>
-      <p class="green-text"><%=  %></p>
+      <!-- we can do a set icon -->
+      <!-- what to do after this kiddo ? -->
+      <!-- we move for the saturation ? -->
+      <!-- and then its almost done, we are done done done -->
+      <span class="card-title blue-grey-text" style="font-weight: 500"><i class="material-icons"><%= @entity.get_icon %></i><%= @entity.stock_name %></span>
       <p class="green-text"><%= @entity.stock_description %></p>
     </div>
     <div class="card-tabs" style="margin-left: -0.75rem; margin-right: -0.75rem;">
@@ -10,7 +13,6 @@
         <li class="tab"><a href="#<%= @entity.id.parameterize %>_positive_indicators">Positive</a></li>
         <li class="tab"><a href="#<%= @entity.id.parameterize %>_negative_indicators">Negative</a></li>
       </ul>
-      
     </div>
     <div class="card-content grey lighten-4" style="display:none; margin-left: -0.75rem; margin-right: -0.75rem;">
       <div id="<%= @entity.id.parameterize %>_positive_indicators"><%= render :partial => "/entities/information_card/positive_results" %></div>
