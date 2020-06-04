@@ -28,6 +28,10 @@ gem 'hashie'
 gem 'delayed_job_mongoid'
 gem 'cloudinary'
 
+
+### FOR SITEMAP GENERATION AND HOSTING, AS WE ARE USING HEROKU.
+gem 'sitemap_generator'
+gem 'google-cloud-storage'
 #gem "activejob", ">= 4.2.11"
 #gem "actionview", ">= 4.2.11.1"
 

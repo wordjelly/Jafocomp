@@ -58,6 +58,7 @@ var slide_down_logo = function(event){
 			$("#autocomplete-input").prev().removeClass("input-prefix-mobile");
 			show_navbar();
 		}
+		$("label[for='autocomplete-input']").removeClass("active");
 	});
 }
 
@@ -2282,18 +2283,24 @@ $(document).on('click','.related_query_term',function(event){
 	search_new($(this).attr("data-related-query"));
 });
 
+var toggle_search_field_label = function(add_or_remove){
+	$("label[for='autocomplete-input']").toggleClass("active");
+}
+
 $(document).on("click",'.index_chip',function(event){
 
-	$("#logo").slideUp('fast',function(){
+	$("#logo,#exchanges").slideUp('fast',function(){
 				
 	});
 	$(".default_sectors").first().hide();
 	
+	/**
+	this is used in the search complete callback to show the first search result.
+	**/
 	$(this).data("clicked","yes");
 	$("#autocomplete-input").val($(this).attr("data-related-query"));
 	search_new($(this).attr("data-related-query"));
-	//$("#autocomplete-input").trigger("click");
-	
+	$("label[for='autocomplete-input']").addClass("active");
 
 });
 

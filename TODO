@@ -240,8 +240,7 @@ and below we give, combinations
 we search for combinations where it is the primary entity -> and show them, together with one random hit from inside the combination.
 
 ---------------------------------------------------------------
-<!-- too many fucked up spaces in this -->
-<!-- better formatting for stock descriptions. -->
+<!-- better formatting for stock descriptions, lets address this, look into why the characters are not being properly handled server side. -->
 <!-- add some space in the graph, between the reacted positively, negatively and the graph itself. -->
 <!-- submit to google crawler, make a sitemap -->
 <!-- sort out watsapp text not showing correctly -->
@@ -251,3 +250,6 @@ we search for combinations where it is the primary entity -> and show them, toge
 <!-- also clicking on the industries should work -->
 <!-- show stats on all the results, in the cards, dropdown for graph? -->
 <!-- load related card only for impacted entity id -->
+<!-- on stocks page get rid of underscores from exchnage names -->
+<!-- show the background image instead of the entity images, or downlod the entity images -->
+<-- increase font size of descriptions -->
