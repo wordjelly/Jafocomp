@@ -39,6 +39,8 @@ module Concerns::Stock::CombinationQueryConcern
 
 			self.from = args[:from] || 0
 
+			
+
 			## do a nested function score query.
 			self.set_top_results({
 				:query => query_string,

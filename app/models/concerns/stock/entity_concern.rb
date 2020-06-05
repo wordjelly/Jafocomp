@@ -21,7 +21,9 @@ module Concerns::Stock::EntityConcern
 
 		index_name "frontend"
 		document_type "doc"
-
+		RISE = "rise"
+		FALL = "fall"
+		TREND_DIRECTIONS = ["rise","fall"]
 
 		attribute :stock_is_exchange, Integer, mapping: {type: 'integer'}, default: NO
 
@@ -164,11 +166,11 @@ module Concerns::Stock::EntityConcern
 		end
 
 		def args_for_positive_results_query
-			{:query => "", :direction => "rise", :impacted_entity_id => self.id.to_s}
+			{:query => "", :direction => RISE, :impacted_entity_id => self.id.to_s}
 		end
 
 		def args_for_negative_results_query
-			{:query => "", :direction => "fall", :impacted_entity_id => self.id.to_s}
+			{:query => "", :direction => FALL, :impacted_entity_id => self.id.to_s}
 		end
 		
 		#############################################################
@@ -389,6 +391,23 @@ module Concerns::Stock::EntityConcern
 			
 		end
 
+		########################################################
+		##
+		##
+		## used to build the sitemap
+		## called_from Concerns::Stock::ExchangeConcern
+		##
+		##
+		########################################################
+
+		def entity_combinations
+			## okay so how does this work exactly.
+
+		end
+
+		def indicator_combinations
+
+		end
 
 		def self.permitted_params
 			[
