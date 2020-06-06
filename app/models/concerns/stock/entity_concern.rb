@@ -9,6 +9,7 @@ module Concerns::Stock::EntityConcern
 		include Concerns::Stock::IndividualConcern
 		include Concerns::Stock::CombinationConcern
 		include Concerns::Stock::CombinationQueryConcern 
+		include Concerns::Stock::ExchangeConcern
 		include Concerns::BackgroundJobConcern
 		include ActiveModel::Validations
 		include ActiveModel::Callbacks

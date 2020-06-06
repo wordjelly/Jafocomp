@@ -6,7 +6,7 @@ require 'google/cloud/storage'
 SitemapGenerator::Sitemap.default_host = "http://www.algorini.com"
 
 # The remote host where your sitemaps will be hosted
-SitemapGenerator::Sitemap.sitemaps_host = "https://console.cloud.google.com/storage/browser/test_bucket_one"
+SitemapGenerator::Sitemap.sitemaps_host = "https://console.cloud.google.com/storage/browser/algorini"
 
 # The directory to write sitemaps to locally
 SitemapGenerator::Sitemap.public_path = 'tmp/'
@@ -16,21 +16,23 @@ SitemapGenerator::Sitemap.sitemaps_path = 'sitemaps/'
 
 
 SitemapGenerator::Sitemap.adapter = SitemapGenerator::GoogleStorageAdapter.new(
-  credentials: './keys/google_cloud_storage_bhargav_r_raut@gmail.com_service_account_dark-edge-264914-3c2e40ad386e.json',
+  credentials: "/home/bhargav/Github/Jafocomp/config/keys/google_cloud_storage_bhargav_r_raut@gmail.com_service_account_dark-edge-264914-3c2e40ad386e.json",
   project_id: ENV["GOOGLE_CLOUD_PROJECT"],
-  bucket: ENV["GOOGLE_CLOUD_SITEMAP_BUCKET"]
+  bucket: "algorini"
 )
 
+SitemapGenerator::Sitemap.create do
+  add '/home', :changefreq => 'daily', :priority => 0.9
+end
 
-
+=begin
 ## so now we can have this as a rake task, but i prefer a background job
 ## so we can have this inside a seperate sitemap class
 ## to be triggered as a background job.
 
-=begin
 storage = Google::Cloud::Storage.new(
   project_id: ENV["GOOGLE_CLOUD_PROJECT"],
-  credentials: "./keys/google_cloud_storage_bhargav_r_raut@gmail.com_service_account_dark-edge-264914-3c2e40ad386e.json"
+  credentials: "/home/bhargav/Github/Jafocomp/config/keys/google_cloud_storage_bhargav_r_raut@gmail.com_service_account_dark-edge-264914-3c2e40ad386e.json"
 )
 
 bucket = storage.create_bucket "test_bucket_one"
