@@ -5,11 +5,12 @@ development:
     default:
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: jafocomp_development
+      database: local_development
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
         - localhost:27017
+      #uri: <%= ENV['MONGODB_URI'] || "mongodb://localhost" %>
       options:
         # Change the default write concern. (default = { w: 1 })
         # write:
@@ -38,7 +39,8 @@ development:
         # on 2.4 and 2.6 is :plain)
         # auth_mech: :scram
 
-        # The database or source to authenticate the user against. (default: admin)
+        # The database or source to authenticate the user against.
+        # (default: the database specified above or admin)
         # auth_source: admin
 
         # Force a the driver cluster to behave in a certain manner instead of auto-
@@ -50,8 +52,8 @@ development:
         # via ismaster commands. (default: 10)
         # heartbeat_frequency: 10
 
-        # The time in seconds for selecting servers for a near read preference. (default: 0.015)
-        # local_threshold: 0.015
+        # The time in seconds for selecting servers for a near read preference. (default: 5)
+        # local_threshold: 5
 
         # The timeout in seconds for selecting a server for an operation. (default: 30)
         # server_selection_timeout: 30
@@ -130,17 +132,31 @@ development:
     # environment. The Mongoid logger will be set to the Rails logger
     # otherwise.(default: :info)
     # log_level: :info
-
-    # Application name that is printed to the mongodb logs upon establishing a
-    # connection in server versions >= 3.4. Note that the name cannot exceed 128 bytes.
-    # app_name: MyApplicationName
 test:
   clients:
     default:
-      database: jafocomp_test
+      database: local_test
       hosts:
         - localhost:27017
       options:
         read:
           mode: :primary
         max_pool_size: 1
+        
+production:
+  clients:
+    default:
+     # The standard MongoDB connection URI allows for easy
+     # replica set connection setup.
+     # Use environment variables or a config file to keep your
+     # credentials safe e.g. <%= ENV['MONGODB_URI'] %>.
+     uri: <%= ENV['MONGODB_URI'] || "mongodb://localhost" %>
+     ## so i can use all these
+     ## the same way.
+     ## only for elasticsearch the credentials 
+     options:
+       # The default timeout is 5, which is the time in seconds
+       # for a connection to time out.
+       # We recommend 15 because it allows for plenty of time
+       # in most operating environments.
+       connect_timeout: 15
