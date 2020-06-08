@@ -48,6 +48,8 @@ class SiteMap::SiteMap
 		# The remote host where your sitemaps will be hosted
 		SitemapGenerator::Sitemap.sitemaps_host = "https://console.cloud.google.com/storage/browser/algorini"
 
+		SitemapGenerator::Sitemap.create_index = true
+
 		# The directory to write sitemaps to locally
 		SitemapGenerator::Sitemap.public_path = 'tmp/'
 
