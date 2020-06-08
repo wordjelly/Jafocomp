@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   get 'stocks/:id/with_stock/:primary_stock_id/with_indicator/:indicator_id' => "stocks#show"
   get 'stocks/:id/with_exchange/:exchange_id' => "stocks#show"
 
-  get '/sitemap.xml.gz', to: redirect("https://console.cloud.google.com/storage/browser/_details/algorini/sitemaps/sitemap.xml.gz", status: 301)
+  get '/sitemap.xml.gz', to: redirect("https://storage.cloud.google.com/algorini/sitemaps/sitemap.xml.gz", status: 301)
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
