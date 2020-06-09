@@ -1,6 +1,7 @@
 class ScheduleJob < ActiveJob::Base
   
-  queue_as :default
+  # so it will queue all this.
+  queue_as :algorini
   self.queue_adapter = Rails.env.production? ? :delayed_job : :inline
 
   ##so we try to get this delayed shit working first
