@@ -52,6 +52,30 @@ class Indicator
 		self.abbreviation = Result.shorten_indicator(self.stock_name)
 	end
 
+	def self.get_indicators_from_frontend_index
+		query = {
+			bool: {
+				must: [
+					{
+						term: {
+							stock_is_indicator: Concerns::Stock::EntityConcern::YES
+						}
+					},
+					{
+						term: {
+							stock_result_type: 0
+						}
+					}
+				]
+			}
+		}
+		search({:query => query, :size => 100}).response.hits.hits.map {|hit|
+			i = Indicator.new(hit["_source"])
+			i.id = hit["_id"]
+			i
+		}
+	end
+
 
 	def self.get_all
 		query = {

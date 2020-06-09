@@ -8,7 +8,8 @@ module Concerns::Stock::ExchangeConcern
 	end
 
 	def entities(args={})
-		search_request = Stock.search({
+
+		query = {
 			size: 100,
 			query: {
 				bool: {
@@ -20,13 +21,17 @@ module Concerns::Stock::ExchangeConcern
 						},
 						{
 							term: {
-								stock_exchange_name: self.stock_name
+								stock_exchange: self.stock_exchange
 							}
 						}
 					]
 				}
 			}
-		})
+		}
+
+		#puts JSON.pretty_generate(query)
+
+		search_request = Stock.search(query)
 
 		search_request.response.hits.hits.map {|hit|
 			s = Stock.new(hit["_source"])

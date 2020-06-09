@@ -24,4 +24,9 @@ namespace :algorini do
 
     end
 
+    task sitemap: :environment do 
+        sitemap = SiteMap::SiteMap.new({:exchange_name => "Nifty 50", :exchange_id => "E-9"})
+        sitemap.save
+    end
+
 end

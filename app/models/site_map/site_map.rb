@@ -35,18 +35,27 @@ class SiteMap::SiteMap
 		self.exchange
 	end
 
+	## how do we do this through a rake task.
+	## i should be able to do this from the controller.
 	def build_sitemap
 		set_exchange
 		Rails.logger.debug("came to create sitemap, with self exchange :#{self.exchange.id.to_s}")
 		all_other_stocks = get_exchange.get_all_other_stocks
-		all_indicators = Indicator.get_all
+		all_indicators = Indicator.get_indicators_from_frontend_index
 		exchange_entities = get_exchange.entities
+		puts "exchange entities are:"
+		puts exchange_entities.to_s
+		#exit(1)
+
+		puts "------------------ all other stocks keys are ----------------- "
+		puts all_other_stocks.keys.to_s
 
 		# Your website's host name
-		SitemapGenerator::Sitemap.default_host = "http://www.algorini.com"
+		SitemapGenerator::Sitemap.default_host = "https://www.algorini.com"
 
+		# so this is also wrong.
 		# The remote host where your sitemaps will be hosted
-		SitemapGenerator::Sitemap.sitemaps_host = "https://console.cloud.google.com/storage/browser/algorini"
+		SitemapGenerator::Sitemap.sitemaps_host = "https://storage.googleapis.com/algorini"
 
 		SitemapGenerator::Sitemap.create_index = true
 
@@ -56,6 +65,8 @@ class SiteMap::SiteMap
 		# Set this to a directory/path if you don't want to upload to the root of your `sitemaps_host`
 		SitemapGenerator::Sitemap.sitemaps_path = 'sitemaps/'
 
+		## useful for debugging.
+		SitemapGenerator::Sitemap.compress = false
 
 		SitemapGenerator::Sitemap.adapter = SitemapGenerator::GoogleStorageAdapter.new(
 		  credentials: CREDENTIALS_PATH,
@@ -63,6 +74,7 @@ class SiteMap::SiteMap
 		  bucket: "algorini"
 		)
 
+		# lets take a look at the sitemap.
 
 		## so now let me focus on generating this shite.
 		## add the stock pages, indicator pages and exchange pages.
@@ -72,17 +84,21 @@ class SiteMap::SiteMap
 			exchange_entities.each do |exchange_entity|
 				
 				## entity page.
-				add Rails.application.routes.url_helpers.stock_path(exchange_entity.name), :changefreq => "daily", :priority => 0.9
+				add Rails.application.routes.url_helpers.stock_path(exchange_entity.stock_name), :changefreq => "daily", :priority => 0.9
 
-=begin
+
 				## trend directions.
 				Concerns::Stock::EntityConcern::TREND_DIRECTIONS.each do |td|
-					add Rails.application.routes.url_helpers.direction_entity_path(exchange_entity.name,td), :changefreq => "daily", :priority => 0.9
+					add Rails.application.routes.url_helpers.direction_entity_path(exchange_entity.stock_name,td), :changefreq => "daily", :priority => 0.9
 				end
-					
+		
 				## indicator combinations.
 				all_indicators.each do |indicator| 
-					add Rails.application.routes.url_helpers.combination_indicator_path(impacted_stock.name,exchange_entity.name,), :changefreq => "daily", :priority => 0.9
+					
+					puts "indicator name :#{indicator.stock_name}"
+					#puts JSON.pretty_generate(indicator.attributes)
+					
+					add Rails.application.routes.url_helpers.combination_indicator_path(exchange_entity.stock_name,indicator.stock_name), :changefreq => "daily", :priority => 0.9
 				end
 
 				## other entity combinations.
@@ -90,15 +106,13 @@ class SiteMap::SiteMap
 					all_other_stocks[exchange_name].each do |impacted_stock|
 						## combination path
 						## entity path.
-						add Rails.application.routes.url_helpers.combination_entity_path(impacted_stock.name,exchange_entity.name), :changefreq => "daily", :priority => 0.9
+						add Rails.application.routes.url_helpers.combination_entity_path(impacted_stock.stock_name,exchange_entity.stock_name), :changefreq => "daily", :priority => 0.9
 					end
 				end
-=end
-
-
 			end
 		end
 
+		SitemapGenerator::Sitemap.ping_search_engines('https://algorini.com/sitemap.xml.gz')
 
 	end
 
