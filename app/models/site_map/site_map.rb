@@ -112,7 +112,7 @@ class SiteMap::SiteMap
 			end
 		end
 
-		SitemapGenerator::Sitemap.ping_search_engines('https://algorini.com/sitemap.xml.gz')
+		#SitemapGenerator::Sitemap.ping_search_engines('https://algorini.com/sitemap.xml.gz')
 
 	end
 
