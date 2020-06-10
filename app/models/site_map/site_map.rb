@@ -78,7 +78,7 @@ class SiteMap::SiteMap
 		SitemapGenerator::Sitemap.sitemaps_path = 'sitemaps/'
 
 		## useful for debugging.
-		SitemapGenerator::Sitemap.compress = false
+		SitemapGenerator::Sitemap.compress = true
 
 		adapter = SitemapGenerator::GoogleStorageAdapter.new(
 		  project_id: ENV["GOOGLE_CLOUD_PROJECT"],
