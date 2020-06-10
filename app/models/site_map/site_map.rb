@@ -80,11 +80,16 @@ class SiteMap::SiteMap
 		## useful for debugging.
 		SitemapGenerator::Sitemap.compress = false
 
-		SitemapGenerator::Sitemap.adapter = SitemapGenerator::GoogleStorageAdapter.new(
-		  credentials: get_credentials_path,
+		adapter = SitemapGenerator::GoogleStorageAdapter.new(
 		  project_id: ENV["GOOGLE_CLOUD_PROJECT"],
 		  bucket: "algorini"
 		)
+
+		unless Rails.env.production?
+			adapter.credentials = get_credentials_path
+		end
+
+		SitemapGenerator::Sitemap.adapter = adapter
 
 		# lets take a look at the sitemap.
 
