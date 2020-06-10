@@ -17,7 +17,11 @@ class SiteMap::SiteMap
 	## today mostly cloning -> and 
 	## don't allow newer categories ??? what say, that prevents fuck ups.
 
-	CREDENTIALS_PATH = Rails.root.join("config","keys","google_cloud_storage_bhargav_r_raut@gmail.com_service_account_dark-edge-264914-3c2e40ad386e.json")
+	#CREDENTIALS_PATH = Rails.root.join("config","keys","google_cloud_storage_bhargav_r_raut@gmail.com_service_account_dark-edge-264914-3c2e40ad386e.json")
+
+	#JSON.parse(ENV["GOOGLE_CLOUD_CREDENTIALS"])
+
+	#
 
 	after_save do |document|
 		document.schedule_background_update
@@ -25,6 +29,14 @@ class SiteMap::SiteMap
 
 	def schedule_background_update
 		ScheduleJob.perform_later([self.id.to_s,self.class.name.to_s,"build_sitemap"])
+	end
+
+	def get_credentials_path
+		if Rails.env.production?
+			StringIO.new(ENV["GOOGLE_CLOUD_CREDENTIALS"])
+		else
+			Rails.root.join("config","keys","google_cloud_storage_bhargav_r_raut@gmail.com_service_account_dark-edge-264914-3c2e40ad386e.json")
+		end
 	end
 
 	## lets see if this much works or not
@@ -69,7 +81,7 @@ class SiteMap::SiteMap
 		SitemapGenerator::Sitemap.compress = false
 
 		SitemapGenerator::Sitemap.adapter = SitemapGenerator::GoogleStorageAdapter.new(
-		  credentials: CREDENTIALS_PATH,
+		  credentials: get_credentials_path,
 		  project_id: ENV["GOOGLE_CLOUD_PROJECT"],
 		  bucket: "algorini"
 		)
