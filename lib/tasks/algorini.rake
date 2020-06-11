@@ -15,12 +15,6 @@ namespace :algorini do
 
 		Rails.logger.debug("creating indicators")
 		Indicator.update_many
-        #Stock.create_index! force: true
-        #aggs = Inventory::Item.items_count_by_item_group("Pathofast-5e7e7b29acbcd678ed0903c49768ef")
-
-        #l = JSON.parse($redis.get("week_changes_obj"))
-        #IO.write("jj.json",JSON.pretty_generate(l))
-        #User.setup
 
     end
 

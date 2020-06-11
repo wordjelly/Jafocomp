@@ -1,6 +1,6 @@
 <% if @entity.positive_results.size > 0 %>
 	<ul class="collection with-header">
-		<li class="collection-header green-text"><h4><i class="material-icons" style="margin-right:1rem;">storage</i>Positive Indicators</h4></li>
+		<li class="collection-header green-text"><h4><i class="material-icons" data-icon="storage" style="margin-right:1rem;"></i>Positive Indicators</h4></li>
 		<% random_results = [] %>
 		<% 1.times do |n| %>
 			<% random_key = Random.rand((@entity.positive_results.size - 1)) %>
@@ -13,12 +13,12 @@
 			<% icon_color = (icon == "trending_up" ? "green" : "red") %>
 
 		    <li class="collection-item avatar" style="padding-top: 20px !important; padding-bottom: 10px !important;">
-		      <i class="material-icons circle <%= icon_color %>"><%= icon %></i>
+		      <i data-icon="<%= icon %>" class="material-icons circle <%= icon_color %>"></i>
 		      <span class="title" style="font-weight: 500; font-size: 19px;"><span class="grey-text">What happens to </span><span class="blue-grey-text"><%= result["_source"]["setup"].gsub(/What happens to/,'') %>?</span></span>
 		      <p class="<%= icon_color %>-text" style="margin-top: 1rem; font-size: 16px;"><%= result["_source"]["answer"] %>
 		      </p>
 		      <p style="margin-top:0.75rem;">
-		      	<i style="vertical-align: bottom" class="material-icons grey-text text-lighten-1">bubble_chart</i><%= link_to "Stats", result_path(id: result["_id"], eid: result["_source"]["impacted_entity_id"]), class: "grey-text text-lighten-1" %>
+		      	<i style="vertical-align: bottom" data-icon="bubble_chart" class="material-icons grey-text text-lighten-1"></i><%= link_to "Stats", result_path(id: result["_id"], eid: result["_source"]["impacted_entity_id"]), class: "grey-text text-lighten-1" %>
 		      </p>
 		    </li>
 	    <% end %>

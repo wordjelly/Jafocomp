@@ -16,7 +16,7 @@
           <% icon = "trending_down" %>
         <% end %>
         <div class="<%= text_color %>" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
-          <i class="material-icons"><%= icon %></i>
+          <i class="material-icons" data-icon="<%= icon %>"></i>
           Historically, <b><%= result['_source']['target'] %></b> <%= result["_source"]["rises_or_falls"] %>  <b><%= result["_source"]["percentage"] %>%</b> of the times. <span><br> </span>
         </div>
         <div>

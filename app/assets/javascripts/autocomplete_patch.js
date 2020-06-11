@@ -238,18 +238,18 @@ M.Autocomplete.prototype.replace_up_down = function(match,ud,offset,string){
 
 	if(ud == "up"){
 		if(match.indexOf("pattern") != -1){
-			return "<i class='material-icons'>arrow_upward</i> pattern";
+			return "<i class='material-icons' data-icon='arrow_upward'></i> pattern";
 		}
 		else{
-			return "<i class='material-icons'>arrow_upward</i>";
+			return "<i class='material-icons' data-icon='arrow_upward'></i>";
 		}
 	}
 	else{
 		if(match.indexOf("pattern") != -1){
-			return "<i class='material-icons'>arrow_downward</i> pattern";
+			return "<i class='material-icons' data-icon='arrow_downward'></i> pattern";
 		}
 		else{
-			return "<i class='material-icons'>arrow_downward</i>";
+			return "<i class='material-icons' data-icon='arrow_downward'></i>";
 		}
 	}
 }

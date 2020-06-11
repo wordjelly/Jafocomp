@@ -1573,12 +1573,12 @@ var update_falls_or_rises_text = function(search_result){
 	_.each(search_result.impacts[0].statistics,function(statistic,key,list){
 		var total_times = statistic.total_up + statistic.total_down;
 		if(statistic.total_up >= statistic.total_down){
-			statistic["up_down_text"] = "<i class='material-icons'>call_made</i>Rises " + statistic.total_up + "/" + (total_times) + " times";
+			statistic["up_down_text"] = "<i class='material-icons' data-icon='call_made'></i>Rises " + statistic.total_up + "/" + (total_times) + " times";
 			statistic["up_down_text_color"] = "green";
 			search_result.bias = 1
 		}
 		else{
-			statistic["up_down_text"] = "<i class='material-icons'>call_received</i>Falls " + statistic.total_down + "/" + (total_times) + " times";
+			statistic["up_down_text"] = "<i class='material-icons' data-icon='call_received'></i>Falls " + statistic.total_down + "/" + (total_times) + " times";
 			statistic["up_down_text_color"] = "red";	
 			search_result.bias = -1
 		}
@@ -1663,10 +1663,10 @@ var replace_percentage_and_literal_numbers = function(search_result){
 
 var replacer = function(match,ud,offset,string){
 	if(ud == "up"){
-		return "<i class='material-icons'>arrow_upward</i>";
+		return "<i class='material-icons' data-icon='arrow_upward'></i>";
 	}
 	else{
-		return "<i class='material-icons'>arrow_downward</i>";
+		return "<i class='material-icons' data-icon='arrow_downward'></i>";
 	}
 }
 
@@ -2083,10 +2083,10 @@ var build_time_based_indicator_summary = function(search_result){
 				// first fix the trend.
 				summary = "";
 				if(trend["rose_or_fell"] == "fell"){
-					summary += '<span class="red-text"><i class="material-icons">trending_down</i>';
+					summary += '<span class="red-text"><i class="material-icons" data-icon="trending_down"></i>';
 				}
 				else if(trend["rose_or_fell"] == "rose"){
-					summary += '<span class="green-text"><i class="material-icons">trending_up</i>';
+					summary += '<span class="green-text"><i class="material-icons" data-icon="trending_up"></i>';
 				}
 
 				summary += "In the last " + _.size(Object.keys(search_result.year_wise_data)) + " years, " + search_result.target + " " + trend["rose_or_fell"] + " " + get_preposition(search_result) + " " + get_predicate(search_result) + " " + trend["rose_or_fell_times"] + " times.</span>";

@@ -74,7 +74,7 @@
       <div class="card">
           <div class="card-image">
             <canvas id="search_result_chart_{{= search_result['_id'] }}" />
-            <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
+            <a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons" data-icon="add"></i></a>
           </div>
           <div class="card-content">
             <span class="card-title">{{= search_result['_source']['setup'] }}</span>
@@ -189,7 +189,7 @@
   <script type="text/template" id="related_queries_template">
     {{_.each(search_result,function(query){ }}
       <div class="grey-text text-lighten-2 related_query_term" style="font-size:18px; cursor: pointer" data-related-query={{= query }}>
-        <i class="material-icons" style="vertical-align: bottom">keyboard_arrow_right</i>{{= query }}  
+        <i class="material-icons" data-icon="keyboard_arrow_right" style="vertical-align: bottom"></i>{{= query }}  
       </div>
     {{ }) }}
   </script>
@@ -207,7 +207,7 @@
         {{ }) }}
 
         <div class="chip show_more_query_chips grey lighten-2"  style="border-bottom: none; cursor: pointer; font-size: 16px;">
-            <i class="material-icons" style="vertical-align: middle; !important">add</i>
+            <i class="material-icons" data-icon="add" style="vertical-align: middle; !important"></i>
         </div>
 
 
@@ -243,7 +243,7 @@
       <div class="card">
         <div class="card-content">
           <div class="card-title blue-grey-text" style="font-weight: 400;">
-            <i class="material-icons">{{= search_result.icon }}</i> <a href="{{= search_result.entity_link }}">{{= search_result.title }}</a>
+            <i class="material-icons" data-icon="{{= search_result.icon }}"></i> <a href="{{= search_result.entity_link }}">{{= search_result.title }}</a>
           </div>
           <div class="card-content-main green-text">
             {{= search_result.content }}
@@ -304,10 +304,10 @@
           </span>
           {{ if(search_result.rises_or_falls == "tends to rise"){ }}
           <div class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
-            <i class="material-icons">trending_up</i>
+            <i class="material-icons" data-icon="trending_up"></i>
           {{ } else { }}
           <div class="red-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
-            <i class="material-icons">trending_down</i>
+            <i class="material-icons" data-icon="trending_down"></i>
           {{ } }}
             Historically, <b>{{= search_result.target }}</b> {{= search_result.rises_or_falls }}  <b>{{= search_result.percentage }}%</b> of the times. <span><br> </span>
           </div>
@@ -324,7 +324,7 @@
               <div class="{{= val.time_frame_name }}">
                 <div class="row profit_loss">
                   <div class="col l3 m3 s3 center">
-                    <div class="blue-grey-text text-lighten-1"><i class="material-icons"  style="font-size: 24px;">timeline</i></div>
+                    <div class="blue-grey-text text-lighten-1"><i class="material-icons" data-icon="timeline"  style="font-size: 24px;"></i></div>
                     <div class="grey-text text-darken-1">Over {{= val.time_frame_name }}</div>
                   </div>
                   <div class="col l4 m4 s4 center">
@@ -429,12 +429,12 @@
         <div class="card">
           <div class="card-content">
             <span class="card-title blue-grey-text text-lighten-1" style="font-weight:600 !important; font-size:26px !important;">Related</span>
-            <i class="green-text material-icons" style="vertical-align:sub;">chevron_right</i>
+            <i class="green-text material-icons" style="vertical-align:sub;" data-icon="chevron_right"></i>
             <span class="green-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
               Positive Indicators for {{= search_result.target }}
             </span>
             <br>
-            <i class="red-text material-icons" style="vertical-align:sub;">chevron_right</i>
+            <i class="red-text material-icons" style="vertical-align:sub;" data-icon="chevron_right"></i>
             <span class="red-text" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
               Negative Indicators for {{= search_result.target }}
             </span>
@@ -447,9 +447,9 @@
             <span class="card-title">
               Debug
             </span>
-            <i class="material-icons">chevron_right</i>Current Datapoint epoch {{= search_result.current_datapoint_epoch }}
+            <i class="material-icons" data-icon="chevron_right"></i>Current Datapoint epoch {{= search_result.current_datapoint_epoch }}
             <br>
-            <i class="material-icons">chevron_right</i>Epoch SCore {{= search_result.gd_epoch_score_new }}
+            <i class="material-icons" data-icon="chevron_right"></i>Epoch SCore {{= search_result.gd_epoch_score_new }}
           </div>
         </div>
       </div>
@@ -494,12 +494,12 @@
     <ul id="nav-mobile" class="right hide-on-med-and-down">
       <li><%= link_to "Exchanges", stocks_path(:entity => {:stock_is_exchange => 1}) %></li>
       <li><%= link_to "Stocks", stocks_path %></li>
-      <li><%= link_to "Indicators", indicators_path(:entity => {:stock_is_indicator => 1}) %>Indicators</li>
+      <li><%= link_to "Indicators", indicators_path(:entity => {:stock_is_indicator => 1}) %></li>
     </ul>
   </div>
 </nav>
 
-
+<!-- set titles and descriptions for all -->
 
 <!---- container block -->
 
@@ -521,10 +521,10 @@
 
 <div class="row" style="margin-bottom: 0px;">
   <div class="input-field col s12 l12 m12">
-    <i class="material-icons prefix">textsms</i>
-    <input type="text" id="autocomplete-input"  class="autocomplete">
+    <i class="material-icons prefix" data-icon="textsms"></i>
+    <input type="text" id="autocomplete-input" class="autocomplete">
     <label for="autocomplete-input">Search</label>
-    <i class="material-icons" id="input-clear" style="display: none">close</i>
+    <i class="material-icons" data-icon="close" id="input-clear" style="display: none"></i>
   </div>
 </div>
 

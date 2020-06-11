@@ -614,16 +614,16 @@ module Concerns::IndividualResultConcern
 			replaced = text
 
 			replaced = replaced.gsub(/(up|down)(?=(_up|_down))/) {|match|if match == "up"
-					"<i class='material-icons'>arrow_upward</i>"
+					"<i class='material-icons' data-icon='arrow_upward'></i>"
 				elsif match == "down"
-					"<i class='material-icons'>arrow_downward</i>"
+					"<i class='material-icons' data-icon='arrow_downward'></i>"
 				end  
 			}
 
 			replaced = replaced.gsub(/_(up|down)\b/) {|match|if match == "up"
-					"<i class='material-icons'>arrow_upward</i>"
+					"<i class='material-icons' data-icon='arrow_upward'></i>"
 				elsif match == "down"
-					"<i class='material-icons'>arrow_downward</i>"
+					"<i class='material-icons' data-icon='arrow_downward'></i>"
 				end  
 			}
 

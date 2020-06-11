@@ -53,3 +53,11 @@
 .information_card .tabs .indicator {
     background-color: white;
 }
+
+
+/****
+to prevent icons showing up in search results
+****/
+.material-icons:after {
+    content: attr(data-icon);
+}

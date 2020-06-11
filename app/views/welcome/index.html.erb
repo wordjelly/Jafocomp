@@ -90,7 +90,7 @@
 				<% if index == 0 %>
 					<!-- add a chip to show all -->
 					<div class="chip show_more_chips blue-grey white-text lighten-2"  style="border-bottom: none; cursor: pointer; font-size: 16px;">
-			            <i class="material-icons" style="vertical-align: middle; !important">add</i>
+			            <i class="material-icons" data-icon="add" style="vertical-align: middle; !important"></i>
 			        </div>
 			    <!-- lets do nested form -->
 				<% elsif index == (last_index - sector_row.size) %>
@@ -127,8 +127,8 @@
 		
 		<div id="front_page_trend" class="card col l6 offset-l3" data-trends="<%= JSON.generate(@result['trends']) %>" style="font-size:22px; margin-top:0.5rem;">
 			<div class="card-content">
-			<div class="card-title">Quick Trends<i class="material-icons refresh_trend" style="vertical-align: super; font-size:18px;">autorenew</i></div>
-			<i style="vertical-align: middle; margin-right:1rem;" class="material-icons <%= @result['trends'][0]["trend_direction"] == 'rise' ? 'green' : 'red' %>-text front_page_trend_icon">trending_<%= @result["trends"][0]["trend_direction"] == "rise" ? "up" : "down" %></i><span id="front_page_trend_setup" class="grey-text"><%= @result["trends"][0]["setup"] %> (<%= @result["trends"][0]["dateString"] %>)</span>
+			<div class="card-title">Quick Trends<i class="material-icons refresh_trend" data-icon="autorenew" style="vertical-align: super; font-size:18px;"></i></div>
+			<i style="vertical-align: middle; margin-right:1rem;" class="material-icons <%= @result['trends'][0]["trend_direction"] == 'rise' ? 'green' : 'red' %>-text front_page_trend_icon" data-icon="trending__<%= @result['trends'][0]['trend_direction'] == 'rise' ? 'up' : 'down' %>"></i><span id="front_page_trend_setup" class="grey-text"><%= @result["trends"][0]["setup"] %> (<%= @result["trends"][0]["dateString"] %>)</span>
 			</div>
 		</div>
 		<div class="divider col l2 m2 s2 offset-l5 offset-m5 offset-s5" style="margin-top:1rem;">
