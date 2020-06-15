@@ -492,9 +492,9 @@
   <div class="nav-wrapper">
     <a href="/" class="brand-logo">Algorini</a>
     <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <li><%= link_to "Exchanges", stocks_path(:entity => {:stock_is_exchange => 1}) %></li>
-      <li><%= link_to "Stocks", stocks_path %></li>
-      <li><%= link_to "Indicators", indicators_path(:entity => {:stock_is_indicator => 1}) %></li>
+      <li data-nosnippet><%= link_to "Exchanges", exchanges_path %></li>
+      <li data-nosnippet><%= link_to "Stocks", stocks_path %></li>
+      <li data-nosnippet><%= link_to "Indicators", indicators_path %></li>
     </ul>
   </div>
 </nav>
@@ -502,7 +502,6 @@
 <!-- set titles and descriptions for all -->
 
 <!---- container block -->
-
 
 <div class="container base">
   <!-- search related stuff -->
@@ -516,6 +515,8 @@
     </div>
 </div>
 
+<!-- so seo was a big issue -->
+<!-- get rid of those navs -->
 <%= content_for :before_search %>
 
 

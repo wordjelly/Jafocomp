@@ -1,8 +1,0 @@
-<% @stocks_by_exchange.keys.each do |exchange_name| %>
-	var div_id = "#<%= exchange_name.parameterize %>";
-	<% @stocks_by_exchange[exchange_name][:stocks].each do |stock| %>
-		<% @stock = stock %>
-		<% @from = @stocks_by_exchange[exchange_name][:next_from] %>
-		$(div_id).append("<%= escape_javascript(render :partial => '/stocks/show_summary.html.erb') %>");
-	<% end %>
-<% end %>

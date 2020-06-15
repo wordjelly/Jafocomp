@@ -1,0 +1,9 @@
+<ul class="collection">
+    <% @exchanges.each do |entity| %>
+    <li class="collection-item avatar">
+      <i class="material-icons circle green" data-icon="insert_chart"></i>
+      <span class="title blue-grey-text text-darken-2" style="font-weight: 500; font-size: 18px;"><%= link_to entity.stock_name, stock_path(entity.stock_name) %></span>
+      <p class="grey-text text-darken-2" style="font-size: 14px;"><%= entity.stock_description.split(".")[0] %></p>
+    </li>
+    <% end %>
+</ul>

@@ -310,7 +310,7 @@ module Concerns::Stock::EntityConcern
 		## key -> exchange_name
 		## value -> hash(:stocks => [Array of Stock Objects], :next_from => Integer)
 		## @called_from : stocks_controller#index, and indicators_controller#index.
-		def do_index
+		def do_index(args={})
 
 			#puts self.attributes.to_s
 			## so if want to load more we can do that.
@@ -373,7 +373,7 @@ module Concerns::Stock::EntityConcern
 			## and we have to deal with 
 			stocks_by_exchange = {}
 			
-			puts JSON.pretty_generate(search_request.response.to_h)
+			#puts JSON.pretty_generate(search_request.response.to_h)
 
 
 			search_request.response.aggregations.exchange_agg.buckets.each do |exchange_agg_bucket|

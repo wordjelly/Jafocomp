@@ -5,9 +5,8 @@
 	      <img class="entity_background" style="height: 200px">
 	    </div>
 	    <div class="card-content">
-	      <span class="card-title blue-grey-text" style="font-weight: 500"><%= @entity.stock_name %></span>
-	      <p>Explore thousands of financial indicators and correlations for <%= @entity.stock_name %></p>
-	      <p><%= @entity.stock_description %></p>
+	      <span class="card-title blue-grey-text" style="font-weight: 300; font-size:44px; margin-bottom:1rem;"><%= @entity.stock_name %></span>
+	      <p style="font-size: 20px;"><%= @entity.stock_description %></p>
 	    </div>
 	    <div class="card-action">
 	      <a href="<%= @entity.stock_link %>">Read More At Wikipedia</a>
@@ -18,18 +17,22 @@
 
 <!-- would be better to -->
 
-<div class="row" style="margin-bottom: 10px !important;">
+<div class="row" style="margin-bottom: 10px !important; display: none;">
 	<div class="col l12 s12 m12">
 		<ul class="collection with-header">
-			<li class="collection-header"><h4><i class="material-icons" data-icon="storage" style="margin-right:1rem;"></i>Latest Correlations</h4></li>
+			<li class="collection-header"><h4><i class="material-icons" data-icon="storage" style="margin-right:1rem;"></i>Latest Trends</h4></li>
 		</ul>
 	</div>
 </div>
 
+
+<h3 class="header light" style="padding-left: 1rem; margin-bottom: 1rem; margin-top:3rem;"><i class="material-icons" data-icon="collections_bookmark"></i><span style="margin-left: 0.5rem;">Top Trends</span></h3>
+<div class="divider" style="width:30%; margin-left: 1rem; margin-bottom: 1rem;"></div>
+
 <% @entity.stock_top_results.each_slice(1) do |results| %>
 	<div class="row">
 		<% results.each do |result| %>
-		    <%= render :partial => "/stocks/summary_card", locals: {result: result } %>
+		    <%= render :partial => "/entities/summary_card", locals: {result: result } %>
 		<% end %>
 	</div>
 <% end %>

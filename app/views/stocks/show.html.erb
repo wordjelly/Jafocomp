@@ -1,5 +1,0 @@
-<% if @stock.stock_result_type == Concerns::Stock::EntityConcern::SINGLE %>
-	<%= render :partial => "show" %>
-<% elsif @stock.stock_result_type == Concerns::Stock::EntityConcern::COMBINATION %>
-	<%= render :partial => "show_combination" %>
-<% end %>

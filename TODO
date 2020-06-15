@@ -246,10 +246,18 @@ we search for combinations where it is the primary entity -> and show them, toge
 <!-- sort out watsapp text not showing correctly -->
 <!-- fix the query -->
 <!-- show indicators, stocks, as bottom links, on mobile view -->
-<!-- make clicking on the exchange(takes to the exchange page?) -->
+<!-- make clicking on the exchange(takes to the exchange page -> would be a better option (what about just showing the entity results, how to show the correlations then, a seperate page for that ?)) -->
 <!-- also clicking on the industries should work -->
 <!-- show stats on all the results, in the cards, dropdown for graph? -->
 <!-- load related card only for impacted entity id -->
 <!-- on stocks page get rid of underscores from exchnage names -->
 <!-- show the background image instead of the entity images, or downlod the entity images -->
 <-- increase font size of descriptions -->
+
+
+DO THIS FIRST, AND MANAGE A TITLE FOR EVERY PAGE, AS WELL AS A DESCRIPTION.
+
+<!-- exchanges page simple index with a display of the exchanges as a simple collection -->
+<!-- clicking on it, takes it to the entity page -->
+<!-- below the latest correlations a simple table, with links to components -->
+<!-- below that a simple collection with links to correlations with other stock, and a correlation page to correlate the chosen stock with any of them, which will take us to the with_stock, and titles for all these pages. --> 
