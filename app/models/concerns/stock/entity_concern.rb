@@ -129,9 +129,17 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :stock_id
 		attr_accessor :indicator_id
 		attr_accessor :exchange_id
+
+		## should be used for pagination and other purposes.
+		## size can be permitted.
 		attr_accessor :from
-		attr_accessor :trend_direction
+		attr_accessor :size
+		attr_accessor :total_pagination_blocks
 		
+		attr_accessor :trend_direction
+				
+		## because this has to be stored in the query_concern.
+		attribute :total_results, Integer, mapping: {type: 'integer'}
 		attribute :div_id, String,  mapping: {type: 'keyword'}
 		## used in stocks_controller -> to show only the exchanges in the index action.
 		attr_accessor :only_exchanges
@@ -146,7 +154,17 @@ module Concerns::Stock::EntityConcern
 		end
 
 
-		#############################################################
+		after_find do |document|
+			document.set_pagination_details
+		end
+
+		## so we will have to run the callbacks as after_find.
+		def set_pagination_details
+			self.from ||= 0
+			self.size ||= 10
+			self.total_pagination_blocks = 10
+		end
+		############################################################
 		##
 		##
 		## CALLBACKS
@@ -375,7 +393,6 @@ module Concerns::Stock::EntityConcern
 			
 			#puts JSON.pretty_generate(search_request.response.to_h)
 
-
 			search_request.response.aggregations.exchange_agg.buckets.each do |exchange_agg_bucket|
 
 				exchange_name = exchange_agg_bucket["key"]
@@ -383,6 +400,7 @@ module Concerns::Stock::EntityConcern
 				exchange_agg_bucket.stocks_agg.hits.hits.each do |hit|
 					stock = self.class.new(hit["_source"])
 					stock.id = hit["_id"]
+					stock.run_callbacks(:find)
 					stocks_by_exchange[exchange_name][:stocks] << stock
 				end
 			end
@@ -420,6 +438,7 @@ module Concerns::Stock::EntityConcern
 					[
 						:trigger_update,
 						:from,
+						:size,
 						:stock_is_exchange,
 						:stock_exchange,
 						:stock_is_indicator,

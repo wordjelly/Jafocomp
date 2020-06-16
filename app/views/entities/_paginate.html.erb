@@ -1,4 +1,20 @@
-<div class="row center">
-      <!-- so we have say 400 results, and we show 10 per page -->
-      <div class="col s1 m1 l1 amber-darken-2 white-text">1</div>
+<div class="row center" style="padding-left: 0.75rem; padding-right: 0.75rem; margin-top: 2.75rem;">
+      <% from = (@entity.from/(@entity.size*@entity.total_pagination_blocks)).to_i %>
+      <% block_number = from/@entity.size %>
+      <% puts "start from is :#{from}, and block number is; #{block_number}, total results are: #{@entity.total_results}" %>
+      <% total_blocks = 0 %>
+      <% while true %>
+            <div style="border: 1px solid; border-color: #eee; line-height: 50px; font-size: 28px;" class="col s1 m1 l1 amber darken-2 white-text"><%= block_number %></div>
+            <% from += @entity.size %>
+            <% block_number += 1 %>
+            <% total_blocks += 1 %>
+            <% puts "loop ends, from becomes: #{from}, block number becomes: #{block_number}" %>
+            <% if from > @entity.total_results %>
+                  <% break %>
+            <% end %>
+            <% if total_blocks > 11 %>
+                  <% break %>
+            <% end %>
+      <% end %>
 </div>
+<!-- where to render this stuff -->

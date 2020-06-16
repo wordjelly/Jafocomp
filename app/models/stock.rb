@@ -23,6 +23,7 @@ class Stock
 	INFORMATION_TYPE = "entity"
 
 	
+
 	include Concerns::Stock::EntityConcern
 
 	
@@ -89,6 +90,7 @@ class Stock
 				
 			end
 			e.id = hit["_id"]
+			e.run_callbacks(:find)
 			#puts "e div id before: #{e.div_id}"
 			#puts "args--> #{args}"
 			#ds = args.deep_symbolize_keys

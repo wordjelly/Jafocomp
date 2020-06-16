@@ -201,6 +201,7 @@ class Indicator
 			raise Elasticsearch::Transport::Transport::Error if hit.blank?
 			e = cls.new(hit["_source"])
 			e.id = hit["_id"]
+			e.run_callbacks(:find)
 			puts "args--> #{args}"
 			e.attributes.merge!(args)
 		rescue Elasticsearch::Transport::Transport::Error

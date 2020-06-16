@@ -555,13 +555,16 @@ class Result
 
 		body = match_phrase_query_builder(args)
 
-		puts "search body"
-		puts JSON.pretty_generate(body)
+		#puts "search body"
+		#puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
 
-		#puts "search results"
-		#puts search_results.size.to_s
+		if args[:object]
+			if args[:object].respond_to? :total_results
+				args[:object].total_results = search_results['hits']['total']
+			end
+		end
 
 		parse_nested_search_results(search_results,args[:query])
 

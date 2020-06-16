@@ -1,0 +1,12 @@
+<h3 class="header light" style="padding-left: 1rem; margin-bottom: 1rem; margin-top:3rem;"><i class="material-icons" data-icon="collections_bookmark"></i><span style="margin-left: 0.5rem;">Tips From Other Stocks</span></h3>
+<div class="divider" style="width:65%; margin-left: 1rem; margin-bottom: 0rem;"></div>
+
+<div class="row" style="padding-left: 0.75rem; padding-right: 0.75rem; margin-top: 2.00rem;">
+	<ul class="collection">
+		<% @entity.combinations.each do |combination| %>
+		    <li class="collection-item">
+		      <span class="title">Correlations between <%= combination["exchange_name"] %> stocks and <%= @entity.stock_name %></span>
+		    </li>
+		<% end %>
+	</ul>
+</div>
