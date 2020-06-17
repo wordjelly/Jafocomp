@@ -83,6 +83,8 @@ module Concerns::Stock::EntityConcern
 
 		attribute :components, Array, mapping: {type: 'keyword'}
 
+
+
 		## why indicator combinations were not generated ?
 		## for that we needed the stocks
 		## 
@@ -129,6 +131,9 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :stock_id
 		attr_accessor :indicator_id
 		attr_accessor :exchange_id
+		attr_accessor :show_components
+		attr_accessor :combine_with
+	
 
 		## should be used for pagination and other purposes.
 		## size can be permitted.
@@ -443,13 +448,90 @@ module Concerns::Stock::EntityConcern
 						:stock_exchange,
 						:stock_is_indicator,
 						:trend_direction,
-						:div_id
+						:div_id,
+						:show_components,
+						:combine_with
 					]
 				}
 			]
 		end
 
 		
+	end
+
+	module ClassMethods
+		def find_or_initialize(args={})
+			#puts "Came to find or initialize with args: #{args}"
+			e = nil
+			cls = args.delete(:class_name) || "Stock"
+			cls = cls.constantize
+			return cls.new(args) if ((args[:id].blank?))
+			begin
+				#puts index_name
+				#puts document_type
+
+				query = {
+					bool: {
+						should: [
+							{
+								ids: {
+									values: [args[:id]]
+								}
+							},
+							{
+								term: {
+									stock_name: args[:id]
+								}
+							}
+						]
+					}
+				}
+
+				#puts "query is:"
+				#puts query.to_s
+				## no idea why the fuck this is not working.
+
+				search_response =  cls.gateway.client.search :body => {query: query}, index: index_name, :type => document_type
+
+				#puts search_response.to_s
+				
+				hit = search_response["hits"]["hits"].first
+
+				#puts "hit is:"
+				#puts hit.to_s
+
+				#hit = cls.gateway.client.get :id => args[:id], :index => Stock.index_name, :type => Stock.document_type
+				raise Elasticsearch::Transport::Transport::Error if hit.blank?
+
+				e = cls.new(hit["_source"])
+				
+				
+				args.keys.each do |k|
+					
+					e.send("#{k}=",args[k])
+					
+				end
+				e.id = hit["_id"]
+				e.run_callbacks(:find)
+				#puts "e div id before: #{e.div_id}"
+				#puts "args--> #{args}"
+				#ds = args.deep_symbolize_keys
+				#puts "ds is #{ds}"
+				#e.attributes.merge!(ds)
+				#puts "attributes div id after merging:"
+				#puts e.div_id
+			rescue Elasticsearch::Transport::Transport::Error
+				##puts "rescuing."
+				#puts "args setting :#{args}"
+				e = cls.new(args)
+				##puts "args are :#{args}"
+				e.set_name_description_link
+				#puts "---------- came past that ---------------- "
+			end
+			#puts "trigger udpate is--------------: #{e.trigger_update}"
+			#puts e.trigger_update.to_s
+	 		e
+		end
 	end
 
 end

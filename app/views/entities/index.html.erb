@@ -1,16 +1,26 @@
-<% @entities_by_exchange.keys.each do |exchange_name| %>
-	<div id="<%= exchange_name.parameterize %>" class="col l12 m12 s12">
-		<% @entities = @entities_by_exchange[exchange_name][:stocks] %>
-		<% @from = @entities_by_exchange[exchange_name][:next_from] %>
-		<div id ="<%= exchange_name.parameterize %>_stocks">
-			<% @entities.each do |entity| %>
-				<% @entity = entity %>
-				<%= render :partial => "/entities/show_summary" %>
-			<% end %>
-		</div>
-		<div id="more_button_holder" class="center">
-			<%= render :partial => "/entities/more_button", locals: { exchange_name: exchange_name } %>
-		</div>
-	</div>
-<% end %>
+<% first_entity = @entities_by_exchange[@entities_by_exchange.keys[0]][:stocks][0] %>
 
+<% unless first_entity.combine_with.blank? %>
+	
+<% else %>
+	<!-- if combine with is true, render that -->
+	<!-- we can show a simple list of all the stocks, by exchange name -->
+	<% @entities_by_exchange.keys.each do |exchange_name| %>
+		<div id="<%= exchange_name.parameterize %>" class="col l12 m12 s12">
+			<% @entities = @entities_by_exchange[exchange_name][:stocks] %>
+			<% @from = @entities_by_exchange[exchange_name][:next_from] %>
+			<!-- if combine with is true, then we show combination -->
+			<div id ="<%= exchange_name.parameterize %>_stocks">
+				<% @entities.each do |entity| %>
+					<% @entity = entity %>
+					<%= render :partial => "/entities/show_summary" %>
+				<% end %>
+			</div>
+			<div id="more_button_holder" class="center">
+				<%= render :partial => "/entities/more_button", locals: { exchange_name: exchange_name } %>
+			</div>
+		</div>
+	<% end %>
+
+
+<% end %>

@@ -4,8 +4,8 @@ module Concerns::Stock::ExchangeConcern
 
 	included do 
 
-
 	end
+
 
 	def entities(args={})
 

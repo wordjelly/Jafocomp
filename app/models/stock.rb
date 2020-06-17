@@ -1,32 +1,12 @@
 require 'elasticsearch/persistence/model'
-
-## routes like
-## indicators/stochastic_oscillator_indicator
-## stocks/Asian%10Paints/indicators
-## stocks/ABC/combinations/XYZ/indicators/
-
-## for a given stock (with or without combining factors)
-## stocks/ABC
-## it will show -> top 5 hits, and combination card hits.
-## if you click on an exchange -> will show top 5 hits, for all stocks in that exchange.
-## if you click on a combination card -> you can skip or paginate, by simple url query parameters.
-## if you click on an indicator -> it is like an exchange, we need combinations for all entities, impacted by those indicators.
-
-## how to compare against stocks of only a particular exchange, will have to be able to filter like that somehow.
-
-
-
-## so we need these nested urls.
-## so we can have and_stock.
 class Stock
 
 	INFORMATION_TYPE = "entity"
 
-	
-
 	include Concerns::Stock::EntityConcern
-
 	
+=begin
+	## find or initialize class methods has been ported to entity_concern#classmethods.
 	############################################################
 	##
 	##
@@ -112,7 +92,7 @@ class Stock
 	end
 
 	## so only show exchanges?
-	
+=end
 
 
 end

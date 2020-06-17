@@ -163,6 +163,8 @@ class Indicator
 
 	end
 
+	## ported to entity_concern#classmethods module.
+=begin
 	## @params[String] id : the id of the stock
 	## @return[Stock] e : either the stock if it exists, otherwise a new instance of an stock, with the provided id. 
 	def self.find_or_initialize(args={})
@@ -216,5 +218,6 @@ class Indicator
 		puts e.trigger_update.to_s
  		e
 	end
+=end
 
 end

@@ -39,4 +39,6 @@ class ExchangesController < ApplicationController
 
 	end	
 
+	## so we go with show, and fire a get_components accessor on it.
+
 end
