@@ -332,6 +332,7 @@ module Concerns::Stock::EntityConcern
 		## @return[Hash] stocks_by_exchange
 		## key -> exchange_name
 		## value -> hash(:stocks => [Array of Stock Objects], :next_from => Integer)
+		## @args => the query parameters sent into the index_action, keyed under :entity.
 		## @called_from : stocks_controller#index, and indicators_controller#index.
 		def do_index(args={})
 
@@ -405,6 +406,11 @@ module Concerns::Stock::EntityConcern
 				exchange_agg_bucket.stocks_agg.hits.hits.each do |hit|
 					stock = self.class.new(hit["_source"])
 					stock.id = hit["_id"]
+					args.keys.each do |attr|
+						if attr.to_s == "combine_with"
+							stock.send("#{attr}=",args[attr])
+						end
+					end
 					stock.run_callbacks(:find)
 					stocks_by_exchange[exchange_name][:stocks] << stock
 				end

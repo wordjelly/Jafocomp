@@ -40,7 +40,7 @@ module Concerns::EntityControllerConcern
 			
 			@entity = get_resource_class.new(permitted_params.fetch("entity",{}))
 			
-			@entities_by_exchange = @entity.do_index
+			@entities_by_exchange = @entity.do_index(permitted_params.fetch("entity",{}))
 
 			respond_to do |format|
 				format.html do 

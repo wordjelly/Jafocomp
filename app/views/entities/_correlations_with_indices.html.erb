@@ -7,7 +7,7 @@
 		<!-- or we will fuck up the name -->
 		<% @entity.combinations.each do |combination| %>
 		    <li class="collection-item">
-		      <%= link_to stocks_path({:entity => {:stock_exchange => combiation["exchange_name"], :combine_with => @entity.stock_name}}) do %>
+		      <%= link_to stocks_path({:entity => {:stock_exchange => combination["exchange_name"], :combine_with => @entity.stock_name}}) do %>
 		      	<span class="title">Correlations between <%= combination["exchange_name"] %> stocks and <%= @entity.stock_name %></span>
 		      <% end %>
 		    </li>
