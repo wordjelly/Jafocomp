@@ -6,6 +6,7 @@ module Concerns::EntityControllerConcern
 
 		before_action :find, :only => [:show,:update]
 		before_action :query, :only => [:show]
+		
 
 		## submit to google search map also.
 		def show

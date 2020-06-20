@@ -133,7 +133,9 @@ module Concerns::Stock::CombinationConcern
 			self.class.add_bulk_item(update_request)
 		end
 
-
+		## so we made a combination from the hits.
+		## but are we using these combinations or not ?
+		## so why commit it at all.
 		def combination_from_hits(args)
 			primary_stock = args[:primary_stock]
 			search_results = args[:search_results]
@@ -195,6 +197,9 @@ module Concerns::Stock::CombinationConcern
 
 
 					multi_response["responses"].each_with_index {|search_results,key|
+ 		
+						#puts JSON.pretty_generate(search_results)
+						#exit(1)
 
 						s = combination_from_hits({
 							primary_stock: self,
@@ -204,8 +209,10 @@ module Concerns::Stock::CombinationConcern
 
 						index_results_for_log[index][slice[key].stock_name] = search_results.size.to_s
 
+						## so the game is not here anyways.
 						self.add_combination_to_self(s)
 
+						## for what ?
 						self.class.add_bulk_item(s)
 
 					}
@@ -218,6 +225,8 @@ module Concerns::Stock::CombinationConcern
 
 			Rails.logger.debug("updated combinations for #{self.stock_name} as follows:")
 			Rails.logger.debug(JSON.pretty_generate(index_results_for_log))
+
+			## so here we want to add the combination total hits.
 
 		end
 

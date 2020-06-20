@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  
   before_action :set_meta_information
 
   DEFAULT_TITLE = "Algorini - Stock Market Search Engine"
@@ -24,6 +25,7 @@ class ApplicationController < ActionController::Base
     puts "meta information has been set"
     puts "title is #{@title}, meta description is #{@meta_description}"
   end
+
 
   ## so now how to set the layout.
 

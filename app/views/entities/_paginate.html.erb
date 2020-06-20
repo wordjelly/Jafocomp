@@ -1,20 +1,41 @@
-<div class="row center" style="padding-left: 0.75rem; padding-right: 0.75rem; margin-top: 2.75rem;">
-      <% from = (@entity.from/(@entity.size*@entity.total_pagination_blocks)).to_i %>
-      <% block_number = from/@entity.size %>
-      <% puts "start from is :#{from}, and block number is; #{block_number}, total results are: #{@entity.total_results}" %>
+<div class="row center" style="padding-left: 0.75rem; padding-right: 0.75rem; margin-top: 2.75rem; margin-bottom: 3.5rem;">
+      
+      <% from = (@entity.from.to_i/(@entity.size.to_i*@entity.total_pagination_blocks).to_i)*(@entity.size.to_i*@entity.total_pagination_blocks) %>
+      <% block_number = from/@entity.size.to_i %>
+      <% start_from = from %>
+      
+      <!-- just click on one before, and it will work -->
+      <!-- from should have become 100 -->
+
       <% total_blocks = 0 %>
       <% while true %>
-            <div style="border: 1px solid; border-color: #eee; line-height: 50px; font-size: 28px;" class="col s1 m1 l1 amber darken-2 white-text"><%= block_number %></div>
+            <% pagination_selected = "" %>
+            <% if from.to_i == @entity.from.to_i %>
+                  <% pagination_selected = "pagination_selected" %>
+            <% end %>
+            <%= link_to get_pagination_url({:original_url => controller.request.original_url, :from => from}) do %>
+                  <div style="border: 1px solid; border-color: #eee; line-height: 50px; font-size: 28px;" class="col s1 m1 l1 amber darken-2 white-text <%= pagination_selected %>"><%= block_number %></div>
+            <% end %>
+
             <% from += @entity.size %>
             <% block_number += 1 %>
             <% total_blocks += 1 %>
-            <% puts "loop ends, from becomes: #{from}, block number becomes: #{block_number}" %>
+            
             <% if from > @entity.total_results %>
                   <% break %>
             <% end %>
-            <% if total_blocks > 11 %>
+            <% if total_blocks > @entity.total_pagination_blocks %>
                   <% break %>
             <% end %>
       <% end %>
+      
 </div>
+<% if start_from > 0 %>
+      <div class="row center" style="margin-top:2.5rem; margin-bottom: 2.5rem;">
+            <div class="col l12 m12 s12">
+                  <%= link_to "Prev", get_pagination_url({:original_url => controller.request.original_url, :from => (start_from - @entity.size)}), {:class => "waves-effect waves-light btn"} %>
+            </div>
+      </div>
+<% end %>
+
 <!-- where to render this stuff -->

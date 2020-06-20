@@ -133,14 +133,20 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :exchange_id
 		attr_accessor :show_components
 		attr_accessor :combine_with
-	
+
+
 
 		## should be used for pagination and other purposes.
 		## size can be permitted.
 		attr_accessor :from
 		attr_accessor :size
 		attr_accessor :total_pagination_blocks
-		
+		## the original request url, with the query paramters,
+		## used in paginate, to render the pagination blocks.
+		## set before_action in the application controller.
+		attr_accessor :request_url
+	
+
 		attr_accessor :trend_direction
 				
 		## because this has to be stored in the query_concern.
@@ -167,7 +173,7 @@ module Concerns::Stock::EntityConcern
 		def set_pagination_details
 			self.from ||= 0
 			self.size ||= 10
-			self.total_pagination_blocks = 10
+			self.total_pagination_blocks = 11
 		end
 		############################################################
 		##

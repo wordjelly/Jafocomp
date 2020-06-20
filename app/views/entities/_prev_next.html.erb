@@ -1,0 +1,15 @@
+<div class="row">
+
+	<% if @entity.from.to_i > 0 %>
+		<div class="col l6 m6 s6 right-align">
+			<%= link_to "Prev", combination_entity_path(:id => @entity.stock_impacted, :primary_stock_id => @entity.stock_primary, :from => (@entity.from.to_i + @entity.stock_top_results.size).to_s), {:class => "waves-effect waves-light btn"} %>
+		</div>
+		<div class="col l6 m6 s6 left-align">
+			<%= link_to "Next", combination_entity_path(:id => @entity.stock_impacted, :primary_stock_id => @entity.stock_primary, :from => (@entity.from.to_i + @entity.stock_top_results.size).to_s), {:class => "waves-effect waves-light btn"} %>
+		</div>
+	<% else %>
+		<div class="col l6 m6 s6 offset-l3 offset-m3 offset-s3 center">
+			<%= link_to "Next", combination_entity_path(:id => @entity.stock_impacted, :primary_stock_id => @entity.stock_primary, :from => (@entity.from.to_i + @entity.stock_top_results.size).to_s), {:class => "waves-effect waves-light btn"} %>
+		</div>
+	<% end %>
+</div>

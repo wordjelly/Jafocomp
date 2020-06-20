@@ -486,52 +486,48 @@
 <body>
 
 
-<!-- nav bar will have to be here if at all -->
-<!-- on click search, it will hide the navbar depending on the current media query, it will move the  -->
-<nav class="blue-grey" id="navbar">
-  <div class="nav-wrapper">
-    <a href="/" class="brand-logo">Algorini</a>
-    <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <li data-nosnippet><%= link_to "Exchanges", exchanges_path %></li>
-      <li data-nosnippet><%= link_to "Stocks", stocks_path %></li>
-      <li data-nosnippet><%= link_to "Indicators", indicators_path %></li>
-    </ul>
-  </div>
-</nav>
-
-<!-- set titles and descriptions for all -->
-
-<!---- container block -->
-
-<div class="container base">
-  <!-- search related stuff -->
-  
-  <!-- this entire block has been moved from the container, where it was the first thing. -->
-<div class="row" style="margin-bottom: 0px !important; height: 0px;">
-    <div id="queued_query" data-queued-query></div>
-    <div id="already_running_query" data-already-running-query></div>
-    <div class="progress" id="progress_bar" style="visibility: hidden;">
-          <div class="indeterminate"></div>
+  <!-- nav bar will have to be here if at all -->
+  <!-- on click search, it will hide the navbar depending on the current media query, it will move the  -->
+  <nav class="blue-grey" id="navbar">
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo">Algorini</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li data-nosnippet><%= link_to "Exchanges", exchanges_path %></li>
+        <li data-nosnippet><%= link_to "Stocks", stocks_path %></li>
+        <li data-nosnippet><%= link_to "Indicators", indicators_path %></li>
+      </ul>
     </div>
-</div>
+  </nav>
 
-<!-- so seo was a big issue -->
-<!-- get rid of those navs -->
-<%= content_for :before_search %>
+  <!-- set titles and descriptions for all -->
 
+  <!---- container block -->
 
-<div class="row" style="margin-bottom: 0px;">
-  <div class="input-field col s12 l12 m12">
-    <i class="material-icons prefix" data-icon="textsms"></i>
-    <input type="text" id="autocomplete-input" class="autocomplete">
-    <label for="autocomplete-input">Search</label>
-    <i class="material-icons" data-icon="close" id="input-clear" style="display: none"></i>
+  <div class="container base">
+    <!-- search related stuff -->
+    
+    <!-- this entire block has been moved from the container, where it was the first thing. -->
+  <div class="row" style="margin-bottom: 0px !important; height: 0px;">
+      <div id="queued_query" data-queued-query></div>
+      <div id="already_running_query" data-already-running-query></div>
+      <div class="progress" id="progress_bar" style="visibility: hidden;">
+            <div class="indeterminate"></div>
+      </div>
   </div>
-</div>
 
-  
+  <!-- so seo was a big issue -->
+  <!-- get rid of those navs -->
+  <%= content_for :before_search %>
 
-  
+
+  <div class="row" style="margin-bottom: 0px;">
+    <div class="input-field col s12 l12 m12">
+      <i class="material-icons prefix" data-icon="textsms"></i>
+      <input type="text" id="autocomplete-input" class="autocomplete">
+      <label for="autocomplete-input">Search</label>
+      <i class="material-icons" data-icon="close" id="input-clear" style="display: none"></i>
+    </div>
+  </div>
 
   <div class="row">
     <div id="top_result_contexts" data-context="[]"></div>
@@ -578,9 +574,10 @@
 
   </div>
 
-  <%= yield %>
+    <%= yield %>
 
-</div>
+  </div>
 
 </body>
+<%= render :partial => "/footer/footer.html.erb" %>
 </html>

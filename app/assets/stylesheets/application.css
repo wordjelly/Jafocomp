@@ -61,3 +61,10 @@ to prevent icons showing up in search results
 .material-icons:after {
     content: attr(data-icon);
 }
+
+/**
+selected pagination text color
+***/
+.pagination_selected {
+  color: #565656 !important;
+}
