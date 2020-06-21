@@ -5,11 +5,13 @@
 	      <img class="entity_background" style="height: 200px">
 	    </div>
 	    <div class="card-content">
-	      <span class="card-title blue-grey-text" style="font-weight: 300; font-size:44px; margin-bottom:1rem;"><%= @entity.stock_name %></span>
-	      <p style="font-size: 20px;"><%= @entity.stock_description %></p>
+	      <span class="card-title blue-grey-text" style="font-weight: 300; font-size:44px; margin-bottom:1rem;"><%= @entity.page_title %></span>
+	      <p style="font-size: 20px;"><%= @entity.page_description %></p>
 	    </div>
 	    <div class="card-action">
-	      <a href="<%= @entity.stock_link %>">Read More At Wikipedia</a>
+	      <!-- here the title and description will be different -->
+	      <%= link_to "Positive Indicators", direction_entity_path(:id => @entity.stock_name.to_s, :trend_direction => "rise") %>
+	      <%= link_to "Negative Indicators", direction_entity_path(:id => @entity.stock_name.to_s, :trend_direction => "rise") %>
 	    </div>
 	  </div>
 	</div>
@@ -42,5 +44,8 @@
 
 <%= render :partial => "/entities/correlations_with_indices" %>
 
+<% if @entity.is_index? %>
+	<%= render :partial => "/exchanges/components" %>
+<% end %>
 
 <!-- render :partial => "/entities/entity_combinations" -->

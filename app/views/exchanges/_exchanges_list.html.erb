@@ -1,0 +1,10 @@
+<h3 class="header light" style="padding-left: 1rem; margin-bottom: 1rem; margin-top:3rem;"><i class="material-icons" data-icon="collections_bookmark"></i><span style="margin-left: 0.5rem;">List of Exchanges</span></h3>
+<div class="divider" style="width:30%; margin-left: 1rem; margin-bottom: 1rem;"></div>
+<ul class="collection">
+    <% @exchanges.each do |exchange| %>
+    <li class="collection-item avatar">
+      <i class="material-icons circle green" data-icon="insert_chart"></i>
+      <span class="title blue-grey-text text-darken-2" style="font-weight: 500; font-size: 18px;"><%= link_to exchange.stock_name, stock_path(exchange.stock_name) %></span>
+    </li>
+    <% end %>
+</ul>

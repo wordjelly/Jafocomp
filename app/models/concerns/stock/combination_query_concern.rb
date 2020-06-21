@@ -11,6 +11,9 @@ module Concerns::Stock::CombinationQueryConcern
 			puts "Args coming into query are :#{args}"
 			## so we have something called directin.
 			## should be permitted on stock.
+			## sort out frontend issues till end june.
+			## then 10 days of july for the rest of it
+			## by 15th we are out with this.
 
 			return if args.blank?
 			return if ((args[:primary_stock_id].blank?) && (args[:indicator_id].blank?) && args[:trend_direction].blank?)
@@ -63,8 +66,11 @@ module Concerns::Stock::CombinationQueryConcern
 			self.stock_impacted = self.stock_name	
 			self.stock_impacted_id = self.id.to_s		
 			self.stock_result_type = Concerns::Stock::EntityConcern::COMBINATION
-
-
+			## so this is for combination.
+			## set title and description.
+			## why components are not working, and about the do_index titles and descriptions.
+			## this should be triggered.
+			set_page_title_and_description
 		end
 
 	end

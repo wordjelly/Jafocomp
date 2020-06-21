@@ -5,8 +5,8 @@
 	      <img class="entity_background" style="height: 200px">
 	    </div>
 	    <div class="card-content">
-	      <span class="card-title blue-grey-text" style="font-weight: 500"><%= get_trend_direction(@entity) %> Indicators for <%= @entity.stock_name %></span>
-	      <p>Indicators with a positive outlook for <%= @entity.stock_name %></p>
+	      <span class="card-title blue-grey-text" style="font-weight: 300; font-size:44px; margin-bottom:1rem;"><%= @entity.page_title %></span>
+	      <p style="font-size: 20px;"><%= @entity.page_description %></p>
 	      <p>Last Updated: <%= @entity.updated_at %></p>
 	    </div>
 	    <!-- this is not a combination, just finish indicator. -->

@@ -145,10 +145,102 @@ module Concerns::Stock::EntityConcern
 		## used in paginate, to render the pagination blocks.
 		## set before_action in the application controller.
 		attr_accessor :request_url
-	
-
 		attr_accessor :trend_direction
-				
+							
+		#########################################
+		##
+		##
+		##
+		## META TITLE AND DESCRIPTION ATTRIBUTES ARE SET ON THE ENTITY ITSELF.
+		## IT IS SET IN THREE PLACES
+		## AFTER_FIND -> SET ON ANY ENTITY
+		## IN THE COMBINATION_QUERY_CONCERN -> IT IS OVERRIDEN 
+		## IN THE DO_INDEX ACTION IT IS SET ON EACH ENTITY.
+		## THE ENTITY ATTRIBUTES ARE THEN USED TO SET THE CONTROLLER LEVEL ATTRIBUTES, JUST BEFORE RENDER.
+		##
+		##
+		##
+		#########################################
+		attr_accessor :page_title
+		attr_accessor :page_description
+
+		def get_positive_or_negative_trend_direction
+			unless self.trend_direction.blank?
+				if self.trend_direction == RISE
+					"Positive"
+				elsif self.trend_direction == FALL
+					"Negative"
+				end
+			end
+		end
+
+		## so why these br's are not working, we have to check.
+		## @called_after_Find.
+		## @args[Hash] args : optional arguments, will be the set of filters that is passed into the do_index function.
+		## use this method only via combination query concern.
+		## all from one indicator, from one exchange, or multiple exchanges.
+		def set_page_title_and_description(args={})
+
+			puts "came to set page title and description" 
+			stocks_by_exchange = args[:stocks_by_exchange]
+			if stocks_by_exchange.blank?
+				if self.stock_result_type == Concerns::Stock::EntityConcern::COMBINATION
+					## is it having a direction.
+					## 
+					unless self.trend_direction.blank?
+						## this has to be sorted out.
+						self.page_title = get_positive_or_negative_trend_direction + " Indicators for #{self.stock_name}"
+						self.page_description = "#{self.total_results} indicators with a #{get_positive_or_negative_trend_direction} outlook for #{self.stock_name}. Indicators combine correlations with other stocks, and technical indicators, over a 10 year historical time-frame."
+					else
+						self.page_title = self.stock_primary + " vs " + self.stock_impacted
+						self.page_description = self.total_results.to_s + " trading tips based on historical trends between " +  self.stock_primary + " & " + self.stock_impacted 
+					end
+				else
+					##############################################
+					##
+					##
+					## INDIVIDUAL STOCKS
+					##
+					##
+					##############################################
+					self.page_title = self.stock_name
+					self.page_description = "#{self.total_results}+ trading tips for #{self.stock_name}, backed by over 10 years of historical analysis."
+				end
+			else
+				puts "stocks by exchange are there."
+				##############################################
+				##
+				##
+				## CALLED VIA DO_INDEX METHOD.
+				##
+				##
+				##############################################
+				if stocks_by_exchange.keys.size == 1
+					if stocks_by_exchange.keys[0].downcase == "indicators"
+						self.page_title = "Technical Indicators"
+						self.page_description = "Algorini uses 19 technical indicators to generate trading tips. Choose a technical indicator from the list below to begin."
+					else
+						self.page_title = self.stock_exchange + "  Components"
+						self.page_description = "Algorini tracks #{stocks_by_exchange[stocks_by_exchange.keys[0]][:stocks].size} stocks from the #{self.stock_exchange} exchange. Choose a stock from the list below to access its latest trading tips."
+					end
+				else
+					puts "stocks by exchange size > 0"
+					self.page_title = "Stock Exchanges"
+					self.page_description = "Algorini covers 5 exchanges, ranging from the Dow Jones(US) to the Nifty 50(India). For each exchange, we crawl correlations against all 180 stocks in our database. The correlations are updated on all market days."
+				end
+			end
+		end
+
+		##########################################
+		##
+		##
+		##
+		##
+		##
+		##
+		##########################################
+
+		## for index actions -> do_index defines it on each entity.
 		## because this has to be stored in the query_concern.
 		attribute :total_results, Integer, mapping: {type: 'integer'}
 		attribute :div_id, String,  mapping: {type: 'keyword'}
@@ -167,6 +259,7 @@ module Concerns::Stock::EntityConcern
 
 		after_find do |document|
 			document.set_pagination_details
+			document.set_page_title_and_description
 		end
 
 		## so we will have to run the callbacks as after_find.
@@ -175,6 +268,9 @@ module Concerns::Stock::EntityConcern
 			self.size ||= 10
 			self.total_pagination_blocks = 11
 		end
+
+
+		
 		############################################################
 		##
 		##
@@ -335,6 +431,7 @@ module Concerns::Stock::EntityConcern
 
 		end
 
+
 		## @return[Hash] stocks_by_exchange
 		## key -> exchange_name
 		## value -> hash(:stocks => [Array of Stock Objects], :next_from => Integer)
@@ -342,6 +439,15 @@ module Concerns::Stock::EntityConcern
 		## @called_from : stocks_controller#index, and indicators_controller#index.
 		def do_index(args={})
 
+			## not allowing to add reports after order finalization.
+			## this is a common problem.
+			## after order finalization -> 
+			## what about launching a modal ?
+			## fuck it.
+			## so if they are all just plain indices
+			## if they are stocks
+			## if they are stocks of a particular index
+			## so that can be sorted out.
 			#puts self.attributes.to_s
 			## so if want to load more we can do that.
 			stock_filters = 
@@ -422,6 +528,17 @@ module Concerns::Stock::EntityConcern
 				end
 			end
 
+			puts "stocks by exchange are:"
+			puts stocks_by_exchange
+
+			stocks_by_exchange.keys.each do |exchange|
+				stocks_by_exchange[exchange][:stocks].each do |stock|
+					stock.set_page_title_and_description({:stocks_by_exchange => stocks_by_exchange})
+				end
+			end
+
+			## set here based on the query parameters.
+			## they need to be sorted out.
 			
 			stocks_by_exchange
 			

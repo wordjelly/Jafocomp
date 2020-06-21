@@ -26,7 +26,7 @@ class ExchangesController < ApplicationController
 		puts "exchanges are:"
 		puts @exchanges.map{|c| c.stock_name}
 
-
+		
 		respond_to do |format|
 			format.html do 
 				render "/exchanges/index.html.erb"

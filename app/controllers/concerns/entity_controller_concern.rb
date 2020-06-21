@@ -7,6 +7,11 @@ module Concerns::EntityControllerConcern
 		before_action :find, :only => [:show,:update]
 		before_action :query, :only => [:show]
 		
+		## this is set from individual actions (show, index) from different controllers.
+		def set_individual_action_meta_information(args={})
+			@title = args[:title]
+			@meta_description = args[:description]
+		end
 
 		## submit to google search map also.
 		def show
@@ -15,6 +20,16 @@ module Concerns::EntityControllerConcern
 			#puts JSON.pretty_generate(@entity.deep_attributes(false,false))
 			puts "-------- entity div id ----------"
 			puts @entity.div_id
+				
+			puts "set title and description."
+			## why the fuck are components not working.
+			## 
+
+			set_individual_action_meta_information({
+				:title => @entity.page_title,
+				:description => @entity.page_description
+			})
+
 			respond_to do |format|
 				format.html do 
 					render "/entities/show"
@@ -33,12 +48,9 @@ module Concerns::EntityControllerConcern
 			get_resource_class.update_many
 		end
 
-		## so from the stocks controller we can handle this.
-		## now the index action has to be spiced up to collate by entity.
-		## how many entities to take per exchange
-		## that has to be done in this aggregation.
+		
 		def index
-			
+
 			@entity = get_resource_class.new(permitted_params.fetch("entity",{}))
 			
 			@entities_by_exchange = @entity.do_index(permitted_params.fetch("entity",{}))

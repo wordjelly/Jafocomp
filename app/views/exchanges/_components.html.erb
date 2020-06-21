@@ -1,11 +1,11 @@
+<h3 class="header light" style="padding-left: 1rem; margin-bottom: 1rem; margin-top:3rem;"><i class="material-icons" data-icon="collections_bookmark"></i><span style="margin-left: 0.5rem;">Index Components</span></h3>
+<div class="divider" style="width:30%; margin-left: 1rem; margin-bottom: 1rem;"></div>
 <ul class="collection">
-    <% @exchanges.each do |entity| %>
+    <% @entity.components.each do |component| %>
     <li class="collection-item avatar">
       <i class="material-icons circle green" data-icon="insert_chart"></i>
-      <span class="title blue-grey-text text-darken-2" style="font-weight: 500; font-size: 18px;"><%= link_to entity.stock_name, stock_path(entity.stock_name) %></span>
-      <p class="grey-text text-darken-2" style="font-size: 14px;"><%= entity.stock_description.split(".")[0] %></p>
+      <span class="title blue-grey-text text-darken-2" style="font-weight: 500; font-size: 18px;"><%= link_to component, stock_path(component) %></span>
     </li>
     <% end %>
 </ul>
-<!-- so we sort out this -->
-<!-- for combination, and combination follows the same shit as the other stuff -->
+<!-- what next, add title, description for all pages, entity stock_name, and description, can we set it in the view. -->
