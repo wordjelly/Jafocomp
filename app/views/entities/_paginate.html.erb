@@ -14,7 +14,7 @@
                   <% pagination_selected = "pagination_selected" %>
             <% end %>
             <%= link_to get_pagination_url({:original_url => controller.request.original_url, :from => from}) do %>
-                  <div style="border: 1px solid; border-color: #eee; line-height: 50px; font-size: 28px;" class="col s1 m1 l1 amber darken-2 white-text <%= pagination_selected %>"><%= block_number %></div>
+                  <div style="border: 1px solid; border-color: #eee; line-height: 50px; font-size: 28px;" class="col s1 m1 l1 blue-grey white-text <%= pagination_selected %>"><%= block_number %></div>
             <% end %>
 
             <% from += @entity.size %>

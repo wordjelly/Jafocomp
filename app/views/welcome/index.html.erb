@@ -17,24 +17,24 @@
 		<div class="row center chips" id="exchanges" style="margin-bottom: 1rem; margin-top:1rem; border-bottom: none;">
 
 			<h4 style="margin-bottom: 3rem; margin-top: -5rem; line-height: 40px;" class="light">Algorini is a free search engine for stock market trading ideas. We crawl over 180 stocks and 5 exchanges. Search for any stock, to generate instant trading ideas.</h4>
-			<!-- so here we add the chips -->
-			<div data-nosnippet class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="forex" data-category="forex" style="border-bottom: none; cursor: pointer;">
-				  FRX
+
+			<div data-nosnippet class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="forex" data-entity-name="forex" data-category="forex" style="border-bottom: none; cursor: pointer;">
+				  <%= link_to "FRX", stock_path("forex") %>
 			</div>
-			<div data-nosnippet class="index_chip chip default_sector amber white-text lighten-2" data-category="Dow Jones" data-related-query="dow" style="border-bottom: none; cursor: pointer;">
-				  DOW
+			<div data-nosnippet class="index_chip chip default_sector amber white-text lighten-2" data-category="Dow Jones" data-entity-name="Dow Jones" data-related-query="Dow Jones" style="border-bottom: none; cursor: pointer;">
+				  <%= link_to "DOW", stock_path("Dow Jones") %>
 			</div>
-			<div data-nosnippet class="index_chip chip default_sector blue-grey white-text lighten-2" data-category="Dax 30" data-related-query="dax" style="border-bottom: none; cursor: pointer;">
-				  DAX
+			<div data-nosnippet class="index_chip chip default_sector blue-grey white-text lighten-2" data-category="Dax 30" data-entity-name="Dax 30" data-related-query="dax" style="border-bottom: none; cursor: pointer;">
+				  <%= link_to "DAX", stock_path("Dax 30") %>
 			</div>
-			<div data-nosnippet class="index_chip chip default_sector amber white-text lighten-2" data-category="CAC 40" data-related-query="cac" style="border-bottom: none; cursor: pointer;">
-				  CAC
+			<div data-nosnippet class="index_chip chip default_sector amber white-text lighten-2" data-category="CAC 40" data-entity-name="Cac 40" data-related-query="cac" style="border-bottom: none; cursor: pointer;">
+				  <%= link_to "CAC", stock_path("Cac 40") %>
 			</div>
-			<div data-nosnippet class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="nifty" data-category="Nifty 50" style="border-bottom: none; cursor: pointer;">
-				  NIFTY
+			<div data-nosnippet class="index_chip chip default_sector blue-grey white-text lighten-2" data-related-query="nifty" data-entity-name="Nifty 50" data-category="Nifty 50" style="border-bottom: none; cursor: pointer;">
+				  <%= link_to "NIFTY", stock_path("Nifty 50") %>
 			</div>
-			<div data-nosnippet class="index_chip chip default_sector amber white-text lighten-2" data-category="oil" data-related-query="opec" style="border-bottom: none; cursor: pointer;">
-				  OIL
+			<div data-nosnippet class="index_chip chip default_sector amber white-text lighten-2" data-category="FTSE 100" data-entity-name="Ftse 100" data-related-query="opec" style="border-bottom: none; cursor: pointer;">
+				  <%= link_to "FTSE", stock_path("Ftse 100") %>
 			</div>
 		</div>
 

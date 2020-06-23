@@ -207,7 +207,8 @@ module Concerns::Stock::EntityConcern
 					self.page_description = "#{self.total_results}+ trading tips for #{self.stock_name}, backed by over 10 years of historical analysis."
 				end
 			else
-				puts "stocks by exchange are there."
+				puts "stocks by exchange are there, with key size."
+				puts stocks_by_exchange.keys.size
 				##############################################
 				##
 				##
@@ -220,8 +221,14 @@ module Concerns::Stock::EntityConcern
 						self.page_title = "Technical Indicators"
 						self.page_description = "Algorini uses 19 technical indicators to generate trading tips. Choose a technical indicator from the list below to begin."
 					else
-						self.page_title = self.stock_exchange + "  Components"
-						self.page_description = "Algorini tracks #{stocks_by_exchange[stocks_by_exchange.keys[0]][:stocks].size} stocks from the #{self.stock_exchange} exchange. Choose a stock from the list below to access its latest trading tips."
+						unless self.combine_with.blank?
+							
+							self.page_title = stocks_by_exchange.keys[0] + "Stocks vs " + self.combine_with 
+							self.page_description = "Choose A Stock to compare with " +  self.combine_with
+						else
+							self.page_title = self.stock_exchange + "  Components"
+							self.page_description = "Algorini tracks #{stocks_by_exchange[stocks_by_exchange.keys[0]][:stocks].size} stocks from the #{self.stock_exchange} exchange. Choose a stock from the list below to access its latest trading tips."
+						end
 					end
 				else
 					puts "stocks by exchange size > 0"

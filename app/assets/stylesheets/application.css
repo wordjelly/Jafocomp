@@ -68,3 +68,11 @@ selected pagination text color
 .pagination_selected {
   color: #565656 !important;
 }
+
+/**
+used in summary_card.html.erb
+set from javascript search_result_chart.js
+**/
+.chart_holder {
+  height: 50vh;
+}

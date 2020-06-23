@@ -157,3 +157,10 @@ var draw_chart = function(id,search_result){
 
     // so we have only one chart.
 }
+
+$(document).on('click','.toggle_search_result_chart',function(event){
+    console.log("clicked toggle search result chart");
+    console.log($(this).attr("data-chart-id"));
+    $("#" + $(this).attr("data-chart-id") + "_holder").toggleClass("chart_holder");
+    $("#" + $(this).attr("data-chart-id") + "_holder").toggle();
+});

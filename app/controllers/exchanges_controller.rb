@@ -26,6 +26,11 @@ class ExchangesController < ApplicationController
 		puts "exchanges are:"
 		puts @exchanges.map{|c| c.stock_name}
 
+		set_individual_action_meta_information({
+			:title => @exchanges.first.page_title,
+			:description =>@exchanges.first.page_description
+		})
+
 		
 		respond_to do |format|
 			format.html do 

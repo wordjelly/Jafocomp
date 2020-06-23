@@ -2296,12 +2296,13 @@ $(document).on("click",'.index_chip',function(event){
 	
 	/**
 	this is used in the search complete callback to show the first search result.
-	**/
+	EARLIER CODE TO SHOW A SEARCH RESULT FOR THIS INDEX.
 	$(this).data("clicked","yes");
 	$("#autocomplete-input").val($(this).attr("data-related-query"));
 	search_new($(this).attr("data-related-query"));
 	$("label[for='autocomplete-input']").addClass("active");
-
+	***/
+	
 });
 
 

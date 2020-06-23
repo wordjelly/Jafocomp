@@ -55,6 +55,11 @@ module Concerns::EntityControllerConcern
 			
 			@entities_by_exchange = @entity.do_index(permitted_params.fetch("entity",{}))
 
+			set_individual_action_meta_information({
+				:title => @entities_by_exchange[@entities_by_exchange.keys[0]][:stocks].first.page_title,
+				:description =>@entities_by_exchange[@entities_by_exchange.keys[0]][:stocks].first.page_description
+			})
+
 			respond_to do |format|
 				format.html do 
 					render "/entities/index.html.erb"

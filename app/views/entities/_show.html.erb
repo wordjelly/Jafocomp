@@ -31,14 +31,13 @@
 <h3 class="header light" style="padding-left: 1rem; margin-bottom: 1rem; margin-top:3rem;"><i class="material-icons" data-icon="collections_bookmark"></i><span style="margin-left: 0.5rem;">Top Trends</span></h3>
 <div class="divider" style="width:30%; margin-left: 1rem; margin-bottom: 1rem;"></div>
 
-<% @entity.stock_top_results.each_slice(1) do |results| %>
-	<div class="row">
-		<% results.each do |result| %>
-		    <%= render :partial => "/entities/summary_card", locals: {result: result } %>
-		<% end %>
-	</div>
-<% end %>
-	
+<div class="row">
+	<% puts "total top results are: #{@entity.stock_top_results.size}" %>
+	<% @entity.stock_top_results.each do |result| %>
+		<%= render :partial => "/entities/summary_card", locals: {result: result } %>	
+	<% end %>
+</div>
+
 <%= render :partial => "/entities/paginate" %>
 
 

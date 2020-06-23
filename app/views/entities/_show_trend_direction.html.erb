@@ -9,7 +9,6 @@
 	      <p style="font-size: 20px;"><%= @entity.page_description %></p>
 	      <p>Last Updated: <%= @entity.updated_at %></p>
 	    </div>
-	    <!-- this is not a combination, just finish indicator. -->
 	    <div class="card-action">
 	      <%= link_to @entity.stock_primary, stock_path(@entity.stock_name) %>
 	    </div>

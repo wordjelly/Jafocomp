@@ -1,27 +1,36 @@
-<div id="<%= result['_id'] %>" class="result col s12 m12 l12 summary_card" data-result="<%= JSON.generate(result) %>" >
+<div id="<%= result['_id'] %>" class="result col s12 m12 l12 summary_card" data-result="<%= JSON.generate(result) %>">
   <div class="card" style="margin-top:1.5rem;">
-    <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
+      <div class="card-content grey-text text-lighten-1" style="padding-bottom:20px !important;">
 
-        <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
-          <i class="fas fa-industry"></i>
-          <!-- format this setup better -->
-          What happens to <span class="blue-grey-text"><%= result["_source"]["setup"].gsub(/What happens to/,'') %> </span>
-        </span>
+          <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
+            <i class="fas fa-industry"></i>
+            <%= link_to result_path(result["_id"],{eid: result["_source"]["impacted_entity_id"]}) do %>
+              <span class="grey-text text-lighten-1">What happens to</span> <span class="blue-grey-text"><%= result["_source"]["setup"].gsub(/What happens to/,'') %></span>
+            <% end %>
+          </span>
 
-        <% if result['_source']['rises_or_falls'] =~ /rise/ %>
-          <% text_color = "green-text" %>
-          <% icon = "trending_up" %>
-        <% else %> 
-          <% text_color = "red-text" %>
-          <% icon = "trending_down" %>
-        <% end %>
-        <div class="<%= text_color %>" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
-          <i class="material-icons" data-icon="<%= icon %>"></i>
-          Historically, <b><%= result['_source']['target'] %></b> <%= result["_source"]["rises_or_falls"] %>  <b><%= result["_source"]["percentage"] %>%</b> of the times. <span><br> </span>
-        </div>
-        <div>
-          <canvas id="search_result_chart_<%= result['_id'] %>" style="display:none" />
-        </div>
-    </div>
+          <% if result['_source']['rises_or_falls'] =~ /rise/ %>
+              <% text_color = "green-text" %>
+              <% icon = "trending_up" %>
+          <% else %> 
+              <% text_color = "red-text" %>
+              <% icon = "trending_down" %>
+          <% end %>
+
+          <div class="<%= text_color %>" style="margin-top: 1.5rem;font-size:22px; font-weight: 400; margin-bottom:1rem; !important">
+            <i class="material-icons" data-icon="<%= icon %>"></i>Historically, <b><%= result['_source']['target'] %></b><%= result["_source"]["rises_or_falls"] %>  <b><%= result["_source"]["percentage"] %>%</b> of the times. <span><br></span>
+          </div>
+
+          <div class="grey-text text-lighten-1" style="margin-top:1.5rem;">
+            <span data-chart-id="search_result_chart_<%= result['_id'] %>" class="toggle_search_result_chart">
+              <i style="vertical-align: bottom" class="material-icons"data-icon="insert_chart"></i>Chart
+            </span>
+          </div>
+
+          <div id="search_result_chart_<%= result['_id'] %>_holder" style="display:none;">
+              <canvas style="position: relative; margin:auto; height: 50vh; max-height: 50vh;" id="search_result_chart_<%= result['_id'] %>" />
+          </div>
+
+      </div>
   </div>
 </div>
