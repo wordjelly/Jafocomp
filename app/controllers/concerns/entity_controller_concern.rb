@@ -16,13 +16,8 @@ module Concerns::EntityControllerConcern
 		## submit to google search map also.
 		def show
 			puts params.to_s
-			#puts @entity.to_s
-			#puts JSON.pretty_generate(@entity.deep_attributes(false,false))
-			puts "-------- entity div id ----------"
-			puts @entity.div_id
-				
-			puts "set title and description."
-			## why the fuck are components not working.
+			
+			## what if it comes in with a pagination ?
 			## 
 
 			set_individual_action_meta_information({

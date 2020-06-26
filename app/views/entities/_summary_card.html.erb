@@ -5,7 +5,7 @@
           <span class="card-title" style="font-weight:600 !important; font-size:26px !important;">
             <i class="fas fa-industry"></i>
             <%= link_to result_path(result["_id"],{eid: result["_source"]["impacted_entity_id"]}) do %>
-              <span class="grey-text text-lighten-1">What happens to</span> <span class="blue-grey-text"><%= result["_source"]["setup"].gsub(/What happens to/,'') %></span>
+              <span class="grey-text text-lighten-1">What happens to</span> <span class="blue-grey-text"><%= result["_source"]["setup"].gsub(/What happens to/,'').html_safe %></span>
             <% end %>
           </span>
 

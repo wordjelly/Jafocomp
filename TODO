@@ -261,3 +261,17 @@ DO THIS FIRST, AND MANAGE A TITLE FOR EVERY PAGE, AS WELL AS A DESCRIPTION.
 <!-- clicking on it, takes it to the entity page -->
 <!-- below the latest correlations a simple table, with links to components -->
 <!-- below that a simple collection with links to correlations with other stock, and a correlation page to correlate the chosen stock with any of them, which will take us to the with_stock, and titles for all these pages. --> 
+
+============================================================
+########## fix the icons, for up-down
+########## fix the query
+########## fix watsapp, twitter 
+########## fix multiple related
+########## look at security for the api endpoints.
+########## generate triggers to update entities
+########## generate triggers to update sitemap
+########## fix overloading
+########## fix wrong calculations
+########## make other content disappear when search results are being shown.
+
+and then this project is over.

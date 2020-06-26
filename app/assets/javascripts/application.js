@@ -135,7 +135,12 @@ $(document).on('focus','#autocomplete-input',function(event){
 		$(this).prev().addClass("input-prefix-mobile");
 		hide_navbar();
 	}
+	clear_page_content();
 });
+
+var clear_page_content = function(){
+	$("#page_content").html("");
+}
 
 $(document).on('focusout','#autocomplete-input',function(event){
 

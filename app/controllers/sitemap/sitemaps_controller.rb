@@ -6,7 +6,7 @@ class Sitemap::SitemapsController < ApplicationController
 	end
 
 	def permitted_params
-		params.permit(:sitemap => [:exchange_name, :exchange_id])
+		params.permit(:sitemap => [:exchange_name, :exchange_id, :entity_id])
 	end
 
 end

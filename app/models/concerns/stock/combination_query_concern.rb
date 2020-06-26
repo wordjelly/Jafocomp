@@ -14,9 +14,9 @@ module Concerns::Stock::CombinationQueryConcern
 			## sort out frontend issues till end june.
 			## then 10 days of july for the rest of it
 			## by 15th we are out with this.
-
+			## but then doesnt work with single entity.
 			return if args.blank?
-			return if ((args[:primary_stock_id].blank?) && (args[:indicator_id].blank?) && args[:trend_direction].blank?)
+			return if ((args[:primary_stock_id].blank?) && (args[:indicator_id].blank?) && args[:trend_direction].blank? && args[:from].blank?)
 				
 			query_string = ""
 
@@ -39,6 +39,8 @@ module Concerns::Stock::CombinationQueryConcern
 					query_string += indicator.stock_name
 				end
 			end
+
+
 
 			self.from = args[:from] || 0
 
@@ -64,8 +66,13 @@ module Concerns::Stock::CombinationQueryConcern
 				self.stock_primary_id = primary_stock.id.to_s
 			end
 			self.stock_impacted = self.stock_name	
-			self.stock_impacted_id = self.id.to_s		
-			self.stock_result_type = Concerns::Stock::EntityConcern::COMBINATION
+			self.stock_impacted_id = self.id.to_s	
+			
+			if args[:indicator_id].blank? and args[:primary_stock_id].blank? and args[:trend_direction].blank?
+				self.stock_result_type = Concerns::Stock::EntityConcern::SINGLE
+			else	
+				self.stock_result_type = Concerns::Stock::EntityConcern::COMBINATION
+			end
 			## so this is for combination.
 			## set title and description.
 			## why components are not working, and about the do_index titles and descriptions.

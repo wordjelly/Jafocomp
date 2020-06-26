@@ -555,8 +555,8 @@ class Result
 
 		body = match_phrase_query_builder(args)
 
-		#puts "search body"
-		#puts JSON.pretty_generate(body)
+		puts "search body"
+		puts JSON.pretty_generate(body)
 
 		search_results = gateway.client.search index: "correlations", body: body
 

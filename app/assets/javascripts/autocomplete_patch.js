@@ -1,5 +1,7 @@
 M.Autocomplete.prototype._getIndicesOf = function(searchStr, str, caseSensitive){
 
+
+
 	var searchStrLen = searchStr.length;
     if (searchStrLen == 0) {
         return [];
@@ -9,12 +11,14 @@ M.Autocomplete.prototype._getIndicesOf = function(searchStr, str, caseSensitive)
         str = str.toLowerCase();
         searchStr = searchStr.toLowerCase();
     }
-    while ((index = str.indexOf(searchStr, startIndex)) > -1) {
+
+    var str_without_tags = str.replace(/(<([^>]+)>)/ig,function(s){ var k = Array(s.length); k.fill(" "); return k.join("");  });
+
+    while ((index = str_without_tags.indexOf(searchStr, startIndex)) > -1) {
         indices.push(index);
         startIndex = index + searchStrLen;
     }
     return indices;
-
 }
 
 M.Autocomplete.prototype.selectOption = function(el) {
