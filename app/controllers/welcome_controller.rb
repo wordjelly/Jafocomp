@@ -10,6 +10,11 @@ class WelcomeController < ApplicationController
 		end
 	end	
 
+
+	def our_story
+		render "our_story"
+	end
+
 	## so we have a tooltip request.
 	## for things that are to be shown as the information.
 	## we send the match_query and show the first hit, as the result.

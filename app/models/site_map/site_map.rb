@@ -164,18 +164,36 @@ class SiteMap::SiteMap
 
 		SitemapGenerator::Sitemap.namer = SitemapGenerator::SimpleNamer.new(:sitemap)
 
-		puts "came to addd to index ---------------------------->"
+
 		SitemapGenerator::Sitemap.create do
+			
 			args[:all_other_stocks].keys.each do |exchange|
 				args[:all_other_stocks][exchange].each do |stock|
 		  			add_to_index "/#{stock.sitemap_file_name}"
 		  		end
 		  	end
-		  	## will also have to do for indicators.
-		  	## and basic navigation pages here.
+
+		  	args[:all_indicators].each do |indicator|
+		  		add_to_index "/#{indicator.sitemap_file_name}"
+		  	end
+		  	
+		  	## Add Exchanges index action
+		  	add exchanges_path, :changefreq => "monthly", :priority => 0.9
+
+		  	## Add Indicators index action
+			add indicators_path, :changefreq => "monthly", :priority => 0.9
+
+
+		  	## Add Stocks index Action
+		  	add stocks_path, :changefreq => "daily", :priority => 0.9
+
+
 		end
 
+		SitemapGenerator::Sitemap.ping_search_engines('https://algorini.com/sitemap.xml.gz')
 	end
+
+	
 
 	def build_entity_sitemap
 
@@ -183,7 +201,8 @@ class SiteMap::SiteMap
 
 		Rails.logger.debug("came to create sitemap, with entity id :#{self.entity_id}")
 		all_other_stocks = get_entity.get_all_other_stocks
-		all_indicators = Indicator.get_indicators_from_frontend_index
+		all_indicators = []
+		all_indicators = Indicator.get_indicators_from_frontend_index unless get_entity.is_indicator?
 		exchange_entities = [get_entity]
 		#puts "exchange entities are:"
 		#puts exchange_entities.to_s
@@ -272,15 +291,11 @@ class SiteMap::SiteMap
 			end
 		end
 
-		add_entity_sitemap_to_sitemap_index({:sitemap_name => sitemap_file_name})
+		add_entity_sitemap_to_sitemap_index({:sitemap_name => sitemap_file_name, :all_other_stocks => all_other_stocks, :all_indicators => all_indicators})
 
 		## you want to update the index.
 		##SitemapGenerator::Sitemap.ping_search_engines('https://algorini.com/sitemap.xml.gz')
 		
-	end
-
-	def build_navigation_sitemap
-
 	end
 
 	## how do we do this through a rake task.

@@ -15,6 +15,8 @@ Rails.application.routes.draw do
 
   put 'indicators/update_many' => 'indicators#update_many'
 
+  get 'our_story' => "welcome#our_story"
+
   resources :results
   resources :visualizations
   resources :stocks

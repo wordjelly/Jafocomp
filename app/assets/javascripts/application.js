@@ -9,6 +9,7 @@
 //= require search_result_chart.js
 //= require autocomplete_patch.js
 //= require stock.js
+//= require our_story.js
 
 
 

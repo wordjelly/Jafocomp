@@ -14,6 +14,7 @@ module Concerns::Stock::EntityConcern
 		include ActiveModel::Validations
 		include ActiveModel::Callbacks
 
+		PASSWORD = ENV["ALGORINI_FRONTEND_PASSWORD"]
 		INFORMATION_TYPE_ENTITY = "entity"
 		SINGLE = 0
 		COMBINATION = 1
@@ -133,6 +134,8 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :exchange_id
 		attr_accessor :show_components
 		attr_accessor :combine_with
+
+		attr_accessor :password
 
 
 
@@ -324,6 +327,12 @@ module Concerns::Stock::EntityConcern
 			self.trigger_update = false
 			self.stock_is_indicator = YES if self.class.name == "Indicator"
 			self.save
+			update_sitemap
+		end
+
+		def update_sitemap
+			sitemap = SiteMap::SiteMap.new({entity_id: self.id.to_s})
+			sitemap.save
 		end
 
 		## so this is done
@@ -569,6 +578,12 @@ module Concerns::Stock::EntityConcern
 
 		end
 
+		def authenticate?
+			result = self.password == PASSWORD
+			Rails.logger.debug("Authenticate result is #{result}")
+			result
+		end
+
 		def self.permitted_params
 			[
 				:id,
@@ -586,7 +601,8 @@ module Concerns::Stock::EntityConcern
 						:trend_direction,
 						:div_id,
 						:show_components,
-						:combine_with
+						:combine_with,
+						:password
 					]
 				}
 			]
@@ -669,5 +685,32 @@ module Concerns::Stock::EntityConcern
 	 		e
 		end
 	end
+
+	#######################################################
+	##
+	##
+	## CONVENIENCE HELPERS
+	##
+	##
+	#######################################################
+	def is_indicator?
+		self.stock_is_indicator == YES
+	end
+
+	def is_exchange?
+		self.stock_is_exchange == YES
+	end
+
+	#######################################################
+	##
+	##
+	## HELPERS FOR SITEMAP
+	##
+	##
+	#######################################################
+	def sitemap_file_name
+		self.stock_name.gsub(/\s/,"").to_s + ".xml.gz"
+	end
+
 
 end

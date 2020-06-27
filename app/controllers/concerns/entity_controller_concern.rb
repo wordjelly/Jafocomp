@@ -4,7 +4,11 @@ module Concerns::EntityControllerConcern
 
 	included do 
 
+
+		skip_before_action :verify_authenticity_token, only: [:update]
+
 		before_action :find, :only => [:show,:update]
+		
 		before_action :query, :only => [:show]
 		
 		## this is set from individual actions (show, index) from different controllers.
@@ -71,7 +75,11 @@ module Concerns::EntityControllerConcern
 
 		## will expect an id.
 		def update
-			@entity.save
+			if Rails.env.production?
+				@entity.save if @entity.authenticate?
+			else
+				@entity.save
+			end
 		end
 
 		###############################################################
