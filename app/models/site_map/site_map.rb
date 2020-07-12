@@ -11,6 +11,9 @@ class SiteMap::SiteMap
 	attribute :exchange_name, String, mapping: {type: 'keyword'}
 	attribute :exchange_id, String, mapping: {type: 'keyword'}
 	attribute :entity_id, String, mapping: {type: 'keyword'}
+
+	index_name "sitemap"
+	document_type "sitemap"
 	
 	attr_accessor :exchange
 	attr_accessor :entity
@@ -137,7 +140,7 @@ class SiteMap::SiteMap
 		end
 
 		## you want to update the index.
-		SitemapGenerator::Sitemap.ping_search_engines('https://algorini.com/sitemap.xml.gz')
+		SitemapGenerator::Sitemap.ping_search_engines('https://algorini.com/sitemap.xml.gz') if Rails.env.production?
 
 	end
 

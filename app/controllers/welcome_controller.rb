@@ -10,6 +10,11 @@ class WelcomeController < ApplicationController
 		end
 	end	
 
+	## symptom index -> yes(because we have to search on symptoms)
+	## 
+	## question, answer, disease id, symptom, weightage.
+	## this is the only document to create
+	## all the other things, are not important.
 
 	def our_story
 		render "our_story"

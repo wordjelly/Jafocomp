@@ -14,6 +14,7 @@ module Concerns::Stock::EntityConcern
 		include ActiveModel::Validations
 		include ActiveModel::Callbacks
 
+		#put this on the server.
 		PASSWORD = ENV["ALGORINI_FRONTEND_PASSWORD"]
 		INFORMATION_TYPE_ENTITY = "entity"
 		SINGLE = 0
@@ -166,6 +167,17 @@ module Concerns::Stock::EntityConcern
 		#########################################
 		attr_accessor :page_title
 		attr_accessor :page_description
+
+
+		#########################################
+		##
+		##
+		## ALLOWS THE CALLER, TO DECIDE IF THE SITEMAP SHOULD BE UPDATED OR NOT, this is also a permitted parameter.
+		##
+		##
+		#########################################
+		attribute :do_sitemap_update, Integer, mapping: {type: 'integer'}
+
 
 		def get_positive_or_negative_trend_direction
 			unless self.trend_direction.blank?
@@ -326,11 +338,13 @@ module Concerns::Stock::EntityConcern
 			update_components
 			self.trigger_update = false
 			self.stock_is_indicator = YES if self.class.name == "Indicator"
+			update_sitemap unless self.do_sitemap_update.blank?
+			self.do_sitemap_update = nil
 			self.save
-			update_sitemap
 		end
 
 		def update_sitemap
+			Rails.logger.debug("Updating Sitemap")
 			sitemap = SiteMap::SiteMap.new({entity_id: self.id.to_s})
 			sitemap.save
 		end
@@ -602,7 +616,8 @@ module Concerns::Stock::EntityConcern
 						:div_id,
 						:show_components,
 						:combine_with,
-						:password
+						:password,
+						:do_sitemap_update
 					]
 				}
 			]

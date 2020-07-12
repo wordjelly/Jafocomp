@@ -75,11 +75,11 @@ module Concerns::EntityControllerConcern
 
 		## will expect an id.
 		def update
-			if Rails.env.production?
+			#if Rails.env.production?
 				@entity.save if @entity.authenticate?
-			else
-				@entity.save
-			end
+			#else
+			#	@entity.save
+			#end
 		end
 
 		###############################################################

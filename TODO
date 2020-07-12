@@ -263,10 +263,11 @@ DO THIS FIRST, AND MANAGE A TITLE FOR EVERY PAGE, AS WELL AS A DESCRIPTION.
 <!-- below that a simple collection with links to correlations with other stock, and a correlation page to correlate the chosen stock with any of them, which will take us to the with_stock, and titles for all these pages. --> 
 
 ============================================================
+########## fix watsapp and blank related links, disable sitemap for now.
 ########## fix the icons, for up-down
 ########## fix the query
 ########## fix watsapp, twitter 
-########## fix multiple related
+########## fix multiple related -- this is a issue.
 ########## look at security for the api endpoints.
 ########## generate triggers to update entities
 ########## generate triggers to update sitemap
@@ -275,3 +276,10 @@ DO THIS FIRST, AND MANAGE A TITLE FOR EVERY PAGE, AS WELL AS A DESCRIPTION.
 ########## make other content disappear when search results are being shown.
 
 and then this project is over.
+so i have to now look at watsapp twitter, related mess, and that's that.
+then look at logging a bit better.
+common issues with logging.
+## i wanna log like -> committed 324 correlations for Nifty 50, with TUI, and publish an array of them.
+
+## can i do this first or start that first ?
+## stuff like this.
