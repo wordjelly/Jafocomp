@@ -1,0 +1,5 @@
+<li class="collection-item">
+	<%= link_to (combination_entity_path(:id => entity["impacted_entity_id"], :primary_stock_id => entity["primary_entity_id"])) do %>
+		How do <b><%= entity["primary_entity_name"] %>'s</b> indicators affect <b><%= @entity.stock_name %></b>?
+	<% end %>
+</li>

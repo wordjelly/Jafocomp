@@ -14,6 +14,7 @@ module Concerns::Stock::EntityConcern
 		include ActiveModel::Validations
 		include ActiveModel::Callbacks
 
+		#okay so now the next step, is to sort out assign attributes and seperate all that into another thing.
 		#put this on the server.
 		PASSWORD = ENV["ALGORINI_FRONTEND_PASSWORD"]
 		INFORMATION_TYPE_ENTITY = "entity"
