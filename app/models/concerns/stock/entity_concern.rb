@@ -86,8 +86,9 @@ module Concerns::Stock::EntityConcern
 
 		attribute :components, Array, mapping: {type: 'keyword'}
 
-
-
+		## set in find_or_initialize, as true if the record is not found.
+		attr_accessor :newly_added
+		
 		## why indicator combinations were not generated ?
 		## for that we needed the stocks
 		## 
@@ -594,9 +595,17 @@ module Concerns::Stock::EntityConcern
 		end
 
 		def authenticate?
-			result = self.password == PASSWORD
-			Rails.logger.debug("Authenticate result is #{result}")
-			result
+			puts "Self password:#{self.password}"
+			puts "Stored password: #{PASSWORD}"
+			if self.password == PASSWORD
+				result = true
+				Rails.logger.debug("Authenticate result is #{result}")
+				result
+			else
+				result = false
+				Rails.logger.debug("Authenticate result is #{result}")
+				result
+			end
 		end
 
 		def self.permitted_params
@@ -633,7 +642,12 @@ module Concerns::Stock::EntityConcern
 			e = nil
 			cls = args.delete(:class_name) || "Stock"
 			cls = cls.constantize
-			return cls.new(args) if ((args[:id].blank?))
+			if args[:id].blank?
+				d = cls.new(args)
+				d.newly_added = true
+				return d
+			end
+			#return cls.new(args) if ((args[:id].blank?))
 			begin
 				#puts index_name
 				#puts document_type
@@ -692,6 +706,7 @@ module Concerns::Stock::EntityConcern
 				##puts "rescuing."
 				#puts "args setting :#{args}"
 				e = cls.new(args)
+				e.newly_added = true
 				##puts "args are :#{args}"
 				e.set_name_description_link
 				#puts "---------- came past that ---------------- "

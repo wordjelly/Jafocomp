@@ -1,6 +1,13 @@
 var div_id = "#<%= @entity.div_id %>";
 console.log("div id is:" + div_id);
-$(div_id).find(".information").first().append("<%= escape_javascript(render :partial => '/entities/information_card.html.erb') %>");
+<% if @entity.newly_added.blank? %>
+	$(div_id).find(".information").first().find(".information_card").append("<%= escape_javascript(render :partial => '/entities/information_card.html.erb') %>");
+	$(div_id).find(".information").first().show();
+<% end %>
 console.log("<%= @entity.to_s %>");
-$(div_id).find(".related_queries").first().append("<%= escape_javascript(render :partial => '/entities/related_queries_card.html.erb') %>");
+<% @entity.combinations.each do |combination| %>
+	<% entity = combination["entities"].sample %>
+	$(div_id).find(".related_queries").first().find("ul").first().append("<%= escape_javascript(render :partial => '/entities/information_card/related_queries_list_element.html.erb', locals: {entity: entity}) %>");
+	$(div_id).find(".related_queries").show();
+<% end %>
 $(".tabs").tabs();

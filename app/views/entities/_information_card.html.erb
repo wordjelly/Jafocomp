@@ -1,10 +1,6 @@
-<div class="row information_card" style="margin-left: 0px !important; margin-right: 0px !important;">
   <div class="card col l6 m6 s12">
     <div class="card-content">
-      <!-- we can do a set icon -->
-      <!-- what to do after this kiddo ? -->
-      <!-- we move for the saturation ? -->
-      <!-- and then its almost done, we are done done done -->
+      <!-- we have to append here -->
       <span class="card-title blue-grey-text" style="font-weight: 500"><i data-icon="<%= @entity.get_icon %>" class="material-icons"></i><%= @entity.stock_name %></span>
       <p class="green-text"><%= @entity.stock_description %></p>
     </div>
@@ -19,4 +15,3 @@
       <div id="<%= @entity.id.parameterize %>_negative_indicators"><%= render :partial => "/entities/information_card/negative_results" %></div>
     </div>
   </div>
-</div>

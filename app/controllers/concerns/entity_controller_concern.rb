@@ -20,10 +20,7 @@ module Concerns::EntityControllerConcern
 		## submit to google search map also.
 		def show
 			puts params.to_s
-			
-			## what if it comes in with a pagination ?
-			## 
-
+		
 			set_individual_action_meta_information({
 				:title => @entity.page_title,
 				:description => @entity.page_description
