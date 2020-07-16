@@ -393,7 +393,7 @@ var get_primary_entity_and_indicator = function(search_result){
 // one problem at a time.
 // called after build setup.
 var build_meta_description = function(search_result){
-	search_result.description = "Historicall " + search_result.target + search_result.rises_or_falls + search_result.percentage + "%" +  "of the times.";
+	search_result.description = "Historically " + search_result.target + search_result.rises_or_falls + " " + search_result.percentage + "%" +  " of the times.";
 };
 
 var add_chart_image_url = function(search_result){
@@ -605,7 +605,6 @@ var build_setup = function(search_result,text){
 		search_result.setup = rises_parts[0] + rises_parts[1]; 
 	}
 	***/
-	build_meta_description(search_result);
 	add_chart_image_url(search_result);
 }
 
@@ -1024,12 +1023,22 @@ function CreateUUID() {
   });
 }
 
+var camelize = function camelize(str) {
+  return str.replace(/\W+(.)/g, function(match, chr)
+   {
+        return chr.toUpperCase();
+    });
+}
+
 // get twitter working, 
 // and then facebook.
 // first download those images.?
 var compose_twitter_url = function(search_result){
 	var base = "https://twitter.com/intent/tweet";
-	var hashtags = [search_result.target];
+	var hashtags = [_.map(search_result.target.split(" "),function(target){
+		return camelize(target);
+	}).join("")];
+	//var hashtags = [search_result.target];
 	var text = $("<div>").html(search_result.setup).text();
 	var url = search_result.url;
 	// okay so this can be done.
@@ -1048,6 +1057,10 @@ var compose_twitter_url = function(search_result){
 var set_social_sharing_urls = function(search_result){
 	
 	// then debug this one, last thing, and we are through and check the image also.
+	console.log("the search results setup is:");
+	console.log(search_result.setup);
+	console.log("search result description is:");
+	console.log(search_result.description);
 	search_result.social_text = search_result.setup + "? " + search_result.description;
 
 	search_result.url = "https://www.algorini.com/results/" + search_result.id + "?eid=" + search_result.impacted_entity_id;
@@ -1105,19 +1118,16 @@ var prepare_search_result = function(search_result,autocomplete_suggestions_hash
 	// 
 
 	build_time_based_indicator_summary(search_result);
+	build_meta_description(search_result);
 
 	search_result.summary_style = "";
 	
 	if(_.isNull(search_result.summary) || _.isEmpty(search_result.summary.trim()) || _.isUndefined(search_result.summary)){
 		search_result.summary_style = "display:none;"
 	}
-	// okay so lets hope this shit works.
-	// now what next ?
-	//search_result.summary_style = "display:none;"
-	//////////console.log("search result setup becomes:");
-	//////////console.log(search_result.setup);
-	//// okay so by the time we get done on this, 
-	//// its changed.
+	
+	// sodwa
+
 	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = search_result.div_id;
 
 	// knock off see-more
