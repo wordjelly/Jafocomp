@@ -6,7 +6,9 @@ namespace :algorini do
 
     	Stock.create_index! force: true
     	Indicator.create_index! force: true
+        SiteMap::SiteMap.create_index! force: true
 
+=begin
     	Rails.logger.debug("creating stocks")
     	10.times do |t|
 			stock = Stock.find_or_initialize({id: "E-#{t}", trigger_update: true})
@@ -15,7 +17,7 @@ namespace :algorini do
 
 		Rails.logger.debug("creating indicators")
 		Indicator.update_many
-
+=end
     end
 
     task sitemap: :environment do 
