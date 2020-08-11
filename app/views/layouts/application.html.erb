@@ -68,6 +68,60 @@
 
   <%= cloudinary_js_config %>
   
+  <script type="text/template" id="poller_sessions_table_template">
+    <div id="poller_sessions_table">
+      <table class="striped highlight">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Events</th>
+          </tr>
+        </thead>
+        <tbody id="poller_session_table_body">
+
+        </tbody>
+      </table>
+    </div>
+  </script>
+
+  <script type="text/template" id="poller_sessions_id_template">
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Information</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ _.each(search_result.poller_session_rows,function(row){ }}
+          <tr>
+            <td>{{= row.event_name }}</td>
+            <td>
+              <ol>
+                {{ _.each(row.information,function(info){ }}
+                  <li>{{= info.start_time }} : 
+                    {{= JSON.stringify(info.description) }}
+                  </li>
+                {{ }) }}
+              </ol>
+            </td>
+          </tr>
+        {{ }) }}
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/template" id="poller_sessions_table_row_template">
+    <tr class="poller_session_table_row" data-poller-session-id="{{= search_result.poller_session_id }}">
+      <td>{{= search_result.start_time }}</td>
+      <td>{{= search_result.type }}</td>
+      <td>{{ _.each(search_result.events,function(event){ }}
+        <div>{{= event.event_time }} : {{= event.event_name }}</div>
+      {{ }) }}
+      </td>
+    </tr>
+  </script>
 
   <script type="text/template" id="result_card_template">
     <div id="{{= search_result['_id'] }}" class="result col s12 m6 l6" data-result='{{= JSON.stringify(search_result) }}' >

@@ -11,6 +11,10 @@ Rails.application.routes.draw do
 
   get 'download_sessions' => 'welcome#download_sessions'
 
+  get 'poller_sessions' => 'welcome#poller_sessions'
+
+  get 'poller_session' => 'welcome#poller_session'
+
   get 'exchange/:exchange' => 'welcome#exchange'
 
   put 'indicators/update_many' => 'indicators#update_many'

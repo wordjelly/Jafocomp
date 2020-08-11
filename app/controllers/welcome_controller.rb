@@ -65,6 +65,25 @@ class WelcomeController < ApplicationController
 		end	
 	end
 
+	## shows all the logs for an individual poller session.
+	def poller_session
+		poller_session_rows = Logs::PollerSession.get(params[:poller_session_id])
+		respond_to do |format|
+			format.json do 
+				render :json => {poller_session_rows: poller_session_rows, status: 200}
+			end
+		end
+	end
+
+	def poller_sessions
+		poller_session_rows = Logs::PollerSession.view
+		respond_to do |format|
+			format.json do 
+				render :json => {poller_session_rows: poller_session_rows, status: 200}
+			end
+		end
+	end
+
 
 	def permitted_params
 		## context will be a single string.

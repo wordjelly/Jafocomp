@@ -2,7 +2,10 @@ require 'elasticsearch/persistence/model'
 
 class Logs::PollerSession
 
-	include Elasticsearch::Persistence::Model
+	#include Elasticsearch::Persistence::Model
+
+	INDEX_NAME = "tradegenie_titan"
+	DOCUMENT_TYPE = "doc"
 
 	COMMON = [
 		"M1-LOCK_ENTERED",
@@ -25,13 +28,16 @@ class Logs::PollerSession
 	]
 
 	def self.aggs
+		combined = COMMON + POLLER_SESSION_EVENTS + DOWNLOADER_SESSION_EVENTS
+		combined.flatten!
+
 		{
 		    "poller_session" => {
 			    "terms" => {
 			        "field" => "poller_session_id",
-			        "size" => 100,
+			        "size" => 200,
 			        "order" => {
-			          "start_time" => "asc"
+			          "start_time" => "desc"
 			        }
 			    },
 		      	"aggs" => {
@@ -44,8 +50,8 @@ class Logs::PollerSession
 		            		"events" => {
 		              			"terms" => {
 		                			"field" => "event_name",
-		                			"size" => 10,
-		                			"include" => [], 
+		                			"size" => 11,
+		                			"include" => combined, 
 		                			"order" => {
 		                  				"start_time" => "asc"
 		                			}
@@ -78,6 +84,133 @@ class Logs::PollerSession
 		}
 	end
 
-	
 
+	def self.get(poller_session_id)
+		search_response = Elasticsearch::Persistence.client.search :index => INDEX_NAME, :type => DOCUMENT_TYPE, :body => {
+			:size => 0,
+			:query => {
+				term: {
+					poller_session_id: poller_session_id
+				}
+			},
+			:aggs => {
+				events: {
+					terms: {
+						field: "event_name",
+						size: 100,
+						order: {
+							"start_time" => "asc"
+						}
+					},
+					aggs: {
+						start_time: {
+							min: {
+								field: "time"
+							}
+						},
+						information: {
+							terms: {
+								field: "information",
+								size: 100,
+								order: {
+									start_time: "asc"
+								}
+							},
+							aggs: {
+								start_time: {
+									min: {
+										field: "time"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		puts "--------------------------------------------------->"
+		puts JSON.pretty_generate(search_response["aggregations"])
+		
+		puts "--------------------------------------------------->"
+
+		poller_session_rows = search_response["aggregations"]["events"]["buckets"].map {|event_bucket|
+			{
+				"event_name" => event_bucket["key"],
+				"information" => event_bucket["information"]["buckets"].map{|d|
+					{
+						"description" => JSON.parse(d["key"]),
+						"start_time" => (Time.at(d["start_time"]["value"].to_i/1000).strftime("%-d %b %Y %I:%M:%S %P"))
+					}
+				}
+			}
+		}
+
+		poller_session_rows
+
+	end
+
+	## now can render this on the front end.
+	## converts the aggregation to a table.
+	## @return[Array]
+	## [
+	##  {
+	##     "start_time" : whatever,
+	##     "type" : downloader/poller
+	##     "events" : [{"event_name" => x, "event_time" => y}]
+	##  }
+	##]
+	def self.view
+
+		search_response = Elasticsearch::Persistence.client.search :index => INDEX_NAME, :type => DOCUMENT_TYPE, :body => {
+			:size => 0,
+			:query => query,
+			:aggs => aggs
+		}
+	
+		puts JSON.pretty_generate(search_response["aggregations"])
+		
+		table_rows = []
+
+		search_response["aggregations"]["poller_session"]["buckets"].each do |poller_session_bucket|
+
+			poller_session_id = poller_session_bucket["key"]
+
+			start_time = Time.at(poller_session_bucket["start_time"]["value"].to_i/1000).strftime("%-d %b %Y %I:%M %P")
+
+			poller_session_bucket["type"]["buckets"].each do |type_bucket|
+
+				type = type_bucket["key"]
+
+				events = []
+
+				type_bucket["events"]["buckets"].each do |event_bucket|
+
+					event_time = Time.at(event_bucket["start_time"]["value"].to_i/1000).strftime("%I:%M %P")
+
+					event_name = event_bucket["key"]
+
+					events << {
+						"event_time" => event_time,
+						"event_name" => event_name
+					}
+
+				end
+
+				table_rows << {
+					"poller_session_id" => poller_session_id,
+					"start_time" => start_time,
+					"type" => type,
+					"events" => events
+				}
+
+			end
+
+		end
+
+		puts JSON.pretty_generate(table_rows)
+
+		table_rows
+
+	end
 end
