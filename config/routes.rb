@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   get 'stocks/:id/:trend_direction' => "stocks#show", as: "direction_entity"
   get 'stocks/:id/with_stock/:primary_stock_id/with_indicator/:indicator_id' => "stocks#show"
   get 'stocks/:id/with_exchange/:exchange_id' => "stocks#show"
+  put 'force_create_index' => "stocks#force_create_index", as: "force_create_index"
 
   ## for sitemap.
   get '/sitemap.xml.gz', to: redirect("https://storage.googleapis.com/algorini/sitemaps/sitemap.xml.gz", status: 301)

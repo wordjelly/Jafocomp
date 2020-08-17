@@ -22,9 +22,18 @@ module Concerns::Stock::EntityConcern
 		COMBINATION = 1
 		NO = -1
 		YES = 1
+		FRONTEND_LOG = "frontend_log"
 
 		index_name "frontend"
 		document_type "doc"
+
+		## we can just call a method on the api.
+		## simpler.
+
+		LOG_INDEX_NAME = "tradegenie_titan"
+		LOG_INDEX_TYPE = "doc"
+		LOG_INDEX_POLLER_SESSION_TYPE = "Poller"
+
 		RISE = "rise"
 		FALL = "fall"
 		TREND_DIRECTIONS = ["rise","fall"]
@@ -86,6 +95,8 @@ module Concerns::Stock::EntityConcern
 
 		attribute :components, Array, mapping: {type: 'keyword'}
 
+		attribute :poller_session_id, String, mapping: {type: 'keyword'}
+
 		## set in find_or_initialize, as true if the record is not found.
 		attr_accessor :newly_added
 		
@@ -139,7 +150,7 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :combine_with
 
 		attr_accessor :password
-
+		
 
 
 		## should be used for pagination and other purposes.
@@ -272,6 +283,11 @@ module Concerns::Stock::EntityConcern
 		attr_accessor :only_exchanges
 
 		before_save do |document|
+			## logging update.
+			## lets see if this works.
+			## then we go into the details.
+			## add that call.
+			document.log_update
 			document.set_abbreviation
 		end
 
@@ -303,8 +319,24 @@ module Concerns::Stock::EntityConcern
 		##
 		#############################################################
 		after_save do |document|
-			##puts "--------- CAME TO AFTER SAVE --------------- "
+			## i want only one single update here.
+			## first of all did it update this entity or not.
+			## what did it update.
+			## etc.
 			schedule_background_update
+		end
+
+		def log_update
+			create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => {
+				:event_name => FRONTEND_LOG,
+				:time => Time.now.to_i*1000,
+				:poller_session_id => self.poller_session_id,
+				:poller_session_type => LOG_INDEX_POLLER_SESSION_TYPE,
+				:information => JSON.generate({
+					:entity_name => self.stock_name,
+					:id => self.id.to_s
+				})
+			}
 		end
 
 		def schedule_background_update
@@ -334,8 +366,8 @@ module Concerns::Stock::EntityConcern
 			set_top_results(args_for_top_results_query)
 			set_positive_results(args_for_positive_results_query)
 			set_negative_results(args_for_negative_results_query)
-			## that's it basically
-			## now we mod those cards for the information query.
+			## i need logging at this level layered with poller session id.
+			## so we do this next.
 			update_combinations
 			update_components
 			self.trigger_update = false
@@ -627,6 +659,7 @@ module Concerns::Stock::EntityConcern
 						:show_components,
 						:combine_with,
 						:password,
+						:poller_session_id,
 						:do_sitemap_update
 					]
 				}
@@ -647,11 +680,11 @@ module Concerns::Stock::EntityConcern
 				d.newly_added = true
 				return d
 			end
+			#organization -> 
+			#inventory issues -> 
+			#do that first.
 			#return cls.new(args) if ((args[:id].blank?))
 			begin
-				#puts index_name
-				#puts document_type
-
 				query = {
 					bool: {
 						should: [

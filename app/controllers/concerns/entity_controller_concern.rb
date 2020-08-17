@@ -5,12 +5,19 @@ module Concerns::EntityControllerConcern
 	included do 
 
 
-		skip_before_action :verify_authenticity_token, only: [:update]
+		skip_before_action :verify_authenticity_token, only: [:update,:force_create_index]
 
-		before_action :find, :only => [:show,:update]
+		before_action :find, :only => [:show,:update,:force_create_index]
 		
 		before_action :query, :only => [:show]
-		
+			
+		## called from the backend to clear the frontend index.
+		def force_create_index
+			if @entity.authenticate?
+				puts Stock.create_index! force: true 
+			end
+		end
+
 		## this is set from individual actions (show, index) from different controllers.
 		def set_individual_action_meta_information(args={})
 			@title = args[:title]
@@ -73,7 +80,8 @@ module Concerns::EntityControllerConcern
 		## will expect an id.
 		def update
 			#if Rails.env.production?
-				@entity.save if @entity.authenticate?
+			
+			@entity.save if @entity.authenticate?
 			#else
 			#	@entity.save
 			#end
