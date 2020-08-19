@@ -193,23 +193,30 @@ M.Autocomplete.prototype._renderDropdown = function(data,val){
 	        data: data[key],
 	        key: key
 	      };
+
 	      matchingData.push(entry);
 
 	      this.count++;
 	    }
   	}
 
+  	console.log("matching data is:");
+  	console.log(matchingData);
+  	// okay so we have a data key.
+  	// so we can sort on that.
+
   	// Sort
-  	if (this.options.sortFunction) {
-	    let sortFunctionBound = (a, b) => {
-	      return this.options.sortFunction(
-	        a.key.toLowerCase(),
-	        b.key.toLowerCase(),
-	        val.toLowerCase()
-	      );
-	    };
-	    matchingData.sort(sortFunctionBound);
-  	}
+  	// 
+  	//if (this.options.sortFunction) {
+    let sortFunctionBound = (a, b) => {
+      return this.sort_autocomplete(
+        a,
+        b,
+        val.toLowerCase()
+      );
+    };
+    matchingData.sort(sortFunctionBound);
+  	//}
 
   	// Limit
   	matchingData = matchingData.slice(0, this.options.limit);
@@ -280,6 +287,10 @@ M.Autocomplete.prototype.summarize_sma_cross = function(primary_text){
 	primary_text = primary_text.replace(new RegExp(/\'([A-Za-z\s]+)(moving\saverages\scross)(\s\(\d+\,\d+\))/),"\'s moving averages cross");
 
 	return primary_text;
+}
+
+M.Autocomplete.prototype.sort_autocomplete = function(a,b,inputString){
+	return a.key.indexOf(inputString) - b.key.indexOf(inputString);
 }
 
 M.Autocomplete.prototype.replace_pattern_with_icons = function(setup){

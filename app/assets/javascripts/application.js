@@ -1089,12 +1089,60 @@ var set_social_sharing_urls = function(search_result){
 }
 
 
-var prepare_search_result = function(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries){
+var update_entity_links = function(search_result,entity_links){
+
+	console.log("came to updat entity links");
+	var entry = null;
+	console.log("searh rsult inside update entity links");
+	console.log(search_result);
+
+	if(search_result.primary_entity){
+		entry = "All Indicators for " + search_result.primary_entity;
+
+		if(entity_links[entry])
+		{
+			entity_links[entry] += 1	
+		} 
+		else{
+			entity_links[entry] = 1		
+		}
+	}
+	if(search_result.target){
+		entry = "All Indicators for " + search_result.target;
+		console.log("entry is");
+		console.log(entry);
+		if(entity_links[entry])
+		{
+			entity_links[entry] += 1	
+		} 
+		else{
+			entity_links[entry] = 1		
+		}
+	}
+
+	if(search_result.primary_entity && search_result.target){
+		entry = "How " + search_result.primary_entity + " affects " + search_result.target;
+
+		if(entity_links[entry])
+		{
+			entity_links[entry] += 1	
+		} 
+		else{
+			entity_links[entry] = 1		
+		}
+	}
+
+	console.log("entity links after inital adding");
+	console.log(entity_links);
+
+}
+
+var prepare_search_result = function(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries,entity_links){
 
 	////console.log(search_result['_id']);
 
 	////console.log("------------------------");
-
+	
 	text = search_result["text"];
 	id = search_result["_id"];
 	search_result = search_result['_source'];
@@ -1177,9 +1225,11 @@ var prepare_search_result = function(search_result,autocomplete_suggestions_hash
 		++total_negative;
 	}
 	set_social_sharing_urls(search_result);
+	update_entity_links(search_result,entity_links);
 	return search_result;
 }
 
+// id like to do this and more.
 // we fold the indicators, add it into a seperate data elemet.
 // it renders the javascript with the content
 /****
@@ -1201,14 +1251,29 @@ var display_search_results = function(search_results,input){
 	var related_queries = [];
 	var total_positive = 0;
 	var total_negative = 0;
-	 // and later use a template to get this.
-	
+	// and later use a template to get this.
+	// we have primary entity, and we have target
+	// so we can show the top primary entity -> target pair
+	// and 
+	// and show that here directly with the links, as last 2.
+	// lets get this working.
+	var entity_links = {};
 	search_results = _.map(search_results,function(search_result,index,list){
-			//console.log(search_result);
-	    	search_result = prepare_search_result(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries);
+	    	search_result = prepare_search_result(search_result,autocomplete_suggestions_hash,total_positive,total_negative,categories,related_queries,entity_links);
+	    	
+	    	// what about the pair.
+	    	console.log("search result becomes:");
+	    	console.log(search_result);
 	    	render_search_result_new(search_result);
 	    	return search_result;
     });
+
+	console.log("entity links are:");
+	console.log(entity_links);
+	// so we can do this.
+	$.extend(autocomplete_suggestions_hash,entity_links);
+	// so show me a way to directly get those
+	// trim both sides.
 
     update_positive_and_negative_tab_titles(total_positive,total_negative);
 

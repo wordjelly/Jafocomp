@@ -319,12 +319,9 @@ module Concerns::Stock::EntityConcern
 		##
 		#############################################################
 		after_save do |document|
-			## i want only one single update here.
-			## first of all did it update this entity or not.
-			## what did it update.
-			## etc.
 			schedule_background_update
 		end
+
 
 		def log_update
 			create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => {
@@ -338,6 +335,8 @@ module Concerns::Stock::EntityConcern
 				})
 			}
 		end
+
+
 
 		def schedule_background_update
 			ScheduleJob.perform_later([self.id.to_s,self.class.name.to_s,"update_it"]) unless self.trigger_update.blank?
