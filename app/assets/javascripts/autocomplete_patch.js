@@ -119,9 +119,14 @@ M.Autocomplete.prototype._highlight = function(string, $el) {
 		}
 	});
 	
+	/// if it doesnt get any segments, it bombs here.
 	///var final_string = this.hide_sma_brackets(segments.join(''));
-
-	$el.html(segments.join(""));
+	if(_.isEmpty(segments)){
+		$el.html('<span>' + el_text + '</span>');
+	}	
+	else{
+		$el.html(segments.join(""));
+	}
 }
 	
 	
@@ -290,6 +295,11 @@ M.Autocomplete.prototype.summarize_sma_cross = function(primary_text){
 }
 
 M.Autocomplete.prototype.sort_autocomplete = function(a,b,inputString){
+	// this happens when it cannot show any matching shit.
+	// so what is the data.
+	// okay how do we sort and iconize this to look better.
+	console.log(a);
+	console.log(b);
 	return a.key.indexOf(inputString) - b.key.indexOf(inputString);
 }
 

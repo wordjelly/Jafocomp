@@ -1097,7 +1097,7 @@ var update_entity_links = function(search_result,entity_links){
 	console.log(search_result);
 
 	if(search_result.primary_entity){
-		entry = "All Indicators for " + search_result.primary_entity;
+		entry = ("All Indicators for " + search_result.primary_entity.trim()).trim();
 
 		if(entity_links[entry])
 		{
@@ -1108,7 +1108,7 @@ var update_entity_links = function(search_result,entity_links){
 		}
 	}
 	if(search_result.target){
-		entry = "All Indicators for " + search_result.target;
+		entry = ("All Indicators for " + search_result.target.trim()).trim();
 		console.log("entry is");
 		console.log(entry);
 		if(entity_links[entry])
@@ -1121,7 +1121,7 @@ var update_entity_links = function(search_result,entity_links){
 	}
 
 	if(search_result.primary_entity && search_result.target){
-		entry = "How " + search_result.primary_entity + " affects " + search_result.target;
+		entry = ("How " + search_result.primary_entity.trim() + " affects " + search_result.target.trim()).trim();
 
 		if(entity_links[entry])
 		{
