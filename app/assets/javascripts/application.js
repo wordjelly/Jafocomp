@@ -1271,7 +1271,16 @@ var display_search_results = function(search_results,input){
 	console.log("entity links are:");
 	console.log(entity_links);
 	// so we can do this.
-	$.extend(autocomplete_suggestions_hash,entity_links);
+	var top_n_links = {};
+
+	_.each(Object.keys(entity_links),function(key,index,list){
+		if(index <= 2){
+			top_n_links[key] = entity_links[key];
+		}	
+	});
+	
+	$.extend(autocomplete_suggestions_hash,top_n_links);
+
 	// so show me a way to directly get those
 	// trim both sides.
 

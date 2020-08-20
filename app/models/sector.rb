@@ -27,20 +27,28 @@ class Sector
 				}
 			}
 		}
-		response = gateway.client.search index: "correlations", body: body
-		
-		response["hits"]["hits"].map{|hit| 
+		begin
+			response = gateway.client.search index: "correlations", body: body
+			
+			response["hits"]["hits"].map{|hit| 
 
-			sector = Sector.new(hit["_source"])
-			sector_counter_to_name[sector.counter.to_s] = sector
-			sector_name_to_counter[sector.information_name] = sector.counter.to_s
-		}	
+				sector = Sector.new(hit["_source"])
+				sector_counter_to_name[sector.counter.to_s] = sector
+				sector_name_to_counter[sector.information_name] = sector.counter.to_s
+			}	
 
-		
-		{
-			sector_counter_to_name: sector_counter_to_name,
-			sector_name_to_counter: sector_name_to_counter
-		}
+			
+			{
+				sector_counter_to_name: sector_counter_to_name,
+				sector_name_to_counter: sector_name_to_counter
+			}
+		rescue => e
+			Rails.logger.error(e)
+			{
+				sector_counter_to_name: {},
+				sector_name_to_counter: {}
+			}
+		end
 	end
 
 	## we want to get the information actually.

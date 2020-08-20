@@ -295,12 +295,7 @@ M.Autocomplete.prototype.summarize_sma_cross = function(primary_text){
 }
 
 M.Autocomplete.prototype.sort_autocomplete = function(a,b,inputString){
-	// this happens when it cannot show any matching shit.
-	// so what is the data.
-	// okay how do we sort and iconize this to look better.
-	console.log(a);
-	console.log(b);
-	return a.key.indexOf(inputString) - b.key.indexOf(inputString);
+	return a.key.length - b.key.length;
 }
 
 M.Autocomplete.prototype.replace_pattern_with_icons = function(setup){
