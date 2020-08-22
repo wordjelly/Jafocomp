@@ -679,6 +679,7 @@ module Concerns::Stock::EntityConcern
 				d.newly_added = true
 				return d
 			end
+			#it can take.
 			#organization -> 
 			#inventory issues -> 
 			#do that first.

@@ -33,6 +33,9 @@ Rails.application.routes.draw do
 
   ## its better than nothing.
   ## lets see how it goes with this much first.
+  ## what if its name ?
+  ## then ?
+  ## that query has to be ambiguous in nature at that point.
   get 'stocks/:id/with_stock/:primary_stock_id' => "stocks#show", as: "combination_entity"
   get 'stocks/:id/with_indicator/:indicator_id' => "stocks#show", as: "combination_indicator" 
   get 'stocks/:id/:trend_direction' => "stocks#show", as: "direction_entity"

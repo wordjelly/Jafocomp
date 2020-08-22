@@ -33,7 +33,9 @@ M.Autocomplete.prototype.selectOption = function(el) {
   	if (typeof this.options.onAutocomplete === 'function') {
      //console.log(el);
   	 //console.log(el.attr("data-div-id"));
-   	 this.options.onAutocomplete.call(this, text,el.attr("data-div-id"));
+  	 //console.log("the payload is:");
+  	 //console.log(JSON.parse(el.attr("data-payload")));
+   	 this.options.onAutocomplete.call(this, text,JSON.parse(el.attr("data-payload")));
   	}
 }
 
@@ -233,15 +235,18 @@ M.Autocomplete.prototype._renderDropdown = function(data,val){
   	// Render
 	for (let i = 0; i < matchingData.length; i++) {
 	    let entry = matchingData[i];
-	    let $autocompleteOption = $('<li data-div-id="' + entry.data + '"></li>');
-	    //sort out 2020.
-	    //if (!!entry.data) {
-	    //  $autocompleteOption.append(
-	    //    `<img src="${entry.data}" class="right circle"><span>${entry.key}</span>`
-	    //  );
-	    //} else {
-	    $autocompleteOption.append('<span>' + entry.key + '</span>');
-	    //}
+	    // so we added it here.
+	    // lets give it something like a payload.
+	    var start = '<li data-payload=';
+	    var mid = JSON.stringify(entry.data);
+	    var mid2 = '><span>' + entry.key + '</span>';
+	    var end = '</li>';
+	   
+	    let $autocompleteOption = $(start + mid + mid2 + end);
+		
+		//console.log("after stringifying entry data:");
+		//console.log($autocompleteOption);
+	   
 
 	    $(this.container).append($autocompleteOption);
 	    this._highlight(val, $autocompleteOption);

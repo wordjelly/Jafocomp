@@ -1088,7 +1088,11 @@ var set_social_sharing_urls = function(search_result){
 
 }
 
-
+// add the links.
+// and do the time resolution.
+// to make it look better.
+// why cac and cac 40 ?
+// why not french stocks are coming -> gotta investigate all this.
 var update_entity_links = function(search_result,entity_links){
 
 	console.log("came to updat entity links");
@@ -1101,10 +1105,14 @@ var update_entity_links = function(search_result,entity_links){
 
 		if(entity_links[entry])
 		{
-			entity_links[entry] += 1	
+			entity_links[entry]['score'] += 1	
 		} 
 		else{
-			entity_links[entry] = 1		
+			// i think it is getting stripped at some level.
+			entity_links[entry] = {
+				score : 1,
+				lin :  ('/stocks/' + encodeURI(search_result.primary_entity.trim()))
+			}		
 		}
 	}
 	if(search_result.target){
@@ -1113,24 +1121,35 @@ var update_entity_links = function(search_result,entity_links){
 		console.log(entry);
 		if(entity_links[entry])
 		{
-			entity_links[entry] += 1	
+			entity_links[entry]['score'] += 1	
 		} 
 		else{
-			entity_links[entry] = 1		
+			entity_links[entry] = {
+				score : 1,
+				lin :  ('/stocks/' + encodeURI(search_result.target.trim()))
+			}	
 		}
 	}
 
 	if(search_result.primary_entity && search_result.target){
 		entry = ("How " + search_result.primary_entity.trim() + " affects " + search_result.target.trim()).trim();
 
+		// this is a combination query.
+		// gotta make it work.
+
 		if(entity_links[entry])
 		{
 			entity_links[entry] += 1	
 		} 
 		else{
-			entity_links[entry] = 1		
+			entity_links[entry] = {
+				"score" : 1,
+				"link" : ("stocks/" + search_result.target.trim() + "/with_stock/"+ search_result.primary_entity.trim())
+			}	
 		}
 	}
+
+	// now test this much
 
 	console.log("entity links after inital adding");
 	console.log(entity_links);
@@ -1176,7 +1195,8 @@ var prepare_search_result = function(search_result,autocomplete_suggestions_hash
 	
 	// sodwa
 
-	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = search_result.div_id;
+	autocomplete_suggestions_hash[search_result.setup.replace(/<\/?[^>]+(>|$)/g, "").replace(/See-More/g,"")] = {div_id : search_result.div_id
+	};
 
 	// knock off see-more
 	// and add the arrows and superscript after the highlight.
@@ -1405,6 +1425,8 @@ var search_new = function(input){
 
 
 		    		//$('.autocomplete').autocomplete('updateData',_.object(_.map(autocomplete_hash,function(value,key){return [key,null];})));
+		    		console.log("autocomplete hash is:");
+		    		console.log(autocomplete_hash);
 		    		$('.autocomplete').autocomplete('updateData',autocomplete_hash);
 		    		//////////console.log("updated the autocomplete");
 		    		$(".chip").each(function(index){
@@ -2685,23 +2707,28 @@ $(document).ready(function(){
       data: {
         
       },
-      onAutocomplete: function(val,div_id) {
-      	// so its only getting done here.
-      	// how to trigger this via result is a challenge.
-      	// gotta figure this out.
-      	//////console.log("val is:" + val);
-      	//////console.log("div id is:" + div_id);
-        //var data = JSON.parse($(".autocomplete").first().data("autocomplete_hash"));
-      	//var div_id = data[val];
-      	// we sort this out.
-      	// first.
-      	if(!_.isUndefined(div_id)){
+      onAutocomplete: function(text,payload) {
+      	// now check if it has the div_id.
+      	// and so on and so forth.
+      	// val
+      	// div_id
+      	console.log("triggered on autocomplete");
+      	console.log("directly calling payload lin");
+      	console.log(payload["lin"]);
+      	console.log(payload);
+      	
+      	if(payload["div_id"]){
       		$(".search_result_card").hide();
       		var the_div = $("#" + div_id);
       		$(the_div).show();
       		// we want to also show these cards.
       		load_entity_information({search_result_card : the_div})
 
+      	}
+      	else if(payload["lin"]){
+      		console.log("got payload link");
+      		console.log(payload["lin"]);
+      		window.location.replace(payload["lin"]);
       	}
       }
     });

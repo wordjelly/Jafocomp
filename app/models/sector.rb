@@ -37,7 +37,6 @@ class Sector
 				sector_name_to_counter[sector.information_name] = sector.counter.to_s
 			}	
 
-			
 			{
 				sector_counter_to_name: sector_counter_to_name,
 				sector_name_to_counter: sector_name_to_counter
