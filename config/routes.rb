@@ -43,6 +43,8 @@ Rails.application.routes.draw do
   get 'stocks/:id/with_exchange/:exchange_id' => "stocks#show"
   put 'force_create_index' => "stocks#force_create_index", as: "force_create_index"
 
+  get 'stock_ticks' => 'stocks#ticks', as: "stock_ticks"
+
   ## for sitemap.
   get '/sitemap.xml.gz', to: redirect("https://storage.googleapis.com/algorini/sitemaps/sitemap.xml.gz", status: 301)
   # Example of regular route:

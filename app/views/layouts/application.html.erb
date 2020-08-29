@@ -67,6 +67,33 @@
   <%= javascript_include_tag  "https://widget.cloudinary.com/global/all.js" %>
 
   <%= cloudinary_js_config %>
+
+  <!-- so we have it by index , clicking on it should show this table -->
+  <!-- this gives useful information -->
+  <script type="text/template" id="entities_history_table_template">
+    <div id="entities_history_table">
+      <table class="striped highlight">
+        <thead>
+          <tr>
+            <th>Stock Name</th>
+            <th>Last 10 Ticks</th>
+            <th>Last Download Attempt</th>
+            <th>Last Frontend Update</th>
+          </tr>
+        </thead>
+        
+        <tbody id="poller_session_table_body">
+          {{ _.each(search_result.entities,function(entity){  }}
+            <tr>
+              <td>{{= entity.symbol }}</td>
+              <td></td>
+              <td></td>
+            </tr>
+          {{ }) }}
+        </tbody>
+      </table>
+    </div>
+  </script>
   
   <script type="text/template" id="poller_sessions_table_template">
     <div id="poller_sessions_table">

@@ -291,6 +291,21 @@ M.Autocomplete.prototype.add_superscript_to_standard_deviation = function(setup)
 	return setup;
 }
 
+// okay how to solve the problem of the dates.
+// see different ways to display it, show current price.
+// ram increment
+// problems with logging ?
+// so date -> price -> calculations done(in which session for download, in which session for poller) -> frontend update.
+// i need such tables by index also.
+// then debug the calculation mistakes
+// 
+// entity -> last date -> 
+// do we do this first, or what ?
+// clicking on a date -> if a particular entity could not be downloaded on that date.
+
+// price table.
+// whether that price has been through calculation
+// and then whether that was committed to the frontend.
 
 M.Autocomplete.prototype.summarize_sma_cross = function(primary_text){
 

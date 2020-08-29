@@ -154,6 +154,15 @@
 		<div class="show_session_logs">Show Sessions Logs</div>
 	</div>
 
+	<div class="row center" style="margin-top:1rem;">
+		<% ["NIFTY","CAC_40","DAX","NASDAQ-100","FTSE_100"].each do |exchange_name| %>
+			<span class="stock_ticks" data-exchange-name="<%=  exchange_name %>"><%= exchange_name %></span>
+		<% end %>	
+		<div id="stock_ticks">
+
+		</div>
+	</div>
+
 	
 	<!-- so we can put all this into the layout -->
 <!--

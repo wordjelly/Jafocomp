@@ -12,7 +12,6 @@
 //= require our_story.js
 
 
-
 // now for infinite scroll, with tabs.
 /****
 DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject.

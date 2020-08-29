@@ -87,3 +87,11 @@ $(document).on('click','.poller_session_table_row',function(event){
 		$("#poller_session").append(template({poller_session_rows :poller_session_rows}));
 	});	
 })
+
+$(document).on('click','.stock_ticks',function(event){
+	var exchange_name = $(this).attr("data-exchange-name");
+	$.get('/stock_ticks.json',{exchange_name : exchange_name}).done(function(data) {
+		console.log("response data is:");
+		console.log(data);
+	});
+});
