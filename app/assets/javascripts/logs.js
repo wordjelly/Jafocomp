@@ -93,5 +93,24 @@ $(document).on('click','.stock_ticks',function(event){
 	$.get('/stock_ticks.json',{exchange_name : exchange_name}).done(function(data) {
 		console.log("response data is:");
 		console.log(data);
+		var entities = data.entities;
+		console.log("individual entities");
+		console.log(entities);
+		$("#stock_ticks").html("");
+		var template = _.template($('#stock_ticks_template').html());
+		$("#stock_ticks").append(template({entities : entities}));
 	});
 });
+
+$(document).on('click','.download_history',function(event){
+	console.log("clicked on download history");
+	var entity_unique_name = $(this).attr("data-entity-unique-name");
+	$.get("/download_history.json",{entity_unique_name : entity_unique_name}).done(function(data){
+		console.log("the download history data is:");
+		console.log(data);
+		var poller_sessions = data.poller_sessions;
+		$("#download_history").html("");
+		var template = _.template($('#download_history_template').html());
+		$("#download_history").append(template({poller_sessions : poller_sessions}));
+	});
+});	

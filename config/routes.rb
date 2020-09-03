@@ -45,6 +45,9 @@ Rails.application.routes.draw do
 
   get 'stock_ticks' => 'stocks#ticks', as: "stock_ticks"
 
+  get 'download_history' => 'stocks#download_history', as: "stock_download_history"
+  
+
   ## for sitemap.
   get '/sitemap.xml.gz', to: redirect("https://storage.googleapis.com/algorini/sitemaps/sitemap.xml.gz", status: 301)
   # Example of regular route:

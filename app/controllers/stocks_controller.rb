@@ -10,6 +10,12 @@ class StocksController < ApplicationController
 		end
 	end
 
-
-
+	def download_history
+		respond_to do |format|
+			format.json do 
+				render :json => {poller_sessions: Logs::Entity.download_history(:entity_unique_name => params[:entity_unique_name]), status: 200}
+			end
+		end
+	end
+	
 end

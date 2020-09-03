@@ -26,9 +26,5 @@ class ApplicationController < ActionController::Base
     @social_image_url ||= ""
   end
 
-  
-
-
-  ## so now how to set the layout.
 
 end

@@ -51,6 +51,8 @@
   <!--- fontawesome icons -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+
   <script type="text/javascript" src="https://unpkg.com/canvg@3.0.4/lib/umd.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
@@ -68,9 +70,32 @@
 
   <%= cloudinary_js_config %>
 
+  <script type="text/template" id="download_history_template">
+    <div id="download_history_table">
+      <table class="striped highlight">
+        <thead>
+          <tr>
+            <th>Poller Session Id</th>
+            <th>Poller Session Date & Time</th>
+            <th>Events</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ _.each(search_result.poller_sessions,function(poller_session){ }}
+            <tr>
+              <td>{{= poller_session.poller_session_id }}</td>
+              <td>{{= poller_session.poller_session_date }}</td>
+              <td>{{= poller_session.events }}</td>
+            </tr>
+          {{ }) }}
+        </tbody>
+      </table>
+    </div>
+  </script>
+
   <!-- so we have it by index , clicking on it should show this table -->
   <!-- this gives useful information -->
-  <script type="text/template" id="entities_history_table_template">
+  <script type="text/template" id="stock_ticks_template">
     <div id="entities_history_table">
       <table class="striped highlight">
         <thead>
@@ -85,8 +110,38 @@
         <tbody id="poller_session_table_body">
           {{ _.each(search_result.entities,function(entity){  }}
             <tr>
-              <td>{{= entity.symbol }}</td>
-              <td></td>
+              <td class="download_history" data-entity-unique-name="{{= entity.entity_unique_name }}">{{= entity.entity_unique_name }}</td>
+              <td>
+                <table class="striped">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Open</th>
+                      <th>High</th>
+                      <th>Low</th>
+                      <th>Close</th>
+                      <th>Volume</th>
+                      <th>Poller Session Id</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{ _.each(entity.datapoints,function(dp,key,list){ }}
+                      {{var show = ""}}
+                      {{var poller_session_datetime = moment(dp.poller_session_date).format("YYYY-MM-DD - h:mm:ss A") }}
+                      {{ if(key > 0){ show = "display:none;" } }}
+                      <tr style="{{= show }}">
+                        <td>{{= dp.day_of_month }} {{= dp.month_of_year }} {{= dp.year }}</td>
+                        <td>{{= dp.open }}</td>
+                        <td>{{= dp.high }}</td>
+                        <td>{{= dp.low }}</td>
+                        <td>{{= dp.close }}</td>
+                        <td>{{= dp.volume }}</td>
+                        <td>{{= dp.poller_session_id }} {{= poller_session_datetime }}</td>
+                      </tr>
+                    {{ }) }}
+                  </tbody>
+                </table>
+              </td>
               <td></td>
             </tr>
           {{ }) }}
