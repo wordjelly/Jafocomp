@@ -70,6 +70,8 @@
 
   <%= cloudinary_js_config %>
 
+
+  <!-- download history by poller session, for a given stock -->
   <script type="text/template" id="download_history_template">
     <div id="download_history_table">
       <table class="striped highlight">
@@ -93,8 +95,9 @@
     </div>
   </script>
 
-  <!-- so we have it by index , clicking on it should show this table -->
-  <!-- this gives useful information -->
+
+
+  <!-- historical data of last 10 days for every stock in an exchange -->
   <script type="text/template" id="stock_ticks_template">
     <div id="entities_history_table">
       <table class="striped highlight">
@@ -150,8 +153,35 @@
     </div>
   </script>
   
+
+  <!-- i want to be able to click on an entity or exchange and search for it directly as filter -->
+  <!-- poller session table, just one row per poller session, whether download or poll. -->
+  <!-- so if we click on any entity index / entity, how do we click on it, is all this needed ? -->
   <script type="text/template" id="poller_sessions_table_template">
     <div id="poller_sessions_table">
+      <form>
+        <div class="input-field col s6">
+          <input id="poller_session_id_search" type="text">
+          <label for="session_id">Search Poller Session Id</label>
+        </div>
+        <div class="input-field col s6">
+          <input id="poller_sessions_from_search" type="text" class="datepicker">
+          <label for="poller_sessions_from">Poller Sessions From</label>
+        </div>
+        <div class="input-field col s6">
+          <input id="poller_sessions_upto_search" type="text" class="datepicker">
+          <label for="poller_sessions_upto">Poller Sessions Upto</label>
+        </div>
+        <div class="input-field col s6">
+          <input id="poller_sessions_entity_unique_name" type="text">
+          <label>Poller Sessions Entity Unique Name</label>
+        </div>
+        <div class="input-field col s6">
+          <input id="poller_sessions_indice" type="text">
+          <label for="poller_sessions_indice_search">Poller Sessions Indice Search</label>
+        </div>
+        <span class="waves-effect waves-light btn search_poller_sessions">Search</span>
+      </form>
       <table class="striped highlight">
         <thead>
           <tr>
@@ -164,38 +194,13 @@
 
         </tbody>
       </table>
+      <span class="waves-effect waves-light btn" id="newer_poller_sessions">Newer</span>
+      <span class="waves-effect waves-light btn" id="older_poller_sessions">Older</span>
     </div>
   </script>
 
-  <script type="text/template" id="poller_sessions_id_template">
-    <table class="striped">
-      <thead>
-        <tr>
-          <th>Event Name</th>
-          <th>Information</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{ _.each(search_result.poller_session_rows,function(row){ }}
-          <tr>
-            <td>{{= row.event_name }}</td>
-            <td>
-              <ol>
-                {{ _.each(row.information,function(info){ }}
-                  <li>{{= info.start_time }} : 
-                    {{= JSON.stringify(info.description) }}
-                  </li>
-                {{ }) }}
-              </ol>
-            </td>
-          </tr>
-        {{ }) }}
-      </tbody>
-    </table>
-  </script>
-
   <script type="text/template" id="poller_sessions_table_row_template">
-    <tr class="poller_session_table_row" data-poller-session-id="{{= search_result.poller_session_id }}">
+    <tr class="poller_session_table_row" data-poller-session-id="{{= search_result.poller_session_id }}" data-query-params='{{= JSON.stringify(search_result.query_params) }}'>
       <td>{{= search_result.start_time }}</td>
       <td>{{= search_result.type }}</td>
       <td>{{ _.each(search_result.events,function(event){ }}
@@ -204,6 +209,54 @@
       </td>
     </tr>
   </script>
+  <!--- ENDS. -->
+
+
+  <!--- TO SHOW THE DETAILS OF A GIVEN POLLER SESSION -->
+  <!-- filter by entity unique name -->
+  <script type="text/template" id="poller_sessions_id_template">
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Entity Names</th>
+          <th>Index Names</th>
+          <th>Information</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ _.each(search_result.poller_session_rows,function(row){ }}
+          <tr>
+            <td>{{= row.event_name }}</td>
+            <td>{{= row.entity_unique_names }}</td>
+            <td>
+              <ol>
+                {{ _.each(row.indices,function(indice){ }}
+                  <u><li style="cursor:pointer" data-name="{{= indice.index_name }}" class="filter_by_exchange">{{= indice.index_name }}</li></u>
+                {{ }) }}
+              </ol>
+            </td>
+            <td data-information='{{= JSON.stringify(row.indices) }}'>
+              {{ var first_index = _.first(row.indices) }}
+              <ol>
+                {{ _.each(first_index.information,function(info){ }}
+                    <li>{{= info.start_time }} : 
+                      {{= JSON.stringify(info.description) }} : {{ _.each(info.entity_unique_names,function(eun){  }}
+                        <u><span style="cursor:pointer" data-name="{{= eun }}" class="filter_by_entity">{{= eun }},</span></u>
+                      {{ }) }}
+                    </li>
+                {{ }) }}
+              </ol>
+            </td>
+          </tr>
+        {{ }) }}
+      </tbody>
+    </table>
+  </script>
+  <!---- --->
+
+
+  
 
   <script type="text/template" id="result_card_template">
     <div id="{{= search_result['_id'] }}" class="result col s12 m6 l6" data-result='{{= JSON.stringify(search_result) }}' >
@@ -219,12 +272,7 @@
       </div>
     </div>
   </script>
-  <!-- now the required logs have to work -->
-  <!-- for eg time based subindicators -->
-  <!-- time of processing of individaul entity tasks -->
-  <!-- memory and cron rejection reasons -->
-  <!-- this has to be known -->
-  <!-- exception tracking -->
+  
   <script type="text/template" id="download_session_template">
     <div class="card">
       <div class="card-content">

@@ -10,8 +10,14 @@
 //= require autocomplete_patch.js
 //= require stock.js
 //= require our_story.js
+//= require entity_logs.js
+//= require session_logs.js
+//= require exchange_logs.js
 
-
+// can we call setup ?
+// setup some dummy patients ?
+// and confirm them
+// then we can start testing out order creation.
 // now for infinite scroll, with tabs.
 /****
 DISCLAIMER : I don't know ratshit about Javascript. This file, summarizes my knowledge of the subject.
@@ -2731,6 +2737,27 @@ $(document).ready(function(){
       	}
       }
     });
+    init_js_plugins();
+});
+
+var init_js_plugins = function(){
+	$('.datepicker').datepicker();
+}
+
+$( document ).ajaxSend(function() {
+  console.log("sending ajax request");
+  //$("#progress").css("visibility","visible");
+});
+
+$( document ).ajaxComplete(function() {
+  //$("#progress").css("visibility","hidden");
+  console.log("ajax complete");
+  init_js_plugins();
+});
+
+$( document ).ajaxError(function() {
+  //$("#progress").css("visibility","hidden");
+  console.log("ajax error");
 });
 
 

@@ -1,7 +1,14 @@
 class StocksController < ApplicationController
 
 	include Concerns::EntityControllerConcern
-		
+	
+	# basic navigation.
+	# poller sessions -> one way of navigating
+	# exchange -> poller sessions
+	# historical data of the entities for the exchange
+	# download history for an exchange.
+	
+
 	def ticks
 		respond_to do |format|
 			format.json do 

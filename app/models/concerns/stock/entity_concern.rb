@@ -2,6 +2,21 @@ module Concerns::Stock::EntityConcern
 
 	extend ActiveSupport::Concern
 
+	PASSWORD = ENV["ALGORINI_FRONTEND_PASSWORD"]
+	INFORMATION_TYPE_ENTITY = "entity"
+	SINGLE = 0
+	COMBINATION = 1
+	NO = -1
+	YES = 1
+	FRONTEND_LOG = "frontend_log"
+	LOG_INDEX_NAME = "tradegenie_titan"
+	LOG_INDEX_TYPE = "doc"
+	LOG_INDEX_POLLER_SESSION_TYPE = "Poller"
+	RISE = "rise"
+	FALL = "fall"
+	TREND_DIRECTIONS = ["rise","fall"]
+	
+
 	included do 
 
 		include Elasticsearch::Persistence::Model
@@ -16,27 +31,13 @@ module Concerns::Stock::EntityConcern
 
 		#okay so now the next step, is to sort out assign attributes and seperate all that into another thing.
 		#put this on the server.
-		PASSWORD = ENV["ALGORINI_FRONTEND_PASSWORD"]
-		INFORMATION_TYPE_ENTITY = "entity"
-		SINGLE = 0
-		COMBINATION = 1
-		NO = -1
-		YES = 1
-		FRONTEND_LOG = "frontend_log"
+		
 
 		index_name "frontend"
 		document_type "doc"
 
 		## we can just call a method on the api.
 		## simpler.
-
-		LOG_INDEX_NAME = "tradegenie_titan"
-		LOG_INDEX_TYPE = "doc"
-		LOG_INDEX_POLLER_SESSION_TYPE = "Poller"
-
-		RISE = "rise"
-		FALL = "fall"
-		TREND_DIRECTIONS = ["rise","fall"]
 
 		attribute :stock_is_exchange, Integer, mapping: {type: 'integer'}, default: NO
 

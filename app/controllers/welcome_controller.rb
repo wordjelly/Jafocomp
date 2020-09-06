@@ -66,8 +66,25 @@ class WelcomeController < ApplicationController
 	end
 
 	## shows all the logs for an individual poller session.
+	## so this is possible.
 	def poller_session
-		poller_session_rows = Logs::PollerSession.get(params[:poller_session_id])
+		## date filter.
+
+		args = {}
+
+		if params[:entity_unique_name]
+			args[:entity_unique_name] = params[:entity_unique_name]
+		end
+
+		if params[:indice]
+			args[:indice] = params[:indice]
+		end
+
+		if params[:poller_session_id]
+			args[:poller_session_id] = params[:poller_session_id]
+		end
+
+		poller_session_rows = Logs::PollerSession.get(args)
 		respond_to do |format|
 			format.json do 
 				render :json => {poller_session_rows: poller_session_rows, status: 200}
@@ -75,8 +92,35 @@ class WelcomeController < ApplicationController
 		end
 	end
 
+	## filter by date, exchange, or entity.
+	## right so that will have to be stored -> to pipe forward to get.
 	def poller_sessions
-		poller_session_rows = Logs::PollerSession.view
+		args = {}
+			
+		### ADD DATE RANGE QUERIES.
+		### we can search for a particular date range.
+		if params[:poller_sessions_upto]
+			args[:poller_sessions_upto] = params[:poller_sessions_upto]
+		end
+
+		if params[:poller_sessions_from]
+			args[:poller_sessions_from] = params[:poller_sessions_from]
+		end
+
+		if params[:entity_unique_name]
+			args[:entity_unique_name] = params[:entity_unique_name]
+		end
+
+		if params[:indice]
+			args[:indice] = params[:indice]
+		end
+		
+		poller_session_rows = Logs::PollerSession.view(args)
+		
+		poller_session_rows.map{|c|
+			c[:query_params] = args
+		}
+
 		respond_to do |format|
 			format.json do 
 				render :json => {poller_session_rows: poller_session_rows, status: 200}
