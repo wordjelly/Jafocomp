@@ -55,8 +55,8 @@ var get_poller_sessions = function(args){
 var get_poller_session = function(args){
 	$.get('/poller_session.json',args).done(function(data){
 		var poller_session_rows = data.poller_session_rows;
-		//console.log("got response of individual log event");
-		//console.log(poller_session_rows);
+		console.log("got response of poller session ids");
+		console.log(poller_session_rows);
 		$("#logs").html("");
 		var template = _.template($('#poller_sessions_id_template').html());
 		$("#logs").append(template({poller_session_rows :poller_session_rows}));
@@ -108,6 +108,8 @@ $(document).on('click','.filter_by_entity',function(event){
 		entity_unique_name : entity_unique_name
 	});
 });
+
+
 
 // so this shit works now.
 // now what

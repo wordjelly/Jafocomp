@@ -43,9 +43,18 @@ Rails.application.routes.draw do
   get 'stocks/:id/with_exchange/:exchange_id' => "stocks#show"
   put 'force_create_index' => "stocks#force_create_index", as: "force_create_index"
 
+  ################################
+  ##
+  ##
+  ## ENTITY LOG ROUTES
+  ##
+  ##
+  ################################
   get 'stock_ticks' => 'stocks#ticks', as: "stock_ticks"
-
-  get 'download_history' => 'stocks#download_history', as: "stock_download_history"
+  get 'stock_download_history' => 'stocks#download_history', as: "stock_download_history"
+  get 'stock_errors' => 'stocks#errors', as: "stock_errors"
+  get 'stock_poller_history' => 'stocks#poller_history', as: "stock_poller_history"
+   
   
 
   ## for sitemap.

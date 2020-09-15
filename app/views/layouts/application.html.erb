@@ -72,7 +72,7 @@
 
 
   <!-- download history by poller session, for a given stock -->
-  <script type="text/template" id="download_history_template">
+  <script type="text/template" id="stock_download_history_template">
     <div id="download_history_table">
       <table class="striped highlight">
         <thead>
@@ -95,65 +95,128 @@
     </div>
   </script>
 
+  <!-- so we can track the cron -->
+  <!-- there after we can check other stuff out -->
 
-
-  <!-- historical data of last 10 days for every stock in an exchange -->
   <script type="text/template" id="stock_ticks_template">
     <div id="entities_history_table">
+      <h6>{{= search_result.entities[0].entity_unique_name }}</h6>
       <table class="striped highlight">
         <thead>
           <tr>
-            <th>Stock Name</th>
-            <th>Last 10 Ticks</th>
-            <th>Last Download Attempt</th>
-            <th>Last Frontend Update</th>
+            <th>Date</th>
+            <th>OHLCV</th>
+            <th>Downloaded Session & Date</th>
+            <th>Poller Session & Date</th>
           </tr>
         </thead>
-        
         <tbody id="poller_session_table_body">
           {{ _.each(search_result.entities,function(entity){  }}
-            <tr>
-              <td class="download_history" data-entity-unique-name="{{= entity.entity_unique_name }}">{{= entity.entity_unique_name }}</td>
-              <td>
-                <table class="striped">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Open</th>
-                      <th>High</th>
-                      <th>Low</th>
-                      <th>Close</th>
-                      <th>Volume</th>
-                      <th>Poller Session Id</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {{ _.each(entity.datapoints,function(dp,key,list){ }}
-                      {{var show = ""}}
-                      {{var poller_session_datetime = moment(dp.poller_session_date).format("YYYY-MM-DD - h:mm:ss A") }}
-                      {{ if(key > 0){ show = "display:none;" } }}
-                      <tr style="{{= show }}">
-                        <td>{{= dp.day_of_month }} {{= dp.month_of_year }} {{= dp.year }}</td>
-                        <td>{{= dp.open }}</td>
-                        <td>{{= dp.high }}</td>
-                        <td>{{= dp.low }}</td>
-                        <td>{{= dp.close }}</td>
-                        <td>{{= dp.volume }}</td>
-                        <td>{{= dp.poller_session_id }} {{= poller_session_datetime }}</td>
-                      </tr>
-                    {{ }) }}
-                  </tbody>
-                </table>
-              </td>
-              <td></td>
-            </tr>
+            {{ _.each(entity.datapoints,function(dp,key,list){ }}
+              {{ var poller_session_datetime = moment(dp.poller_session_date).format("YYYY-MM-DD - h:mm:ss A") }}
+              {{ var poller_processor_session_datetime = "" }}
+              {{ if(dp.poller_processor_session_date){ }}
+                {{ var poller_processor_session_datetime = moment(dp.poller_processor_session_date).format("YYYY-MM-DD - h:mm:ss A") }}
+              {{ } }}
+              <tr>
+                <td>{{= dp.day_of_month }} {{= dp.month_of_year }} {{= dp.year }}</td>
+                <td>Open:{{= dp.open }}<br>High: {{= dp.high }}<br>Low: {{= dp.low }}<br> Close: {{= dp.close }}<br> Volume: {{= dp.volume }}</td>
+                <td>{{= dp.poller_session_id }} {{= poller_session_datetime }}</td>
+                <td>{{= dp.poller_processor_session_id }} {{= poller_processor_session_datetime }}</td>
+              </tr>
+            {{ }) }}
           {{ }) }}
         </tbody>
       </table>
     </div>
   </script>
-  
 
+  <script type="text/template" id="stock_errors_template">
+    <div id="stock_errors_table">
+      <table class="striped highlight">
+        <thead>
+          <tr>
+            <th>Poller Session Id</th>
+            <th>Time</th>
+            <th>Event Name</th>
+            <th>Information</th>
+          </tr>
+        </thead>
+      </table>
+      <tbody>
+        {{ _.each(search_result.errors,function(error_row){ }}
+          <tr>
+            <td>{{= error_row.poller_session_id }}</td>
+            <td>{{= error_row.time }}</td>
+            <td>{{= error_row.event_name }}</td>
+            <td>{{= error_row.information }}</td>
+          </tr>
+        {{ }) }}
+      </tbody>
+    </div>
+  </script>
+
+
+  <script type="text/template" id="stock_poller_history_template">
+    <div id="stock_errors_table">
+      <table class="striped highlight">
+        <thead>
+          <tr>
+            <th>Poller Session Id</th>
+            <th>Time</th>
+            <th>Event Names</th>
+          </tr>
+        </thead>
+      
+        <tbody>
+          {{ _.each(search_result.poller_history,function(row){ }}
+            <tr>
+              <td>{{= row.poller_session_id }}</td>
+              <td>{{= row.start_time }}</td>
+              <td>
+                <ol>
+                {{ _.each(row.events,function(event){  }}
+                  <li>{{= event.event_time }} : {{= event.event_name }}</li>
+                {{ }) }}
+                </ol>
+              </td>
+            </tr>
+          {{ }) }}
+        </tbody>
+      </table>
+    </div>
+  </script>  
+  <!-- gonna have to sort this out today itself. -->
+  <!-- without all this, no point -->
+  <!-- how do we easily filter all this stuff -->
+  <!-- what about poller errors ? -->
+  <script id="stock_log_template" type="text/template">
+
+    <h4>Recent Errors</h4>
+    <div id="stock_errors"></div>
+    <div class="divider"></div>
+
+    <h4>Ticks</h4>
+    <div id="stock_ticks"></div>
+    <div class="divider"></div>
+
+    <h4>Download History</h4>
+    <div id="stock_download_history"></div>
+    <div class="divider"></div>
+
+    <h4>Poller History</h4>
+    <div id="stock_poller_history"></div>
+    <div class="divider"></div>
+
+    <h4>FrontEnd Actions History</h4>
+    <div id="stock_frontend_actions"></div>
+    <div class="divider"></div>
+
+    <h4>Combinations Created History</h4>
+    <div id="stock_combinations_created_history"></div>
+    <div class="divider"></div>    
+
+  </script>
   <!-- i want to be able to click on an entity or exchange and search for it directly as filter -->
   <!-- poller session table, just one row per poller session, whether download or poll. -->
   <!-- so if we click on any entity index / entity, how do we click on it, is all this needed ? -->
@@ -181,6 +244,8 @@
           <label for="poller_sessions_indice_search">Poller Sessions Indice Search</label>
         </div>
         <span class="waves-effect waves-light btn search_poller_sessions">Search</span>
+
+        <span class="waves-effect waves-light btn search_entity">Search Entity</span>
       </form>
       <table class="striped highlight">
         <thead>
@@ -237,16 +302,18 @@
               </ol>
             </td>
             <td data-information='{{= JSON.stringify(row.indices) }}'>
-              {{ var first_index = _.first(row.indices) }}
-              <ol>
-                {{ _.each(first_index.information,function(info){ }}
-                    <li>{{= info.start_time }} : 
-                      {{= JSON.stringify(info.description) }} : {{ _.each(info.entity_unique_names,function(eun){  }}
-                        <u><span style="cursor:pointer" data-name="{{= eun }}" class="filter_by_entity">{{= eun }},</span></u>
-                      {{ }) }}
-                    </li>
-                {{ }) }}
-              </ol>
+              {{ if(_.size(row.indices) > 0){ }}
+                {{ var first_index = _.first(row.indices) }}
+                <ol>
+                  {{ _.each(first_index.information,function(info){ }}
+                      <li>{{= info.start_time }} : 
+                        {{= JSON.stringify(info.description) }} : {{ _.each(info.entity_unique_names,function(eun){  }}
+                          <u><span style="cursor:pointer" data-name="{{= eun }}" class="filter_by_entity">{{= eun }},</span><sup class="show_entity_logs" data-entity-unique-name="{{= eun }}">Logs</sup></u>
+                        {{ }) }}
+                      </li>
+                  {{ }) }}
+                </ol>
+              {{ } }}
             </td>
           </tr>
         {{ }) }}

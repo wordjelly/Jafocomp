@@ -44,13 +44,6 @@ class Logs::PollerSession
 	## so we don't need to filter here anymore.
 	## indice, entity_unique_name
 	def self.aggs(args={})
-		## here the pagination is an issue.
-		## how do we do this.
-		## do it by range query only.
-		## that date and time -. should get returned.
-		combined = COMMON + POLLER_SESSION_EVENTS + DOWNLOADER_SESSION_EVENTS
-		combined.flatten!
-
 		{
 		    "poller_session" => {
 			    "terms" => {
@@ -71,7 +64,7 @@ class Logs::PollerSession
 		              			"terms" => {
 		                			"field" => "event_name",
 		                			"size" => 11,
-		                			"include" => combined, 
+		                			"include" => args[:event_names], 
 		                			"order" => {
 		                  				"start_time" => "asc"
 		                			}
@@ -168,6 +161,7 @@ class Logs::PollerSession
 	end
 
 	def self.get(args)
+		puts "--------------- CAME TO GET --------------------- "
 		query = {
 			bool: {
 				must: []
@@ -175,11 +169,13 @@ class Logs::PollerSession
 		}
 
 		args.keys.map{|c|
-			query[:bool][:must] << {
-				term: {
-					c => args[c]
+			if c.to_s == "poller_session_id"
+				query[:bool][:must] << {
+					term: {
+						c => args[c]
+					}
 				}
-			}
+			end
 		}
 
 		search_response = Elasticsearch::Persistence.client.search :index => INDEX_NAME, :type => DOCUMENT_TYPE, :body => {
@@ -240,7 +236,7 @@ class Logs::PollerSession
 		# we don't wanna include the memory information under the logs
 		# we wanna group the 
 		puts "--------------------------------------------------->"
-		#puts JSON.pretty_generate(search_response["aggregations"])
+		puts JSON.pretty_generate(search_response["aggregations"])
 		
 		puts "--------------------------------------------------->"
 
@@ -262,6 +258,9 @@ class Logs::PollerSession
 			}
 		}
 
+		puts "poller session rows being returned"
+		puts JSON.pretty_generate(poller_session_rows)
+
 		poller_session_rows
 
 		## so we have an expandable/ collapsible system
@@ -270,26 +269,10 @@ class Logs::PollerSession
 		## and we can filter whatever we want also.
 	end
 
-	## now can render this on the front end.
-	## converts the aggregation to a table.
-	## @return[Array]
-	## [
-	##  {
-	##     "start_time" : whatever,
-	##     "type" : downloader/poller
-	##     "events" : [{"event_name" => x, "event_time" => y}]
-	##  }
-	##]
-	def self.view(args={})
+	def self.parse_poller_sessions_aggs(args={})
 
-		search_response = Elasticsearch::Persistence.client.search :index => INDEX_NAME, :type => DOCUMENT_TYPE, :body => {
-			:size => 0,
-			:query => query(args),
-			:aggs => aggs(args)
-		}
-	
-		puts JSON.pretty_generate(search_response["aggregations"])
-		
+		search_response = args[:search_response]
+
 		table_rows = []
 
 		search_response["aggregations"]["poller_session"]["buckets"].each do |poller_session_bucket|
@@ -331,6 +314,37 @@ class Logs::PollerSession
 		puts JSON.pretty_generate(table_rows)
 
 		table_rows
+	end
+
+	## now can render this on the front end.
+	## converts the aggregation to a table.
+	## @return[Array]
+	## [
+	##  {
+	##     "start_time" : whatever,
+	##     "type" : downloader/poller
+	##     "events" : [{"event_name" => x, "event_time" => y}]
+	##  }
+	##]
+	def self.view(args={})
+
+		combined = COMMON + POLLER_SESSION_EVENTS + DOWNLOADER_SESSION_EVENTS
+		combined.flatten!
+
+		args[:event_names] = combined
+	
+		search_response = Elasticsearch::Persistence.client.search :index => INDEX_NAME, :type => DOCUMENT_TYPE, :body => {
+			:size => 0,
+			:query => query(args),
+			:aggs => aggs(args)
+		}
+	
+		puts JSON.pretty_generate(search_response["aggregations"])
+		
+		
+
+		parse_poller_sessions_aggs({:search_response => search_response})
+		
 
 	end
 end

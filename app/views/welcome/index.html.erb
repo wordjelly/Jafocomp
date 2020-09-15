@@ -147,10 +147,11 @@
 	</div>
 
 
+	<!--
 	<div class="row center" style="margin-top:1rem;">
 		<div id="show_logs">Show Logs</div>
 	</div>
-
+	-->
 
 	<div class="row center" style="margin-top:1rem;">
 		<div class="show_session_logs">Show Sessions Logs</div>
@@ -161,7 +162,7 @@
 	<!-- like for a particular entity -->
 	<div class="row center" style="margin-top:1rem;">
 		<% ["NIFTY","CAC_40","DAX","NASDAQ-100","FTSE_100"].each do |exchange_name| %>
-			<span class="stock_ticks" data-exchange-name="<%=  exchange_name %>"><%= exchange_name %></span>
+			<!--<span class="stock_ticks" data-exchange-name="<%=  exchange_name %>"><% exchange_name %></span> -->
 		<% end %>	
 	</div>
 
@@ -191,5 +192,11 @@
 <div class="row" style="margin-top:1rem;">
 	<div id="logs" class="col l12 m12 s12">
 
+	</div>
+</div>
+
+<div class="row" style="margin-top:1rem;">
+	<div id="stock_log" class="col l12 m12 s12">
+		
 	</div>
 </div>
