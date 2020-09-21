@@ -223,8 +223,14 @@ module Concerns::Stock::CombinationConcern
 
 			end
 
-			Rails.logger.debug("updated combinations for #{self.stock_name} as follows:")
-			Rails.logger.debug(JSON.pretty_generate(index_results_for_log))
+			## its combinations with every other stock.
+			## could be 180 of them
+			index_results_for_log
+			## this will become very heavy.
+			## to log.
+			## 
+			#Rails.logger.debug("updated combinations for #{self.stock_name} as follows:")
+			#Rails.logger.debug(JSON.pretty_generate(index_results_for_log))
 
 			## so here we want to add the combination total hits.
 

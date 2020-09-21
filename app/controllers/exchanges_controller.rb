@@ -2,15 +2,6 @@ class ExchangesController < ApplicationController
 
 	include Concerns::EntityControllerConcern
 	
-	## override the index action.
-	## i think use it for a bit, and try to do the tests simultaneously
-	## but that's not possible.
-	## i want billing statement, working for outsourcing, and prepaid option.
-	## and it should work with the lis.
-	## that much i can do without too much trouble.
-	## we can use default timings ?
-	## at bare minimum.
-
 	def index
 
 		puts "came to index action in exchanges controller----------"
@@ -45,5 +36,22 @@ class ExchangesController < ApplicationController
 	end	
 
 	## so we go with show, and fire a get_components accessor on it.
+
+	def all
+		respond_to do |format|
+			format.json do 
+				render :json => {exchanges: Logs::Exchange.all(:exchange_name => params[:exchange_name]), status: 200}
+			end
+		end
+	end
+
+	def summary
+		respond_to do |format|
+			format.json do 
+				render :json => {datapoints: Logs::Exchange.summary(:exchange_name => params[:exchange_name], :entity_unique_names => params[:entity_unique_names]), status: 200}
+			end
+		end
+	end
+	
 
 end

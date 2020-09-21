@@ -79,15 +79,18 @@ module Concerns::EntityControllerConcern
 
 		## will expect an id.
 		def update
-			#if Rails.env.production?
-			
-			@entity.save if @entity.authenticate?
-			#else
-			#	@entity.save
-			#end
+			begin
+				Logs::Entity.start_frontend_update({:entity_unique_name => @entity.entity_unique_name, :indice => @entity.indice})
+				if @entity.authenticate?
+					@entity.save 
+					Logs::Entity.frontend_update_completed({:entity_unique_name => @entity.entity_unique_name, :indice => @entity.indice})
+				else
+					Logs::Entity.frontend_auth_error
+				end
+			rescue => e
+				Logs::Entity.frontend_update_errors({:information => e.to_s})
+			end
 		end
-
-
 
 		###############################################################
 		##

@@ -65,6 +65,7 @@ var get_poller_session = function(args){
 
 $(document).on('click','.show_session_logs',function(event){
 	get_poller_sessions({});
+	get_exchanges({});
 });
 
 $(document).on('click','#newer_poller_sessions',function(event){
@@ -122,3 +123,17 @@ $(document).on('click','.filter_by_exchange',function(event){
 		indice : indice
 	});
 });
+
+/***
+now just the route and template and clicking on it should provide some useful results.
+***/
+var get_exchanges = function(args){
+	$.get('/all_exchanges.json',args).done(function(data){
+		var exchanges = data.exchanges;
+		console.log("got response of all exchanges");
+		console.log(exchanges);
+		$("#exchange_components").html("");
+		var template = _.template($('#exchanges_template').html());
+		$("#exchange_components").append(template({exchanges : exchanges}));
+	});
+}

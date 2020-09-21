@@ -25,6 +25,21 @@ class Logs::Entity
 	FRONTEND_UPDATE = "A1u1a-FRONTEND_UPDATE";
 	COMPLEX_PAIR = "A1u2-COMPLEX_PAIR";
 
+	FRONTEND_LOG = "frontend_log"
+	LOG_INDEX_NAME = "tradegenie_titan"
+	LOG_INDEX_TYPE = "doc"
+	LOG_INDEX_POLLER_SESSION_TYPE = "Poller"
+
+	START_FRONTEND_UPDATE = "start_frontend_update"
+	FRONTEND_UPDATE_AUTH_ERRPR = "frontend_update_auth_error"
+	FRONTEND_UPDATE_ERROR = "frontend_update_error"	
+	FRONTEND_UPDATE_COMPLETED = "frontend_update_completed"
+	START_BACKGROUND_UPDATE = "start_background_update"
+	BACKGROUND_UPDATE_ERROR = "background_update_error"
+	BACKGROUND_UPDATE_COMPLETED = "background_update_completed"
+
+
+
 	POLLER_EVENTS = [STARTED_ENTITY_POLL_PROCESS,ENTITY_TASK_STARTED,ENTITY_TASK_ERROR,ENTITY_TASK_FINISHED,FUTURES_RETRIEVED,FUTURE_RETRIEVE_ERROR,EXECUTOR_WAITING_TO_SHUTDOWN,EXECUTOR_SHUTDOWN_COMPLETED,FRONTEND_UPDATE,COMPLEX_PAIR]
 
 	def self.index_properties
@@ -40,6 +55,70 @@ class Logs::Entity
 			}
 		}
 	end
+
+	###########################################################
+	##
+	##
+	##
+	## FRONTEND UPDATE LOGGING DETAILS.
+	##
+	##
+	##
+	###########################################################
+	def self.frontend_auth_error(args={})
+		create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => {
+				:event_name => FRONTEND_UPDATE_AUTH_ERRPR,
+				:time => Time.now.to_i*1000
+			}
+	end
+
+	def self.start_frontend_update(args={})
+		create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => args.merge({
+				:event_name => START_FRONTEND_UPDATE,
+				:time => Time.now.to_i*1000
+			})
+	end
+
+	def self.frontend_update_errors(args={})
+		create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => args.merge({:event_name => FRONTEND_UPDATE_ERROR, :time => Time.now.to_i*1000})
+	end
+
+	def self.frontend_update_completed(args={})
+		create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => args.merge({:event_name => FRONTEND_UPDATE_COMPLETED, :time => Time.now.to_i*1000})
+	end
+
+	def self.start_background_update(args={})
+		create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => args.merge({
+				:event_name => START_BACKGROUND_UPDATE,
+				:time => Time.now.to_i*1000
+			})	
+	end
+
+	def self.background_update_errors(args={})
+		create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => args.merge({
+				:event_name => BACKGROUND_UPDATE_ERROR,
+				:time => Time.now.to_i*1000
+			})		
+	end
+
+	def self.background_update_completed(args={})
+		create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => args.merge({
+				:event_name => BACKGROUND_UPDATE_COMPLETED,
+				:time => Time.now.to_i*1000
+			})			
+	end
+
+=begin
+:entity_unique_name => args[:entity].entity_unique_name,
+:indice => args[:entity].indice,
+:poller_session_id => self.poller_session_id,
+:poller_session_type => LOG_INDEX_POLLER_SESSION_TYPE,
+:information => "x/y/z",
+=end
+	
+
+	##########################################################
+
 
 	def self.entities_query(args)
 		puts "args coming into entities querys are:"

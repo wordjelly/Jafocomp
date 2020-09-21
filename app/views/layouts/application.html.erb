@@ -70,6 +70,53 @@
 
   <%= cloudinary_js_config %>
 
+  <script type="text/template" id="exchange_summary_template">
+    <table class="striped highlight">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Not-Downloaded</th>
+          <th>Not-polled</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ _.each(search_result.datapoints,function(datapoint){ }}
+          <tr>
+            <td>{{= datapoint.date }}</td>
+            <td>{{= datapoint.not_downloaded }}</td>
+            <td>{{= datapoint.not_polled }}</td>
+          </tr>
+        {{ }) }}
+      </tbody>
+    </table>
+  </script>
+  <!-- exchange summary -->
+  <!-- when was the last time the exchange went for download -->
+  <!-- exchange level logs -->
+  <!-- which entity is lagging -->
+  <!-- aggregate by datestring , aggregate on the datapoints, filter on polled , and others and then give the entity names -->
+  <script type="text/template" id="exchanges_template">
+    <table class="striped highlight">
+      <thead>
+        <tr>
+          <th>Exchange Name</th>
+          <th>Entities</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ _.each(search_result.exchanges,function(exchange){ }}
+          <tr>
+            <td data-exchange-name="{{= exchange.name }}" class="exchange_summary">{{= exchange.name }}</td>
+            <td>
+              {{ _.each(exchange.entity_names,function(name){ }}
+                <span class="show_entity_logs" data-entity-unique-name="{{= name }}">{{= name }}</span>
+              {{ }) }}
+            </td>
+          </tr>
+        {{ }) }}
+      </tbody>
+    </table>
+  </script>
 
   <!-- download history by poller session, for a given stock -->
   <script type="text/template" id="stock_download_history_template">
@@ -156,7 +203,7 @@
     </div>
   </script>
 
-
+  <!-- next is to know expected tick, search by exchange, and search by entities  -->
   <script type="text/template" id="stock_poller_history_template">
     <div id="stock_errors_table">
       <table class="striped highlight">

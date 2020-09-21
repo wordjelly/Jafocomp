@@ -29,15 +29,27 @@ module Concerns::Stock::EntityConcern
 		include ActiveModel::Validations
 		include ActiveModel::Callbacks
 
-		#okay so now the next step, is to sort out assign attributes and seperate all that into another thing.
-		#put this on the server.
 		
-
 		index_name "frontend"
 		document_type "doc"
 
-		## we can just call a method on the api.
-		## simpler.
+		########################################################
+		##
+		##
+		## JUST FOR LOGGING -> SENT IN FROM THE BACKEND.
+		##
+		##
+		########################################################
+		attribute :entity_unique_name, String, mapping: {type: 'keyword'}
+		attribute :indice, String, mapping: {type: 'keyword'}
+		########################################################
+		##
+		##
+		## ENDS
+		##
+		##
+		########################################################
+
 
 		attribute :stock_is_exchange, Integer, mapping: {type: 'integer'}, default: NO
 
@@ -288,7 +300,7 @@ module Concerns::Stock::EntityConcern
 			## lets see if this works.
 			## then we go into the details.
 			## add that call.
-			document.log_update
+			#document.log_update
 			document.set_abbreviation
 		end
 
@@ -324,19 +336,11 @@ module Concerns::Stock::EntityConcern
 		end
 
 
+=begin
 		def log_update
-			create_response = Elasticsearch::Persistence.client.create :index => LOG_INDEX_NAME, :type => LOG_INDEX_TYPE, :id => SecureRandom.uuid, :body => {
-				:event_name => FRONTEND_LOG,
-				:time => Time.now.to_i*1000,
-				:poller_session_id => self.poller_session_id,
-				:poller_session_type => LOG_INDEX_POLLER_SESSION_TYPE,
-				:information => JSON.generate({
-					:entity_name => self.stock_name,
-					:id => self.id.to_s
-				})
-			}
+			
 		end
-
+=end
 
 
 		def schedule_background_update
@@ -363,18 +367,28 @@ module Concerns::Stock::EntityConcern
 		##
 		#############################################################
 		def update_it
-			set_top_results(args_for_top_results_query)
-			set_positive_results(args_for_positive_results_query)
-			set_negative_results(args_for_negative_results_query)
-			## i need logging at this level layered with poller session id.
-			## so we do this next.
-			update_combinations
-			update_components
-			self.trigger_update = false
-			self.stock_is_indicator = YES if self.class.name == "Indicator"
-			update_sitemap unless self.do_sitemap_update.blank?
-			self.do_sitemap_update = nil
-			self.save
+			begin
+				Logs::Entity.start_background_update({:entity_unique_name => self.entity_unique_name, :indice => self.indice, :poller_session_id => self.poller_session_id})
+
+				set_top_results(args_for_top_results_query)
+				set_positive_results(args_for_positive_results_query)
+				set_negative_results(args_for_negative_results_query)
+				combinations_updated = update_combinations
+				update_components
+				self.trigger_update = false
+				self.stock_is_indicator = YES if self.class.name == "Indicator"
+				update_sitemap unless self.do_sitemap_update.blank?
+				self.do_sitemap_update = nil
+				self.save
+				Logs::Entity.background_update_completed({:entity_unique_name => self.entity_unique_name, :indice => self.indice, :poller_session_id => self.poller_session_id, :information => {
+					:top_results => self.top_results.size,
+					:positive_results => self.positive_results.size,
+					:negative_results => self.negative_results.size,
+					:combinations => combinations_updated
+				}})
+			rescue => e
+				Logs::Entity.background_update_errors({:information => e.to_s, :entity_unique_name => self.entity_unique_name, :indice => self.indice, :poller_session_id => self.poller_session_id})
+			end
 		end
 
 		def update_sitemap
@@ -660,6 +674,8 @@ module Concerns::Stock::EntityConcern
 						:combine_with,
 						:password,
 						:poller_session_id,
+						:indice,
+						:entity_unique_name,
 						:do_sitemap_update
 					]
 				}

@@ -1100,10 +1100,13 @@ var set_social_sharing_urls = function(search_result){
 // why not french stocks are coming -> gotta investigate all this.
 var update_entity_links = function(search_result,entity_links){
 
+
 	console.log("came to updat entity links");
 	var entry = null;
 	console.log("searh rsult inside update entity links");
 	console.log(search_result);
+	console.log("entity links are:");
+	console.log(entity_links)
 
 	if(search_result.primary_entity){
 		entry = ("All Indicators for " + search_result.primary_entity.trim()).trim();
@@ -1136,11 +1139,12 @@ var update_entity_links = function(search_result,entity_links){
 		}
 	}
 
+	// sitemap logging, positive negative indicator issue
+	// exchange summary, filter timing, market stack.
+
 	if(search_result.primary_entity && search_result.target){
 		entry = ("How " + search_result.primary_entity.trim() + " affects " + search_result.target.trim()).trim();
 
-		// this is a combination query.
-		// gotta make it work.
 
 		if(entity_links[entry])
 		{
@@ -2724,7 +2728,7 @@ $(document).ready(function(){
       	
       	if(payload["div_id"]){
       		$(".search_result_card").hide();
-      		var the_div = $("#" + div_id);
+      		var the_div = $("#" + payload["div_id"]);
       		$(the_div).show();
       		// we want to also show these cards.
       		load_entity_information({search_result_card : the_div})
