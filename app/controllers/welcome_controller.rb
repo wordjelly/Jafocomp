@@ -128,6 +128,45 @@ class WelcomeController < ApplicationController
 		end
 	end
 
+	## now setup a crons template.
+	## and a list template.
+	def crons
+		respond_to do |format|
+			format.json do 
+				render :json => {crons: Logs::Log.get_crons, status: 200}
+			end
+		end
+	end	
+
+	## show queue first.
+	def queue
+
+		## frontend entity logs
+		## then everything else.
+		## sitemap logs.
+		queue = Logs::Log.get_queue
+		
+		entities_by_exchange = {}
+
+		queue.each do |entity|
+			#puts entity.to_s
+			#puts entity["indice"]
+			entities_by_exchange[entity["indice"]] ||= []
+			
+			entities_by_exchange[entity["indice"]] << {"entity_unique_name" => entity["entity_unique_name"], "entity_id" => entity["entity_id"], "time" => entity["time"]}
+		
+		end
+
+		respond_to do |format|
+		
+			format.json do 
+				render :json => {queue: entities_by_exchange, status: 200}
+			end
+			
+		end
+
+	end
+
 
 	def permitted_params
 		## context will be a single string.

@@ -38,9 +38,11 @@ class Logs::Entity
 	BACKGROUND_UPDATE_ERROR = "background_update_error"
 	BACKGROUND_UPDATE_COMPLETED = "background_update_completed"
 
+	FRONTEND_EVENTS = [START_FRONTEND_UPDATE,FRONTEND_UPDATE_AUTH_ERRPR,FRONTEND_UPDATE_ERROR,FRONTEND_UPDATE_COMPLETED,START_BACKGROUND_UPDATE,BACKGROUND_UPDATE_ERROR,BACKGROUND_UPDATE_COMPLETED]
 
 
 	POLLER_EVENTS = [STARTED_ENTITY_POLL_PROCESS,ENTITY_TASK_STARTED,ENTITY_TASK_ERROR,ENTITY_TASK_FINISHED,FUTURES_RETRIEVED,FUTURE_RETRIEVE_ERROR,EXECUTOR_WAITING_TO_SHUTDOWN,EXECUTOR_SHUTDOWN_COMPLETED,FRONTEND_UPDATE,COMPLEX_PAIR]
+
 
 	def self.index_properties
 		{
@@ -121,8 +123,8 @@ class Logs::Entity
 
 
 	def self.entities_query(args)
-		puts "args coming into entities querys are:"
-		puts args.to_s
+		#puts "args coming into entities querys are:"
+		#puts args.to_s
 		
 		base = {
 			bool: {
@@ -212,6 +214,7 @@ class Logs::Entity
 		}
 	end
 
+	DOWNLOAD_HISTORY_EVENTS = ["A1e-DOWNLOADING_ENTITY","A1i-ENTITY_DOWNLOAD_ERROR","A1h-ENTITY_FORCE_REDOWNLOAD","A1g-ENTITY_EXPECTED_DATAPOINT_ABSENT","A1f-ENTITY_DOWNLOADED_DATE_AND_DATAPOINTS","A1j-ENTITY_NO_NEW_DATAPOINTS","A1d11-ENTITY_FILTERED_RECENT_DOWNLOAD"]
 	# the argumen has the download history.
 	# what about frontend update ?
 	# was it successfull or not.
@@ -230,7 +233,7 @@ class Logs::Entity
 					},
 					{
 						terms: {
-							event_name: ["A1e-DOWNLOADING_ENTITY","A1i-ENTITY_DOWNLOAD_ERROR","A1h-ENTITY_FORCE_REDOWNLOAD","A1g-ENTITY_EXPECTED_DATAPOINT_ABSENT","A1f-ENTITY_DOWNLOADED_DATE_AND_DATAPOINTS","A1j-ENTITY_NO_NEW_DATAPOINTS"]
+							event_name: DOWNLOAD_HISTORY_EVENTS
 						}
 					}
 				]
@@ -258,7 +261,7 @@ class Logs::Entity
 		      				download_events: {
 		      					terms: {
 		      						field: "event_name",
-		      						include: ["A1e-DOWNLOADING_ENTITY","A1i-ENTITY_DOWNLOAD_ERROR","A1h-ENTITY_FORCE_REDOWNLOAD","A1g-ENTITY_EXPECTED_DATAPOINT_ABSENT","A1f-ENTITY_DOWNLOADED_DATE_AND_DATAPOINTS","A1j-ENTITY_NO_NEW_DATAPOINTS"]
+		      						include: DOWNLOAD_HISTORY_EVENTS
 		      					}
 		      				},
 		      				download_session_time: {
@@ -281,13 +284,15 @@ class Logs::Entity
 			aggs: download_history_aggregation(args)
 		}
 
-		puts "download history search response aggregation is:"
-		puts JSON.pretty_generate(search_response["aggregations"])
+		#puts "download history search response aggregation is:"
+		#puts JSON.pretty_generate(search_response["aggregations"])
 
 		entity_bucket = search_response["aggregations"]["entities"]["buckets"][0]
 
 		poller_sessions = []
 		entity_bucket["last_10_poller_sessions"]["buckets"].each do |poller_session|
+			puts "poller session is====>"
+			puts JSON.pretty_generate(poller_session)
 			poller_sessions << {
 				:poller_session_id => poller_session["key"],
 				:poller_session_date => poller_session["download_session_time"]["value_as_string"],
@@ -300,16 +305,16 @@ class Logs::Entity
 
 	## returns an array of entities, with entity_unique_name and datapoints.
 	def self.ticks(args={})
-		puts "the entities query is:"
-		puts JSON.pretty_generate(entities_query(args))
-		puts "-----------------------------------------"
+		#puts "the entities query is:"
+		#puts JSON.pretty_generate(entities_query(args))
+		#puts "-----------------------------------------"
 		search_response = Elasticsearch::Persistence.client.search :body => {
 			size: 0,
 			query: entities_query(args),
 			aggs: entities_aggregation(args)
 		}, :index => "tradegenie_titan", :type => "doc"
 
-		#puts JSON.pretty_generate(search_response["aggregations"])
+		##puts JSON.pretty_generate(search_response["aggregations"])
 
 		entities = []
 		## we need poller session id integrated into this.
@@ -325,7 +330,7 @@ class Logs::Entity
 
 		entities
 
-		#puts JSON.pretty_generate(entities)
+		##puts JSON.pretty_generate(entities)
 
 		entities
 
@@ -347,8 +352,8 @@ class Logs::Entity
 		search_response["hits"]["hits"].each do |hit|
 			errors << hit["_source"]
 		end
-		puts "entity errors are:"
-		puts JSON.pretty_generate(errors)
+		#puts "entity errors are:"
+		#puts JSON.pretty_generate(errors)
 		errors
 	end
 
@@ -361,7 +366,7 @@ class Logs::Entity
 			bool: {
 				must: [
 					:terms => {
-						event_name: POLLER_EVENTS
+						event_name: (POLLER_EVENTS + FRONTEND_EVENTS).flatten
 					}
 				]
 			}
@@ -401,12 +406,12 @@ class Logs::Entity
 			:size => 0,
 			:from => args[:from] || 0,
 			:query => base,
-			:aggs => Logs::PollerSession.aggs(:event_names => POLLER_EVENTS)
+			:aggs => Logs::PollerSession.aggs(:event_names => (POLLER_EVENTS + FRONTEND_EVENTS).flatten)
 		}
 
-		puts "poller history search response is:"
-		puts JSON.pretty_generate(search_response)
-		puts "------------------------------------------------"
+		#puts "poller history search response is:"
+		#puts JSON.pretty_generate(search_response)
+		#puts "------------------------------------------------"
 
 		Logs::PollerSession.parse_poller_sessions_aggs({:search_response => search_response})
 

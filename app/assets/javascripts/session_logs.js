@@ -1,3 +1,38 @@
+/*******************************************
+**
+**
+** MAIN CALLEE
+**
+**
+********************************************/
+$(document).on('click','.show_session_logs',function(event){
+	get_poller_sessions({});
+	get_exchanges({});
+	get_crons({});
+	get_queue({})
+});
+
+var get_crons = function(){
+	$.get('/crons.json',{}).done(function(data){
+		console.log("cronts response---------------------->:");
+		console.log(data);
+		var template = _.template($('#crons_template').html());
+		$("#crons").html("");
+		$("#crons").append(template(data));
+	});
+}
+	
+//after this is the exchange downloaded at details.
+var get_queue = function(){
+	$.get('/queue.json',{}).done(function(data){
+		console.log("queue response---------------------->:");
+		console.log(data);
+		var template = _.template($('#queue_template').html());
+		$("#queue").html("");
+		$("#queue").append(template(data));
+	});
+}
+
 var add_poller_session_template = function(){
 	
 	if($("#poller_sessions_table").length > 0){
@@ -63,10 +98,6 @@ var get_poller_session = function(args){
 	});	
 }
 
-$(document).on('click','.show_session_logs',function(event){
-	get_poller_sessions({});
-	get_exchanges({});
-});
 
 $(document).on('click','#newer_poller_sessions',function(event){
 	get_poller_sessions({poller_sessions_from : $(this).attr("data-time")});

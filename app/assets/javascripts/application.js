@@ -2491,6 +2491,7 @@ var quotes = {
 	"A man's worth is no greater than his ambitions." : "~ Marcus Aurelius, Emperor of Rome",
 	"We really can't forecast all that well, and yet we pretend that we can, but we really can't." : "Alan Greenspan",
 	"People who advocate simplicity have money in the bank; the money came first, not the simplicity." : "Douglas Coupland, The Gum Thief",
+	"A new idea is delicate. It can be killed by a sneer or a yawn; it can be stabbed to death by a quip and worried to death by a frown on the right man's brow." : "Ovid",
 	"What do you mean there is no money in the bags?" : "Ocean's Eleven",
 	"Misdirection, what the eyes see and the ears hear, the mind believes" : "Gabriel, Swordfish(2001)",
 	"Don't *ever* risk your life for an asset. If it comes down to you or them... send flowers." : "Nathan Muir, Spy Game(2001)",

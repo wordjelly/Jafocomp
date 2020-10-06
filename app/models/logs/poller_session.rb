@@ -153,15 +153,15 @@ class Logs::PollerSession
 			}
 		end
 
-		puts "the query is:"
-		puts JSON.pretty_generate(base)
+		##puts "the query is:"
+		##puts JSON.pretty_generate(base)
 
 		base
 
 	end
 
 	def self.get(args)
-		puts "--------------- CAME TO GET --------------------- "
+		#puts "--------------- CAME TO GET --------------------- "
 		query = {
 			bool: {
 				must: []
@@ -178,6 +178,7 @@ class Logs::PollerSession
 			end
 		}
 
+		## so basically we want -> to know if it got filtered due to close time.
 		search_response = Elasticsearch::Persistence.client.search :index => INDEX_NAME, :type => DOCUMENT_TYPE, :body => {
 			:size => 0,
 			:query => query,
@@ -235,10 +236,10 @@ class Logs::PollerSession
 		# newly downloaded date and datapoints.
 		# we don't wanna include the memory information under the logs
 		# we wanna group the 
-		puts "--------------------------------------------------->"
-		puts JSON.pretty_generate(search_response["aggregations"])
+		#puts "--------------------------------------------------->"
+		#puts JSON.pretty_generate(search_response["aggregations"])
 		
-		puts "--------------------------------------------------->"
+		#puts "--------------------------------------------------->"
 
 		poller_session_rows = search_response["aggregations"]["events"]["buckets"].map {|event_bucket|
 			{
@@ -258,8 +259,8 @@ class Logs::PollerSession
 			}
 		}
 
-		puts "poller session rows being returned"
-		puts JSON.pretty_generate(poller_session_rows)
+		#puts "poller session rows being returned"
+		#puts JSON.pretty_generate(poller_session_rows)
 
 		poller_session_rows
 
@@ -311,7 +312,7 @@ class Logs::PollerSession
 
 		end
 
-		puts JSON.pretty_generate(table_rows)
+		#puts JSON.pretty_generate(table_rows)
 
 		table_rows
 	end
@@ -328,10 +329,14 @@ class Logs::PollerSession
 	##]
 	def self.view(args={})
 
+		## so only particular events are being added here.
 		combined = COMMON + POLLER_SESSION_EVENTS + DOWNLOADER_SESSION_EVENTS
 		combined.flatten!
 
 		args[:event_names] = combined
+
+		puts "events queried:"
+		puts JSON.pretty_generate(args[:event_names])
 	
 		search_response = Elasticsearch::Persistence.client.search :index => INDEX_NAME, :type => DOCUMENT_TYPE, :body => {
 			:size => 0,
@@ -339,7 +344,7 @@ class Logs::PollerSession
 			:aggs => aggs(args)
 		}
 	
-		puts JSON.pretty_generate(search_response["aggregations"])
+		#puts JSON.pretty_generate(search_response["aggregations"])
 		
 		
 

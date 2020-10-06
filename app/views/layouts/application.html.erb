@@ -70,6 +70,62 @@
 
   <%= cloudinary_js_config %>
 
+  <script type="text/template" id="queue_template">
+    <h4>ENTITIES IN QUEUE</h4>
+    <table class="striped highlight">
+      <thead>
+        <tr>
+          <th>Index</th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ _.each(Object.keys(search_result.queue),function(exchange_name){   }}
+          <tr>
+            {{ console.log(search_result.queue[exchange_name]); }}
+            <td>{{= exchange_name }}</td>
+            <td>{{= JSON.stringify(search_result.queue[exchange_name]) }}</td>
+          </tr>
+        {{ }) }}
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/template" id="crons_template">
+    <h4>CRONS</h4>
+    {{ console.log("Result is:") }}
+    {{ console.log(search_result); }}
+    <table class="striped highlight">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Ago</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ if(search_result.crons.download_cron){ }}
+          {{ if(search_result.crons.download_cron.information){ }}
+            <tr>
+              <td>{{= moment(search_result.crons.download_cron.information).format("YYYY-MM-DD - h:mm:ss A") }}</td>
+              <td>Download Cron</td>
+              <td></td>
+            </tr>
+          {{ } }}
+        {{ } }}
+        {{ if(search_result.crons.poller_cron){ }}
+          {{ if(search_result.crons.poller_cron.information){ }}
+            <tr>
+              <td>{{= moment(search_result.crons.poller_cron.information).format("YYYY-MM-DD - h:mm:ss A") }}</td>
+              <td>Poller Cron</td>
+              <td></td>
+            </tr>
+          {{ } }}
+        {{ } }}
+      </tbody>
+    </table>
+  </script>
+  <!-- reading in the environment arguments into this -->
   <script type="text/template" id="exchange_summary_template">
     <table class="striped highlight">
       <thead>
@@ -118,6 +174,29 @@
     </table>
   </script>
 
+  <script type="text/template" id="exchange_download_history_template">
+    <div id="exchange_download_history_table">
+      <table class="striped highlight">
+        <thead>
+          <tr>
+            <th>Poller Session Id</th>
+            <th>Poller Session Date & Time</th>
+            <th>Events</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ _.each(search_result.poller_sessions,function(poller_session){ }}
+            <tr>
+              <td>{{= poller_session.poller_session_id }}</td>
+              <td>{{= poller_session.poller_session_date }}</td>
+              <td>{{= JSON.stringify(poller_session.events) }}</td>
+            </tr>
+          {{ }) }}
+        </tbody>
+      </table>
+    </div>
+  </script>
+
   <!-- download history by poller session, for a given stock -->
   <script type="text/template" id="stock_download_history_template">
     <div id="download_history_table">
@@ -134,7 +213,7 @@
             <tr>
               <td>{{= poller_session.poller_session_id }}</td>
               <td>{{= poller_session.poller_session_date }}</td>
-              <td>{{= poller_session.events }}</td>
+              <td>{{= JSON.stringify(poller_session.events) }}</td>
             </tr>
           {{ }) }}
         </tbody>

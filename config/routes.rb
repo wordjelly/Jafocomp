@@ -15,6 +15,10 @@ Rails.application.routes.draw do
 
   get 'poller_session' => 'welcome#poller_session'
 
+  get 'crons' => 'welcome#crons'
+
+  get 'queue' => 'welcome#queue'
+
   get 'exchange/:exchange' => 'welcome#exchange'
 
   put 'indicators/update_many' => 'indicators#update_many'

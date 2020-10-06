@@ -116,15 +116,15 @@ class Logs::Exchange
 
 	def self.summary(args={})
 		
-		puts "----------- triggered exchange summary ----------"
+		#puts "----------- triggered exchange summary ----------"
 
-		puts "query is:"
-		puts JSON.pretty_generate(query(args))
+		#puts "query is:"
+		#puts JSON.pretty_generate(query(args))
 
-		puts "aggs are:"
-		puts JSON.pretty_generate(aggs(args))
+		#puts "aggs are:"
+		#puts JSON.pretty_generate(aggs(args))
 
-		puts "--------------------------------------------------"
+		#puts "--------------------------------------------------"
 
 		search_response = Elasticsearch::Persistence.client.search :body => {
 			query: query(args),
@@ -133,8 +133,8 @@ class Logs::Exchange
 
 		datapoints = []
 
-		puts "search response is:"
-		puts JSON.pretty_generate(search_response)
+		#puts "search response is:"
+		#puts JSON.pretty_generate(search_response)
 
 
 		search_response["aggregations"]["linked_list"]["dps"]["datestring"]["buckets"].each do |date_bucket|
@@ -201,9 +201,9 @@ class Logs::Exchange
 		}, :index => "tradegenie_titan", :type => "doc"
 
 
-		puts "search exchanges response"
-		puts JSON.pretty_generate(search_response)
-		puts "------------------------------------"
+		#puts "search exchanges response"
+		#puts JSON.pretty_generate(search_response)
+		#puts "------------------------------------"
 
 		exchanges = []
 		search_response["aggregations"]["exchange_names"]["buckets"].map{|exchange_bucket|
@@ -220,6 +220,124 @@ class Logs::Exchange
 
 	end
 
+	## filtered by recent download.
+	## 
+	DOWNLOAD_HISTORY_EVENTS = ["A1d1-DOWNLOADING_INDEX","A1d11-ENTITY_FILTERED_RECENT_DOWNLOAD","A1a12-INDEX_REJECTED_BY_TIME","A1a12-INDEX_PASSED_BY_TIME"]
+	ENTITY_FILTRATION_EVENTS = ["A1d11-ENTITY_FILTERED_RECENT_DOWNLOAD","A1d11-ENTITY_NOT_FILTERED_RECENT_DOWNLOAD"]
+
+
+	def self.download_history_query(args={})
+		{
+			bool: {
+				must: [
+					{
+						term: {
+							indice: args[:exchange_name]
+						}
+					},
+					{
+						terms: {
+							event_name: DOWNLOAD_HISTORY_EVENTS
+						}
+					}
+				]
+			}
+		}
+	end
+
+	## by poller session.
+	def self.download_history_aggregation(args={})
+		{
+	    	entities: {
+	      		terms: {
+	        		field: "entity_unique_name",
+	        		size: 10,
+	        		exclude: ["all_entities"]
+	      		},
+		      	aggs: {
+		      		last_10_poller_sessions: {
+		      			terms: {
+		      				field: "poller_session_id",
+		      				order: {
+		      					download_session_time: "desc"
+		      				}
+		      			},
+		      			aggs: {
+		      				download_events: {
+		      					terms: {
+		      						field: "event_name",
+		      						include: DOWNLOAD_HISTORY_EVENTS
+		      					}
+		      				},
+		      				filtration_events: {
+		      					terms: {
+		      						field: "event_name",
+		      						include: ENTITY_FILTRATION_EVENTS
+		      					},
+		      					aggs: {
+		      						entities: {
+		      							terms: {
+		      								field: "entity_unique_name",
+		      								size: 50
+		      							},
+		      							aggs: {
+		      								details: {
+		      									terms: {
+		      										field: "information"
+		      									}
+		      								}
+		      							}
+		      						}
+		      					}
+		      				},
+		      				download_session_time: {
+		      					min: {
+		      						field: "download_session_time"
+		      					}
+		      				}
+		      			}
+		      		}
+		      	}
+		    }
+		}
+	end
+
+	## @return[ARray]
+	## [
+	##		{ :poller_session_id => "", :events => [{"event_name" => ["event_info"]}] }
+	## ]
+	## after this why filtration is still active.
+	## it doesnt download anything, so it doesnt do anything
+	def self.download_history(args={})
+		## so right now we just show this much.
+		## and why this is not working in the first place.
+		search_response = Elasticsearch::Persistence.client.search :index => "tradegenie_titan", :type => "doc", :body => {
+			size: 0,
+			query: download_history_query(args),
+			aggs: download_history_aggregation(args)
+		}
+
+		poller_sessions = []
+		search_response["aggregations"]["last_10_poller_sessions"]["buckets"].each do |poller_session_bucket|
+			poller_session_id = poller_session_bucket["key"]
+			poller_session_time = poller_session_bucket["download_session_time"]["value"]
+			events = {}
+			events.merge!(poller_session_bucket["download_events"]["buckets"].map{|c| [c["key"],[c["key"]]]}.to_h)
+
+			## this is an event and in it we want the entity names.
+			poller_session_bucket["filtration_events"]["buckets"].each do |filtration_event|
+				event_name = filtration_event["key"]
+				filtration_event["buckets"].each do |event_bucket|
+					entity_names = event_bucket["entities"]["buckets"].map{|e| e["key"]}
+				end
+				events[event_name] = entity_names
+			end
+			poller_sessions << {:poller_session_id => poller_session_id, :events => events, :poller_session_date => poller_session_time}
+		end
+
+		poller_sessions
+
+	end
 	
 
 end
