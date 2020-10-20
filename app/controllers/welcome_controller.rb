@@ -70,7 +70,12 @@ class WelcomeController < ApplicationController
 	def poller_session
 		## date filter.
 
-		args = {}
+		args = params.slice(:event_name,:entity_unique_name,:indice,:poller_session_id,:expand_all)
+
+=begin
+		if params[:event_name]
+			args[:event_name] = params[:event_name]
+		end
 
 		if params[:entity_unique_name]
 			args[:entity_unique_name] = params[:entity_unique_name]
@@ -84,10 +89,20 @@ class WelcomeController < ApplicationController
 			args[:poller_session_id] = params[:poller_session_id]
 		end
 
+		if params[:expand_all]
+			args[:expand_all] = params[:expand_all]
+		end
+=end
+		#puts "args going to get individual poller session"
+		#puts JSON.pretty_generate(args)
+		#add timing to search
+		#search by type.
+		#and entity unique name etc, should get added.
+
 		poller_session_rows = Logs::PollerSession.get(args)
 		respond_to do |format|
 			format.json do 
-				render :json => {poller_session_rows: poller_session_rows, status: 200}
+				render :json => {poller_session_rows: poller_session_rows, status: 200, poller_session_id: args[:poller_session_id]}
 			end
 		end
 	end
@@ -97,24 +112,9 @@ class WelcomeController < ApplicationController
 	def poller_sessions
 		args = {}
 			
-		### ADD DATE RANGE QUERIES.
-		### we can search for a particular date range.
-		if params[:poller_sessions_upto]
-			args[:poller_sessions_upto] = params[:poller_sessions_upto]
-		end
-
-		if params[:poller_sessions_from]
-			args[:poller_sessions_from] = params[:poller_sessions_from]
-		end
-
-		if params[:entity_unique_name]
-			args[:entity_unique_name] = params[:entity_unique_name]
-		end
-
-		if params[:indice]
-			args[:indice] = params[:indice]
-		end
 		
+		args = params.slice(:poller_sessions_from,:poller_sessions_upto,:entity_unique_name,:indice,:poller_session_id)
+
 		poller_session_rows = Logs::PollerSession.view(args)
 		
 		poller_session_rows.map{|c|

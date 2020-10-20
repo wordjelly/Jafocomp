@@ -153,9 +153,7 @@
 	</div>
 	-->
 
-	<div class="row center" style="margin-top:1rem;">
-		<div class="show_session_logs">Show Sessions Logs</div>
-	</div>
+	
 	<!-- so this is for the exchanges, you can see the -->
 	<!-- can we filter the event log by the exchange name -->
 	<!-- poller sessions endpoint -->
@@ -185,51 +183,46 @@
 		<div id="subindicator"></div>
 	</div>
 
+	<div class="row center" style="margin-top:1rem;">
+		<span class="waves-effect waves-teal btn-flat log_view show_session_logs">Sessions Logs</span>
+		<span class="waves-effect waves-teal btn-flat log_view show_exchange_components">Exchange Components</span>
+		<span class="waves-effect waves-teal btn-flat log_view show_crons_queue">Crons & Queue</span>
+	</div>
 	
 </div>
 
 
-
 <div class="row" style="margin-top:1rem;">
-	<div class="card">
-	<h4>Exchange Logs</h4>
-	<h4>Exchange Summary</h4>
-	<div id="exchange_summary" class="col l12 m12 s12">
+	<div style="display:none;" class="log card session_logs">
+		<h4>Session Logs</h4>
+		<div id="logs" class="col l12 m12 s12">
+		</div>
 	</div>
-
-	<h4>Exchange Download History</h4>
-	<div id="exchange_download_history" class="col l12 m12 s12">
+	<div style="display:none;" class="log card exchange_components">
+		<h4>All Exchange Components</h4>
+		<div id="exchange_components" class="col l12 m12 s12">
+		</div>
+		<h4>Exchange Logs</h4>
+		<h4>Exchange Summary</h4>
+		<div id="exchange_summary" class="col l12 m12 s12">
+		</div>
+		<h4>Exchange Download History</h4>
+		<div id="exchange_download_history" class="col l12 m12 s12">
+		</div>
+		<h4>Individual Stock Logs</h4>
+		<div id="stock_log" class="col l12 m12 s12">
+			
+		</div>
 	</div>
+	<div style="display:none;" class="log card cron">
+		<div id="crons" class="col l12 m12 s12">
+			<h4>Crons</h4>
+		</div>
+			
+		<div id="queue" class="col l12 m12 s12">
+			<h4>Queue</h4>
+		</div>
 	</div>
 </div>
 
-<div class="row" style="margin-top:1rem;">
-	<h4>Session Logs</h4>
-	<div id="logs" class="col l12 m12 s12">
-	</div>
-</div>
-
-<div class="row" style="margin-top:1rem;">
-	<h4>Individual Stock Logs</h4>
-	<div id="stock_log" class="col l12 m12 s12">
-		
-	</div>
-</div>
-
-<div class="row" style="margin-top:1rem;">
-	<h4>All Exchange Components</h4>
-	<div id="exchange_components" class="col l12 m12 s12">
-	</div>
-</div>
-
-<div class="row" style="margin-top:1rem;">
-	<!-- crons -->
-	<div id="crons" class="col l12 m12 s12">
-	
-	</div>
-		
-	<!-- queue -->
-	<div id="queue" class="col l12 m12 s12">
-	
-	</div>
-</div>
+<!-- filter by entity, should just filter the existing session by that entity,and when we pass it forwards, what should be the behaviour, filter by exchange -->

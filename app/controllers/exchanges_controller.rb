@@ -53,5 +53,13 @@ class ExchangesController < ApplicationController
 		end
 	end
 	
+	def exchange_download_history
+		respond_to do |format|
+			format.json do 
+				render :json => {poller_sessions: Logs::Exchange.download_history(:exchange_name => params[:exchange_name]), status: 200}
+			end
+		end
+	end
+
 
 end

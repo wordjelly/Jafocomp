@@ -63,7 +63,7 @@ class Logs::PollerSession
 		            		"events" => {
 		              			"terms" => {
 		                			"field" => "event_name",
-		                			"size" => 11,
+		                			"size" => args[:event_names].size,
 		                			"include" => args[:event_names], 
 		                			"order" => {
 		                  				"start_time" => "asc"
@@ -106,6 +106,14 @@ class Logs::PollerSession
 			}
 		}
 
+		if args[:event_names]
+			base[:bool][:must] << {
+				terms: {
+					event_name: args[:event_names]
+				}
+			}
+		end
+
 		unless args[:poller_session_id].blank?
 			base[:bool][:must] << {
 				term: {
@@ -136,7 +144,7 @@ class Logs::PollerSession
 			base[:bool][:must] << {
 				range: {
 					time: {
-						lte: Time.parse(args[:poller_sessions_upto]).to_i*1000
+						lte: (((Time.parse(args[:poller_sessions_upto]).to_i + 60)*1000))
 					}
 				}
 			}
@@ -147,21 +155,22 @@ class Logs::PollerSession
 			base[:bool][:must] << {
 				range: {
 					time: {
-						gte: Time.parse(args[:poller_sessions_from]).to_i*1000
+						gte: (((Time.parse(args[:poller_sessions_from]).to_i - 60)*1000))
 					}
 				}
 			}
 		end
 
-		##puts "the query is:"
-		##puts JSON.pretty_generate(base)
+		puts "the query is:"
+		puts JSON.pretty_generate(base)
 
 		base
 
 	end
 
 	def self.get(args)
-		#puts "--------------- CAME TO GET --------------------- "
+		puts "--------------- CAME TO GET ---------------------  with args :#{args}"
+
 		query = {
 			bool: {
 				must: []
@@ -169,7 +178,7 @@ class Logs::PollerSession
 		}
 
 		args.keys.map{|c|
-			if c.to_s == "poller_session_id"
+			if c.to_s == "poller_session_id" or c.to_s == "entity_unique_name" or c.to_s == "indice" or c.to_s == "event_name"
 				query[:bool][:must] << {
 					term: {
 						c => args[c]
@@ -179,6 +188,10 @@ class Logs::PollerSession
 		}
 
 		## so basically we want -> to know if it got filtered due to close time.
+		## clicking on another exchange should show the data from that one ?
+		## truncating of long data.
+		## pagination of the 
+		## lets download all 5 exchanges and try and see how it works.
 		search_response = Elasticsearch::Persistence.client.search :index => INDEX_NAME, :type => DOCUMENT_TYPE, :body => {
 			:size => 0,
 			:query => query,
@@ -230,19 +243,12 @@ class Logs::PollerSession
 			}
 		}
 		
-		# indices -> 
-		# what is the information that you want on them.
-		# is the memory required.
-		# newly downloaded date and datapoints.
-		# we don't wanna include the memory information under the logs
-		# we wanna group the 
-		#puts "--------------------------------------------------->"
-		#puts JSON.pretty_generate(search_response["aggregations"])
-		
-		#puts "--------------------------------------------------->"
+		#how to expand everything.
 
 		poller_session_rows = search_response["aggregations"]["events"]["buckets"].map {|event_bucket|
 			{
+				"expand_all" => args[:expand_all],
+				"poller_session_id" => args[:poller_session_id],
 				"event_name" => event_bucket["key"],
 				"indices" => event_bucket["indices"]["buckets"].map{|c|
 					{

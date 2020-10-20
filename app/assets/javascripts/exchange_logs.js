@@ -18,7 +18,7 @@ var get_entity_unique_names = function(args){
 }
 
 var download_history = function(args){
-	$.get("/exchange_download_history",{exchange_name : args["exchange_name"]}).then(function(data){
+	$.post("/exchange_download_history",{exchange_name : args["exchange_name"]}).then(function(data){
 		console.log("exchange download history data is:");
 		console.log(data);
 		$("#exchange_download_history").html("");

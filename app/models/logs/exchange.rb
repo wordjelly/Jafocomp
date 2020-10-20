@@ -227,7 +227,7 @@ class Logs::Exchange
 
 
 	def self.download_history_query(args={})
-		{
+		query = {
 			bool: {
 				must: [
 					{
@@ -243,16 +243,19 @@ class Logs::Exchange
 				]
 			}
 		}
+		puts "query is:"
+		puts JSON.pretty_generate(query)
+		query
 	end
 
+	## so in the entity download history.
 	## by poller session.
 	def self.download_history_aggregation(args={})
 		{
 	    	entities: {
 	      		terms: {
 	        		field: "entity_unique_name",
-	        		size: 10,
-	        		exclude: ["all_entities"]
+	        		size: 100
 	      		},
 		      	aggs: {
 		      		last_10_poller_sessions: {
@@ -316,6 +319,9 @@ class Logs::Exchange
 			query: download_history_query(args),
 			aggs: download_history_aggregation(args)
 		}
+
+		puts JSON.pretty_generate(search_response["aggregations"])
+		exit(1)
 
 		poller_sessions = []
 		search_response["aggregations"]["last_10_poller_sessions"]["buckets"].each do |poller_session_bucket|

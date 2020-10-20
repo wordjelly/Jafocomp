@@ -167,6 +167,11 @@ class Logs::Entity
 	        		exclude: ["all_entities"]
 	      		},
 		      	aggs: {
+		      		entity_id: {
+		      			terms: {
+		      				field: "_id"
+		      			}
+		      		},
 		      		last_10_poller_sessions: {
 		      			terms: {
 		      				field: "poller_session_id",
@@ -203,7 +208,7 @@ class Logs::Entity
 				                  		}
 			                		], 
 			                		size: 10,
-			                		_source: ["es_linked_list.data_point.close","es_linked_list.data_point.open","es_linked_list.data_point.low","es_linked_list.data_point.high","es_linked_list.data_point.volume","es_linked_list.data_point.day_of_month","es_linked_list.data_point.month_of_year","es_linked_list.data_point.year","es_linked_list.data_point.poller_session_id","es_linked_list.data_point.poller_session_date","es_linked_list.data_point.poller_processor_session_id","es_linked_list.data_point.poller_processor_session_date"
+			                		_source: ["es_linked_list.data_point.close","es_linked_list.data_point.open","es_linked_list.data_point.low","es_linked_list.data_point.high","es_linked_list.data_point.volume","es_linked_list.data_point.day_of_month","es_linked_list.data_point.month_of_year","es_linked_list.data_point.year","es_linked_list.data_point.poller_session_id","es_linked_list.data_point.poller_session_date","es_linked_list.data_point.poller_processor_session_id","es_linked_list.data_point.poller_processor_session_date","es_linked_list.data_point.datapoint_index","es_linked_list.data_point.price_change_verified"
 			                		]
 			              		}
 			            	}
@@ -319,8 +324,10 @@ class Logs::Entity
 		entities = []
 		## we need poller session id integrated into this.
 		## for correlations.
+		## how to get datapoint index out of this shit.
+		## just store it on the datapoint.
 		search_response["aggregations"]["entities"]["buckets"].each do |entity_bucket|
-			entity = {"entity_unique_name" => entity_bucket["key"], "datapoints" => []}
+			entity = {"entity_unique_name" => entity_bucket["key"], "datapoints" => [], "entity_id" => entity_bucket["entity_id"]["buckets"][0]["key"]}
 			entity_bucket["last_10_hits"]["last_10"]["hits"]["hits"].each do |hit|
 				datapoint = hit["_source"]["data_point"]
 				entity["datapoints"] << datapoint
@@ -328,9 +335,9 @@ class Logs::Entity
 			entities << entity
 		end
 
-		entities
-
-		##puts JSON.pretty_generate(entities)
+		#entities
+		puts "------------- ENTITY TICKS ------------------ "
+		puts JSON.pretty_generate(entities)
 
 		entities
 
@@ -338,15 +345,31 @@ class Logs::Entity
 
 	## we can do this with indice also, but at least at the entity level we have it.
 	def self.errors(args={})
+		query = {
+			:bool => {
+				:must => [
+					{
+						:terms => {
+							event_name: ["A1i-ENTITY_DOWNLOAD_ERROR","A1s-ENTTIY_TASK_ERROR"]
+						}
+					}
+				]
+			}
+		}
+
+		if args[:entity_unique_name]
+			query[:bool][:must] << {
+				term: {
+					entity_unique_name: args[:entity_unique_name]
+				}
+			}
+		end
+
 		search_response = Elasticsearch::Persistence.client.search :body => {
 			:_source => ["poller_session_id","information","time","event_name"],
 			:size => 10,
 			:from => args[:from] || 0,
-			:query => {
-				:terms => {
-					event_name: ["A1i-ENTITY_DOWNLOAD_ERROR","A1s-ENTTIY_TASK_ERROR"]
-				}
-			}
+			:query => query
 		}
 		errors = []
 		search_response["hits"]["hits"].each do |hit|

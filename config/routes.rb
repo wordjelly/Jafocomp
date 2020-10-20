@@ -37,6 +37,7 @@ Rails.application.routes.draw do
 
   get 'all_exchanges' => 'exchanges#all', as: "all_exchanges"
   post 'exchange_summary' => 'exchanges#summary', as: "exchange_summary"
+  post 'exchange_download_history' => 'exchanges#exchange_download_history', as: 'exchange_download_history'
 
   
   get 'stocks/:id/with_stock/:primary_stock_id' => "stocks#show", as: "combination_entity"
@@ -57,6 +58,8 @@ Rails.application.routes.draw do
   get 'stock_download_history' => 'stocks#download_history', as: "stock_download_history"
   get 'stock_errors' => 'stocks#errors', as: "stock_errors"
   get 'stock_poller_history' => 'stocks#poller_history', as: "stock_poller_history"
+  ## then just rerun it and pray basically.
+  post 'update_tick_verified' => 'stocks#update_tick_verified'
    
   
 

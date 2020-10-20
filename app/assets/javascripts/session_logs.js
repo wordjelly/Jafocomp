@@ -5,12 +5,24 @@
 **
 **
 ********************************************/
-$(document).on('click','.show_session_logs',function(event){
-	get_poller_sessions({});
-	get_exchanges({});
-	get_crons({});
-	get_queue({})
+$(document).on('click','.log_view',function(event){
+	$(".log").hide();
 });
+
+$(document).on('click','.show_session_logs',function(event){
+	$(".session_logs").show();
+	get_poller_sessions({});
+});
+
+$(document).on('click','.show_exchange_components',function(event){
+	$(".exchange_components").show();
+	get_exchanges({});
+})
+
+$(document).on('click','.show_crons_queue',function(event){
+	get_crons({});
+	get_queue({});
+})
 
 var get_crons = function(){
 	$.get('/crons.json',{}).done(function(data){
@@ -59,8 +71,6 @@ var get_poller_sessions = function(args){
 		
 		var poller_session_rows = data["poller_session_rows"];
 		
-		
-
 		//console.log("these are the poller session rows");
 		//console.log(poller_session_rows);
 		add_poller_session_template();
@@ -141,6 +151,25 @@ $(document).on('click','.filter_by_entity',function(event){
 	});
 });
 
+$(document).on('click','.all_exchange_event_information',function(event){
+	get_poller_session({
+		expand_all : 1, 
+		poller_session_id : $(this).attr("data-poller-session-id"),
+		indice: $(this).attr("data-indice"),
+		event_name: $(this).attr("data-event-name")
+	});
+});
+
+
+$(document).on('click','.short_exchange_event_information',function(event){
+	
+	
+	//console.log("clicked short exchange event information" + indice + poller_session_id + event_name);
+	var find_string = "[data-indice='" + indice + "'][data-event-name='" + event_name + "']";
+	//console.log("find string is:");
+	//console.log(find_string);
+	$("ol[data-indice='" + indice + "'][data-event-name='" + event_name + "']").show();
+});
 
 
 // so this shit works now.

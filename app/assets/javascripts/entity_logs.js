@@ -51,3 +51,10 @@ var get_stock_poller_history = function(entity_unique_name){
 		$("#stock_poller_history").append(template(data));
 	});	
 }
+
+
+$(document).on('click','.update_tick_verified',function(event){
+	var entity_id = $(this).attr("data-entity-id");
+	var datapoint_index = $(this).attr("data-datapoint-index");
+	$.post('/update_tick_verified.json',{entity_id : entity_id, datapoint_index : datapoint_index});
+})

@@ -234,6 +234,7 @@
             <th>OHLCV</th>
             <th>Downloaded Session & Date</th>
             <th>Poller Session & Date</th>
+            <th>Options</th>
           </tr>
         </thead>
         <tbody id="poller_session_table_body">
@@ -249,6 +250,7 @@
                 <td>Open:{{= dp.open }}<br>High: {{= dp.high }}<br>Low: {{= dp.low }}<br> Close: {{= dp.close }}<br> Volume: {{= dp.volume }}</td>
                 <td>{{= dp.poller_session_id }} {{= poller_session_datetime }}</td>
                 <td>{{= dp.poller_processor_session_id }} {{= poller_processor_session_datetime }}</td>
+                <td class="update_tick_verified" data-entity-id="{{= entity.entity_id }}" data-datapoint-index="{{= dp.datapoint_index }}">Verify Datapoint</td>
               </tr>
             {{ }) }}
           {{ }) }}
@@ -361,17 +363,10 @@
           <input id="poller_sessions_upto_search" type="text" class="datepicker">
           <label for="poller_sessions_upto">Poller Sessions Upto</label>
         </div>
-        <div class="input-field col s6">
-          <input id="poller_sessions_entity_unique_name" type="text">
-          <label>Poller Sessions Entity Unique Name</label>
-        </div>
-        <div class="input-field col s6">
-          <input id="poller_sessions_indice" type="text">
-          <label for="poller_sessions_indice_search">Poller Sessions Indice Search</label>
-        </div>
+       
         <span class="waves-effect waves-light btn search_poller_sessions">Search</span>
 
-        <span class="waves-effect waves-light btn search_entity">Search Entity</span>
+        
       </form>
       <table class="striped highlight">
         <thead>
@@ -418,20 +413,31 @@
       <tbody>
         {{ _.each(search_result.poller_session_rows,function(row){ }}
           <tr>
-            <td>{{= row.event_name }}</td>
+            <td>{{= row.event_name }} {{= row.poller_session_id }}</td>
             <td>{{= row.entity_unique_names }}</td>
             <td>
               <ol>
                 {{ _.each(row.indices,function(indice){ }}
-                  <u><li style="cursor:pointer" data-name="{{= indice.index_name }}" class="filter_by_exchange">{{= indice.index_name }}</li></u>
+                  <u><li style="cursor:pointer">{{= indice.index_name }}
+                    <span data-name="{{= indice.index_name }}" class="filter_by_exchange">Filter by Exchange</span>
+                    <br>
+                    <span class="all_exchange_event_information" data-poller-session-id="{{= row.poller_session_id }}" data-event-name="{{= row.event_name }}" data-indice="{{= indice.index_name }}"> All Events</span>
+                    <br>
+                    <span class="short_exchange_event_information" data-poller-session-id="{{= row.poller_session_id }}" data-event-name="{{= row.event_name }}" data-indice="{{= indice.index_name }}"> 5 events</span></li></u>
                 {{ }) }}
               </ol>
             </td>
             <td data-information='{{= JSON.stringify(row.indices) }}'>
-              {{ if(_.size(row.indices) > 0){ }}
-                {{ var first_index = _.first(row.indices) }}
-                <ol>
-                  {{ _.each(first_index.information,function(info){ }}
+              {{ _.each(row.indices,function(indice,index){   }}
+                {{ var display = "" }}
+                {{ if(index > 0){ display = 'display:none' } }}
+                <ol class="exchange_event_information" style="{{= display }}" data-event-name="{{= row.event_name }}" data-indice="{{= indice.index_name }}">
+                  {{ var arr = indice.information; }}
+                  {{ if(row.expand_all){ }}
+                  {{ }else{ }}
+                      {{ arr = arr.slice(0,5) }}
+                  {{ } }}
+                  {{ _.each(arr,function(info){  }}
                       <li>{{= info.start_time }} : 
                         {{= JSON.stringify(info.description) }} : {{ _.each(info.entity_unique_names,function(eun){  }}
                           <u><span style="cursor:pointer" data-name="{{= eun }}" class="filter_by_entity">{{= eun }},</span><sup class="show_entity_logs" data-entity-unique-name="{{= eun }}">Logs</sup></u>
@@ -439,7 +445,8 @@
                       </li>
                   {{ }) }}
                 </ol>
-              {{ } }}
+              {{ }) }}
+              
             </td>
           </tr>
         {{ }) }}
