@@ -225,7 +225,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.19.0, < 2.0)
     rake (13.0.1)
-    rdoc (6.2.1)
+    rdoc (6.3.2)
     representable (3.0.4)
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
